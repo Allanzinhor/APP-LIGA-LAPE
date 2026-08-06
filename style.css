@@ -1114,3 +1114,77 @@ textarea:focus { border-color: #0056b3; }
     cursor: pointer;
 }
 .btn-acao.txt-vermelho { color: #dc3545; }
+
+/* Correção global para quebra de texto (nunca mais vaza da caixa) */
+p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Estilização e transição lateral dos Avisos (Carrossel Horizontal) */
+.quadro-avisos {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    overflow: hidden; /* Oculta o que sai da caixa */
+    position: relative;
+}
+
+.avisos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f1f3f5;
+    padding-bottom: 5px;
+}
+
+.slides-container {
+    display: flex;
+    width: 100%;
+    position: relative;
+    min-height: 70px;
+}
+
+.slide {
+    min-width: 100%;
+    box-sizing: border-box;
+    display: none; /* Escondidos por padrão */
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+}
+
+.slide.ativo {
+    display: block;
+    opacity: 1;
+    animation: deslizarLateral 0.5s ease-in-out;
+}
+
+@keyframes deslizarLateral {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.slide h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: #0056b3;
+}
+
+.slide p {
+    margin: 0;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.4;
+}

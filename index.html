@@ -92,7 +92,7 @@
             </div>
         </section>
 
-        <!-- Avisos (Slides) -->
+        <!-- Avisos (Slides Horizontais) -->
         <section class="quadro-avisos">
             <div class="avisos-header">
                 <span>⚠️ Avisos Importantes</span>
@@ -370,7 +370,7 @@
             });
         }
 
-        // SLIDES DE AVISOS FUNCIONAIS
+        // CARROSSEL DE AVISOS COM TRANSIÇÃO LATERAL E 6 SEGUNDOS DE ESPAÇO
         function renderizarAvisos() {
             const container = document.getElementById("container-slides");
             const contador = document.getElementById("contador-slide");
@@ -391,13 +391,13 @@
             if(contador) contador.innerText = `${indiceSlideAtual + 1}/${avisos.length}`;
         }
 
-        // Passa o slide automaticamente a cada 4 segundos se houver avisos
+        // Passa o slide lateralmente a cada 6 segundos
         setInterval(() => {
             if (avisos.length > 1) {
                 indiceSlideAtual = (indiceSlideAtual + 1) % avisos.length;
                 renderizarAvisos();
             }
-        }, 4000);
+        }, 6000);
 
         document.getElementById("btn-prev-mes").addEventListener("click", () => { mesAtual--; if (mesAtual < 0) { mesAtual = 11; anoAtual--; } renderizarApp(); });
         document.getElementById("btn-next-mes").addEventListener("click", () => { mesAtual++; if (mesAtual > 11) { mesAtual = 0; anoAtual++; } renderizarApp(); });
