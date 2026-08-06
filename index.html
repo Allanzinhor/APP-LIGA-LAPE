@@ -316,6 +316,7 @@
                         local: d.local || "Local a definir",
                         ch: Number(d.ch || 0),
                         desc: d.desc || "",
+                        publico: d.publico || "todos", // "todos" ou "diretoria"
                         cancelada: d.cancelada || false,
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
@@ -568,13 +569,20 @@
             if(!gridDias) return;
             gridDias.innerHTML = "";
 
+            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+
             const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
             const totalDiasMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
             for (let i = 0; i < primeiroDiaMes; i++) { gridDias.innerHTML += `<div class="dia-calendario vazio"></div>`; }
             for (let dia = 1; dia <= totalDiasMes; dia++) {
                 let dataFormatada = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                let temAtividade = atividades.some(ativ => ativ.data === dataFormatada && !ativ.cancelada);
+                let temAtividade = atividades.some(ativ => {
+                    if (ativ.data !== dataFormatada || ativ.cancelada) return false;
+                    if (ativ.publico === 'diretoria' && !ehDiretoria) return false;
+                    return true;
+                });
                 let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
                 let hoje = new Date();
                 let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "dia-hoje" : "";
@@ -587,10 +595,19 @@
         }
 
         function renderizarHistoricoGeral() {
-            let totalGeralAtividades = atividades.filter(a => !a.cancelada).length;
-            let totalGeralPresencas = atividades.filter(a => !a.cancelada && a.statusAdmin === 'presente').length;
-            let totalGeralJustificativas = atividades.filter(a => !a.cancelada && a.statusAdmin === 'justificado').length;
-            let totalGeralCH = atividades.filter(a => !a.cancelada && a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
+            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+
+            let ativVisiveis = atividades.filter(a => {
+                if (a.cancelada) return false;
+                if (a.publico === 'diretoria' && !ehDiretoria) return false;
+                return true;
+            });
+
+            let totalGeralAtividades = ativVisiveis.length;
+            let totalGeralPresencas = ativVisiveis.filter(a => a.statusAdmin === 'presente').length;
+            let totalGeralJustificativas = ativVisiveis.filter(a => a.statusAdmin === 'justificado').length;
+            let totalGeralCH = ativVisiveis.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("geral-atividades").innerText = totalGeralAtividades;
             document.getElementById("geral-presencas").innerText = totalGeralPresencas;
@@ -603,8 +620,12 @@
             if(!listaAtividades) return;
             listaAtividades.innerHTML = "";
 
+            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+
             const atividadesDesteMes = atividades.filter(ativ => {
                 if(!ativ.data) return false;
+                if(ativ.publico === 'diretoria' && !ehDiretoria) return false;
                 const dataAtiv = new Date(ativ.data + "T00:00:00");
                 return dataAtiv.getMonth() === mesAtual && dataAtiv.getFullYear() === anoAtual;
             });
@@ -631,6 +652,15 @@
                 const dataObj = new Date(ativ.data + "T00:00:00");
                 let botoesCardHtml = "";
                 let statusOficialHtml = "";
+                let sinalizacaoDiretoriaHtml = "";
+
+                if (ativ.publico === 'diretoria') {
+                    sinalizacaoDiretoriaHtml = `
+                        <div style="background: #e7f5ff; border-left: 4px solid #1c7ed6; padding: 8px; border-radius: 6px; margin-bottom: 8px;">
+                            <p style="color: #1971c2; font-size: 12px; font-weight: bold; margin: 0;">👔 Atividade Exclusiva da Diretoria</p>
+                        </div>
+                    `;
+                }
 
                 if (ativ.cancelada) {
                     statusOficialHtml = `
@@ -665,6 +695,7 @@
 
                 listaAtividades.innerHTML += `
                     <div class="card-atividade" style="${badgeCanceladaEstilo}">
+                        ${sinalizacaoDiretoriaHtml}
                         <div class="badges">
                             <span class="badge-dias">${ativ.ch}h de CH</span>
                             ${!ativ.cancelada ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Cancelada</span>'}

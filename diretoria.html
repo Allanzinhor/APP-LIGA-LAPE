@@ -115,16 +115,25 @@
         <!-- ABA 3: CADASTRAR ATIVIDADES -->
         <div id="secao-cadastro-atividades" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
-                <h3>Nova Atividade</h3>
+                <h3 id="titulo-form-atividade">Nova Atividade</h3>
                 <div class="grid-form">
                     <input type="text" id="at-titulo" placeholder="Título *" class="col-full">
                     <input type="date" id="at-data">
                     <input type="time" id="at-hora">
                     <input type="text" id="at-local" placeholder="Local">
                     <input type="number" id="at-ch" placeholder="Carga Horária (h)">
-                    <textarea id="at-desc" rows="3" placeholder="Descrição..." class="col-full"></textarea>
+                    
+                    <div class="col-full" style="margin-top: 5px;">
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Visibilidade da Atividade:</label>
+                        <select id="at-publico" class="col-full" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                            <option value="todos">Para Todos (Ligantes e Diretoria)</option>
+                            <option value="diretoria">Apenas Diretoria</option>
+                        </select>
+                    </div>
+
+                    <textarea id="at-desc" rows="3" placeholder="Descrição..." class="col-full" style="margin-top: 5px;"></textarea>
                 </div>
-                <button class="btn-salvar" onclick="cadastrarAtividade()">Criar Atividade na Nuvem</button>
+                <button class="btn-salvar" id="btn-salvar-atividade" onclick="cadastrarAtividade()">Criar Atividade na Nuvem</button>
             </div>
         </div>
 
@@ -636,6 +645,8 @@
         async function cadastrarAtividade() {
             let titulo = document.getElementById('at-titulo').value;
             let data = document.getElementById('at-data').value;
+            let publico = document.getElementById('at-publico').value;
+
             if(!titulo || !data) { alert("Preencha Título e Data."); return; }
 
             await db.collection("atividades").add({
@@ -644,6 +655,7 @@
                 local: document.getElementById('at-local').value || "Local a definir",
                 ch: Number(document.getElementById('at-ch').value || 0),
                 desc: document.getElementById('at-desc').value || "",
+                publico: publico,
                 frequencias: {}
             });
 
@@ -672,6 +684,7 @@
 
             filtradas.forEach(a => {
                 let statusCancelada = a.cancelada ? `<span style="color: #e03131; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">⚠️ Atividade Cancelada</span>` : "";
+                let tagPublico = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Para Todos</span>`;
                 let textoBotaoCancelar = a.cancelada ? "Ativar" : "Cancelar";
                 let corBotaoCancelar = a.cancelada ? "verde" : "cinza";
 
@@ -679,7 +692,7 @@
                     <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #dee2e6;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
-                                <h4 style="margin: 0; color: #0056b3;">${a.titulo}</h4>
+                                <h4 style="margin: 0; color: #0056b3;">${a.titulo} ${tagPublico}</h4>
                                 <p class="cinza" style="margin: 4px 0; font-size: 12px;">${a.data} às ${a.hora} | Local: ${a.local || 'N/D'} | CH: ${a.ch}h</p>
                                 <p style="font-size: 11px; color: #555; margin: 4px 0;">${a.desc || 'Sem descrição'}</p>
                                 ${statusCancelada}
@@ -705,17 +718,21 @@
             document.getElementById('at-local').value = ativ.local || '';
             document.getElementById('at-ch').value = ativ.ch || 0;
             document.getElementById('at-desc').value = ativ.desc || '';
+            document.getElementById('at-publico').value = ativ.publico || 'todos';
 
-            let btnCadastrar = document.querySelector('#secao-cadastro-atividades .btn-salvar');
+            let btnCadastrar = document.getElementById('btn-salvar-atividade');
             btnCadastrar.innerText = "Salvar Alterações da Atividade";
             btnCadastrar.setAttribute("onclick", `salvarEdicaoAtividade('${id}')`);
 
+            document.getElementById('titulo-form-atividade').innerText = "Editar Atividade";
             mudarAba('cadastro-atividades', { target: document.querySelectorAll('.aba-btn')[2] });
         }
 
         async function salvarEdicaoAtividade(id) {
             let titulo = document.getElementById('at-titulo').value;
             let data = document.getElementById('at-data').value;
+            let publico = document.getElementById('at-publico').value;
+
             if(!titulo || !data) { alert("Preencha Título e Data."); return; }
 
             await db.collection("atividades").doc(id).update({
@@ -724,14 +741,16 @@
                 hora: document.getElementById('at-hora').value || "19:00",
                 local: document.getElementById('at-local').value || "Local a definir",
                 ch: Number(document.getElementById('at-ch').value || 0),
-                desc: document.getElementById('at-desc').value || ""
+                desc: document.getElementById('at-desc').value || "",
+                publico: publico
             });
 
             alert("Atividade atualizada com sucesso!");
 
-            let btnCadastrar = document.querySelector('#secao-cadastro-atividades .btn-salvar');
+            let btnCadastrar = document.getElementById('btn-salvar-atividade');
             btnCadastrar.innerText = "Criar Atividade na Nuvem";
             btnCadastrar.setAttribute("onclick", "cadastrarAtividade()");
+            document.getElementById('titulo-form-atividade').innerText = "Nova Atividade";
 
             document.getElementById('at-titulo').value = "";
             document.getElementById('at-data').value = "";
@@ -739,6 +758,7 @@
             document.getElementById('at-local').value = "";
             document.getElementById('at-ch').value = "";
             document.getElementById('at-desc').value = "";
+            document.getElementById('at-publico').value = "todos";
 
             carregarDadosAdmin();
             mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
