@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel - Liga Acadêmica</title>
+    <!-- Reaproveitamos o mesmo arquivo de pintura -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="fundo-app">
+
+    <!-- Cabeçalho do App -->
+    <header class="cabecalho">
+        <h2>Minha Liga</h2>
+        <button class="btn-perfil">Perfil</button>
+    </header>
+
+    <!-- Calendário -->
+    <section class="calendario-mes">
+        <h3>Agosto</h3>
+        <div class="grid-calendario">
+            <!-- Representação visual simples dos dias -->
+            <div class="dia">Dom</div> <div class="dia">Seg</div> <div class="dia">Ter</div> <div class="dia">Qua</div> <div class="dia">Qui</div> <div class="dia">Sex</div> <div class="dia">Sáb</div>
+            <div class="dia">4</div> <div class="dia">5</div> <div class="dia">6</div> <div class="dia">7</div> <div class="dia">8</div> <div class="dia dia-ativo">9</div> <div class="dia">10</div>
+        </div>
+    </section>
+
+    <!-- Área de Atividades -->
+    <section class="atividades">
+        <h2>Próximas Atividades</h2>
+        
+        <!-- Card de Atividade -->
+        <div class="card-atividade">
+            <div class="badges">
+                <span class="badge-dias">Faltam 3 dias</span>
+                <span class="badge-confirmados">15 confirmados</span>
+            </div>
+            
+            <h3 class="titulo-atividade">Reunião Científica: Caso Clínico</h3>
+            <p class="desc-atividade">Discussão geral sobre o caso clínico da enfermaria com os preceptores.</p>
+            
+            <div class="info-atividade">
+                <p><strong>Data:</strong> 09/08 às 18:30</p>
+                <p><strong>Local:</strong> Sala 204 - Bloco B</p>
+            </div>
+            
+            <div class="botoes-card">
+                <button class="btn-confirmar">Confirmar Presença</button>
+                <!-- O onClick abaixo é o gatilho para abrir a caixa -->
+                <button class="btn-justificar" onclick="abrirModal()">Justificar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Caixa de Justificativa Oculta (Modal) -->
+    <div id="modal-justificativa" class="modal">
+        <div class="modal-conteudo">
+            <h3>Justificar Ausência</h3>
+            <p>Explique o motivo da sua ausência nesta atividade:</p>
+            <textarea rows="4" placeholder="Digite sua justificativa aqui..."></textarea>
+            
+            <div class="botoes-modal">
+                <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-enviar">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- O "Encanamento" (JavaScript) para a caixa funcionar -->
+    <script>
+        function abrirModal() {
+            // Pega a caixa invisível e muda para 'flex' (visível)
+            document.getElementById('modal-justificativa').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            // Esconde a caixa novamente
+            document.getElementById('modal-justificativa').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
