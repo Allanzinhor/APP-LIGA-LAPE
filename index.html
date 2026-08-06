@@ -80,15 +80,18 @@
             </div>
         </section>
 
-        <!-- Financeiro do Mês Atual -->
+        <!-- Financeiro com Acumulado e Mês Atual -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">💳 Situação Financeira (<span id="mes-financeiro-texto">Mês Atual</span>)</p>
             <div class="card-financeiro">
-                <div class="fin-info">
-                    <div><span class="fin-label">Valor:</span><span class="fin-valor" id="fin-debito-total">R$ 10,00</span></div>
-                    <div><span class="fin-label">Status:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
+                <div class="fin-info" style="align-items: flex-start;">
+                    <div>
+                        <span class="fin-label">Valor do Mês:</span><span class="fin-valor" id="fin-valor-mes" style="font-size: 15px;">R$ 10,00</span>
+                        <span class="fin-label" style="margin-top: 6px;">Débito Total Acumulado:</span><span class="fin-valor" id="fin-debito-total" style="color: #e03131;">R$ 10,00</span>
+                    </div>
+                    <div><span class="fin-label">Status do Mês:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
                 </div>
-                <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()">Pagar Mensalidade (Pix)</button>
+                <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()">Pagar Mensalidade do Mês (Pix)</button>
             </div>
         </section>
 
@@ -214,6 +217,15 @@
 
         async function carregarDadosDinamicosApp() {
             try {
+                // Sincroniza dados atualizados do usuário do banco (para refletir aprovações do financeiro instantaneamente)
+                let userDoc = await db.collection("membros").doc(usuarioLogado.id).get();
+                if(userDoc.exists) {
+                    usuarioLogado = { id: userDoc.id, ...userDoc.data() };
+                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                }
+            } catch(e) { console.log(e); }
+
+            try {
                 let avSnap = await db.collection("avisos").get();
                 avisos = [];
                 avSnap.forEach(doc => avisos.push({ id: doc.id, ...doc.data() }));
@@ -285,59 +297,84 @@
             }
         }
 
-        // --- CONTROLE FINANCEIRO NO APP ---
+        // --- CÁLCULO FINANCEIRO ACUMULADO E MÊS ATUAL ---
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function atualizarFinanceiroApp() {
-            let chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}`;
+            let chaveMesAtual = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}`;
             document.getElementById("mes-financeiro-texto").innerText = `${nomesMeses[mesAtual]} / ${anoAtual}`;
 
-            // Verifica se a mensalidade é cobrada (a partir de agosto de 2025)
-            let anoMesNum = anoAtual * 100 + (mesAtual + 1);
-            let cobravel = anoMesNum >= 202508;
-
+            let finMap = usuarioLogado.financeiro || {};
+            
+            // Status do Mês Selecionado
+            let statusMes = finMap[chaveMesAtual] || 'pendente';
             let badgeStatus = document.getElementById("fin-status-badge");
             let btnPix = document.getElementById("btn-acao-pix");
+            let valMesEl = document.getElementById("fin-valor-mes");
+            let debTotalEl = document.getElementById("fin-debito-total");
 
-            if(!cobravel) {
+            let anoMesNumAtual = anoAtual * 100 + (mesAtual + 1);
+            let cobravelAtual = anoMesNumAtual >= 202508;
+
+            if(!cobravelAtual) {
+                valMesEl.innerText = "R$ 0,00";
                 badgeStatus.innerText = "Não Cobrado";
                 badgeStatus.className = "badge-status-financeiro badge-fin abonado";
                 btnPix.style.display = "none";
-                return;
-            }
-
-            btnPix.style.display = "block";
-            let finMap = usuarioLogado.financeiro || {};
-            let statusMes = finMap[chaveMes] || 'pendente';
-
-            if(statusMes === 'pago') {
-                badgeStatus.innerText = "Pago ✓";
-                badgeStatus.className = "badge-status-financeiro badge-fin pago";
-                btnPix.innerText = "Mensalidade Quitada";
-                btnPix.disabled = true;
-                btnPix.style.background = "#6c757d";
-            } else if(statusMes === 'analise') {
-                badgeStatus.innerText = "Aguardando Confirmação";
-                badgeStatus.className = "badge-status-financeiro badge-fin analise";
-                btnPix.innerText = "Em análise pelo financeiro";
-                btnPix.disabled = true;
-                btnPix.style.background = "#f59f00";
-            } else if(statusMes === 'abonado') {
-                badgeStatus.innerText = "Abonado";
-                badgeStatus.className = "badge-status-financeiro badge-fin abonado";
-                btnPix.innerText = "Isento / Abonado";
-                btnPix.disabled = true;
-                btnPix.style.background = "#adb5bd";
             } else {
-                badgeStatus.innerText = "Pendente";
-                badgeStatus.className = "badge-status-financeiro badge-fin pendente";
-                btnPix.innerText = "Pagar Mensalidade (Pix)";
-                btnPix.disabled = false;
-                btnPix.style.background = "#0056b3";
+                valMesEl.innerText = "R$ 10,00";
+                btnPix.style.display = "block";
+                if(statusMes === 'pago') {
+                    badgeStatus.innerText = "Pago ✓";
+                    badgeStatus.className = "badge-status-financeiro badge-fin pago";
+                    btnPix.innerText = "Mensalidade Quitada";
+                    btnPix.disabled = true;
+                    btnPix.style.background = "#6c757d";
+                } else if(statusMes === 'analise') {
+                    badgeStatus.innerText = "Aguardando Confirmação";
+                    badgeStatus.className = "badge-status-financeiro badge-fin analise";
+                    btnPix.innerText = "Em análise pelo financeiro";
+                    btnPix.disabled = true;
+                    btnPix.style.background = "#f59f00";
+                } else if(statusMes === 'abonado') {
+                    badgeStatus.innerText = "Abonado";
+                    badgeStatus.className = "badge-status-financeiro badge-fin abonado";
+                    btnPix.innerText = "Isento / Abonado";
+                    btnPix.disabled = true;
+                    btnPix.style.background = "#adb5bd";
+                } else {
+                    badgeStatus.innerText = "Pendente";
+                    badgeStatus.className = "badge-status-financeiro badge-fin pendente";
+                    btnPix.innerText = "Pagar Mensalidade do Mês (Pix)";
+                    btnPix.disabled = false;
+                    btnPix.style.background = "#0056b3";
+                }
             }
+
+            // Cálculo do Débito Total Acumulado (de Agosto de 2025 até o mês atual)
+            let debitoAcumulado = 0;
+            let anoCalc = 2025;
+            let mesCalc = 8; // Agosto
+
+            while (anoCalc * 100 + mesCalc <= anoMesNumAtual) {
+                let chaveCalc = `${anoCalc}-${String(mesCalc).padStart(2, '0')}`;
+                let statusCalc = finMap[chaveCalc] || 'pendente';
+                
+                if (statusCalc !== 'pago' && statusCalc !== 'abonado') {
+                    debitoAcumulado += 10;
+                }
+
+                mesCalc++;
+                if (mesCalc > 12) {
+                    mesCalc = 1;
+                    anoCalc++;
+                }
+            }
+
+            debTotalEl.innerText = `R$ ${debitoAcumulado.toFixed(2).replace('.', ',')}`;
         }
 
         function abrirModalPix() { document.getElementById("modal-pix").style.display = "flex"; }
@@ -364,7 +401,7 @@
                 localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                 alert("Pagamento notificado! Aguardando confirmação do financeiro.");
                 fecharModalPix();
-                atualizarFinanceiroApp();
+                carregarDadosDinamicosApp();
             } catch(e) {
                 console.error(e);
                 alert("Erro ao notificar pagamento.");
