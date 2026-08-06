@@ -111,7 +111,7 @@
             <div id="grid-dias" class="grid-calendario"></div>
         </section>
 
-        <!-- Desempenho do Mês (Com Faltas incluídas) -->
+        <!-- Desempenho do Mês -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">📅 Desempenho no Mês</p>
             <div class="dashboard-estatisticas" style="grid-template-columns: repeat(5, 1fr); gap: 4px;">
@@ -206,6 +206,10 @@
                         totalConfirmados: totalConfirmados
                     });
                 });
+
+                // ORDENAÇÃO CRONOLÓGICA (Mais próxima para mais longe)
+                atividades.sort((a, b) => new Date(a.data + "T" + a.hora) - new Date(b.data + "T" + b.hora));
+
             } catch(e) { console.log(e); }
 
             renderizarApp();
