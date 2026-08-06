@@ -21,20 +21,21 @@
 </head>
 <body class="fundo-app">
 
-    <div class="celular-container" style="max-width: 540px;">
+    <div class="celular-container" style="max-width: 580px;">
         
         <header class="cabecalho">
             <h2>Gestão da Liga (Admin)</h2>
             <button class="btn-perfil" onclick="window.location.href='index.html'">Sair</button>
         </header>
 
-        <!-- Navegação por Abas -->
-        <nav class="admin-abas-complexa">
+        <!-- Navegação por Abas (Atualizada com Financeiro) -->
+        <nav class="admin-abas-complexa" style="grid-template-columns: repeat(3, 1fr);">
             <button class="aba-btn ativo" onclick="mudarAba('cadastro-membros', event)">➕ Membros</button>
             <button class="aba-btn" onclick="mudarAba('lista-membros', event)">👥 Alunos</button>
             <button class="aba-btn" onclick="mudarAba('cadastro-atividades', event)">➕ Ativ.</button>
             <button class="aba-btn" onclick="mudarAba('lista-atividades', event)">📅 Gerenciar</button>
             <button class="aba-btn" onclick="mudarAba('frequencia', event)">📋 Frequência</button>
+            <button class="aba-btn" onclick="mudarAba('financeiro', event)">💰 Financeiro</button>
             <button class="aba-btn" onclick="mudarAba('avisos', event)">⚠️ Avisos</button>
         </nav>
 
@@ -88,6 +89,11 @@
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Filtrar Atividades por Mês/Ano</h3>
                 <select id="filtro-mes-atividades" onchange="renderizarAtividadesEdicao()">
+                    <option value="2025-08">Agosto / 2025</option>
+                    <option value="2025-09">Setembro / 2025</option>
+                    <option value="2025-10">Outubro / 2025</option>
+                    <option value="2025-11">Novembro / 2025</option>
+                    <option value="2025-12">Dezembro / 2025</option>
                     <option value="2026-06">Junho / 2026</option>
                     <option value="2026-07">Julho / 2026</option>
                     <option value="2026-08" selected>Agosto / 2026</option>
@@ -106,6 +112,11 @@
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Controle de Frequência por Mês/Ano</h3>
                 <select id="filtro-mes-frequencia" onchange="renderizarFrequenciaAdmin()">
+                    <option value="2025-08">Agosto / 2025</option>
+                    <option value="2025-09">Setembro / 2025</option>
+                    <option value="2025-10">Outubro / 2025</option>
+                    <option value="2025-11">Novembro / 2025</option>
+                    <option value="2025-12">Dezembro / 2025</option>
                     <option value="2026-06">Junho / 2026</option>
                     <option value="2026-07">Julho / 2026</option>
                     <option value="2026-08" selected>Agosto / 2026</option>
@@ -118,7 +129,29 @@
             <div id="lista-admin-frequencia"></div>
         </div>
 
-        <!-- ABA 6: AVISOS (COM EDIÇÃO E EXCLUSÃO) -->
+        <!-- ABA 6: FINANCEIRO (NOVO) -->
+        <div id="secao-financeiro" class="admin-secao" style="display: none;">
+            <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
+                <h3>Gestão de Mensalidades por Mês</h3>
+                <select id="filtro-mes-financeiro" onchange="renderizarFinanceiroAdmin()">
+                    <option value="2025-08">Agosto / 2025</option>
+                    <option value="2025-09">Setembro / 2025</option>
+                    <option value="2025-10">Outubro / 2025</option>
+                    <option value="2025-11">Novembro / 2025</option>
+                    <option value="2025-12">Dezembro / 2025</option>
+                    <option value="2026-06">Junho / 2026</option>
+                    <option value="2026-07">Julho / 2026</option>
+                    <option value="2026-08" selected>Agosto / 2026</option>
+                    <option value="2026-09">Setembro / 2026</option>
+                    <option value="2026-10">Outubro / 2026</option>
+                    <option value="2026-11">Novembro / 2026</option>
+                    <option value="2026-12">Dezembro / 2026</option>
+                </select>
+            </div>
+            <div id="lista-admin-financeiro"></div>
+        </div>
+
+        <!-- ABA 7: AVISOS -->
         <div id="secao-avisos" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-aviso">Publicar Novo Aviso</h3>
@@ -174,6 +207,7 @@
 
             renderizarAtividadesEdicao();
             renderizarFrequenciaAdmin();
+            renderizarFinanceiroAdmin();
             carregarAvisosAdmin();
         }
 
@@ -192,7 +226,8 @@
                 tel: document.getElementById('m-tel').value,
                 curso: document.getElementById('m-curso').value,
                 periodo: document.getElementById('m-periodo').value,
-                cargo: document.getElementById('m-cargo').value
+                cargo: document.getElementById('m-cargo').value,
+                financeiro: {}
             });
 
             alert(`Membro cadastrado!\nCódigo: ${codigoGerado}\nSenha: LAPE2026`);
@@ -347,7 +382,76 @@
             carregarDadosAdmin();
         }
 
-        // --- GERENCIAMENTO DE AVISOS (SALVAR, EDITAR, EXCLUIR) ---
+        // --- GESTÃO FINANCEIRA ADMIN ---
+        function renderizarFinanceiroAdmin() {
+            let mesFiltro = document.getElementById("filtro-mes-financeiro").value;
+            let div = document.getElementById("lista-admin-financeiro");
+            div.innerHTML = "";
+
+            let [anoF, mesF] = mesFiltro.split('-').map(Number);
+            let anoMesNum = anoF * 100 + mesF;
+            let cobravel = anoMesNum >= 202508;
+
+            if(!cobravel) {
+                div.innerHTML = `<div class="card-admin-item"><p class="cinza">Mensalidades só começaram a ser cobradas a partir de Agosto de 2025.</p></div>`;
+                return;
+            }
+
+            let htmlTabela = `
+                <div class="card-admin-item">
+                    <h4>Controle Financeiro - ${mesFiltro}</h4>
+                    <table class="tabela-financeiro">
+                        <thead>
+                            <tr>
+                                <th>Ligante</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            membrosCache.forEach(m => {
+                let finMap = m.financeiro || {};
+                let status = finMap[mesFiltro] || 'pendente';
+
+                let badge = `<span class="badge-fin pendente">Pendente</span>`;
+                if(status === 'pago') badge = `<span class="badge-fin pago">Pago ✓</span>`;
+                if(status === 'analise') badge = `<span class="badge-fin analise">Aguardando Confirmação</span>`;
+                if(status === 'abonado') badge = `<span class="badge-fin abonado">Abonado (R$ 0)</span>`;
+
+                let botoesFin = `
+                    <button class="btn-mini verde" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pago')">Recebido</button>
+                    <button class="btn-mini cinza" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'abonado')">Abonar</button>
+                    <button class="btn-mini vermelho" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pendente')">Resetar</button>
+                `;
+
+                htmlTabela += `
+                    <tr>
+                        <td><strong>${m.nome}</strong><br><small class="cinza">Cód: ${m.codigo}</small></td>
+                        <td>${badge}</td>
+                        <td>${botoesFin}</td>
+                    </tr>
+                `;
+            });
+
+            htmlTabela += `</tbody></table></div>`;
+            div.innerHTML = htmlTabela;
+        }
+
+        async function alterarFinanceiroAdmin(membroId, mesAno, novoStatus) {
+            let membro = membrosCache.find(x => x.id === membroId);
+            if(!membro) return;
+            if(!membro.financeiro) membro.financeiro = {};
+            membro.financeiro[mesAno] = novoStatus;
+
+            await db.collection("membros").doc(membroId).update({
+                financeiro: membro.financeiro
+            });
+            carregarDadosAdmin();
+        }
+
+        // --- GESTÃO DE AVISOS ---
         async function salvarAviso() {
             let id = document.getElementById('av-id-editando').value;
             let titulo = document.getElementById('av-titulo').value.trim();
@@ -356,11 +460,9 @@
             if(!titulo || !texto) { alert("Preencha o título e a mensagem do aviso."); return; }
 
             if(id) {
-                // Atualiza aviso existente
                 await db.collection("avisos").doc(id).update({ titulo, texto });
                 alert("Aviso atualizado com sucesso!");
             } else {
-                // Cria novo aviso
                 await db.collection("avisos").add({ titulo, texto });
                 alert("Aviso publicado com sucesso!");
             }

@@ -57,7 +57,7 @@
         <header class="cabecalho">
             <h2 id="titulo-boas-vindas">Minha Liga</h2>
             <div style="display: flex; gap: 8px; align-items: center;">
-                <div class="avatar-perfil" onclick="abrirPerfil()">
+                <div class="avatar-perfil" onclick="abrirPerfilModal()">
                     <img id="foto-avatar" src="https://via.placeholder.com/150" alt="Foto">
                 </div>
                 <button onclick="fazerLogout()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">Sair</button>
@@ -80,19 +80,19 @@
             </div>
         </section>
 
-        <!-- Financeiro -->
+        <!-- Financeiro do Mês Atual -->
         <section class="secao-historico-geral">
-            <p class="titulo-secao-geral">💳 Situação Financeira</p>
+            <p class="titulo-secao-geral">💳 Situação Financeira (<span id="mes-financeiro-texto">Mês Atual</span>)</p>
             <div class="card-financeiro">
                 <div class="fin-info">
                     <div><span class="fin-label">Valor:</span><span class="fin-valor" id="fin-debito-total">R$ 10,00</span></div>
                     <div><span class="fin-label">Status:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
                 </div>
-                <button class="btn-pagar" onclick="alert('Sistema de Pix integrado.')">Pagar Mensalidade (Pix)</button>
+                <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()">Pagar Mensalidade (Pix)</button>
             </div>
         </section>
 
-        <!-- Avisos (Slides Horizontais) -->
+        <!-- Avisos (Slides) -->
         <section class="quadro-avisos">
             <div class="avisos-header">
                 <span>⚠️ Avisos Importantes</span>
@@ -133,6 +133,44 @@
         </section>
     </div>
 
+    <!-- MODAL PIX -->
+    <div id="modal-pix" class="modal" style="display:none;">
+        <div class="modal-conteudo text-center" style="text-align:center;">
+            <h3>Pagamento via Pix</h3>
+            <p>Escaneie o QR Code ou copie a chave abaixo:</p>
+            <div class="qrcode-box">📱 QR CODE PIX</div>
+            <div class="copia-cola">
+                <input type="text" id="chave-pix-input" value="00020126580014br.gov.pix...lape_oficial" readonly>
+                <button class="btn-copiar" onclick="copiarPix()">Copiar</button>
+            </div>
+            <p id="aviso-copiado" class="texto-sucesso" style="display:none;">Chave copiada!</p>
+            <div class="botoes-modal" style="margin-top: 15px; display:flex; gap:8px;">
+                <button class="btn-salvar" onclick="notificarPagamento()">Já realizei o pagamento</button>
+                <button class="btn-cancelar" onclick="fecharModalPix()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PERFIL -->
+    <div id="modal-perfil" class="modal-perfil-overlay">
+        <div class="modal-perfil-conteudo">
+            <div class="perfil-topo">
+                <div class="avatar-grande"><img id="perfil-foto" src="https://via.placeholder.com/150" alt="Foto"></div>
+                <h3 id="perfil-nome">Nome</h3>
+                <span class="perfil-codigo" id="perfil-codigo">20261000</span>
+                <p class="perfil-cargo" id="perfil-cargo">Ligante</p>
+            </div>
+            <div class="perfil-detalhes">
+                <div class="info-grupo"><span class="info-label">E-mail</span><span class="info-valor" id="perfil-email">-</span></div>
+                <div class="info-linha-dupla">
+                    <div class="info-grupo"><span class="info-label">Curso</span><span class="info-valor" id="perfil-curso">-</span></div>
+                    <div class="info-grupo"><span class="info-label">Período</span><span class="info-valor" id="perfil-periodo">-</span></div>
+                </div>
+            </div>
+            <button class="btn-fechar-perfil" onclick="fecharPerfilModal()">Fechar</button>
+        </div>
+    </div>
+
     <script>
         let usuarioLogado = null;
         let atividades = [];
@@ -142,7 +180,6 @@
         async function fazerLogin() {
             let codigoInput = document.getElementById('login-codigo').value.trim();
             let senhaInput = document.getElementById('login-senha').value.trim();
-
             if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
 
             try {
@@ -230,10 +267,7 @@
                     await docRef.update({ frequencias: frequencias });
                     carregarDadosDinamicosApp();
                 }
-            } catch(e) {
-                console.error(e);
-                alert("Erro ao conectar com o banco de dados.");
-            }
+            } catch(e) { console.error(e); }
         }
 
         function confirmarPresencaAluno(id) {
@@ -251,15 +285,107 @@
             }
         }
 
-        function fazerLogout() {
-            localStorage.removeItem("lape_sessao_usuario");
-            location.reload();
-        }
-
+        // --- CONTROLE FINANCEIRO NO APP ---
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        function atualizarFinanceiroApp() {
+            let chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}`;
+            document.getElementById("mes-financeiro-texto").innerText = `${nomesMeses[mesAtual]} / ${anoAtual}`;
+
+            // Verifica se a mensalidade é cobrada (a partir de agosto de 2025)
+            let anoMesNum = anoAtual * 100 + (mesAtual + 1);
+            let cobravel = anoMesNum >= 202508;
+
+            let badgeStatus = document.getElementById("fin-status-badge");
+            let btnPix = document.getElementById("btn-acao-pix");
+
+            if(!cobravel) {
+                badgeStatus.innerText = "Não Cobrado";
+                badgeStatus.className = "badge-status-financeiro badge-fin abonado";
+                btnPix.style.display = "none";
+                return;
+            }
+
+            btnPix.style.display = "block";
+            let finMap = usuarioLogado.financeiro || {};
+            let statusMes = finMap[chaveMes] || 'pendente';
+
+            if(statusMes === 'pago') {
+                badgeStatus.innerText = "Pago ✓";
+                badgeStatus.className = "badge-status-financeiro badge-fin pago";
+                btnPix.innerText = "Mensalidade Quitada";
+                btnPix.disabled = true;
+                btnPix.style.background = "#6c757d";
+            } else if(statusMes === 'analise') {
+                badgeStatus.innerText = "Aguardando Confirmação";
+                badgeStatus.className = "badge-status-financeiro badge-fin analise";
+                btnPix.innerText = "Em análise pelo financeiro";
+                btnPix.disabled = true;
+                btnPix.style.background = "#f59f00";
+            } else if(statusMes === 'abonado') {
+                badgeStatus.innerText = "Abonado";
+                badgeStatus.className = "badge-status-financeiro badge-fin abonado";
+                btnPix.innerText = "Isento / Abonado";
+                btnPix.disabled = true;
+                btnPix.style.background = "#adb5bd";
+            } else {
+                badgeStatus.innerText = "Pendente";
+                badgeStatus.className = "badge-status-financeiro badge-fin pendente";
+                btnPix.innerText = "Pagar Mensalidade (Pix)";
+                btnPix.disabled = false;
+                btnPix.style.background = "#0056b3";
+            }
+        }
+
+        function abrirModalPix() { document.getElementById("modal-pix").style.display = "flex"; }
+        function fecharModalPix() { document.getElementById("modal-pix").style.display = "none"; }
+
+        function copiarPix() {
+            let input = document.getElementById("chave-pix-input");
+            input.select();
+            document.execCommand("copy");
+            let aviso = document.getElementById("aviso-copiado");
+            aviso.style.display = "block";
+            setTimeout(() => aviso.style.display = "none", 3000);
+        }
+
+        async function notificarPagamento() {
+            let chaveMes = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}`;
+            if(!usuarioLogado.financeiro) usuarioLogado.financeiro = {};
+            usuarioLogado.financeiro[chaveMes] = 'analise';
+
+            try {
+                await db.collection("membros").doc(usuarioLogado.id).update({
+                    financeiro: usuarioLogado.financeiro
+                });
+                localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                alert("Pagamento notificado! Aguardando confirmação do financeiro.");
+                fecharModalPix();
+                atualizarFinanceiroApp();
+            } catch(e) {
+                console.error(e);
+                alert("Erro ao notificar pagamento.");
+            }
+        }
+
+        function abrirPerfilModal() {
+            document.getElementById("perfil-nome").innerText = usuarioLogado.nome;
+            document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo;
+            document.getElementById("perfil-cargo").innerText = usuarioLogado.cargo || "Ligante";
+            document.getElementById("perfil-email").innerText = usuarioLogado.email || "-";
+            document.getElementById("perfil-curso").innerText = usuarioLogado.curso || "-";
+            document.getElementById("perfil-periodo").innerText = usuarioLogado.periodo || "-";
+            document.getElementById("modal-perfil").style.display = "flex";
+        }
+        function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
+
+        function fazerLogout() {
+            localStorage.removeItem("lape_sessao_usuario");
+            location.reload();
+        }
 
         function renderizarApp() {
             document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
@@ -282,6 +408,7 @@
 
             renderizarHistoricoGeral();
             renderizarCardsENumeros();
+            atualizarFinanceiroApp();
         }
 
         function renderizarHistoricoGeral() {
@@ -370,7 +497,6 @@
             });
         }
 
-        // CARROSSEL DE AVISOS COM TRANSIÇÃO LATERAL E 6 SEGUNDOS DE ESPAÇO
         function renderizarAvisos() {
             const container = document.getElementById("container-slides");
             const contador = document.getElementById("contador-slide");
@@ -391,7 +517,6 @@
             if(contador) contador.innerText = `${indiceSlideAtual + 1}/${avisos.length}`;
         }
 
-        // Passa o slide lateralmente a cada 6 segundos
         setInterval(() => {
             if (avisos.length > 1) {
                 indiceSlideAtual = (indiceSlideAtual + 1) % avisos.length;
