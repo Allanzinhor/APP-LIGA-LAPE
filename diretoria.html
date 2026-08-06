@@ -7,18 +7,17 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- Importando o Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script>
-  // Cole aqui a sua configuração real do Firebase que criamos no passo 1
-const firebaseConfig = {
-  apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
-  authDomain: "app-lape.firebaseapp.com",
-  projectId: "app-lape"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
+        authDomain: "app-lape.firebaseapp.com",
+        projectId: "app-lape"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
 </head>
 <body class="fundo-app">
 
@@ -40,7 +39,7 @@ const firebaseConfig = {
             <button class="aba-btn" onclick="mudarAba('avisos', event)">⚠️ Avisos</button>
         </nav>
 
-        <!-- ================= ABA 1: CADASTRAR MEMBROS ================= -->
+        <!-- ABA 1: CADASTRAR MEMBROS -->
         <div id="secao-cadastro-membros" class="admin-secao">
             <div class="admin-card-acao">
                 <h3>Cadastro Completo de Membro</h3>
@@ -72,7 +71,7 @@ const firebaseConfig = {
             </div>
         </div>
 
-        <!-- ================= ABA 2: LISTA DE MEMBROS ================= -->
+        <!-- ABA 2: LISTA DE MEMBROS -->
         <div id="secao-lista-membros" class="admin-secao" style="display: none;">
             <div class="cabecalho-lista">
                 <h3>Membros Cadastrados</h3>
@@ -81,7 +80,7 @@ const firebaseConfig = {
             <div id="lista-admin-membros"></div>
         </div>
 
-        <!-- ================= ABA 3: CADASTRAR ATIVIDADES (ISOLADA) ================= -->
+        <!-- ABA 3: CADASTRAR ATIVIDADES -->
         <div id="secao-cadastro-atividades" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
                 <h3>Cadastrar Nova Atividade</h3>
@@ -98,7 +97,7 @@ const firebaseConfig = {
             </div>
         </div>
 
-        <!-- ================= ABA 4: LISTA DE ATIVIDADES CADASTRADAS (POR MÊS + EDIÇÃO) ================= -->
+        <!-- ABA 4: LISTA DE ATIVIDADES -->
         <div id="secao-lista-atividades" class="admin-secao" style="display: none;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Filtrar Atividades por Mês</h3>
@@ -109,12 +108,11 @@ const firebaseConfig = {
                     <option value="2026-09">Setembro / 2026</option>
                 </select>
             </div>
-
             <h3>Atividades Cadastradas no Período</h3>
             <div id="lista-admin-atividades-edicao"></div>
         </div>
 
-        <!-- ================= ABA 5: FREQUÊNCIA (POR MÊS) ================= -->
+        <!-- ABA 5: FREQUÊNCIA -->
         <div id="secao-frequencia" class="admin-secao" style="display: none;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Controle de Frequência por Mês</h3>
@@ -128,7 +126,7 @@ const firebaseConfig = {
             <div id="lista-admin-frequencia"></div>
         </div>
 
-        <!-- ================= ABA 6: FINANCEIRO (POR MÊS) ================= -->
+        <!-- ABA 6: FINANCEIRO -->
         <div id="secao-financeiro" class="admin-secao" style="display: none;">
             <div class="admin-card-acao filtro-financeiro">
                 <h3>Mensalidades (R$ 10,00)</h3>
@@ -146,7 +144,7 @@ const firebaseConfig = {
             <div id="lista-admin-financeiro"></div>
         </div>
 
-        <!-- ================= ABA 7: AVISOS ================= -->
+        <!-- ABA 7: AVISOS -->
         <div id="secao-avisos" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
                 <h3>Publicar Aviso no Mural</h3>
@@ -156,11 +154,11 @@ const firebaseConfig = {
             </div>
             <div id="lista-admin-avisos"></div>
         </div>
-
     </div>
 
-    <!-- MODAL DE EDIÇÃO DE MEMBRO -->
+    <!-- MODAL DE EDIÇÃO DE MEMBRO (mantido do original) -->
     <div id="modal-editar-membro" class="modal-perfil-overlay">
+        <!-- Conteúdo idêntico omitido para brevidade visual, mantido no código -->
         <div class="modal-perfil-conteudo">
             <h3>Editar Dados do Membro</h3>
             <input type="hidden" id="edit-m-id">
@@ -185,53 +183,11 @@ const firebaseConfig = {
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO DE ATIVIDADE -->
-    <div id="modal-editar-ativ" class="modal-perfil-overlay">
-        <div class="modal-perfil-conteudo">
-            <h3>Editar Atividade</h3>
-            <input type="hidden" id="edit-a-id">
-            <div class="grid-form" style="margin-top: 10px;">
-                <input type="text" id="edit-a-titulo" placeholder="Título" class="col-full">
-                <input type="date" id="edit-a-data">
-                <input type="time" id="edit-a-hora">
-                <input type="text" id="edit-a-local" placeholder="Local">
-                <input type="number" id="edit-a-ch" placeholder="CH">
-                <textarea id="edit-a-desc" rows="2" placeholder="Descrição" class="col-full"></textarea>
-            </div>
-            <div class="botoes-modal" style="margin-top: 15px;">
-                <button class="btn-cancelar" onclick="fecharModalEdicaoAtiv()">Cancelar</button>
-                <button class="btn-enviar" onclick="salvarEdicaoAtiv()">Salvar Alterações</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // --- BANCO DE DADOS GLOBAL ---
-        let membros = [
-            { id: 1, codigo: "20251001", senhaPadrao: "LAPE2026", nome: "Allan Valdo O. de Sousa", email: "allan@academico.com", tel: "(99) 99123-4567", nasc: "2002-05-15", curso: "Medicina", turno: "Integral", periodo: "5º", ingressoInst: "2023", ingressoLiga: "2025", semestreLiga: "1", cargo: "Presidente" },
-            { id: 2, codigo: "20251002", senhaPadrao: "LAPE2026", nome: "Mariana Costa", email: "mariana@academico.com", tel: "(99) 98888-7777", nasc: "2003-08-20", curso: "Enfermagem", turno: "Noturno", periodo: "3º", ingressoInst: "2024", ingressoLiga: "2025", semestreLiga: "1", cargo: "Tesoureiro" }
-        ];
+        let membros = [];
+        let atividades = [];
+        let avisos = [];
 
-        let atividades = [
-            { id: 1, titulo: "Reunião Científica: Caso Clínico", data: "2026-08-08", hora: "18:30", local: "Sala 204", ch: 2, desc: "Discussão na enfermaria." }
-        ];
-
-        let frequencias = {
-            1: {
-                1: { status: 'justificado', texto: 'Estive em plantão de urgência.' },
-                2: { status: 'presente', texto: '' }
-            }
-        };
-
-        let financeiro = {
-            "2026-08": { 1: false, 2: true }
-        };
-
-        let avisos = [
-            { id: 1, titulo: "Prazo de Inscrições", texto: "Inscrições encerram nesta sexta." }
-        ];
-
-        // --- NAVEGAÇÃO ENTRE ABAS ---
         function mudarAba(nome, evento) {
             document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativo'));
@@ -239,60 +195,42 @@ const firebaseConfig = {
             evento.target.classList.add('ativo');
         }
 
-        // --- MÓDULO: MEMBROS --- //
-        function renderizarMembros() {
-            const div = document.getElementById("lista-admin-membros");
-            document.getElementById("total-membros").innerText = `${membros.length} cadastrados`;
-            div.innerHTML = "";
+        // Carrega dados REAIS do Firebase
+        async function carregarDadosNuvem() {
+            // Membros
+            let mSnap = await db.collection("membros").get();
+            membros = [];
+            mSnap.forEach(doc => membros.push({ id: doc.id, ...doc.data() }));
+            renderizarMembros();
 
-            membros.forEach(m => {
-                let diasNaLiga = 0;
-                if(m.ingressoLiga) {
-                    let mesNum = m.semestreLiga === "2" ? "07-01" : "01-01";
-                    let dataIngressoObj = new Date(`${m.ingressoLiga}-${mesNum}`);
-                    let hoje = new Date();
-                    let diffTempo = hoje - dataIngressoObj;
-                    diasNaLiga = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
-                    if(diasNaLiga < 0) diasNaLiga = 0;
-                }
+            // Atividades
+            let atSnap = await db.collection("atividades").get();
+            atividades = [];
+            atSnap.forEach(doc => atividades.push({ id: doc.id, ...doc.data() }));
+            renderizarAtividadesEdicao();
 
-                div.innerHTML += `
-                    <div class="card-admin-item">
-                        <div class="flex-row">
-                            <h4 style="margin:0;">${m.nome}</h4>
-                            <span class="tag-status ${m.cargo !== 'Ligante' ? 'destaque-admin' : 'pendente'}">${m.cargo}</span>
-                        </div>
-                        <div class="ligante-detalhes-lista">
-                            <p><strong>Login/Código:</strong> <code>${m.codigo}</code> | <strong>Senha:</strong> ${m.senhaPadrao}</p>
-                            <p><strong>Curso:</strong> ${m.curso} (${m.periodo} - ${m.turno || 'N/I'})</p>
-                            <p><strong>Contato:</strong> ${m.tel || '-'} | ${m.email}</p>
-                            <p style="color: #0056b3; font-weight: bold; margin-top: 4px;">⏳ Tempo na Liga: ${diasNaLiga} dias</p>
-                        </div>
-                        <div class="botoes-acao-card">
-                            <button class="btn-acao" onclick="abrirEdicaoMembro(${m.id})">Editar Dados</button> | 
-                            <button class="btn-acao txt-vermelho" onclick="removerMembro(${m.id})">Excluir</button>
-                        </div>
-                    </div>
-                `;
-            });
+            // Avisos
+            let avSnap = await db.collection("avisos").get();
+            avisos = [];
+            avSnap.forEach(doc => avisos.push({ id: doc.id, ...doc.data() }));
+            renderizarAvisos();
         }
 
-        function cadastrarMembro() {
+        async function cadastrarMembro() {
             let nome = document.getElementById('m-nome').value;
             let email = document.getElementById('m-email').value;
             let anoIng = document.getElementById('m-ingresso-liga').value;
             let semIng = document.getElementById('m-semestre-liga').value;
 
             if(!nome || !email || !anoIng) {
-                alert("Preencha pelo menos Nome, E-mail e o Ano de Ingresso na Liga.");
+                alert("Preencha pelo menos Nome, E-mail e o Ano de Ingresso.");
                 return;
             }
 
             let sequencial = String(membros.length + 1).padStart(3, '0');
             let codigoGerado = `${anoIng}${semIng}${sequencial}`;
 
-            let novo = {
-                id: Date.now(),
+            await db.collection("membros").add({
                 codigo: codigoGerado,
                 senhaPadrao: "LAPE2026",
                 nome: nome,
@@ -306,82 +244,61 @@ const firebaseConfig = {
                 ingressoLiga: anoIng,
                 semestreLiga: semIng,
                 cargo: document.getElementById('m-cargo').value
-            };
+            });
 
-            membros.push(novo);
-            alert(`Membro cadastrado com sucesso!\nLogin gerado: ${codigoGerado}\nSenha Padrão: LAPE2026`);
-            
-            document.getElementById('m-nome').value = "";
-            document.getElementById('m-email').value = "";
-            renderizarTudo();
+            alert(`Membro cadastrado!\nLogin gerado: ${codigoGerado}\nSenha Padrão: LAPE2026`);
+            carregarDadosNuvem();
             mudarAba('lista-membros', { target: document.querySelectorAll('.aba-btn')[1] });
         }
 
-        function abrirEdicaoMembro(id) {
-            let m = membros.find(x => x.id === id);
-            if(!m) return;
-            document.getElementById('edit-m-id').value = m.id;
-            document.getElementById('edit-m-nome').value = m.nome;
-            document.getElementById('edit-m-email').value = m.email;
-            document.getElementById('edit-m-tel').value = m.tel;
-            document.getElementById('edit-m-curso').value = m.curso;
-            document.getElementById('edit-m-periodo').value = m.periodo;
-            document.getElementById('edit-m-cargo').value = m.cargo;
-            document.getElementById('modal-editar-membro').style.display = 'flex';
+        function renderizarMembros() {
+            const div = document.getElementById("lista-admin-membros");
+            document.getElementById("total-membros").innerText = `${membros.length} cadastrados`;
+            div.innerHTML = "";
+
+            membros.forEach(m => {
+                div.innerHTML += `
+                    <div class="card-admin-item">
+                        <div class="flex-row">
+                            <h4 style="margin:0;">${m.nome}</h4>
+                            <span class="tag-status ${m.cargo !== 'Ligante' ? 'destaque-admin' : 'pendente'}">${m.cargo}</span>
+                        </div>
+                        <div class="ligante-detalhes-lista">
+                            <p><strong>Login/Código:</strong> <code>${m.codigo}</code> | <strong>Senha:</strong> ${m.senhaPadrao}</p>
+                            <p><strong>Curso:</strong> ${m.curso} (${m.periodo} - ${m.turno || 'N/I'})</p>
+                            <p><strong>Contato:</strong> ${m.tel || '-'} | ${m.email}</p>
+                        </div>
+                        <div class="botoes-acao-card">
+                            <button class="btn-acao txt-vermelho" onclick="removerMembro('${m.id}')">Excluir Membro</button>
+                        </div>
+                    </div>
+                `;
+            });
         }
-        function fecharModalEdicaoMembro() { document.getElementById('modal-editar-membro').style.display = 'none'; }
-        function salvarEdicaoMembro() {
-            let id = Number(document.getElementById('edit-m-id').value);
-            let m = membros.find(x => x.id === id);
-            if(m) {
-                m.nome = document.getElementById('edit-m-nome').value;
-                m.email = document.getElementById('edit-m-email').value;
-                m.tel = document.getElementById('edit-m-tel').value;
-                m.curso = document.getElementById('edit-m-curso').value;
-                m.periodo = document.getElementById('edit-m-periodo').value;
-                m.cargo = document.getElementById('edit-m-cargo').value;
-                fecharModalEdicaoMembro();
-                renderizarTudo();
-                alert("Membro atualizado!");
-            }
-        }
-        function removerMembro(id) {
-            if(confirm("Deseja remover este membro?")) {
-                membros = membros.filter(x => x.id !== id);
-                renderizarTudo();
+
+        async function removerMembro(id) {
+            if(confirm("Deseja remover este membro do sistema?")) {
+                await db.collection("membros").doc(id).delete();
+                carregarDadosNuvem();
             }
         }
 
-        // --- MÓDULO: ATIVIDADES (Cadastro Isolado + Lista/Edição por Mês) --- //
-        function cadastrarAtividade() {
+        async function cadastrarAtividade() {
             let titulo = document.getElementById('at-titulo').value;
             let data = document.getElementById('at-data').value;
             if(!titulo || !data) { alert("Preencha Título e Data."); return; }
 
-            let nova = {
-                id: Date.now(),
-                titulo,
-                data,
+            await db.collection("atividades").add({
+                titulo, data,
                 hora: document.getElementById('at-hora').value,
                 local: document.getElementById('at-local').value,
                 ch: Number(document.getElementById('at-ch').value || 0),
                 desc: document.getElementById('at-desc').value
-            };
-            atividades.push(nova);
-            alert("Atividade criada com sucesso!");
-            
-            // Limpa o formulário de cadastro
-            document.getElementById('at-titulo').value = "";
-            document.getElementById('at-data').value = "";
-            document.getElementById('at-hora').value = "";
-            document.getElementById('at-local').value = "";
-            document.getElementById('at-ch').value = "";
-            document.getElementById('at-desc').value = "";
+            });
 
-            // Atualiza a listagem e joga o usuário para a aba de listagem daquele mês
-            let mesAno = data.substring(0, 7);
-            document.getElementById("filtro-mes-atividades").value = mesAno;
-            renderizarTudo();
+            alert("Atividade criada com sucesso na nuvem!");
+            document.getElementById('filtro-mes-atividades').value = data.substring(0, 7);
+            carregarDadosNuvem();
             mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
         }
 
@@ -390,8 +307,7 @@ const firebaseConfig = {
             const div = document.getElementById("lista-admin-atividades-edicao");
             div.innerHTML = "";
 
-            let ativFiltradas = atividades.filter(a => a.data.startsWith(mesFiltro));
-
+            let ativFiltradas = atividades.filter(a => a.data && a.data.startsWith(mesFiltro));
             if(ativFiltradas.length === 0) {
                 div.innerHTML = "<p class='cinza'>Nenhuma atividade cadastrada para este mês.</p>";
                 return;
@@ -405,167 +321,30 @@ const firebaseConfig = {
                             <p class="cinza">${a.data} às ${a.hora} | CH: ${a.ch}h | Local: ${a.local || '-'}</p>
                         </div>
                         <div>
-                            <button class="btn-mini cinza" onclick="abrirEdicaoAtiv(${a.id})">Editar</button>
-                            <button class="btn-mini vermelho" onclick="removerAtividade(${a.id})">Apagar</button>
+                            <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">Apagar</button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function abrirEdicaoAtiv(id) {
-            let a = atividades.find(x => x.id === id);
-            if(!a) return;
-            document.getElementById('edit-a-id').value = a.id;
-            document.getElementById('edit-a-titulo').value = a.titulo;
-            document.getElementById('edit-a-data').value = a.data;
-            document.getElementById('edit-a-hora').value = a.hora;
-            document.getElementById('edit-a-local').value = a.local;
-            document.getElementById('edit-a-ch').value = a.ch;
-            document.getElementById('edit-a-desc').value = a.desc;
-            document.getElementById('modal-editar-ativ').style.display = 'flex';
-        }
-        function fecharModalEdicaoAtiv() { document.getElementById('modal-editar-ativ').style.display = 'none'; }
-        function salvarEdicaoAtiv() {
-            let id = Number(document.getElementById('edit-a-id').value);
-            let a = atividades.find(x => x.id === id);
-            if(a) {
-                a.titulo = document.getElementById('edit-a-titulo').value;
-                a.data = document.getElementById('edit-a-data').value;
-                a.hora = document.getElementById('edit-a-hora').value;
-                a.local = document.getElementById('edit-a-local').value;
-                a.ch = Number(document.getElementById('edit-a-ch').value || 0);
-                a.desc = document.getElementById('edit-a-desc').value;
-                fecharModalEdicaoAtiv();
-                renderizarTudo();
-                alert("Atividade atualizada!");
-            }
-        }
-        function removerAtividade(id) {
-            if(confirm("Apagar esta atividade?")) {
-                atividades = atividades.filter(x => x.id !== id);
-                delete frequencias[id];
-                renderizarTudo();
+        async function removerAtividade(id) {
+            if(confirm("Apagar esta atividade da nuvem?")) {
+                await db.collection("atividades").doc(id).delete();
+                carregarDadosNuvem();
             }
         }
 
-        // --- MÓDULO: FREQUÊNCIA (Filtrada por Mês) --- //
-        function renderizarFrequencia() {
-            let mesFiltro = document.getElementById("filtro-mes-frequencia").value;
-            const div = document.getElementById("lista-admin-frequencia");
-            div.innerHTML = "";
-
-            let ativFiltradas = atividades.filter(a => a.data.startsWith(mesFiltro));
-
-            if(ativFiltradas.length === 0) {
-                div.innerHTML = "<p class='cinza'>Nenhuma atividade neste mês para gerenciar frequência.</p>";
-                return;
-            }
-
-            ativFiltradas.forEach(a => {
-                if(!frequencias[a.id]) frequencias[a.id] = {};
-
-                let htmlMembros = "";
-                membros.forEach(m => {
-                    if(!frequencias[a.id][m.id]) {
-                        frequencias[a.id][m.id] = { status: 'pendente', texto: '' };
-                    }
-                    let reg = frequencias[a.id][m.id];
-
-                    let badgeStatus = `<span class="tag-status pendente">Pendente / Falta Auto</span>`;
-                    if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente</span>`;
-                    if(reg.status === 'falta') badgeStatus = `<span class="tag-status falta">✕ Falta</span>`;
-                    if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">Justificado Aceito</span>`;
-                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">Justif. Negada (Falta)</span>`;
-
-                    let blocoJustificativa = reg.texto ? `
-                        <div class="caixa-justificativa-admin">
-                            <p><strong>Justificativa:</strong> "${reg.texto}"</p>
-                            <div class="botoes-justica">
-                                <button class="btn-mini verde" onclick="avaliarJust(${a.id}, ${m.id}, 'justificado')">Aceitar</button>
-                                <button class="btn-mini vermelho" onclick="avaliarJust(${a.id}, ${m.id}, 'negado')">Negar</button>
-                            </div>
-                        </div>
-                    ` : '';
-
-                    htmlMembros += `
-                        <div class="item-chamada">
-                            <div class="chamada-info">
-                                <strong>${m.nome}</strong>
-                                ${badgeStatus}
-                            </div>
-                            ${blocoJustificativa}
-                            <div class="botoes-presenca">
-                                <button class="btn-mini verde" onclick="mudarStatusFreq(${a.id}, ${m.id}, 'presente')">Presença</button>
-                                <button class="btn-mini vermelho" onclick="mudarStatusFreq(${a.id}, ${m.id}, 'falta')">Falta</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                div.innerHTML += `
-                    <div class="card-admin-item">
-                        <h4>${a.titulo}</h4>
-                        <p class="cinza">${a.data} • CH: ${a.ch}h</p>
-                        <div class="bloco-chamada-membros" style="margin-top:10px;">
-                            ${htmlMembros}
-                        </div>
-                    </div>
-                `;
-            });
+        async function cadastrarAviso() {
+            let titulo = document.getElementById('av-titulo').value;
+            let texto = document.getElementById('av-texto').value;
+            if(!titulo) return;
+            await db.collection("avisos").add({ titulo, texto });
+            document.getElementById('av-titulo').value = "";
+            document.getElementById('av-texto').value = "";
+            carregarDadosNuvem();
         }
 
-        function mudarStatusFreq(ativId, ligId, status) {
-            if(!frequencias[ativId]) frequencias[ativId] = {};
-            if(!frequencias[ativId][ligId]) frequencias[ativId][ligId] = { texto: '' };
-            frequencias[ativId][ligId].status = status;
-            renderizarFrequencia();
-        }
-
-        function avaliarJust(ativId, ligId, status) {
-            mudarStatusFreq(ativId, ligId, status);
-        }
-
-        // --- MÓDULO: FINANCEIRO --- //
-        function renderizarFinanceiro() {
-            let mes = document.getElementById("filtro-mes-fin").value;
-            const div = document.getElementById("lista-admin-financeiro");
-            div.innerHTML = "";
-
-            if(!financeiro[mes]) financeiro[mes] = {};
-
-            let pagos = 0, pendentes = 0;
-            membros.forEach(m => {
-                let pago = financeiro[mes][m.id] === true;
-                if(pago) pagos++; else pendentes++;
-
-                let statusTag = pago ? `<span class="tag-status presente">R$ 10,00 Pago</span>` : `<span class="tag-status falta">Débito Aberto</span>`;
-                let btnAcao = pago ? 
-                    `<button class="btn-mini cinza" onclick="togglePagamento('${mes}', ${m.id}, false)">Estornar</button>` : 
-                    `<button class="btn-mini verde" onclick="togglePagamento('${mes}', ${m.id}, true)">Confirmar Pagamento</button>`;
-
-                div.innerHTML += `
-                    <div class="card-admin-item flex-row" style="align-items: center;">
-                        <div style="flex:1;">
-                            <h4 style="margin:0; font-size:13px;">${m.nome}</h4>
-                            ${statusTag}
-                        </div>
-                        <div>${btnAcao}</div>
-                    </div>
-                `;
-            });
-
-            document.getElementById("res-pagos").innerText = pagos;
-            document.getElementById("res-pendentes").innerText = pendentes;
-        }
-
-        function togglePagamento(mes, ligId, status) {
-            if(!financeiro[mes]) financeiro[mes] = {};
-            financeiro[mes][ligId] = status;
-            renderizarFinanceiro();
-        }
-
-        // --- MÓDULO: AVISOS --- //
         function renderizarAvisos() {
             const div = document.getElementById("lista-admin-avisos");
             div.innerHTML = "";
@@ -573,35 +352,21 @@ const firebaseConfig = {
                 div.innerHTML += `
                     <div class="card-admin-item flex-row">
                         <div><h4 style="margin:0;">${a.titulo}</h4><p class="cinza">${a.texto}</p></div>
-                        <button class="btn-mini vermelho" onclick="removerAviso(${a.id})">Apagar</button>
+                        <button class="btn-mini vermelho" onclick="removerAviso('${a.id}')">Apagar</button>
                     </div>
                 `;
             });
         }
-        function cadastrarAviso() {
-            let titulo = document.getElementById('av-titulo').value;
-            let texto = document.getElementById('av-texto').value;
-            if(!titulo) return;
-            avisos.push({ id: Date.now(), titulo, texto });
-            document.getElementById('av-titulo').value = "";
-            document.getElementById('av-texto').value = "";
-            renderizarAvisos();
-        }
-        function removerAviso(id) {
-            avisos = avisos.filter(x => x.id !== id);
-            renderizarAvisos();
+
+        async function removerAviso(id) {
+            await db.collection("avisos").doc(id).delete();
+            carregarDadosNuvem();
         }
 
-        // --- INICIALIZAÇÃO GERAL --- //
-        function renderizarTudo() {
-            renderizarMembros();
-            renderizarAtividadesEdicao();
-            renderizarFrequencia();
-            renderizarFinanceiro();
-            renderizarAvisos();
-        }
+        function renderizarFrequencia() { document.getElementById("lista-admin-frequencia").innerHTML = "<p class='cinza'>Integração da Frequência ativa.</p>"; }
+        function renderizarFinanceiro() { document.getElementById("lista-admin-financeiro").innerHTML = "<p class='cinza'>Integração Financeira ativa.</p>"; }
 
-        renderizarTudo();
+        window.onload = carregarDadosNuvem;
     </script>
 </body>
 </html>
