@@ -1,4 +1,6 @@
-/* Isso tira as margens padrão do navegador e escolhe uma fonte limpa */
+/* =========================================
+   CONFIGURAÇÕES GERAIS (Tijolos básicos)
+   ========================================= */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,23 +8,24 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* O fundo do app e o alinhamento central */
+/* =========================================
+   TELA DE LOGIN
+   ========================================= */
 body {
-    background-color: #f0f2f5; /* Um cinza bem clarinho */
+    background-color: #e9ecef;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Ocupa 100% da altura da tela */
+    min-height: 100vh;
 }
 
-/* A caixinha branca de login (parecendo um cartão) */
 #tela-login {
     background-color: #ffffff;
     padding: 30px;
-    border-radius: 12px; /* Deixa as bordas redondinhas */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Dá uma sombra de aplicativo */
-    width: 90%; /* Em celulares, ocupa quase a tela toda */
-    max-width: 350px; /* Em computadores, não fica gigante */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 350px;
     text-align: center;
 }
 
@@ -31,7 +34,6 @@ h2 {
     margin-bottom: 25px;
 }
 
-/* Espaçamento entre os campos */
 form div {
     margin-bottom: 15px;
     text-align: left;
@@ -45,45 +47,48 @@ label {
     color: #555;
 }
 
-/* O visual das caixas de digitar */
 input {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 15px;
 }
 
-/* O botão de Entrar */
 button {
     width: 100%;
     padding: 12px;
-    background-color: #0056b3; /* AQUI VOCÊ MUDA A COR PRINCIPAL DO APP */
+    background-color: #0056b3;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 10px;
 }
 
 button:hover {
-    background-color: #004494; /* Cor ao passar o mouse */
+    background-color: #004494;
 }
 
 /* =========================================
-   ESTILOS DA TELA PRINCIPAL (APP)
+   TELA PRINCIPAL (APP) - DESIGN MOBILE FIRST
    ========================================= */
-
-/* Ajusta o fundo para o painel principal não ficar centralizado como o login */
-.fundo-app {
-    background-color: #f4f7f6;
-    display: block; 
-    height: auto;
+body.fundo-app {
+    align-items: flex-start; /* Alinha o app no topo no PC */
 }
 
-/* Cabeçalho superior */
+/* Esta é a caixa que limita a largura no PC para parecer celular */
+.celular-container {
+    width: 100%;
+    max-width: 414px; /* Tamanho comum de tela de celular */
+    background-color: #f4f7f6;
+    min-height: 100vh;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    position: relative;
+    padding-bottom: 40px;
+}
+
 .cabecalho {
     background-color: #0056b3;
     color: white;
@@ -91,160 +96,193 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.cabecalho h2 {
+    margin-bottom: 0;
+    font-size: 18px;
+    color: white;
 }
 
 .btn-perfil {
     background-color: rgba(255, 255, 255, 0.2);
     width: auto;
-    padding: 8px 16px;
-    margin-top: 0;
-}
-
-.btn-perfil:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    font-size: 13px;
 }
 
 /* Calendário */
 .calendario-mes {
     background-color: white;
-    margin: 20px;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    margin: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
 }
 
-.calendario-mes h3 {
-    text-align: center;
-    color: #333;
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
+}
+
+.calendario-header h3 {
+    font-size: 16px;
+    color: #333;
+}
+
+.calendario-header button {
+    width: auto;
+    background: none;
+    color: #0056b3;
+    padding: 5px 15px;
+    font-size: 18px;
 }
 
 .grid-calendario {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 4px;
     text-align: center;
 }
 
-.dia {
+.dias-semana div {
+    font-size: 12px;
+    color: #777;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.dia-calendario {
     padding: 8px 0;
-    background-color: #f8f9fa;
-    border-radius: 8px;
     font-size: 14px;
-    color: #555;
+    color: #444;
+    border-radius: 6px;
+    min-height: 35px;
+}
+
+.dia-calendario.vazio {
+    background-color: transparent;
+}
+
+.dia-hoje {
+    background-color: #e3f2fd;
+    color: #0056b3;
     font-weight: bold;
 }
 
-.dia-ativo {
-    background-color: #0056b3;
-    color: white;
-    box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3);
+.ponto-verde {
+    width: 6px;
+    height: 6px;
+    background-color: #2b8a3e;
+    border-radius: 50%;
+    margin: 2px auto 0;
 }
 
-/* Cards das Atividades */
+/* Atividades */
 .atividades {
-    padding: 0 20px 30px 20px;
+    padding: 0 15px;
 }
 
 .atividades h2 {
-    font-size: 18px;
-    color: #444;
-    margin-bottom: 15px;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.sem-atividade {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    margin-top: 20px;
 }
 
 .card-atividade {
     background-color: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-    text-align: left;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    margin-bottom: 15px;
 }
 
-/* Etiquetas Coloridas (Badges) */
 .badges {
     display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 
 .badge-dias {
     background-color: #fff4e6;
     color: #e85d04;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 11px;
     font-weight: bold;
 }
 
 .badge-confirmados {
     background-color: #e3f2fd;
     color: #1e88e5;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 11px;
     font-weight: bold;
 }
 
-/* Textos do Card */
 .titulo-atividade {
-    font-size: 18px;
+    font-size: 16px;
     color: #222;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .desc-atividade {
     color: #666;
-    font-size: 14px;
-    margin-bottom: 15px;
-    line-height: 1.5;
+    font-size: 13px;
+    margin-bottom: 12px;
+    line-height: 1.4;
 }
 
 .info-atividade p {
-    font-size: 14px;
+    font-size: 13px;
     color: #444;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
-/* Botões do Card */
 .botoes-card {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.btn-confirmar, .btn-justificar {
+    font-size: 13px;
+    padding: 10px;
 }
 
 .btn-confirmar {
     background-color: #2b8a3e;
-    margin-top: 0;
 }
 
-.btn-confirmar:hover {
-    background-color: #237032;
-}
+.btn-confirmar:hover { background-color: #237032; }
 
 .btn-justificar {
     background-color: #f1f3f5;
     color: #495057;
-    margin-top: 0;
 }
 
-.btn-justificar:hover {
-    background-color: #e9ecef;
-}
+.btn-justificar:hover { background-color: #e9ecef; }
 
-/* =========================================
-   MODAL DE JUSTIFICATIVA (Caixa Escura)
-   ========================================= */
+/* Modal */
 .modal {
-    display: none; /* Fica invisível até o botão ser clicado */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Fundo preto transparente */
-    backdrop-filter: blur(3px); /* Deixa o fundo embaçado */
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -252,54 +290,43 @@ button:hover {
 
 .modal-conteudo {
     background-color: white;
-    padding: 25px;
-    border-radius: 16px;
+    padding: 20px;
+    border-radius: 12px;
     width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    max-width: 320px;
     text-align: left;
 }
 
 .modal-conteudo h3 {
-    margin-bottom: 10px;
-    color: #333;
+    margin-bottom: 8px;
+    font-size: 16px;
 }
 
 .modal-conteudo p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 15px;
+    font-size: 13px;
+    margin-bottom: 12px;
 }
 
 textarea {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-family: inherit;
+    font-size: 13px;
     resize: vertical;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     outline: none;
 }
 
-textarea:focus {
-    border-color: #0056b3;
-}
+textarea:focus { border-color: #0056b3; }
 
 .botoes-modal {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn-cancelar {
     background-color: #fa5252;
-    margin-top: 0;
 }
 
-.btn-cancelar:hover {
-    background-color: #e03131;
-}
-
-.btn-enviar {
-    margin-top: 0;
-}
+.btn-cancelar:hover { background-color: #e03131; }

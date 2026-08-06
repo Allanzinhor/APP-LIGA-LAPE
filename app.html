@@ -4,55 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel - Liga Acadêmica</title>
-    <!-- Reaproveitamos o mesmo arquivo de pintura -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="fundo-app">
 
-    <!-- Cabeçalho do App -->
-    <header class="cabecalho">
-        <h2>Minha Liga</h2>
-        <button class="btn-perfil">Perfil</button>
-    </header>
-
-    <!-- Calendário -->
-    <section class="calendario-mes">
-        <h3>Agosto</h3>
-        <div class="grid-calendario">
-            <!-- Representação visual simples dos dias -->
-            <div class="dia">Dom</div> <div class="dia">Seg</div> <div class="dia">Ter</div> <div class="dia">Qua</div> <div class="dia">Qui</div> <div class="dia">Sex</div> <div class="dia">Sáb</div>
-            <div class="dia">4</div> <div class="dia">5</div> <div class="dia">6</div> <div class="dia">7</div> <div class="dia">8</div> <div class="dia dia-ativo">9</div> <div class="dia">10</div>
-        </div>
-    </section>
-
-    <!-- Área de Atividades -->
-    <section class="atividades">
-        <h2>Próximas Atividades</h2>
+    <!-- Esse container limita o tamanho no computador para ficar com cara de celular -->
+    <div class="celular-container">
         
-        <!-- Card de Atividade -->
-        <div class="card-atividade">
-            <div class="badges">
-                <span class="badge-dias">Faltam 3 dias</span>
-                <span class="badge-confirmados">15 confirmados</span>
-            </div>
-            
-            <h3 class="titulo-atividade">Reunião Científica: Caso Clínico</h3>
-            <p class="desc-atividade">Discussão geral sobre o caso clínico da enfermaria com os preceptores.</p>
-            
-            <div class="info-atividade">
-                <p><strong>Data:</strong> 09/08 às 18:30</p>
-                <p><strong>Local:</strong> Sala 204 - Bloco B</p>
-            </div>
-            
-            <div class="botoes-card">
-                <button class="btn-confirmar">Confirmar Presença</button>
-                <!-- O onClick abaixo é o gatilho para abrir a caixa -->
-                <button class="btn-justificar" onclick="abrirModal()">Justificar</button>
-            </div>
-        </div>
-    </section>
+        <header class="cabecalho">
+            <h2>Minha Liga</h2>
+            <button class="btn-perfil">Perfil</button>
+        </header>
 
-    <!-- Caixa de Justificativa Oculta (Modal) -->
+        <!-- Calendário Funcional -->
+        <section class="calendario-mes">
+            <div class="calendario-header">
+                <button id="btn-prev-mes">&lt;</button>
+                <h3 id="mes-ano-texto">Mês Ano</h3>
+                <button id="btn-next-mes">&gt;</button>
+            </div>
+            
+            <div class="grid-calendario dias-semana">
+                <div>Dom</div> <div>Seg</div> <div>Ter</div> <div>Qua</div> <div>Qui</div> <div>Sex</div> <div>Sáb</div>
+            </div>
+            
+            <!-- Os dias e os pontinhos verdes serão gerados pelo JavaScript aqui dentro -->
+            <div id="grid-dias" class="grid-calendario"></div>
+        </section>
+
+        <!-- Área de Atividades -->
+        <section class="atividades">
+            <h2>Atividades do Mês</h2>
+            
+            <!-- Os cards serão gerados pelo JavaScript aqui dentro -->
+            <div id="lista-atividades"></div>
+        </section>
+
+    </div>
+
+    <!-- Modal de Justificativa -->
     <div id="modal-justificativa" class="modal">
         <div class="modal-conteudo">
             <h3>Justificar Ausência</h3>
@@ -66,17 +56,118 @@
         </div>
     </div>
 
-    <!-- O "Encanamento" (JavaScript) para a caixa funcionar -->
+    <!-- O "Motor" do Calendário -->
     <script>
-        function abrirModal() {
-            // Pega a caixa invisível e muda para 'flex' (visível)
-            document.getElementById('modal-justificativa').style.display = 'flex';
+        // Banco de dados simulado das atividades (no formato Ano-Mês-Dia)
+        const atividades = [
+            { data: "2026-08-08", titulo: "Reunião Científica: Caso Clínico", desc: "Discussão geral sobre o caso clínico da enfermaria com os preceptores.", hora: "18:30", local: "Sala 204 - Bloco B", confirmados: 15 },
+            { data: "2026-08-25", titulo: "Aula Prática: Sutura", desc: "Treinamento prático de fios e nós no laboratório.", hora: "14:00", local: "Laboratório 3", confirmados: 20 },
+            { data: "2026-09-10", titulo: "Simpósio Regional", desc: "Apresentação dos trabalhos acadêmicos desenvolvidos no semestre.", hora: "08:00", local: "Auditório Principal", confirmados: 45 }
+        ];
+
+        let dataAtual = new Date();
+        let mesAtual = dataAtual.getMonth(); // Janeiro é 0, Dezembro é 11
+        let anoAtual = dataAtual.getFullYear();
+        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        function renderizarApp() {
+            // 1. Atualizar Título do Mês
+            document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
+            
+            const gridDias = document.getElementById("grid-dias");
+            gridDias.innerHTML = "";
+
+            const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
+            const totalDiasMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
+
+            // 2. Preencher os espaços em branco antes do dia 1
+            for (let i = 0; i < primeiroDiaMes; i++) {
+                gridDias.innerHTML += `<div class="dia-calendario vazio"></div>`;
+            }
+
+            // 3. Preencher os dias do mês e colocar o ponto verde
+            for (let dia = 1; dia <= totalDiasMes; dia++) {
+                // Formata a data para comparar com nosso banco (Ex: "2026-08-08")
+                let dataFormatada = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                
+                // Verifica se tem atividade nesse dia
+                let temAtividade = atividades.some(ativ => ativ.data === dataFormatada);
+                let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
+                
+                // Destaca o dia de hoje
+                let hoje = new Date();
+                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "dia-hoje" : "";
+
+                gridDias.innerHTML += `<div class="dia-calendario ${ehHoje}">${dia}${htmlPonto}</div>`;
+            }
+
+            renderizarCards();
         }
 
-        function fecharModal() {
-            // Esconde a caixa novamente
-            document.getElementById('modal-justificativa').style.display = 'none';
+        function renderizarCards() {
+            const listaAtividades = document.getElementById("lista-atividades");
+            listaAtividades.innerHTML = "";
+
+            // Filtra as atividades para mostrar apenas as do mês que está na tela
+            const atividadesDesteMes = atividades.filter(ativ => {
+                const dataAtiv = new Date(ativ.data + "T00:00:00");
+                return dataAtiv.getMonth() === mesAtual && dataAtiv.getFullYear() === anoAtual;
+            });
+
+            if (atividadesDesteMes.length === 0) {
+                listaAtividades.innerHTML = "<p class='sem-atividade'>Não há atividades agendadas para este mês.</p>";
+                return;
+            }
+
+            // Cria um card para cada atividade encontrada
+            atividadesDesteMes.forEach(ativ => {
+                const dataObj = new Date(ativ.data + "T00:00:00");
+                const difTempo = dataObj.getTime() - new Date().getTime();
+                const difDias = Math.ceil(difTempo / (1000 * 3600 * 24));
+                
+                let textoDias = difDias > 0 ? `Faltam ${difDias} dias` : (difDias === 0 ? "É Hoje!" : "Já passou");
+                let corBadge = difDias === 0 ? "background-color: #d4edda; color: #155724;" : "";
+
+                listaAtividades.innerHTML += `
+                    <div class="card-atividade">
+                        <div class="badges">
+                            <span class="badge-dias" style="${corBadge}">${textoDias}</span>
+                            <span class="badge-confirmados">${ativ.confirmados} confirmados</span>
+                        </div>
+                        <h3 class="titulo-atividade">${ativ.titulo}</h3>
+                        <p class="desc-atividade">${ativ.desc}</p>
+                        <div class="info-atividade">
+                            <p><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            <p><strong>Local:</strong> ${ativ.local}</p>
+                        </div>
+                        <div class="botoes-card">
+                            <button class="btn-confirmar">Confirmar Presença</button>
+                            <button class="btn-justificar" onclick="abrirModal()">Justificar</button>
+                        </div>
+                    </div>
+                `;
+            });
         }
+
+        // Botões de Voltar e Avançar o Mês
+        document.getElementById("btn-prev-mes").addEventListener("click", () => {
+            mesAtual--;
+            if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
+            renderizarApp();
+        });
+
+        document.getElementById("btn-next-mes").addEventListener("click", () => {
+            mesAtual++;
+            if (mesAtual > 11) { mesAtual = 0; anoAtual++; }
+            renderizarApp();
+        });
+
+        // Controles do Modal (Caixa de Justificativa)
+        function abrirModal() { document.getElementById('modal-justificativa').style.display = 'flex'; }
+        function fecharModal() { document.getElementById('modal-justificativa').style.display = 'none'; }
+
+        // Inicializa o app quando a tela carrega
+        renderizarApp();
     </script>
 </body>
 </html>
