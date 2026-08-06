@@ -92,7 +92,7 @@
         <!-- ABA 5: FREQUÊNCIA INTEGRADA -->
         <div id="secao-frequencia" class="admin-secao" style="display: none;">
             <h3>Controle de Frequência e Justificativas</h3>
-            <p class="subtexto-admin">Valide as presenças ou remova status quando necessário.</p>
+            <p class="subtexto-admin">Valide presenças (com CH) ou aceite/negue justificativas (sem CH).</p>
             <div id="lista-admin-frequencia"></div>
         </div>
 
@@ -238,27 +238,36 @@
                     let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '' };
                     let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
                     
-                    if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente Validado</span>`;
-                    if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">Justificativa: "${reg.texto}"</span>`;
-                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">Falta / Justif. Negada</span>`;
+                    if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente (Com CH)</span>`;
+                    if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">✓ Justificado Aceito (Sem CH)</span>`;
+                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">✕ Falta / Justif. Negada</span>`;
 
                     let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:#1e88e5; display:block;">(Aluno confirmou interesse no app)</span>` : "";
 
-                    let blocoJustificativaAcoes = (reg.status === 'justificado') ? `
-                        <div class="botoes-justica" style="margin-top:6px;">
-                            <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Aceitar</button>
-                            <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Negar</button>
-                        </div>
-                    ` : `
-                        <div class="botoes-presenca" style="margin-top:6px;">
-                            <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Dar Presença</button>
-                            <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Marcar Falta</button>
-                            ${reg.status !== 'pendente' ? `<button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Remover Presença</button>` : ''}
-                        </div>
-                    `;
+                    let blocoJustificativaAcoes = "";
+                    if (reg.status === 'justificado') {
+                        // Se está pendente de avaliação de justificativa enviada pelo aluno
+                        blocoJustificativaAcoes = `
+                            <div class="caixa-justificativa-admin" style="margin:5px 0; background:#fff8e1; padding:6px; border-radius:4px;">
+                                <p style="font-size:11px;"><strong>Justificativa:</strong> "${reg.texto}"</p>
+                                <div class="botoes-justica" style="margin-top:4px;">
+                                    <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'justificado')">Aceitar Justificativa</button>
+                                    <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Negar</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        blocoJustificativaAcoes = `
+                            <div class="botoes-presenca" style="margin-top:6px;">
+                                <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Dar Presença (+CH)</button>
+                                <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Marcar Falta</button>
+                                ${reg.status !== 'pendente' ? `<button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Remover Status</button>` : ''}
+                            </div>
+                        `;
+                    }
 
                     htmlMembros += `
-                        <div class="item-chamada" style="margin-bottom:8px;">
+                        <div class="item-chamada" style="margin-bottom:8px; background:#fff; padding:8px; border-radius:6px; border:1px solid #dee2e6;">
                             <div class="chamada-info">
                                 <div>
                                     <strong>${m.nome}</strong>
@@ -289,6 +298,7 @@
             if(!ativ.frequencias) ativ.frequencias = {};
             if(!ativ.frequencias[ligId]) ativ.frequencias[ligId] = {};
             
+            // Se a diretoria clicar em aceitar justificativa, o status vai como 'justificado'
             ativ.frequencias[ligId].status = novoStatus;
             if(novoStatus === 'pendente') {
                 ativ.frequencias[ligId].texto = '';
