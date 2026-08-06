@@ -92,9 +92,12 @@
             </div>
         </section>
 
-        <!-- Avisos -->
+        <!-- Avisos (Slides) -->
         <section class="quadro-avisos">
-            <div class="avisos-header"><span>⚠️ Avisos Importantes</span><span id="contador-slide">1/1</span></div>
+            <div class="avisos-header">
+                <span>⚠️ Avisos Importantes</span>
+                <span id="contador-slide">1/1</span>
+            </div>
             <div class="slides-container" id="container-slides"></div>
         </section>
 
@@ -134,6 +137,7 @@
         let usuarioLogado = null;
         let atividades = [];
         let avisos = [];
+        let indiceSlideAtual = 0;
 
         async function fazerLogin() {
             let codigoInput = document.getElementById('login-codigo').value.trim();
@@ -175,7 +179,7 @@
             try {
                 let avSnap = await db.collection("avisos").get();
                 avisos = [];
-                avSnap.forEach(doc => avisos.push(doc.data()));
+                avSnap.forEach(doc => avisos.push({ id: doc.id, ...doc.data() }));
                 renderizarAvisos();
             } catch(e) { console.log(e); }
 
@@ -207,9 +211,7 @@
                     });
                 });
 
-                // ORDENAÇÃO CRONOLÓGICA (Mais próxima para mais longe)
                 atividades.sort((a, b) => new Date(a.data + "T" + a.hora) - new Date(b.data + "T" + b.hora));
-
             } catch(e) { console.log(e); }
 
             renderizarApp();
@@ -324,7 +326,6 @@
 
             atividadesDesteMes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
-                
                 let botoesCardHtml = "";
                 let statusOficialHtml = "";
 
@@ -369,19 +370,34 @@
             });
         }
 
-        let indiceSlideAtual = 0;
+        // SLIDES DE AVISOS FUNCIONAIS
         function renderizarAvisos() {
             const container = document.getElementById("container-slides");
             const contador = document.getElementById("contador-slide");
             if(!container) return;
             container.innerHTML = "";
-            if(avisos.length === 0) { container.innerHTML = "<p style='font-size:11px; padding:5px;'>Nenhum aviso.</p>"; return; }
+            if(avisos.length === 0) { 
+                container.innerHTML = "<p style='font-size:11px; padding:5px;'>Nenhum aviso no momento.</p>"; 
+                if(contador) contador.innerText = "0/0";
+                return; 
+            }
+
+            if (indiceSlideAtual >= avisos.length) indiceSlideAtual = 0;
+
             avisos.forEach((aviso, index) => {
                 let classeAtiva = (index === indiceSlideAtual) ? "ativo" : "";
                 container.innerHTML += `<div class="slide ${classeAtiva}"><h4>${aviso.titulo}</h4><p>${aviso.texto}</p></div>`;
             });
-            contador.innerText = `${indiceSlideAtual + 1}/${avisos.length}`;
+            if(contador) contador.innerText = `${indiceSlideAtual + 1}/${avisos.length}`;
         }
+
+        // Passa o slide automaticamente a cada 4 segundos se houver avisos
+        setInterval(() => {
+            if (avisos.length > 1) {
+                indiceSlideAtual = (indiceSlideAtual + 1) % avisos.length;
+                renderizarAvisos();
+            }
+        }, 4000);
 
         document.getElementById("btn-prev-mes").addEventListener("click", () => { mesAtual--; if (mesAtual < 0) { mesAtual = 11; anoAtual--; } renderizarApp(); });
         document.getElementById("btn-next-mes").addEventListener("click", () => { mesAtual++; if (mesAtual > 11) { mesAtual = 0; anoAtual++; } renderizarApp(); });

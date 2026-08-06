@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        <!-- ABA 4: LISTA DE ATIVIDADES (GERENCIAR COM FILTRO DE MÊS/ANO) -->
+        <!-- ABA 4: LISTA DE ATIVIDADES -->
         <div id="secao-lista-atividades" class="admin-secao" style="display: none;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Filtrar Atividades por Mês/Ano</h3>
@@ -101,7 +101,7 @@
             <div id="lista-admin-atividades-edicao"></div>
         </div>
 
-        <!-- ABA 5: FREQUÊNCIA (COM FILTRO DE MÊS/ANO SEPARADO) -->
+        <!-- ABA 5: FREQUÊNCIA -->
         <div id="secao-frequencia" class="admin-secao" style="display: none;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Controle de Frequência por Mês/Ano</h3>
@@ -118,14 +118,17 @@
             <div id="lista-admin-frequencia"></div>
         </div>
 
-        <!-- ABA 6: AVISOS -->
+        <!-- ABA 6: AVISOS (COM EDIÇÃO E EXCLUSÃO) -->
         <div id="secao-avisos" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
-                <h3>Publicar Aviso</h3>
+                <h3 id="titulo-form-aviso">Publicar Novo Aviso</h3>
+                <input type="hidden" id="av-id-editando">
                 <input type="text" id="av-titulo" placeholder="Título">
                 <textarea id="av-texto" rows="3" placeholder="Mensagem..."></textarea>
-                <button class="btn-salvar" onclick="cadastrarAviso()">Publicar na Nuvem</button>
+                <button class="btn-salvar" id="btn-salvar-aviso" onclick="salvarAviso()">Publicar na Nuvem</button>
+                <button class="btn-mini cinza" id="btn-cancelar-aviso" style="display:none; width:100%; margin-top:5px; padding:10px;" onclick="cancelarEdicaoAviso()">Cancelar Edição</button>
             </div>
+            <h3>Avisos Publicados</h3>
             <div id="lista-admin-avisos"></div>
         </div>
     </div>
@@ -133,6 +136,7 @@
     <script>
         let membrosCache = [];
         let atividadesCache = [];
+        let avisosCache = [];
 
         function mudarAba(nome, evento) {
             document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
@@ -166,8 +170,6 @@
             atSnap.forEach(doc => {
                 atividadesCache.push({ id: doc.id, ...doc.data() });
             });
-
-            // ORDENAÇÃO CRONOLÓGICA (Mais próxima para mais longe)
             atividadesCache.sort((a, b) => new Date(a.data + "T" + (a.hora || "00:00")) - new Date(b.data + "T" + (b.hora || "00:00")));
 
             renderizarAtividadesEdicao();
@@ -220,8 +222,6 @@
             });
 
             alert("Atividade criada com sucesso!");
-            
-            // Joga o seletor do mês para o mês da atividade cadastrada para facilitar a visualização
             document.getElementById('filtro-mes-atividades').value = data.substring(0, 7);
             document.getElementById('filtro-mes-frequencia').value = data.substring(0, 7);
 
@@ -347,23 +347,83 @@
             carregarDadosAdmin();
         }
 
-        async function cadastrarAviso() {
-            let titulo = document.getElementById('av-titulo').value;
-            let texto = document.getElementById('av-texto').value;
-            if(!titulo) return;
-            await db.collection("avisos").add({ titulo, texto });
-            alert("Aviso publicado!");
-            carregarDadosAdmin();
+        // --- GERENCIAMENTO DE AVISOS (SALVAR, EDITAR, EXCLUIR) ---
+        async function salvarAviso() {
+            let id = document.getElementById('av-id-editando').value;
+            let titulo = document.getElementById('av-titulo').value.trim();
+            let texto = document.getElementById('av-texto').value.trim();
+
+            if(!titulo || !texto) { alert("Preencha o título e a mensagem do aviso."); return; }
+
+            if(id) {
+                // Atualiza aviso existente
+                await db.collection("avisos").doc(id).update({ titulo, texto });
+                alert("Aviso atualizado com sucesso!");
+            } else {
+                // Cria novo aviso
+                await db.collection("avisos").add({ titulo, texto });
+                alert("Aviso publicado com sucesso!");
+            }
+
+            cancelarEdicaoAviso();
+            carregarAvisosAdmin();
         }
 
         async function carregarAvisosAdmin() {
             let div = document.getElementById("lista-admin-avisos");
             div.innerHTML = "";
             let snap = await db.collection("avisos").get();
+            avisosCache = [];
+
+            if(snap.empty) {
+                div.innerHTML = "<p class='cinza'>Nenhum aviso publicado.</p>";
+                return;
+            }
+
             snap.forEach(doc => {
-                let a = doc.data();
-                div.innerHTML += `<div class="card-admin-item"><h4>${a.titulo}</h4><p class="cinza">${a.texto}</p></div>`;
+                let a = { id: doc.id, ...doc.data() };
+                avisosCache.push(a);
+                div.innerHTML += `
+                    <div class="card-admin-item flex-row">
+                        <div>
+                            <h4>${a.titulo}</h4>
+                            <p class="cinza">${a.texto}</p>
+                        </div>
+                        <div>
+                            <button class="btn-mini cinza" onclick="prepararEdicaoAviso('${a.id}')">Editar</button>
+                            <button class="btn-mini vermelho" onclick="removerAviso('${a.id}')">Apagar</button>
+                        </div>
+                    </div>
+                `;
             });
+        }
+
+        function prepararEdicaoAviso(id) {
+            let aviso = avisosCache.find(x => x.id === id);
+            if(!aviso) return;
+            document.getElementById('av-id-editando').value = aviso.id;
+            document.getElementById('av-titulo').value = aviso.titulo;
+            document.getElementById('av-texto').value = aviso.texto;
+            document.getElementById('titulo-form-aviso').innerText = "Editar Aviso";
+            document.getElementById('btn-salvar-aviso').innerText = "Salvar Alterações";
+            document.getElementById('btn-cancelar-aviso').style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelarEdicaoAviso() {
+            document.getElementById('av-id-editando').value = "";
+            document.getElementById('av-titulo').value = "";
+            document.getElementById('av-texto').value = "";
+            document.getElementById('titulo-form-aviso').innerText = "Publicar Novo Aviso";
+            document.getElementById('btn-salvar-aviso').innerText = "Publicar na Nuvem";
+            document.getElementById('btn-cancelar-aviso').style.display = "none";
+        }
+
+        async function removerAviso(id) {
+            if(confirm("Deseja realmente apagar este aviso?")) {
+                await db.collection("avisos").doc(id).delete();
+                carregarAvisosAdmin();
+            }
         }
 
         window.onload = carregarDadosAdmin;
