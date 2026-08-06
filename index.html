@@ -168,40 +168,45 @@
         }
 
         async function carregarDadosDinamicosApp() {
-            // Avisos
-            let avSnap = await db.collection("avisos").get();
-            avisos = [];
-            avSnap.forEach(doc => avisos.push(doc.data()));
-            renderizarAvisos();
+            try {
+                // Puxa avisos com segurança
+                let avSnap = await db.collection("avisos").get();
+                avisos = [];
+                avSnap.forEach(doc => avisos.push(doc.data()));
+                renderizarAvisos();
+            } catch(e) { console.log("Avisos vazios ou erro:", e); }
 
-            // Atividades e frequências da nuvem
-            let atSnap = await db.collection("atividades").get();
-            atividades = [];
-            atSnap.forEach(doc => {
-                let d = doc.data();
-                let frequenciasMap = d.frequencias || {};
-                let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
+            try {
+                // Puxa atividades com segurança
+                let atSnap = await db.collection("atividades").get();
+                atividades = [];
+                atSnap.forEach(doc => {
+                    let d = doc.data();
+                    let frequenciasMap = d.frequencias || {};
+                    let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
 
-                // Conta quantos alunos confirmaram presença prévia
-                let totalConfirmados = 0;
-                Object.values(frequenciasMap).forEach(reg => {
-                    if(reg.confirmadoAluno === true) totalConfirmados++;
+                    let totalConfirmados = 0;
+                    Object.values(frequenciasMap).forEach(reg => {
+                        if(reg.confirmadoAluno === true) totalConfirmados++;
+                    });
+
+                    atividades.push({
+                        id: doc.id,
+                        titulo: d.titulo || "Atividade sem título",
+                        data: d.data || "",
+                        hora: d.hora || "19:00",
+                        local: d.local || "Local a definir",
+                        ch: Number(d.ch || 0),
+                        desc: d.desc || "",
+                        confirmadoAluno: meuRegistro.confirmadoAluno || false,
+                        statusAdmin: meuRegistro.status || 'pendente',
+                        textoJustificativa: meuRegistro.texto || '',
+                        totalConfirmados: totalConfirmados
+                    });
                 });
+            } catch(e) { console.log("Atividades vazias ou erro:", e); }
 
-                atividades.push({
-                    id: doc.id,
-                    titulo: d.titulo,
-                    data: d.data,
-                    hora: d.hora || "19:00",
-                    local: d.local || "Local a definir",
-                    ch: Number(d.ch || 0),
-                    desc: d.desc || "",
-                    confirmadoAluno: meuRegistro.confirmadoAluno || false, // Se o aluno marcou presença prévia
-                    statusAdmin: reg.status, // O status oficial dado pela diretoria ('presente', 'falta', 'justificado', 'negado')
-                    textoJustificativa: meuRegistro.texto || '',
-                    totalConfirmados: totalConfirmados
-                });
-            });
+            // Sempre renderiza o app, garantindo que o calendário e os contadores apareçam
             renderizarApp();
         }
 
@@ -248,7 +253,9 @@
         function renderizarApp() {
             document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
             const gridDias = document.getElementById("grid-dias");
+            if(!gridDias) return;
             gridDias.innerHTML = "";
+
             const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
             const totalDiasMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
@@ -266,7 +273,6 @@
             renderizarCardsENumeros();
         }
 
-        // HISTÓRICO GERAL E MENSAL SÓ CONTA SE A DIRETORIA DEU O STATUS DE 'presente'
         function renderizarHistoricoGeral() {
             let totalGeralAtividades = atividades.length;
             let totalGeralPresencas = atividades.filter(a => a.statusAdmin === 'presente').length;
@@ -281,6 +287,7 @@
 
         function renderizarCardsENumeros() {
             const listaAtividades = document.getElementById("lista-atividades");
+            if(!listaAtividades) return;
             listaAtividades.innerHTML = "";
 
             const atividadesDesteMes = atividades.filter(ativ => {
@@ -307,13 +314,11 @@
             atividadesDesteMes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
                 
-                // Botão do Aluno (indica presença prévia, sem alterar contadores do topo)
                 let botaoHtml = `<button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>`;
                 if (ativ.confirmadoAluno) {
                     botaoHtml = `<button class="btn-confirmado" disabled>✓ Presença Confirmada</button>`;
                 }
 
-                // Se a diretoria já validou oficialmente a presença ou falta
                 let statusOficialHtml = "";
                 if (ativ.statusAdmin === 'presente') {
                     statusOficialHtml = `<p style="color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px;">✓ Presença validada pela Diretoria</p>`;
