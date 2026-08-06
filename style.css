@@ -1227,3 +1227,13 @@ p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide
 .badge-fin.analise { background-color: #fff3cd; color: #856404; }
 .badge-fin.pendente { background-color: #f8d7da; color: #721c24; }
 .badge-fin.abonado { background-color: #e2e3e5; color: #383d41; }
+
+:root {
+    color-scheme: light;
+}
+
+/* Força que o fundo do corpo não altere se o usuário mudar o tema do sistema */
+body {
+    background-color: #f4f7f6 !important;
+    color: #000000 !important;
+}
