@@ -6,99 +6,101 @@
     <title>LAPE - Portal do Ligante</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- ESTILO PARA TELA INTEIRA E HARMÔNICA -->
+    <!-- ESTILOS LIMPOS E SEPARADOS PARA LOGIN E APP -->
     <style>
-        body.fundo-login-tela-cheia {
-            background-color: #f4f7f6 !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            min-height: 100vh !important;
-            margin: 0 !important;
+        body {
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        /* O container agora assume o formato padrão de app mobile em qualquer tela */
-        .celular-container-login {
-            width: 100% !important;
-            max-width: 420px !important;
-            background-color: #ffffff !important;
-            min-height: 100vh !important;
-            box-shadow: 0 0 25px rgba(0,0,0,0.1) !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: center !important;
-            padding: 30px !important;
-            box-sizing: border-box !important;
+
+        /* Container da Tela de Login */
+        #tela-login {
+            width: 100%;
+            max-width: 400px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            text-align: center;
         }
-        @media (min-width: 500px) {
-            .celular-container-login {
-                min-height: 85vh !important;
-                border-radius: 20px !important;
-            }
+
+        #tela-login h2 {
+            color: #0056b3;
+            font-size: 26px;
+            margin-bottom: 5px;
         }
-        .caixa-login-completa h2 {
-            color: #0056b3 !important;
-            font-size: 28px !important;
-            margin-bottom: 5px !important;
-            text-align: center !important;
+
+        #tela-login p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 25px;
         }
-        .caixa-login-completa p {
-            color: #666 !important;
-            font-size: 14px !important;
-            margin-bottom: 30px !important;
-            text-align: center !important;
-        }
+
         .grupo-input {
-            margin-bottom: 18px !important;
-            text-align: left !important;
+            margin-bottom: 15px;
+            text-align: left;
         }
+
         .grupo-input label {
-            display: block !important;
-            margin-bottom: 6px !important;
-            font-size: 13px !important;
-            font-weight: bold !important;
-            color: #444 !important;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
         }
+
         .grupo-input input {
-            width: 100% !important;
-            padding: 12px !important;
-            border: 1px solid #ced4da !important;
-            border-radius: 8px !important;
-            font-size: 15px !important;
-            box-sizing: border-box !important;
-            outline: none !important;
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
         }
+
         .grupo-input input:focus {
-            border-color: #0056b3 !important;
+            border-color: #0056b3;
         }
+
         .btn-entrar {
-            width: 100% !important;
-            padding: 14px !important;
-            background-color: #0056b3 !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-size: 16px !important;
-            font-weight: bold !important;
-            cursor: pointer !important;
-            margin-top: 10px !important;
+            width: 100%;
+            padding: 12px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
         }
+
         .btn-entrar:hover {
-            background-color: #004494 !important;
+            background-color: #004494;
         }
+
         .btn-admin {
-            width: 100% !important;
-            padding: 12px !important;
-            background-color: #f1f3f5 !important;
-            color: #495057 !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-size: 13px !important;
-            font-weight: bold !important;
-            cursor: pointer !important;
-            margin-top: 15px !important;
+            width: 100%;
+            padding: 10px;
+            background-color: #f1f3f5;
+            color: #495057;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
         }
+
         .btn-admin:hover {
-            background-color: #e2e6ea !important;
+            background-color: #e2e6ea;
         }
     </style>
 
@@ -115,30 +117,28 @@
       const db = firebase.firestore();
     </script>
 </head>
-<body id="corpo-pagina" class="fundo-login-tela-cheia">
+<body id="corpo-pagina">
 
-    <!-- TELA DE LOGIN HARMONIZADA -->
-    <div id="tela-login" class="celular-container-login">
-        <div class="caixa-login-completa">
-            <h2>LAPE</h2>
-            <p>Liga Acadêmica de Pesquisa e Extensão</p>
-            
-            <div class="grupo-input">
-                <label>Código do Ligante</label>
-                <input type="text" id="login-codigo" placeholder="Ex: 20261001">
-            </div>
-
-            <div class="grupo-input">
-                <label>Senha</label>
-                <input type="password" id="login-senha" placeholder="Sua senha">
-            </div>
-
-            <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
-            <button class="btn-admin" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
+    <!-- TELA DE LOGIN -->
+    <div id="tela-login">
+        <h2>LAPE</h2>
+        <p>Liga Acadêmica de Pesquisa e Extensão</p>
+        
+        <div class="grupo-input">
+            <label>Código do Ligante</label>
+            <input type="text" id="login-codigo" placeholder="Ex: 20261001">
         </div>
+
+        <div class="grupo-input">
+            <label>Senha</label>
+            <input type="password" id="login-senha" placeholder="Sua senha">
+        </div>
+
+        <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
+        <button class="btn-admin" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
     </div>
 
-    <!-- TELA PRINCIPAL DO APP (Ocupa o container padrão após o login) -->
+    <!-- TELA PRINCIPAL DO APP (Incialmente oculta por completo) -->
     <div class="celular-container" id="conteudo-principal-app" style="display: none;">
         <header class="cabecalho">
             <h2 id="titulo-boas-vindas">Minha Liga</h2>
@@ -245,14 +245,17 @@
         function iniciarAppComUsuario(user) {
             usuarioLogado = user;
             
-            // Transforma o layout do corpo para encaixar o app principal por completo
-            let corpo = document.getElementById('corpo-pagina');
-            corpo.classList.remove('fundo-login-tela-cheia');
-            corpo.style.backgroundColor = "#e9ecef";
-            corpo.style.alignItems = "flex-start";
-            
+            // Oculta completamente a tela de login
             document.getElementById('tela-login').style.display = 'none';
-            document.getElementById('conteudo-principal-app').style.display = 'block';
+            
+            // Ajusta o corpo da página para alinhar o app principal corretamente no topo
+            let corpo = document.getElementById('corpo-pagina');
+            corpo.style.alignItems = "flex-start";
+            corpo.style.backgroundColor = "#e9ecef";
+
+            // Mostra o container principal do app
+            let appContainer = document.getElementById('conteudo-principal-app');
+            appContainer.style.display = 'block';
 
             document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
             
