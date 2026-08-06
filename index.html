@@ -17,7 +17,8 @@
         .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-admin { width: 100%; padding: 10px; background-color: #f1f3f5; color: #495057; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 12px; }
         .btn-desconfirmar { background-color: #e03131 !important; color: white !important; }
-        .btn-desconfirmar:hover { background-color: #c92a2a !important; }
+        .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
+        .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
     </style>
 
     <!-- Firebase SDKs -->
@@ -71,10 +72,10 @@
         <!-- Histórico Geral Acumulado -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
-            <div class="dashboard-estatisticas geral">
+            <div class="dashboard-estatisticas geral" style="grid-template-columns: repeat(4, 1fr);">
                 <div class="card-stat"><span class="stat-numero" id="geral-atividades">0</span><span class="stat-legenda">Passadas</span></div>
                 <div class="card-stat"><span class="stat-numero" id="geral-presencas">0</span><span class="stat-legenda">Presenças</span></div>
-                <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Justificadas</span></div>
+                <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Abonadas</span></div>
                 <div class="card-stat destaque-ch"><span class="stat-numero" id="geral-ch">0h</span><span class="stat-legenda">CH Total</span></div>
             </div>
         </section>
@@ -110,14 +111,15 @@
             <div id="grid-dias" class="grid-calendario"></div>
         </section>
 
-        <!-- Desempenho do Mês -->
+        <!-- Desempenho do Mês (Com Faltas incluídas) -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">📅 Desempenho no Mês</p>
-            <div class="dashboard-estatisticas">
-                <div class="card-stat"><span class="stat-numero" id="stat-total">0</span><span class="stat-legenda">Total do Mês</span></div>
-                <div class="card-stat"><span class="stat-numero" id="stat-presencas">0</span><span class="stat-legenda">Presenças</span></div>
-                <div class="card-stat"><span class="stat-numero" id="stat-justificativas">0</span><span class="stat-legenda">Justificadas</span></div>
-                <div class="card-stat destaque-ch"><span class="stat-numero" id="stat-ch">0h</span><span class="stat-legenda">CH do Mês</span></div>
+            <div class="dashboard-estatisticas" style="grid-template-columns: repeat(5, 1fr); gap: 4px;">
+                <div class="card-stat"><span class="stat-numero" id="stat-total">0</span><span class="stat-legenda" style="font-size:9px;">Total</span></div>
+                <div class="card-stat"><span class="stat-numero" id="stat-presencas">0</span><span class="stat-legenda" style="font-size:9px;">Presença</span></div>
+                <div class="card-stat"><span class="stat-numero" id="stat-faltas">0</span><span class="stat-legenda" style="font-size:9px;">Faltas</span></div>
+                <div class="card-stat"><span class="stat-numero" id="stat-justificativas">0</span><span class="stat-legenda" style="font-size:9px;">Abonadas</span></div>
+                <div class="card-stat destaque-ch"><span class="stat-numero" id="stat-ch">0h</span><span class="stat-legenda" style="font-size:9px;">CH</span></div>
             </div>
         </section>
 
@@ -185,7 +187,6 @@
                     let frequenciasMap = d.frequencias || {};
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
 
-                    // Contador correto de confirmações prévias dos alunos
                     let totalConfirmados = 0;
                     Object.values(frequenciasMap).forEach(reg => {
                         if(reg.confirmadoAluno === true) totalConfirmados++;
@@ -240,7 +241,7 @@
         function abrirModalJust(id) {
             let motivo = prompt("Explique o motivo da ausência:");
             if (motivo && motivo.trim() !== "") {
-                alterarRegistroFirebase(id, { confirmadoAluno: false, status: 'justificado', texto: motivo });
+                alterarRegistroFirebase(id, { confirmadoAluno: false, status: 'aguardando_analise', texto: motivo });
             }
         }
 
@@ -280,7 +281,7 @@
         function renderizarHistoricoGeral() {
             let totalGeralAtividades = atividades.length;
             let totalGeralPresencas = atividades.filter(a => a.statusAdmin === 'presente').length;
-            let totalGeralJustificativas = atividades.filter(a => a.statusAdmin === 'justificado' || a.statusAdmin === 'negado').length;
+            let totalGeralJustificativas = atividades.filter(a => a.statusAdmin === 'justificado').length;
             let totalGeralCH = atividades.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("geral-atividades").innerText = totalGeralAtividades;
@@ -302,11 +303,13 @@
 
             let totalAtividades = atividadesDesteMes.length;
             let totalPresencas = atividadesDesteMes.filter(a => a.statusAdmin === 'presente').length;
-            let totalJustificativas = atividadesDesteMes.filter(a => a.statusAdmin === 'justificado' || a.statusAdmin === 'negado').length;
+            let totalFaltas = atividadesDesteMes.filter(a => a.statusAdmin === 'negado').length;
+            let totalJustificativas = atividadesDesteMes.filter(a => a.statusAdmin === 'justificado').length;
             let totalCH = atividadesDesteMes.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("stat-total").innerText = totalAtividades;
             document.getElementById("stat-presencas").innerText = totalPresencas;
+            document.getElementById("stat-faltas").innerText = totalFaltas;
             document.getElementById("stat-justificativas").innerText = totalJustificativas;
             document.getElementById("stat-ch").innerText = totalCH + "h";
 
@@ -321,22 +324,19 @@
                 let botoesCardHtml = "";
                 let statusOficialHtml = "";
 
-                // Se a diretoria já validou oficialmente a presença, falta ou negou justificativa, some os botões de ação do aluno
                 if (ativ.statusAdmin === 'presente') {
-                    statusOficialHtml = `<p style="color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px;">✓ Presença validada pela Diretoria</p>`;
+                    statusOficialHtml = `<p class="tag-justificado">✓ Presença validada pela Diretoria</p>`;
                 } else if (ativ.statusAdmin === 'negado') {
-                    statusOficialHtml = `<p style="color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px;">✕ Falta registrada / Justificativa Negada</p>`;
+                    statusOficialHtml = `<p class="tag-falta">✕ Falta registrada / Justificativa Negada</p>`;
                 } else if (ativ.statusAdmin === 'justificado') {
-                    // Se mandou justificativa, some o botão de justificar e avisa
+                    statusOficialHtml = `<p class="tag-justificado">✓ Justificativa Aceita (Abonada)</p>`;
+                } else if (ativ.statusAdmin === 'aguardando_analise') {
                     statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 6px;">⏳ Justificativa em análise</p>`;
                     botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
                 } else {
-                    // Estado pendente normal
                     if (ativ.confirmadoAluno) {
-                        // Se confirmou, mostra o botão de desconfirmar e some com o de justificar
                         botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
                     } else {
-                        // Se não confirmou, mostra confirmar e justificar
                         botoesCardHtml = `
                             <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
                             <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
