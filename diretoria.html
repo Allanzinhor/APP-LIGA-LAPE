@@ -532,7 +532,15 @@
                 alert("Membro atualizado com sucesso!");
             } else {
                 let anoIngLig = ingressoLiga.substring(0, 4) || "2026";
-                let codigoGerado = `${anoIngLig}1${Math.floor(Math.random() * 900) + 100}`;
+                let mesIngresso = new Date(ingressoLiga + "T00:00:00").getMonth() + 1;
+                let semestreLiga = mesIngresso <= 6 ? "1" : "2";
+
+                let prefixo = `${anoIngLig}${semestreLiga}`;
+                let snapshot = await db.collection("membros").where("codigo", ">=", prefixo + "000").where("codigo", "<=", prefixo + "999").get();
+                
+                let proximoNumero = snapshot.size + 1;
+                let codigoGerado = prefixo + proximoNumero.toString().padStart(3, '0');
+
                 dadosMembro.codigo = codigoGerado;
                 dadosMembro.senhaPadrao = "LAPE2026";
                 dadosMembro.financeiro = {};
