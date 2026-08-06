@@ -6,82 +6,98 @@
     <title>LAPE - Portal do Ligante</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- ESTILO FORÇADO PARA GARANTIR O DESIGN DA TELA DE LOGIN -->
+    <!-- ESTILO PARA TELA INTEIRA E HARMÔNICA -->
     <style>
-        body.fundo-login-forcado {
-            background-color: #e9ecef !important;
+        body.fundo-login-tela-cheia {
+            background-color: #f4f7f6 !important;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
             min-height: 100vh !important;
             margin: 0 !important;
         }
-        .caixa-login-moderna {
-            background-color: #ffffff !important;
-            padding: 30px !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-            width: 90% !important;
-            max-width: 350px !important;
-            text-align: center !important;
-        }
-        .caixa-login-moderna h2 {
-            color: #0056b3 !important;
-            margin-bottom: 5px !important;
-            font-size: 24px !important;
-        }
-        .caixa-login-moderna p {
-            color: #666 !important;
-            font-size: 13px !important;
-            margin-bottom: 25px !important;
-        }
-        .grupo-input-login {
-            margin-bottom: 15px !important;
-            text-align: left !important;
-        }
-        .grupo-input-login label {
-            display: block !important;
-            margin-bottom: 5px !important;
-            font-size: 13px !important;
-            font-weight: bold !important;
-            color: #555 !important;
-        }
-        .grupo-input-login input {
+        /* O container agora assume o formato padrão de app mobile em qualquer tela */
+        .celular-container-login {
             width: 100% !important;
-            padding: 11px !important;
-            border: 1px solid #ccc !important;
-            border-radius: 8px !important;
-            font-size: 14px !important;
+            max-width: 420px !important;
+            background-color: #ffffff !important;
+            min-height: 100vh !important;
+            box-shadow: 0 0 25px rgba(0,0,0,0.1) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            padding: 30px !important;
             box-sizing: border-box !important;
         }
-        .btn-entrar-app {
+        @media (min-width: 500px) {
+            .celular-container-login {
+                min-height: 85vh !important;
+                border-radius: 20px !important;
+            }
+        }
+        .caixa-login-completa h2 {
+            color: #0056b3 !important;
+            font-size: 28px !important;
+            margin-bottom: 5px !important;
+            text-align: center !important;
+        }
+        .caixa-login-completa p {
+            color: #666 !important;
+            font-size: 14px !important;
+            margin-bottom: 30px !important;
+            text-align: center !important;
+        }
+        .grupo-input {
+            margin-bottom: 18px !important;
+            text-align: left !important;
+        }
+        .grupo-input label {
+            display: block !important;
+            margin-bottom: 6px !important;
+            font-size: 13px !important;
+            font-weight: bold !important;
+            color: #444 !important;
+        }
+        .grupo-input input {
             width: 100% !important;
             padding: 12px !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 8px !important;
+            font-size: 15px !important;
+            box-sizing: border-box !important;
+            outline: none !important;
+        }
+        .grupo-input input:focus {
+            border-color: #0056b3 !important;
+        }
+        .btn-entrar {
+            width: 100% !important;
+            padding: 14px !important;
             background-color: #0056b3 !important;
             color: white !important;
             border: none !important;
             border-radius: 8px !important;
-            font-size: 15px !important;
-            font-weight: bold !important;
-            cursor: pointer !important;
-            margin-top: 5px !important;
-        }
-        .btn-entrar-app:hover {
-            background-color: #004494 !important;
-        }
-        .btn-admin-portal {
-            width: 100% !important;
-            padding: 10px !important;
-            background-color: #f1f3f5 !important;
-            color: #495057 !important;
-            border: none !important;
-            border-radius: 8px !important;
-            font-size: 12px !important;
+            font-size: 16px !important;
             font-weight: bold !important;
             cursor: pointer !important;
             margin-top: 10px !important;
         }
-        .btn-admin-portal:hover {
+        .btn-entrar:hover {
+            background-color: #004494 !important;
+        }
+        .btn-admin {
+            width: 100% !important;
+            padding: 12px !important;
+            background-color: #f1f3f5 !important;
+            color: #495057 !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            margin-top: 15px !important;
+        }
+        .btn-admin:hover {
             background-color: #e2e6ea !important;
         }
     </style>
@@ -99,96 +115,93 @@
       const db = firebase.firestore();
     </script>
 </head>
-<body id="corpo-pagina" class="fundo-login-forcado">
+<body id="corpo-pagina" class="fundo-login-tela-cheia">
 
-    <div class="celular-container" id="container-geral" style="width: 100%;">
-        
-        <!-- TELA DE LOGIN ESTILIZADA -->
-        <div id="tela-login">
-            <div class="caixa-login-moderna">
-                <h2>LAPE</h2>
-                <p>Portal do Ligante</p>
-                
-                <div class="grupo-input-login">
-                    <label>Código do Ligante</label>
-                    <input type="text" id="login-codigo" placeholder="Ex: 20261001">
-                </div>
-
-                <div class="grupo-input-login">
-                    <label>Senha</label>
-                    <input type="password" id="login-senha" placeholder="Sua senha">
-                </div>
-
-                <button class="btn-entrar-app" onclick="fazerLogin()">Entrar</button>
-                <button class="btn-admin-portal" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
-            </div>
-        </div>
-
-        <!-- TELA PRINCIPAL DO APP (Incialmente oculta) -->
-        <div id="conteudo-principal-app" style="display: none;">
-            <header class="cabecalho">
-                <h2 id="titulo-boas-vindas">Minha Liga</h2>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <div class="avatar-perfil" onclick="abrirPerfil()">
-                        <img id="foto-avatar" src="https://via.placeholder.com/150" alt="Foto">
-                    </div>
-                    <button onclick="fazerLogout()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">Sair</button>
-                </div>
-            </header>
-
-            <div id="painel-diretoria-link" style="display: none;" class="banner-diretoria">
-                <span>⚙️ Modo Diretoria Ativo</span>
-                <button onclick="window.location.href='diretoria.html'">Painel Admin</button>
+    <!-- TELA DE LOGIN HARMONIZADA -->
+    <div id="tela-login" class="celular-container-login">
+        <div class="caixa-login-completa">
+            <h2>LAPE</h2>
+            <p>Liga Acadêmica de Pesquisa e Extensão</p>
+            
+            <div class="grupo-input">
+                <label>Código do Ligante</label>
+                <input type="text" id="login-codigo" placeholder="Ex: 20261001">
             </div>
 
-            <!-- Histórico Geral -->
-            <section class="secao-historico-geral">
-                <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
-                <div class="dashboard-estatisticas geral">
-                    <div class="card-stat"><span class="stat-numero" id="geral-atividades">0</span><span class="stat-legenda">Passadas</span></div>
-                    <div class="card-stat"><span class="stat-numero" id="geral-presencas">0</span><span class="stat-legenda">Presenças</span></div>
-                    <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Justificadas</span></div>
-                    <div class="card-stat destaque-ch"><span class="stat-numero" id="geral-ch">0h</span><span class="stat-legenda">CH Total</span></div>
-                </div>
-            </section>
+            <div class="grupo-input">
+                <label>Senha</label>
+                <input type="password" id="login-senha" placeholder="Sua senha">
+            </div>
 
-            <!-- Financeiro -->
-            <section class="secao-historico-geral">
-                <p class="titulo-secao-geral">💳 Situação Financeira</p>
-                <div class="card-financeiro">
-                    <div class="fin-info">
-                        <div><span class="fin-label">Valor:</span><span class="fin-valor" id="fin-debito-total">R$ 10,00</span></div>
-                        <div><span class="fin-label">Status:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
-                    </div>
-                    <button class="btn-pagar" onclick="abrirModalPix()">Pagar Mensalidade (Pix)</button>
-                </div>
-            </section>
-
-            <!-- Avisos -->
-            <section class="quadro-avisos">
-                <div class="avisos-header"><span>⚠️ Avisos Importantes</span><span id="contador-slide">1/1</span></div>
-                <div class="slides-container" id="container-slides"></div>
-            </section>
-
-            <!-- Calendário -->
-            <section class="calendario-mes">
-                <div class="calendario-header">
-                    <button id="btn-prev-mes">&lt;</button>
-                    <h3 id="mes-ano-texto">Mês Ano</h3>
-                    <button id="btn-next-mes">&gt;</button>
-                </div>
-                <div class="grid-calendario dias-semana">
-                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                </div>
-                <div id="grid-dias" class="grid-calendario"></div>
-            </section>
-
-            <!-- Atividades -->
-            <section class="atividades">
-                <h2>Atividades do Mês</h2>
-                <div id="lista-atividades"></div>
-            </section>
+            <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
+            <button class="btn-admin" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
         </div>
+    </div>
+
+    <!-- TELA PRINCIPAL DO APP (Ocupa o container padrão após o login) -->
+    <div class="celular-container" id="conteudo-principal-app" style="display: none;">
+        <header class="cabecalho">
+            <h2 id="titulo-boas-vindas">Minha Liga</h2>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <div class="avatar-perfil" onclick="abrirPerfil()">
+                    <img id="foto-avatar" src="https://via.placeholder.com/150" alt="Foto">
+                </div>
+                <button onclick="fazerLogout()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">Sair</button>
+            </div>
+        </header>
+
+        <div id="painel-diretoria-link" style="display: none;" class="banner-diretoria">
+            <span>⚙️ Modo Diretoria Ativo</span>
+            <button onclick="window.location.href='diretoria.html'">Painel Admin</button>
+        </div>
+
+        <!-- Histórico Geral -->
+        <section class="secao-historico-geral">
+            <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
+            <div class="dashboard-estatisticas geral">
+                <div class="card-stat"><span class="stat-numero" id="geral-atividades">0</span><span class="stat-legenda">Passadas</span></div>
+                <div class="card-stat"><span class="stat-numero" id="geral-presencas">0</span><span class="stat-legenda">Presenças</span></div>
+                <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Justificadas</span></div>
+                <div class="card-stat destaque-ch"><span class="stat-numero" id="geral-ch">0h</span><span class="stat-legenda">CH Total</span></div>
+            </div>
+        </section>
+
+        <!-- Financeiro -->
+        <section class="secao-historico-geral">
+            <p class="titulo-secao-geral">💳 Situação Financeira</p>
+            <div class="card-financeiro">
+                <div class="fin-info">
+                    <div><span class="fin-label">Valor:</span><span class="fin-valor" id="fin-debito-total">R$ 10,00</span></div>
+                    <div><span class="fin-label">Status:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
+                </div>
+                <button class="btn-pagar" onclick="abrirModalPix()">Pagar Mensalidade (Pix)</button>
+            </div>
+        </section>
+
+        <!-- Avisos -->
+        <section class="quadro-avisos">
+            <div class="avisos-header"><span>⚠️ Avisos Importantes</span><span id="contador-slide">1/1</span></div>
+            <div class="slides-container" id="container-slides"></div>
+        </section>
+
+        <!-- Calendário -->
+        <section class="calendario-mes">
+            <div class="calendario-header">
+                <button id="btn-prev-mes">&lt;</button>
+                <h3 id="mes-ano-texto">Mês Ano</h3>
+                <button id="btn-next-mes">&gt;</button>
+            </div>
+            <div class="grid-calendario dias-semana">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div id="grid-dias" class="grid-calendario"></div>
+        </section>
+
+        <!-- Atividades -->
+        <section class="atividades">
+            <h2>Atividades do Mês</h2>
+            <div id="lista-atividades"></div>
+        </section>
     </div>
 
     <script>
@@ -231,10 +244,12 @@
 
         function iniciarAppComUsuario(user) {
             usuarioLogado = user;
-            // Remove a classe de centralização do login e ajusta o fundo para o app
-            document.getElementById('corpo-pagina').classList.remove('fundo-login-forcado');
-            document.getElementById('corpo-pagina').style.backgroundColor = "#f4f7f6";
-            document.getElementById('corpo-pagina').style.alignItems = "flex-start";
+            
+            // Transforma o layout do corpo para encaixar o app principal por completo
+            let corpo = document.getElementById('corpo-pagina');
+            corpo.classList.remove('fundo-login-tela-cheia');
+            corpo.style.backgroundColor = "#e9ecef";
+            corpo.style.alignItems = "flex-start";
             
             document.getElementById('tela-login').style.display = 'none';
             document.getElementById('conteudo-principal-app').style.display = 'block';
