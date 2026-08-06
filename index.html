@@ -57,8 +57,8 @@
         <header class="cabecalho">
             <h2 id="titulo-boas-vindas">Minha Liga</h2>
             <div style="display: flex; gap: 8px; align-items: center;">
-                <div class="avatar-perfil" onclick="abrirPerfilModal()">
-                    <img id="foto-avatar" src="https://via.placeholder.com/150" alt="Foto">
+                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()">
+                    <!-- Renderizado dinamicamente via JS (Foto ou Inicial) -->
                 </div>
                 <button onclick="fazerLogout()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">Sair</button>
             </div>
@@ -154,23 +154,42 @@
         </div>
     </div>
 
-    <!-- MODAL PERFIL -->
-    <div id="modal-perfil" class="modal-perfil-overlay">
+    <!-- MODAL DE PERFIL COMPLETO -->
+    <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
         <div class="modal-perfil-conteudo">
             <div class="perfil-topo">
-                <div class="avatar-grande"><img id="perfil-foto" src="https://via.placeholder.com/150" alt="Foto"></div>
-                <h3 id="perfil-nome">Nome</h3>
+                <div class="avatar-grande" id="perfil-avatar-container" onclick="alterarFotoPerfil()" style="cursor: pointer;" title="Clique para alterar a foto">
+                    <!-- Foto ou Inicial do nome -->
+                </div>
+                <div class="botao-trocar-foto" onclick="alterarFotoPerfil()">✏️</div>
+                <h3 id="perfil-nome" style="margin-top: 8px;">Nome</h3>
                 <span class="perfil-codigo" id="perfil-codigo">20261000</span>
                 <p class="perfil-cargo" id="perfil-cargo">Ligante</p>
             </div>
-            <div class="perfil-detalhes">
+
+            <div class="perfil-detalhes" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 4px;">
                 <div class="info-grupo"><span class="info-label">E-mail</span><span class="info-valor" id="perfil-email">-</span></div>
+                <div class="info-grupo"><span class="info-label">Telefone</span><span class="info-valor" id="perfil-tel">-</span></div>
+                <div class="info-grupo"><span class="info-label">Data de Nascimento</span><span class="info-valor" id="perfil-nascimento">-</span></div>
                 <div class="info-linha-dupla">
                     <div class="info-grupo"><span class="info-label">Curso</span><span class="info-valor" id="perfil-curso">-</span></div>
-                    <div class="info-grupo"><span class="info-label">Período</span><span class="info-valor" id="perfil-periodo">-</span></div>
+                    <div class="info-grupo"><span class="info-label">Período / Turno</span><span class="info-valor" id="perfil-periodo">-</span></div>
+                </div>
+                <div class="info-grupo"><span class="info-label">Instituição</span><span class="info-valor" id="perfil-instituicao">-</span></div>
+                <div class="info-grupo"><span class="info-label">Matrícula</span><span class="info-valor" id="perfil-matricula">-</span></div>
+                <div class="info-grupo"><span class="info-label">Previsão de Formatura</span><span class="info-valor" id="perfil-formatura">-</span></div>
+                <div class="info-grupo"><span class="info-label">Data de Ingresso na Liga</span><span class="info-valor" id="perfil-ingresso">-</span></div>
+            </div>
+
+            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+                <div id="btn-container-painel-admin">
+                    <!-- Botão do Painel da Diretoria (Exibido apenas se tiver cargo) -->
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1;" onclick="fazerLogout()">Sair</button>
+                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1;" onclick="fecharPerfilModal()">Fechar</button>
                 </div>
             </div>
-            <button class="btn-fechar-perfil" onclick="fecharPerfilModal()">Fechar</button>
         </div>
     </div>
 
@@ -212,16 +231,31 @@
             if(!cargoLower.includes("ligante") && !cargoLower.includes("membro")) {
                 document.getElementById('painel-diretoria-link').style.display = "flex";
             }
+            
+            renderizarAvatarTopo();
             carregarDadosDinamicosApp();
+        }
+
+        // Renderiza foto ou a inicial do nome no topo
+        function renderizarAvatarTopo() {
+            let container = document.getElementById("container-avatar-topo");
+            if (!usuarioLogado) return;
+
+            if (usuarioLogado.fotoUrl && usuarioLogado.fotoUrl.trim() !== "") {
+                container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
+                container.innerHTML = `<div style="width:100%; height:100%; background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:16px;">${inicial}</div>`;
+            }
         }
 
         async function carregarDadosDinamicosApp() {
             try {
-                // Sincroniza dados atualizados do usuário do banco (para refletir aprovações do financeiro instantaneamente)
                 let userDoc = await db.collection("membros").doc(usuarioLogado.id).get();
                 if(userDoc.exists) {
                     usuarioLogado = { id: userDoc.id, ...userDoc.data() };
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                    renderizarAvatarTopo();
                 }
             } catch(e) { console.log(e); }
 
@@ -297,7 +331,6 @@
             }
         }
 
-        // --- CÁLCULO FINANCEIRO ACUMULADO E MÊS ATUAL ---
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
@@ -308,8 +341,6 @@
             document.getElementById("mes-financeiro-texto").innerText = `${nomesMeses[mesAtual]} / ${anoAtual}`;
 
             let finMap = usuarioLogado.financeiro || {};
-            
-            // Status do Mês Selecionado
             let statusMes = finMap[chaveMesAtual] || 'pendente';
             let badgeStatus = document.getElementById("fin-status-badge");
             let btnPix = document.getElementById("btn-acao-pix");
@@ -354,26 +385,19 @@
                 }
             }
 
-            // Cálculo do Débito Total Acumulado (de Agosto de 2025 até o mês atual)
             let debitoAcumulado = 0;
             let anoCalc = 2025;
-            let mesCalc = 8; // Agosto
+            let mesCalc = 8;
 
             while (anoCalc * 100 + mesCalc <= anoMesNumAtual) {
                 let chaveCalc = `${anoCalc}-${String(mesCalc).padStart(2, '0')}`;
                 let statusCalc = finMap[chaveCalc] || 'pendente';
-                
                 if (statusCalc !== 'pago' && statusCalc !== 'abonado') {
                     debitoAcumulado += 10;
                 }
-
                 mesCalc++;
-                if (mesCalc > 12) {
-                    mesCalc = 1;
-                    anoCalc++;
-                }
+                if (mesCalc > 12) { mesCalc = 1; anoCalc++; }
             }
-
             debTotalEl.innerText = `R$ ${debitoAcumulado.toFixed(2).replace('.', ',')}`;
         }
 
@@ -408,16 +432,64 @@
             }
         }
 
+        // --- GESTÃO DO MODAL DE PERFIL ---
         function abrirPerfilModal() {
-            document.getElementById("perfil-nome").innerText = usuarioLogado.nome;
-            document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo;
+            document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
+            document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo || "-";
             document.getElementById("perfil-cargo").innerText = usuarioLogado.cargo || "Ligante";
+            
             document.getElementById("perfil-email").innerText = usuarioLogado.email || "-";
+            document.getElementById("perfil-tel").innerText = usuarioLogado.tel || "-";
+            document.getElementById("perfil-nascimento").innerText = usuarioLogado.nascimento ? new Date(usuarioLogado.nascimento + "T00:00:00").toLocaleDateString('pt-BR') : "-";
             document.getElementById("perfil-curso").innerText = usuarioLogado.curso || "-";
-            document.getElementById("perfil-periodo").innerText = usuarioLogado.periodo || "-";
+            document.getElementById("perfil-periodo").innerText = `${usuarioLogado.periodo || '1º'} / ${usuarioLogado.turno || '-'}`;
+            document.getElementById("perfil-instituicao").innerText = usuarioLogado.instituicao || "Centro Universitario Facimp Wyden";
+            document.getElementById("perfil-matricula").innerText = usuarioLogado.matricula || "-";
+            document.getElementById("perfil-formatura").innerText = usuarioLogado.previsaoFormatura || "-";
+            document.getElementById("perfil-ingresso").innerText = usuarioLogado.ingressoLiga ? new Date(usuarioLogado.ingressoLiga + "T00:00:00").toLocaleDateString('pt-BR') : "-";
+
+            // Renderiza foto ou inicial dentro do modal
+            let avatarModal = document.getElementById("perfil-avatar-container");
+            if (usuarioLogado.fotoUrl && usuarioLogado.fotoUrl.trim() !== "") {
+                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
+                avatarModal.innerHTML = `<div style="width:100%; height:100%; background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:28px;">${inicial}</div>`;
+            }
+
+            // Botão do Painel da Diretoria (Exibido apenas para quem tem cargo de diretoria)
+            let cargoLower = (usuarioLogado.cargo || "").toLowerCase().trim();
+            let containerAdminBtn = document.getElementById("btn-container-painel-admin");
+            
+            if (cargoLower !== "ligante" && cargoLower !== "membro" && cargoLower !== "marketing") {
+                containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
+            } else {
+                containerAdminBtn.innerHTML = "";
+            }
+
             document.getElementById("modal-perfil").style.display = "flex";
         }
+
         function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
+
+        async function alterarFotoPerfil() {
+            let novaUrl = prompt("Insira o link da sua foto de perfil (URL da imagem):", usuarioLogado.fotoUrl || "");
+            if (novaUrl !== null) {
+                usuarioLogado.fotoUrl = novaUrl.trim();
+                try {
+                    await db.collection("membros").doc(usuarioLogado.id).update({
+                        fotoUrl: usuarioLogado.fotoUrl
+                    });
+                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                    renderizarAvatarTopo();
+                    abrirPerfilModal();
+                    alert("Foto de perfil atualizada com sucesso!");
+                } catch(e) {
+                    console.error(e);
+                    alert("Erro ao salvar a foto.");
+                }
+            }
+        }
 
         function fazerLogout() {
             localStorage.removeItem("lape_sessao_usuario");
