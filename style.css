@@ -330,3 +330,787 @@ textarea:focus { border-color: #0056b3; }
 }
 
 .btn-cancelar:hover { background-color: #e03131; }
+
+/* =========================================
+   DASHBOARD DE ESTATÍSTICAS (CH e Resumo)
+   ========================================= */
+.dashboard-estatisticas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 0 15px 15px 15px;
+}
+
+.card-stat {
+    background-color: white;
+    padding: 10px 5px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.stat-numero {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.stat-legenda {
+    font-size: 10px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Destalhe especial para a Carga Horária */
+.destaque-ch {
+    background: linear-gradient(135deg, #0056b3, #004494);
+}
+
+.destaque-ch .stat-numero, 
+.destaque-ch .stat-legenda {
+    color: white;
+}
+
+/* Estados interativos dos botões de presença */
+.btn-confirmado {
+    background-color: #2b8a3e;
+    color: white;
+    cursor: default;
+    margin-top: 0;
+    font-size: 13px;
+    padding: 10px;
+}
+
+.btn-justificado-badge {
+    background-color: #f59f00;
+    color: white;
+    cursor: default;
+    margin-top: 0;
+    font-size: 13px;
+    padding: 10px;
+}
+
+/* =========================================
+   QUADRO DE AVISOS (CARROSSEL DE SLIDES)
+   ========================================= */
+.quadro-avisos {
+    background: linear-gradient(135deg, #fff3cd, #ffeeba);
+    border-left: 4px solid #ffc107;
+    margin: 15px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.avisos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #856404;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+#contador-slide {
+    background-color: rgba(133, 100, 4, 0.15);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+}
+
+.slides-container {
+    position: relative;
+    min-height: 50px;
+    overflow: hidden;
+}
+
+.slide {
+    display: none; /* Esconde todos por padrão */
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide.ativo {
+    display: block; /* Mostra apenas o slide ativo */
+}
+
+.slide h4 {
+    font-size: 14px;
+    color: #533f03;
+    margin-bottom: 3px;
+}
+
+.slide p {
+    font-size: 12px;
+    color: #6c757d;
+    line-height: 1.4;
+}
+
+/* Animação suave de entrada para os slides */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   ESTILOS DO HISTÓRICO GERAL ACUMULADO
+   ========================================= */
+.secao-historico-geral {
+    margin: 15px 15px 0 15px;
+}
+
+.titulo-secao-geral {
+    font-size: 13px;
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 6px;
+    margin-left: 2px;
+}
+
+/* =========================================
+   ESTILOS DO PAINEL FINANCEIRO (MENSALIDADE)
+   ========================================= */
+.card-financeiro {
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.fin-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.fin-label {
+    display: block;
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.fin-valor {
+    font-size: 18px;
+    font-weight: bold;
+    color: #212529;
+}
+
+.badge-status-financeiro {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.btn-pagar {
+    width: 100%;
+    background-color: #0056b3;
+    color: white;
+    padding: 10px;
+    font-size: 13px;
+    margin-top: 0;
+}
+
+/* Modal Pix */
+.qrcode-box {
+    width: 150px;
+    height: 150px;
+    background-color: #f1f3f5;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px auto;
+    color: #868e96;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.copia-cola {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.copia-cola input {
+    font-size: 11px;
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+.btn-copiar {
+    width: auto;
+    padding: 8px 12px;
+    font-size: 12px;
+    background-color: #495057;
+    margin-top: 0;
+}
+
+.btn-copiar:hover { background-color: #343a40; }
+
+.texto-sucesso {
+    color: #2b8a3e;
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* =========================================
+   ESTILOS DO AVATAR E MODAL DE PERFIL
+   ========================================= */
+.avatar-perfil {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.avatar-perfil:hover {
+    transform: scale(1.05);
+}
+
+.avatar-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Modal de Perfil Estilizado */
+.modal-perfil-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-perfil-conteudo {
+    background-color: white;
+    width: 90%;
+    max-width: 360px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    text-align: left;
+}
+
+.perfil-topo {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.avatar-grande {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 10px auto;
+    border: 3px solid #0056b3;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.avatar-grande img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Botãozinho de trocar foto */
+.botao-trocar-foto {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #0056b3;
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.perfil-topo h3 {
+    font-size: 16px;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.perfil-codigo {
+    font-size: 12px;
+    background-color: #e3f2fd;
+    color: #0056b3;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.perfil-detalhes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.info-grupo {
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.info-label {
+    display: block;
+    font-size: 10px;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.info-valor {
+    font-size: 13px;
+    color: #343a40;
+    font-weight: 600;
+}
+
+.info-linha-dupla {
+    display: flex;
+    gap: 10px;
+}
+
+.info-linha-dupla .info-grupo {
+    flex: 1;
+}
+
+.btn-fechar-perfil {
+    width: 100%;
+    background-color: #495057;
+    color: white;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-fechar-perfil:hover {
+    background-color: #343a40;
+}
+
+/* =========================================
+   ESTILOS DO PAINEL DA DIRETORIA (ADMIN)
+   ========================================= */
+.admin-abas {
+    display: flex;
+    background-color: white;
+    padding: 8px;
+    margin: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    gap: 6px;
+}
+
+.aba-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #6c757d;
+    border-radius: 8px;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0;
+}
+
+.aba-btn.ativo {
+    background-color: #0056b3;
+    color: white;
+}
+
+.admin-secao {
+    padding: 0 15px 30px 15px;
+}
+
+.admin-card-acao {
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+}
+
+.admin-card-acao h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.admin-card-acao input, .admin-card-acao textarea {
+    margin-bottom: 10px;
+}
+
+.btn-salvar {
+    background-color: #2b8a3e;
+    margin-top: 5px;
+}
+.btn-salvar:hover { background-color: #237032; }
+
+.card-admin-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.card-admin-item h4 {
+    font-size: 15px;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.card-admin-item p {
+    font-size: 12px;
+    color: #495057;
+    margin-bottom: 4px;
+}
+
+.cinza {
+    color: #868e96 !important;
+    font-size: 11px;
+}
+
+.desc-ativ-admin {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f1f3f5;
+    padding-bottom: 8px;
+}
+
+/* Tags de Status */
+.tag-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+.tag-status.presente { background-color: #d4edda; color: #155724; }
+.tag-status.falta { background-color: #f8d7da; color: #721c24; }
+.tag-status.justificado { background-color: #fff3cd; color: #856404; }
+.tag-status.pendente { background-color: #e9ecef; color: #495057; }
+
+/* Controles de Chamada */
+.bloco-chamada-membros {
+    margin-top: 10px;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.bloco-chamada-membros h5 {
+    font-size: 12px;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.item-chamada {
+    background: white;
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.chamada-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.caixa-justificativa-admin {
+    background-color: #fff8e1;
+    border-left: 3px solid #ffc107;
+    padding: 6px 8px;
+    font-size: 11px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+}
+
+.botoes-presenca, .botoes-justica {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-mini {
+    width: auto;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    margin-top: 0;
+}
+
+.btn-mini.verde { background-color: #2b8a3e; color: white; }
+.btn-mini.verde:hover { background-color: #237032; }
+
+.btn-mini.vermelho { background-color: #fa5252; color: white; }
+.btn-mini.vermelho:hover { background-color: #e03131; }
+
+.flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subtexto-admin {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 12px;
+}
+
+/* =========================================
+   BANNER DE ACESSO RÁPIDO DA DIRETORIA
+   ========================================= */
+.banner-diretoria {
+    background: linear-gradient(135deg, #212529, #343a40);
+    color: white;
+    margin: 15px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.banner-diretoria span {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.banner-diretoria button {
+    width: auto;
+    background-color: #ffc107;
+    color: #212529;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-top: 0;
+}
+
+.banner-diretoria button:hover {
+    background-color: #e0a800;
+}
+
+.perfil-cargo {
+    font-size: 11px;
+    color: #495057;
+    margin-top: 4px;
+    font-weight: bold;
+}
+
+/* =========================================
+   PAINEL DE DIRETORIA COMPLEXO (UPGRADE)
+   ========================================= */
+
+/* Menu de Abas com Rolagem Suave para telas pequenas */
+.admin-abas-complexa {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas por linha */
+    gap: 6px;
+    background-color: white;
+    padding: 10px;
+    margin: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.admin-abas-complexa .aba-btn {
+    width: 100%;
+    padding: 8px 4px;
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-abas-complexa .aba-btn.ativo {
+    background-color: #0056b3;
+    color: white;
+    border-color: #0056b3;
+}
+
+/* Grids Inteligentes para Formulários */
+.grid-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.col-full {
+    grid-column: span 2;
+}
+
+.grid-form input, .grid-form select, .grid-form textarea {
+    width: 100%;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    font-size: 13px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+}
+
+/* Detalhes do Ligante */
+.cabecalho-lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.badge-total {
+    background-color: #0056b3;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.ligante-detalhes-lista {
+    background-color: #f8f9fa;
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: #495057;
+}
+
+.ligante-detalhes-lista p {
+    margin-bottom: 3px;
+}
+
+/* Destaque para Cargos de Diretoria */
+.tag-status.destaque-admin {
+    background-color: #cce5ff;
+    color: #004085;
+    border: 1px solid #b8daff;
+}
+
+/* Accordion (Menu expansível) para Chamadas */
+.accordion-chamada {
+    margin-top: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.accordion-chamada summary {
+    background-color: #e9ecef;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #495057;
+    cursor: pointer;
+    outline: none;
+}
+
+.conteudo-accordion {
+    padding: 10px;
+}
+
+/* Painel Financeiro Mês a Mês */
+.filtro-financeiro select {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #212529;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.resumo-financeiro {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.res-box {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.res-box.pago { background-color: #d4edda; color: #155724; }
+.res-box.pendente { background-color: #f8d7da; color: #721c24; }
+
+/* Botões Textuais Limpos */
+.botoes-acao-card {
+    text-align: right;
+    margin-top: 8px;
+    border-top: 1px solid #f1f3f5;
+    padding-top: 8px;
+}
+
+.btn-acao {
+    background: none;
+    border: none;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.btn-acao.txt-vermelho { color: #dc3545; }
