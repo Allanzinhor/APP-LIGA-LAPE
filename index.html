@@ -2,36 +2,233 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- Essa linha abaixo é mágica: ela garante que o app vai se adaptar ao tamanho da tela do celular -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App da Liga Acadêmica</title>
+    <title>LAPE - Portal do Ligante</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- Importando o Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
+        authDomain: "app-lape.firebaseapp.com",
+        projectId: "app-lape"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
 </head>
-<body>
+<body class="fundo-app">
 
-    <div id="tela-login">
-        <h2>Bem-vindo à Liga</h2>
+    <div class="celular-container">
         
-        <form>
-            <div>
-                <label for="codigo">Código de Registro do Ligante:</label>
-                <!-- A caixa de texto para o código -->
-                <input type="text" id="codigo" placeholder="Digite seu código" required>
+        <!-- TELA DE LOGIN -->
+        <div id="tela-login" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;">
+            <div style="background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 340px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+                <h2>LAPE</h2>
+                <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Portal do Ligante</p>
+                
+                <input type="text" id="login-codigo" placeholder="Código do Ligante (Ex: 20261001)" style="width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px;">
+                <input type="password" id="login-senha" placeholder="Senha (Padrão: LAPE2026)" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px;">
+                
+                <button onclick="fazerLogin()" style="width: 100%; background: #0056b3; color: white; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Entrar no App</button>
+                
+                <button onclick="window.location.href='diretoria.html'" style="width: 100%; background: #f1f3f5; color: #495057; padding: 8px; border: none; border-radius: 8px; font-size: 11px; margin-top: 10px; cursor: pointer;">Acesso da Diretoria (Admin)</button>
             </div>
-            
-            <br> <!-- Isso dá um espaço em branco -->
+        </div>
 
-            <div>
-                <label for="senha">Senha:</label>
-                <!-- A caixa de senha oculta os caracteres -->
-                <input type="password" id="senha" placeholder="Digite sua senha" required>
+        <!-- TELA PRINCIPAL DO APP (Incialmente oculta até o login) -->
+        <div id="conteudo-principal-app" style="display: none;">
+            <header class="cabecalho">
+                <h2 id="titulo-boas-vindas">Minha Liga</h2>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div class="avatar-perfil" onclick="abrirPerfil()">
+                        <img id="foto-avatar" src="https://via.placeholder.com/150" alt="Foto">
+                    </div>
+                    <button onclick="fazerLogout()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">Sair</button>
+                </div>
+            </header>
+
+            <!-- Botão da Diretoria (Se o usuário logado for cargo de gestão) -->
+            <div id="painel-diretoria-link" style="display: none;" class="banner-diretoria">
+                <span>⚙️ Modo Diretoria Ativo</span>
+                <button onclick="window.location.href='diretoria.html'">Painel Admin</button>
             </div>
 
-            <br>
+            <!-- Histórico Geral -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
+                <div class="dashboard-estatisticas geral">
+                    <div class="card-stat"><span class="stat-numero" id="geral-atividades">0</span><span class="stat-legenda">Passadas</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="geral-presencas">0</span><span class="stat-legenda">Presenças</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Justificadas</span></div>
+                    <div class="card-stat destaque-ch"><span class="stat-numero" id="geral-ch">0h</span><span class="stat-legenda">CH Total</span></div>
+                </div>
+            </section>
 
-            <button type="button">Entrar</button>
-        </form>
+            <!-- Financeiro -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">💳 Situação Financeira</p>
+                <div class="card-financeiro">
+                    <div class="fin-info">
+                        <div><span class="fin-label">Valor:</span><span class="fin-valor" id="fin-debito-total">R$ 10,00</span></div>
+                        <div><span class="fin-label">Status:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
+                    </div>
+                    <button class="btn-pagar" onclick="abrirModalPix()">Pagar Mensalidade (Pix)</button>
+                </div>
+            </section>
+
+            <!-- Avisos -->
+            <section class="quadro-avisos">
+                <div class="avisos-header"><span>⚠️ Avisos Importantes</span><span id="contador-slide">1/1</span></div>
+                <div class="slides-container" id="container-slides"></div>
+            </section>
+
+            <!-- Calendário -->
+            <section class="calendario-mes">
+                <div class="calendario-header">
+                    <button id="btn-prev-mes">&lt;</button>
+                    <h3 id="mes-ano-texto">Mês Ano</h3>
+                    <button id="btn-next-mes">&gt;</button>
+                </div>
+                <div class="grid-calendario dias-semana">
+                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                </div>
+                <div id="grid-dias" class="grid-calendario"></div>
+            </section>
+
+            <!-- Atividades -->
+            <section class="atividades">
+                <h2>Atividades do Mês</h2>
+                <div id="lista-atividades"></div>
+            </section>
+        </div>
     </div>
 
+    <!-- Modais de Perfil / Pix mantidos -->
+    <script>
+        let usuarioLogado = null;
+        let atividades = [];
+        let avisos = [];
+
+        async function fazerLogin() {
+            let codigoInput = document.getElementById('login-codigo').value.trim();
+            let senhaInput = document.getElementById('login-senha').value.trim();
+
+            if(!codigoInput || !senhaInput) {
+                alert("Preencha o código e a senha.");
+                return;
+            }
+
+            try {
+                let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
+                if(snapshot.empty) {
+                    alert("Código de ligante não encontrado no banco de dados!");
+                    return;
+                }
+
+                let dadosUser = null;
+                snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
+
+                if(dadosUser.senhaPadrao !== senhaInput) {
+                    alert("Senha incorreta!");
+                    return;
+                }
+
+                // Salva na sessão do navegador e libera o app
+                localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
+                iniciarAppComUsuario(dadosUser);
+
+            } catch(e) {
+                console.error("Erro ao fazer login:", e);
+                alert("Erro ao conectar com o banco de dados.");
+            }
+        }
+
+        function iniciarAppComUsuario(user) {
+            usuarioLogado = user;
+            document.getElementById('tela-login').style.display = 'none';
+            document.getElementById('conteudo-principal-app').style.display = 'block';
+
+            document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
+            
+            // Verifica se é diretoria para mostrar o botão admin
+            let cargoLower = (user.cargo || "").toLowerCase();
+            if(!cargoLower.includes("ligante") && !cargoLower.includes("membro")) {
+                document.getElementById('painel-diretoria-link').style.display = "flex";
+            }
+
+            carregarDadosDinamicosApp();
+        }
+
+        async function carregarDadosDinamicosApp() {
+            // Puxa avisos
+            let avSnap = await db.collection("avisos").get();
+            avisos = [];
+            avSnap.forEach(doc => avisos.push(doc.data()));
+            renderizarAvisos();
+
+            // Puxa atividades
+            let atSnap = await db.collection("atividades").get();
+            atividades = [];
+            atSnap.forEach(doc => atividades.push({ id: doc.id, ...doc.data() }));
+            renderizarApp();
+        }
+
+        function fazerLogout() {
+            localStorage.removeItem("lape_sessao_usuario");
+            location.reload();
+        }
+
+        // Funções de apoio do calendário e slides
+        let dataAtual = new Date();
+        let mesAtual = dataAtual.getMonth(); 
+        let anoAtual = dataAtual.getFullYear();
+        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        function renderizarApp() {
+            document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
+            const gridDias = document.getElementById("grid-dias");
+            gridDias.innerHTML = "";
+
+            const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
+            const totalDiasMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
+
+            for (let i = 0; i < primeiroDiaMes; i++) { gridDias.innerHTML += `<div class="dia-calendario vazio"></div>`; }
+            for (let dia = 1; dia <= totalDiasMes; dia++) {
+                let dataFormatada = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                let temAtividade = atividades.some(ativ => ativ.data === dataFormatada);
+                let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
+                let hoje = new Date();
+                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "dia-hoje" : "";
+                gridDias.innerHTML += `<div class="dia-calendario ${ehHoje}">${dia}${htmlPonto}</div>`;
+            }
+        }
+
+        let indiceSlideAtual = 0;
+        function renderizarAvisos() {
+            const container = document.getElementById("container-slides");
+            const contador = document.getElementById("contador-slide");
+            container.innerHTML = "";
+            if(avisos.length === 0) { container.innerHTML = "<p style='font-size:11px; padding:5px;'>Nenhum aviso.</p>"; return; }
+            avisos.forEach((aviso, index) => {
+                let classeAtiva = (index === indiceSlideAtual) ? "ativo" : "";
+                container.innerHTML += `<div class="slide ${classeAtiva}"><h4>${aviso.titulo}</h4><p>${aviso.texto}</p></div>`;
+            });
+            contador.innerText = `${indiceSlideAtual + 1}/${avisos.length}`;
+        }
+
+        document.getElementById("btn-prev-mes").addEventListener("click", () => { mesAtual--; if (mesAtual < 0) { mesAtual = 11; anoAtual--; } renderizarApp(); });
+        document.getElementById("btn-next-mes").addEventListener("click", () => { mesAtual++; if (mesAtual > 11) { mesAtual = 0; anoAtual++; } renderizarApp(); });
+
+        // Verifica ao abrir se já estava logado na sessão
+        window.onload = () => {
+            let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
+            if(sessaoSalva) {
+                iniciarAppComUsuario(JSON.parse(sessaoSalva));
+            }
+        }
+    </script>
 </body>
 </html>
