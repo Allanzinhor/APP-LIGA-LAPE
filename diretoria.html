@@ -28,11 +28,11 @@
             <button class="btn-perfil" onclick="window.location.href='index.html'">Sair</button>
         </header>
 
-        <!-- Navegação por Abas (Controlada por Permissões) -->
+        <!-- Navegação por Abas (Controlada rigorosamente por cargo) -->
         <nav class="admin-abas-complexa" id="menu-abas-admin" style="grid-template-columns: repeat(3, 1fr);"></nav>
 
         <!-- ABA 1: CADASTRAR / EDITAR MEMBROS -->
-        <div id="secao-cadastro-membros" class="admin-secao">
+        <div id="secao-cadastro-membros" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-membro">Cadastrar Novo Membro</h3>
                 <input type="hidden" id="m-id-editando">
@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        <!-- ABA 2: LISTA DE MEMBROS (SEPARADA POR SEÇÕES) -->
+        <!-- ABA 2: LISTA DE MEMBROS -->
         <div id="secao-lista-membros" class="admin-secao" style="display: none;">
             <div class="cabecalho-lista">
                 <h3>Alunos Cadastrados</h3>
@@ -227,17 +227,15 @@
         let avisosCache = [];
         let usuarioSessao = null;
 
-        // Configuração de Permissões de Abas por Cargo
+        // Permissões exatas solicitadas
         const permissoesCargos = {
             "presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos"],
             "vice-presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos"],
-            "secretaria": ["cadastro-membros", "lista-membros", "financeiro", "avisos"],
+            "secretaria": ["lista-membros", "frequencia", "avisos"],
             "tesoureira": ["financeiro", "avisos"],
-            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "frequencia", "avisos"],
-            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "frequencia", "avisos"],
-            "diretora de marketing": ["avisos"],
-            "marketing": ["avisos"],
-            "ligante": ["avisos"]
+            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de marketing": ["avisos"]
         };
 
         function verificarPermissoesAdmin() {
@@ -245,13 +243,20 @@
             if (sessao) {
                 usuarioSessao = JSON.parse(sessao);
             } else {
-                // Se acessou direto pelo admin sem logar, assume master para testes
-                usuarioSessao = { cargo: "Presidente", nome: "Diretoria Master" };
+                alert("Acesso restrito. Faça login.");
+                window.location.href = "index.html";
+                return;
             }
 
             let cargoLower = (usuarioSessao.cargo || "ligante").toLowerCase().trim();
-            let abasPermitidas = permissoesCargos[cargoLower] || ["avisos"];
+            
+            if (cargoLower === "marketing" || cargoLower === "ligante" || !permissoesCargos[cargoLower]) {
+                alert("Você não possui permissão para acessar o painel da diretoria.");
+                window.location.href = "index.html";
+                return;
+            }
 
+            let abasPermitidas = permissoesCargos[cargoLower];
             let menuNav = document.getElementById("menu-abas-admin");
             menuNav.innerHTML = "";
 
@@ -271,7 +276,6 @@
                 menuNav.innerHTML += `<button class="aba-btn ${idx === 0 ? 'ativo' : ''}" onclick="mudarAba('${aba}', event)">${labelsAbas[aba]}</button>`;
             });
 
-            // Ajusta colunas do menu conforme quantidade de abas
             menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
 
             if (primeiraAba) {
@@ -315,17 +319,26 @@
 
         async function carregarDadosAdmin() {
             let mSnap = await db.collection("membros").get();
-            membrosCache = [];
+            let atSnap = await db.collection("atividades").get();
             
+            atividadesCache = [];
+            atSnap.forEach(doc => {
+                atividadesCache.push({ id: doc.id, ...doc.data() });
+            });
+            atividadesCache.sort((a, b) => new Date(a.data + "T" + (a.hora || "00:00")) - new Date(b.data + "T" + (b.hora || "00:00")));
+
+            membrosCache = [];
             let divDiretoria = document.getElementById("lista-diretoria");
             let divLigantes = document.getElementById("lista-ligantes");
             let divDesligados = document.getElementById("lista-desligados");
 
-            divDiretoria.innerHTML = "";
-            divLigantes.innerHTML = "";
-            divDesligados.innerHTML = "";
+            if (divDiretoria) divDiretoria.innerHTML = "";
+            if (divLigantes) divLigantes.innerHTML = "";
+            if (divDesligados) divDesligados.innerHTML = "";
 
             let totalAtivos = 0;
+            let cargoLogado = (usuarioSessao.cargo || "").toLowerCase();
+            let podeEditarExcluir = ["presidente", "vice-presidente", "secretaria"].includes(cargoLogado);
 
             mSnap.forEach(doc => {
                 let m = { id: doc.id, ...doc.data() };
@@ -348,6 +361,38 @@
                     }
                 }
 
+                // Cálculo de Presenças, Faltas, Justificativas e CH Acumulada
+                let totalPresencas = 0;
+                let totalFaltas = 0;
+                let totalJustificativas = 0;
+                let chAcumulada = 0;
+
+                atividadesCache.forEach(ativ => {
+                    let freqMap = ativ.frequencias || {};
+                    let regAluno = freqMap[m.id];
+                    if (regAluno) {
+                        if (regAluno.status === 'presente') {
+                            totalPresencas++;
+                            chAcumulada += Number(ativ.ch || 0);
+                        } else if (regAluno.status === 'negado') {
+                            totalFaltas++;
+                        } else if (regAluno.status === 'justificado') {
+                            totalJustificativas++;
+                        }
+                    }
+                });
+
+                let botoesAdminCard = "";
+                if (podeEditarExcluir) {
+                    botoesAdminCard = `
+                        <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+                            <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')">Editar</button>
+                            ${!m.desligado ? `<button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')">Desligar</button>` : ''}
+                            <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
+                        </div>
+                    `;
+                }
+
                 let htmlCard = `
                     <div class="card-admin-item card-aluno-recolhido" id="card-aluno-${m.id}">
                         <div class="aluno-resumo" onclick="toggleExpandirAluno('${m.id}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
@@ -355,7 +400,7 @@
                                 <strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span><br>
                                 <small>Código: <code>${m.codigo}</code> | Senha: ${m.senhaPadrao}</small>
                             </div>
-                            <span style="font-size:12px; color:#0056b3; font-weight:bold;">▼ Ver Detalhes</span>
+                            <span style="font-size:12px; color:#0056b3; font-weight:bold;" id="seta-aluno-${m.id}">▼ Ver Detalhes</span>
                         </div>
                         <div class="aluno-detalhes-completo" id="detalhes-aluno-${m.id}" style="display:none; margin-top:12px; border-top:1px solid #eee; padding-top:10px;">
                             <p><strong>Nascimento:</strong> ${m.nascimento || '-'}</p>
@@ -364,37 +409,30 @@
                             <p><strong>Instituição:</strong> ${m.instituicao || 'Centro Universitario Facimp Wyden'}</p>
                             <p><strong>Previsão Formatura:</strong> ${m.previsaoFormatura || '-'}</p>
                             <p><strong>Tempo na Liga:</strong> ${tempoLigaStr}</p>
-                            ${m.desligado ? `<p style="color:#e03131;"><strong>Desligado em:</strong> ${m.dataDesligamento || '-'} | <strong>Motivo:</strong> ${m.motivoDesligamento || '-'}</p>` : ''}
-                            
-                            <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')">Editar</button>
-                                ${!m.desligado ? `<button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')">Desligar</button>` : ''}
-                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
-                            </div>
+                            <hr style="margin:8px 0; border:0; border-top:1px solid #f1f3f5;">
+                            <p style="color:#0056b3;"><strong>📊 Estatísticas na Liga:</strong></p>
+                            <p>• Presenças: ${totalPresencas} | Faltas: ${totalFaltas} | Abonadas: ${totalJustificativas}</p>
+                            <p>• Carga Horária Acumulada: <strong>${chAcumulada}h</strong></p>
+                            ${m.desligado ? `<p style="color:#e03131; margin-top:6px;"><strong>Desligado em:</strong> ${m.dataDesligamento || '-'} | <strong>Motivo:</strong> ${m.motivoDesligamento || '-'}</p>` : ''}
+                            ${botoesAdminCard}
                         </div>
                     </div>
                 `;
 
                 if (m.desligado) {
-                    divDesligados.innerHTML += htmlCard;
+                    if (divDesligados) divDesligados.innerHTML += htmlCard;
                 } else {
                     totalAtivos++;
                     if (isDiretoria) {
-                        divDiretoria.innerHTML += htmlCard;
+                        if (divDiretoria) divDiretoria.innerHTML += htmlCard;
                     } else {
-                        divLigantes.innerHTML += htmlCard;
+                        if (divLigantes) divLigantes.innerHTML += htmlCard;
                     }
                 }
             });
 
-            document.getElementById("total-membros").innerText = `${totalAtivos} ativos`;
-
-            let atSnap = await db.collection("atividades").get();
-            atividadesCache = [];
-            atSnap.forEach(doc => {
-                atividadesCache.push({ id: doc.id, ...doc.data() });
-            });
-            atividadesCache.sort((a, b) => new Date(a.data + "T" + (a.hora || "00:00")) - new Date(b.data + "T" + (b.hora || "00:00")));
+            let badgeTotal = document.getElementById("total-membros");
+            if (badgeTotal) badgeTotal.innerText = `${totalAtivos} ativos`;
 
             renderizarAtividadesEdicao();
             renderizarFrequenciaAdmin();
@@ -404,10 +442,13 @@
 
         function toggleExpandirAluno(id) {
             let detalhes = document.getElementById(`detalhes-aluno-${id}`);
+            let seta = document.getElementById(`seta-aluno-${id}`);
             if (detalhes.style.display === "none") {
                 detalhes.style.display = "block";
+                seta.innerText = "▲ Ocultar";
             } else {
                 detalhes.style.display = "none";
+                seta.innerText = "▼ Ver Detalhes";
             }
         }
 
@@ -548,19 +589,22 @@
             });
 
             alert("Atividade criada com sucesso!");
-            document.getElementById('filtro-mes-atividades').value = data.substring(0, 7);
-            document.getElementById('filtro-mes-frequencia').value = data.substring(0, 7);
+            let filtroAtiv = document.getElementById('filtro-mes-atividades');
+            let filtroFreq = document.getElementById('filtro-mes-frequencia');
+            if (filtroAtiv) filtroAtiv.value = data.substring(0, 7);
+            if (filtroFreq) filtroFreq.value = data.substring(0, 7);
 
             carregarDadosAdmin();
-            mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
+            mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[1] });
         }
 
         function renderizarAtividadesEdicao() {
-            let mesFiltro = document.getElementById("filtro-mes-atividades").value;
+            let mesFiltroSelect = document.getElementById("filtro-mes-atividades");
             let div = document.getElementById("lista-admin-atividades-edicao");
-            if (!div) return;
+            if (!div || !mesFiltroSelect) return;
             div.innerHTML = "";
 
+            let mesFiltro = mesFiltroSelect.value;
             let filtradas = atividadesCache.filter(a => a.data && a.data.startsWith(mesFiltro));
             if(filtradas.length === 0) { 
                 div.innerHTML = "<p class='cinza'>Nenhuma atividade cadastrada para este mês/ano.</p>"; 
@@ -585,11 +629,12 @@
         }
 
         function renderizarFrequenciaAdmin() {
-            let mesFiltro = document.getElementById("filtro-mes-frequencia").value;
+            let mesFiltroSelect = document.getElementById("filtro-mes-frequencia");
             let div = document.getElementById("lista-admin-frequencia");
-            if (!div) return;
+            if (!div || !mesFiltroSelect) return;
             div.innerHTML = "";
 
+            let mesFiltro = mesFiltroSelect.value;
             let ativFiltradas = atividadesCache.filter(a => a.data && a.data.startsWith(mesFiltro));
             if(ativFiltradas.length === 0) {
                 div.innerHTML = "<p class='cinza'>Nenhuma atividade disponível para este mês/ano.</p>";
