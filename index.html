@@ -16,6 +16,8 @@
         .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
         .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-admin { width: 100%; padding: 10px; background-color: #f1f3f5; color: #495057; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 12px; }
+        .btn-desconfirmar { background-color: #e03131 !important; color: white !important; }
+        .btn-desconfirmar:hover { background-color: #c92a2a !important; }
     </style>
 
     <!-- Firebase SDKs -->
@@ -169,15 +171,13 @@
 
         async function carregarDadosDinamicosApp() {
             try {
-                // Puxa avisos com segurança
                 let avSnap = await db.collection("avisos").get();
                 avisos = [];
                 avSnap.forEach(doc => avisos.push(doc.data()));
                 renderizarAvisos();
-            } catch(e) { console.log("Avisos vazios ou erro:", e); }
+            } catch(e) { console.log(e); }
 
             try {
-                // Puxa atividades com segurança
                 let atSnap = await db.collection("atividades").get();
                 atividades = [];
                 atSnap.forEach(doc => {
@@ -185,6 +185,7 @@
                     let frequenciasMap = d.frequencias || {};
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
 
+                    // Contador correto de confirmações prévias dos alunos
                     let totalConfirmados = 0;
                     Object.values(frequenciasMap).forEach(reg => {
                         if(reg.confirmadoAluno === true) totalConfirmados++;
@@ -192,7 +193,7 @@
 
                     atividades.push({
                         id: doc.id,
-                        titulo: d.titulo || "Atividade sem título",
+                        titulo: d.titulo || "Atividade",
                         data: d.data || "",
                         hora: d.hora || "19:00",
                         local: d.local || "Local a definir",
@@ -204,9 +205,8 @@
                         totalConfirmados: totalConfirmados
                     });
                 });
-            } catch(e) { console.log("Atividades vazias ou erro:", e); }
+            } catch(e) { console.log(e); }
 
-            // Sempre renderiza o app, garantindo que o calendário e os contadores apareçam
             renderizarApp();
         }
 
@@ -224,13 +224,17 @@
                     carregarDadosDinamicosApp();
                 }
             } catch(e) {
-                console.error("Erro ao salvar:", e);
+                console.error(e);
                 alert("Erro ao conectar com o banco de dados.");
             }
         }
 
         function confirmarPresencaAluno(id) {
-            alterarRegistroFirebase(id, { confirmadoAluno: true });
+            alterarRegistroFirebase(id, { confirmadoAluno: true, status: 'pendente', texto: '' });
+        }
+
+        function desconfirmarPresencaAluno(id) {
+            alterarRegistroFirebase(id, { confirmadoAluno: false });
         }
 
         function abrirModalJust(id) {
@@ -314,16 +318,30 @@
             atividadesDesteMes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
                 
-                let botaoHtml = `<button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>`;
-                if (ativ.confirmadoAluno) {
-                    botaoHtml = `<button class="btn-confirmado" disabled>✓ Presença Confirmada</button>`;
-                }
-
+                let botoesCardHtml = "";
                 let statusOficialHtml = "";
+
+                // Se a diretoria já validou oficialmente a presença, falta ou negou justificativa, some os botões de ação do aluno
                 if (ativ.statusAdmin === 'presente') {
                     statusOficialHtml = `<p style="color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px;">✓ Presença validada pela Diretoria</p>`;
+                } else if (ativ.statusAdmin === 'negado') {
+                    statusOficialHtml = `<p style="color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px;">✕ Falta registrada / Justificativa Negada</p>`;
                 } else if (ativ.statusAdmin === 'justificado') {
+                    // Se mandou justificativa, some o botão de justificar e avisa
                     statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 6px;">⏳ Justificativa em análise</p>`;
+                    botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
+                } else {
+                    // Estado pendente normal
+                    if (ativ.confirmadoAluno) {
+                        // Se confirmou, mostra o botão de desconfirmar e some com o de justificar
+                        botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                    } else {
+                        // Se não confirmou, mostra confirmar e justificar
+                        botoesCardHtml = `
+                            <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
+                            <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
+                        `;
+                    }
                 }
 
                 listaAtividades.innerHTML += `
@@ -339,9 +357,8 @@
                             <p><strong>Local:</strong> ${ativ.local}</p>
                             ${statusOficialHtml}
                         </div>
-                        <div class="botoes-card">
-                            ${botaoHtml}
-                            <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
+                        <div class="botoes-card" style="margin-top: 15px;">
+                            ${botoesCardHtml}
                         </div>
                     </div>
                 `;

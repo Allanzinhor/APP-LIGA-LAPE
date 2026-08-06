@@ -92,7 +92,7 @@
         <!-- ABA 5: FREQUÊNCIA INTEGRADA -->
         <div id="secao-frequencia" class="admin-secao" style="display: none;">
             <h3>Controle de Frequência e Justificativas</h3>
-            <p class="subtexto-admin">Gerencie as presenças enviadas pelos ligantes em tempo real.</p>
+            <p class="subtexto-admin">Valide as presenças ou remova status quando necessário.</p>
             <div id="lista-admin-frequencia"></div>
         </div>
 
@@ -120,7 +120,6 @@
         }
 
         async function carregarDadosAdmin() {
-            // Membros
             let mSnap = await db.collection("membros").get();
             membrosCache = [];
             let divM = document.getElementById("lista-admin-membros");
@@ -140,7 +139,6 @@
                 `;
             });
 
-            // Atividades
             let atSnap = await db.collection("atividades").get();
             atividadesCache = [];
             atSnap.forEach(doc => {
@@ -223,13 +221,12 @@
             }
         }
 
-        // --- FREQUÊNCIA INTEGRADA ---
         function renderizarFrequenciaAdmin() {
             let div = document.getElementById("lista-admin-frequencia");
             div.innerHTML = "";
 
             if(atividadesCache.length === 0) {
-                div.innerHTML = "<p class='cinza'>Nenhuma atividade disponível para gerenciar frequência.</p>";
+                div.innerHTML = "<p class='cinza'>Nenhuma atividade disponível.</p>";
                 return;
             }
 
@@ -241,31 +238,35 @@
                     let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '' };
                     let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
                     
-                    if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente</span>`;
-                    if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">Justificativa Pendente</span>`;
-                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">Justif. Negada</span>`;
+                    if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente Validado</span>`;
+                    if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">Justificativa: "${reg.texto}"</span>`;
+                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">Falta / Justif. Negada</span>`;
 
-                    let blocoJustificativa = (reg.status === 'justificado' && reg.texto) ? `
-                        <div class="caixa-justificativa-admin" style="margin:5px 0;">
-                            <p><strong>Justificativa:</strong> "${reg.texto}"</p>
-                            <div class="botoes-justica" style="margin-top:4px;">
-                                <button class="btn-mini verde" onclick="avaliarJustificativa('${a.id}', '${m.id}', 'presente')">Aceitar</button>
-                                <button class="btn-mini vermelho" onclick="avaliarJustificativa('${a.id}', '${m.id}', 'negado')">Negar</button>
-                            </div>
+                    let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:#1e88e5; display:block;">(Aluno confirmou interesse no app)</span>` : "";
+
+                    let blocoJustificativaAcoes = (reg.status === 'justificado') ? `
+                        <div class="botoes-justica" style="margin-top:6px;">
+                            <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Aceitar</button>
+                            <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Negar</button>
                         </div>
-                    ` : '';
+                    ` : `
+                        <div class="botoes-presenca" style="margin-top:6px;">
+                            <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Dar Presença</button>
+                            <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Marcar Falta</button>
+                            ${reg.status !== 'pendente' ? `<button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Remover Presença</button>` : ''}
+                        </div>
+                    `;
 
                     htmlMembros += `
                         <div class="item-chamada" style="margin-bottom:8px;">
                             <div class="chamada-info">
-                                <strong>${m.nome}</strong>
+                                <div>
+                                    <strong>${m.nome}</strong>
+                                    ${indicacaoAluno}
+                                </div>
                                 ${badgeStatus}
                             </div>
-                            ${blocoJustificativa}
-                            <div class="botoes-presenca" style="margin-top:4px;">
-                                <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Dar Presença</button>
-                                <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Marcar Falta</button>
-                            </div>
+                            ${blocoJustificativaAcoes}
                         </div>
                     `;
                 });
@@ -289,15 +290,14 @@
             if(!ativ.frequencias[ligId]) ativ.frequencias[ligId] = {};
             
             ativ.frequencias[ligId].status = novoStatus;
+            if(novoStatus === 'pendente') {
+                ativ.frequencias[ligId].texto = '';
+            }
 
             await db.collection("atividades").doc(ativId).update({
                 frequencias: ativ.frequencias
             });
             carregarDadosAdmin();
-        }
-
-        async function avaliarJustificativa(ativId, ligId, acao) {
-            await mudarStatusAdmin(ativId, ligId, acao);
         }
 
         async function cadastrarAviso() {
