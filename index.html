@@ -7,42 +7,18 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        body {
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        #tela-login {
-            width: 100%;
-            max-width: 400px;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-            text-align: center;
-        }
-
+        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; }
         #tela-login h2 { color: #0056b3; font-size: 26px; margin-bottom: 5px; }
         #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
-
         .grupo-input { margin-bottom: 15px; text-align: left; }
         .grupo-input label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold; color: #555; }
         .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
-        .grupo-input input:focus { border-color: #0056b3; }
-
         .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-entrar:hover { background-color: #004494; }
         .btn-admin { width: 100%; padding: 10px; background-color: #f1f3f5; color: #495057; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 12px; }
-        .btn-admin:hover { background-color: #e2e6ea; }
     </style>
 
-    <!-- Importando o Firebase SDK -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
@@ -60,18 +36,15 @@
     <!-- TELA DE LOGIN -->
     <div id="tela-login">
         <h2>LAPE</h2>
-        <p>Liga Acadêmica de Pesquisa e Extensão</p>
-        
+        <p>Portal do Ligante</p>
         <div class="grupo-input">
             <label>Código do Ligante</label>
             <input type="text" id="login-codigo" placeholder="Ex: 20261001">
         </div>
-
         <div class="grupo-input">
             <label>Senha</label>
             <input type="password" id="login-senha" placeholder="Sua senha">
         </div>
-
         <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
         <button class="btn-admin" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
     </div>
@@ -93,7 +66,7 @@
             <button onclick="window.location.href='diretoria.html'">Painel Admin</button>
         </div>
 
-        <!-- Histórico Geral Acumulado -->
+        <!-- Histórico Geral -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
             <div class="dashboard-estatisticas geral">
@@ -112,7 +85,7 @@
                     <div><span class="fin-label">Valor:</span><span class="fin-valor" id="fin-debito-total">R$ 10,00</span></div>
                     <div><span class="fin-label">Status:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
                 </div>
-                <button class="btn-pagar" onclick="abrirModalPix()">Pagar Mensalidade (Pix)</button>
+                <button class="btn-pagar" onclick="alert('Sistema de Pix integrado.')">Pagar Mensalidade (Pix)</button>
             </div>
         </section>
 
@@ -135,7 +108,7 @@
             <div id="grid-dias" class="grid-calendario"></div>
         </section>
 
-        <!-- Dashboard de Estatísticas do Mês -->
+        <!-- Desempenho do Mês -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">📅 Desempenho no Mês</p>
             <div class="dashboard-estatisticas">
@@ -153,15 +126,6 @@
         </section>
     </div>
 
-    <!-- Modais necessários -->
-    <div id="modal-pix" class="modal" style="display:none;">
-        <div class="modal-conteudo text-center">
-            <h3>Pagamento via Pix</h3>
-            <p>Realize o pagamento da mensalidade da liga.</p>
-            <div class="botoes-modal"><button class="btn-cancelar" onclick="fecharModalPix()">Fechar</button></div>
-        </div>
-    </div>
-
     <script>
         let usuarioLogado = null;
         let atividades = [];
@@ -171,68 +135,53 @@
             let codigoInput = document.getElementById('login-codigo').value.trim();
             let senhaInput = document.getElementById('login-senha').value.trim();
 
-            if(!codigoInput || !senhaInput) {
-                alert("Preencha o código e a senha.");
-                return;
-            }
+            if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
 
             try {
                 let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
-                if(snapshot.empty) {
-                    alert("Código de ligante não encontrado no banco de dados!");
-                    return;
-                }
+                if(snapshot.empty) { alert("Código não encontrado!"); return; }
 
                 let dadosUser = null;
                 snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
 
-                if(dadosUser.senhaPadrao !== senhaInput) {
-                    alert("Senha incorreta!");
-                    return;
-                }
+                if(dadosUser.senhaPadrao !== senhaInput) { alert("Senha incorreta!"); return; }
 
                 localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
                 iniciarAppComUsuario(dadosUser);
-
-            } catch(e) {
-                console.error("Erro no login:", e);
-                alert("Erro ao conectar com o banco de dados.");
-            }
+            } catch(e) { console.error(e); alert("Erro ao logar."); }
         }
 
         function iniciarAppComUsuario(user) {
             usuarioLogado = user;
             document.getElementById('tela-login').style.display = 'none';
-            
             let corpo = document.getElementById('corpo-pagina');
             corpo.style.alignItems = "flex-start";
             corpo.style.backgroundColor = "#e9ecef";
-
-            let appContainer = document.getElementById('conteudo-principal-app');
-            appContainer.style.display = 'block';
-
+            document.getElementById('conteudo-principal-app').style.display = 'block';
             document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
-            
+
             let cargoLower = (user.cargo || "").toLowerCase();
             if(!cargoLower.includes("ligante") && !cargoLower.includes("membro")) {
                 document.getElementById('painel-diretoria-link').style.display = "flex";
             }
-
             carregarDadosDinamicosApp();
         }
 
         async function carregarDadosDinamicosApp() {
-            // Puxa avisos da nuvem
+            // Avisos
             let avSnap = await db.collection("avisos").get();
             avisos = [];
             avSnap.forEach(doc => avisos.push(doc.data()));
             renderizarAvisos();
 
-            // Puxa atividades reais cadastradas no Firebase
+            // Atividades e Presenças salvas na nuvem
             let atSnap = await db.collection("atividades").get();
             atividades = [];
             atSnap.forEach(doc => {
                 let d = doc.data();
+                let frequenciasMap = d.frequencias || {};
+                let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: null, texto: '' };
+
                 atividades.push({
                     id: doc.id,
                     titulo: d.titulo,
@@ -241,11 +190,39 @@
                     local: d.local || "Local a definir",
                     ch: Number(d.ch || 0),
                     desc: d.desc || "",
-                    status: null // controle local de presença do aluno
+                    status: meuRegistro.status, // 'presente', 'falta', 'justificado', etc.
+                    textoJustificativa: meuRegistro.texto || ''
                 });
             });
-
             renderizarApp();
+        }
+
+        async function alterarStatusPresencaNoFirebase(ativId, novoStatus, textoJust = "") {
+            try {
+                let docRef = db.collection("atividades").doc(ativId);
+                let docSnap = await docRef.get();
+                if(docSnap.exists) {
+                    let data = docSnap.data();
+                    let frequencias = data.frequencias || {};
+                    frequencias[usuarioLogado.id] = { status: novoStatus, texto: textoJust };
+                    await docRef.update({ frequencias: frequencias });
+                    carregarDadosDinamicosApp();
+                }
+            } catch(e) {
+                console.error("Erro ao salvar status:", e);
+                alert("Erro ao registrar no banco de dados.");
+            }
+        }
+
+        function confirmarPresenca(id) {
+            alterarStatusPresencaNoFirebase(id, 'presente');
+        }
+
+        function abrirModalJust(id) {
+            let motivo = prompt("Explique o motivo da ausência:");
+            if (motivo && motivo.trim() !== "") {
+                alterarStatusPresencaNoFirebase(id, 'justificado', motivo);
+            }
         }
 
         function fazerLogout() {
@@ -262,7 +239,6 @@
             document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
             const gridDias = document.getElementById("grid-dias");
             gridDias.innerHTML = "";
-
             const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
             const totalDiasMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
@@ -282,9 +258,9 @@
 
         function renderizarHistoricoGeral() {
             let totalGeralAtividades = atividades.length;
-            let totalGeralPresencas = atividades.filter(a => a.status === 'confirmado').length;
-            let totalGeralJustificativas = atividades.filter(a => a.status === 'justificado').length;
-            let totalGeralCH = atividades.filter(a => a.status === 'confirmado').reduce((s, a) => s + a.ch, 0);
+            let totalGeralPresencas = atividades.filter(a => a.status === 'presente').length;
+            let totalGeralJustificativas = atividades.filter(a => a.status === 'justificado' || a.status === 'negado').length;
+            let totalGeralCH = atividades.filter(a => a.status === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("geral-atividades").innerText = totalGeralAtividades;
             document.getElementById("geral-presencas").innerText = totalGeralPresencas;
@@ -303,9 +279,9 @@
             });
 
             let totalAtividades = atividadesDesteMes.length;
-            let totalPresencas = atividadesDesteMes.filter(a => a.status === 'confirmado').length;
-            let totalJustificativas = atividadesDesteMes.filter(a => a.status === 'justificado').length;
-            let totalCH = atividadesDesteMes.filter(a => a.status === 'confirmado').reduce((s, a) => s + a.ch, 0);
+            let totalPresencas = atividadesDesteMes.filter(a => a.status === 'presente').length;
+            let totalJustificativas = atividadesDesteMes.filter(a => a.status === 'justificado' || a.status === 'negado').length;
+            let totalCH = atividadesDesteMes.filter(a => a.status === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("stat-total").innerText = totalAtividades;
             document.getElementById("stat-presencas").innerText = totalPresencas;
@@ -319,23 +295,19 @@
 
             atividadesDesteMes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
-                const difTempo = dataObj.getTime() - new Date().getTime();
-                const difDias = Math.ceil(difTempo / (1000 * 3600 * 24));
-                let textoDias = difDias > 0 ? `Faltam ${difDias} dias` : (difDias === 0 ? "É Hoje!" : "Já passou");
-
-                let botaoConfirmarHtml = `<button class="btn-confirmar" onclick="confirmarPresenca('${ativ.id}')">Confirmar Presença</button>`;
-                if (ativ.status === 'confirmado') {
-                    botaoConfirmarHtml = `<button class="btn-confirmado" disabled>✓ Presença Confirmada</button>`;
+                let botaoHtml = `<button class="btn-confirmar" onclick="confirmarPresenca('${ativ.id}')">Confirmar Presença</button>`;
+                
+                if (ativ.status === 'presente') {
+                    botaoHtml = `<button class="btn-confirmado" disabled>✓ Presença Confirmada</button>`;
                 } else if (ativ.status === 'justificado') {
-                    botaoConfirmarHtml = `<button class="btn-justificado-badge" disabled>Ausência Justificada</button>`;
+                    botaoHtml = `<button class="btn-justificado-badge" disabled>Justificativa em Análise</button>`;
+                } else if (ativ.status === 'negado') {
+                    botaoHtml = `<button class="btn-cancelar" style="font-size:13px; padding:10px;" disabled>Justificativa Negada (Falta)</button>`;
                 }
 
                 listaAtividades.innerHTML += `
                     <div class="card-atividade">
-                        <div class="badges">
-                            <span class="badge-dias">${textoDias}</span>
-                            <span class="badge-confirmados">${ativ.ch}h de CH</span>
-                        </div>
+                        <div class="badges"><span class="badge-confirmados">${ativ.ch}h de CH</span></div>
                         <h3 class="titulo-atividade">${ativ.titulo}</h3>
                         <p class="desc-atividade">${ativ.desc}</p>
                         <div class="info-atividade">
@@ -343,25 +315,12 @@
                             <p><strong>Local:</strong> ${ativ.local}</p>
                         </div>
                         <div class="botoes-card">
-                            ${botaoConfirmarHtml}
+                            ${botaoHtml}
                             <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
                         </div>
                     </div>
                 `;
             });
-        }
-
-        function confirmarPresenca(id) {
-            let ativ = atividades.find(a => a.id === id);
-            if (ativ) { ativ.status = 'confirmado'; renderizarApp(); }
-        }
-
-        function abrirModalJust(id) {
-            let motivo = prompt("Explique o motivo da ausência:");
-            if (motivo && motivo.trim() !== "") {
-                let ativ = atividades.find(a => a.id === id);
-                if (ativ) { ativ.status = 'justificado'; renderizarApp(); }
-            }
         }
 
         let indiceSlideAtual = 0;
@@ -383,9 +342,7 @@
 
         window.onload = () => {
             let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
-            if(sessaoSalva) {
-                iniciarAppComUsuario(JSON.parse(sessaoSalva));
-            }
+            if(sessaoSalva) { iniciarAppComUsuario(JSON.parse(sessaoSalva)); }
         }
     </script>
 </body>

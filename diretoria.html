@@ -6,7 +6,7 @@
     <title>Painel da Diretoria - LAPE</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- Importando o Firebase SDK -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
@@ -25,49 +25,36 @@
         
         <header class="cabecalho">
             <h2>Gestão da Liga (Admin)</h2>
-            <button class="btn-perfil" onclick="window.location.href='app.html'">Sair</button>
+            <button class="btn-perfil" onclick="window.location.href='index.html'">Sair</button>
         </header>
 
-        <!-- Navegação por Abas Especializadas e Separadas -->
+        <!-- Navegação por Abas -->
         <nav class="admin-abas-complexa">
-            <button class="aba-btn ativo" onclick="mudarAba('cadastro-membros', event)">➕ Cad. Membros</button>
-            <button class="aba-btn" onclick="mudarAba('lista-membros', event)">👥 Membros</button>
-            <button class="aba-btn" onclick="mudarAba('cadastro-atividades', event)">➕ Cad. Ativ.</button>
-            <button class="aba-btn" onclick="mudarAba('lista-atividades', event)">📅 Atividades</button>
+            <button class="aba-btn ativo" onclick="mudarAba('cadastro-membros', event)">➕ Membros</button>
+            <button class="aba-btn" onclick="mudarAba('lista-membros', event)">👥 Alunos</button>
+            <button class="aba-btn" onclick="mudarAba('cadastro-atividades', event)">➕ Ativ.</button>
+            <button class="aba-btn" onclick="mudarAba('lista-atividades', event)">📅 Gerenciar</button>
             <button class="aba-btn" onclick="mudarAba('frequencia', event)">📋 Frequência</button>
-            <button class="aba-btn" onclick="mudarAba('financeiro', event)">💰 Financeiro</button>
             <button class="aba-btn" onclick="mudarAba('avisos', event)">⚠️ Avisos</button>
         </nav>
 
         <!-- ABA 1: CADASTRAR MEMBROS -->
         <div id="secao-cadastro-membros" class="admin-secao">
             <div class="admin-card-acao">
-                <h3>Cadastro Completo de Membro</h3>
+                <h3>Cadastrar Novo Membro</h3>
                 <div class="grid-form">
                     <input type="text" id="m-nome" placeholder="Nome Completo *" class="col-full" required>
                     <input type="email" id="m-email" placeholder="E-mail *" required>
-                    <input type="text" id="m-tel" placeholder="Telefone / WhatsApp">
-                    <input type="date" id="m-nasc" placeholder="Data de Nascimento">
+                    <input type="text" id="m-tel" placeholder="Telefone">
                     <input type="text" id="m-curso" placeholder="Curso (Ex: Medicina)">
-                    <input type="text" id="m-turno" placeholder="Turno (Ex: Integral)">
-                    <input type="text" id="m-periodo" placeholder="Período Atual (Ex: 5º)">
-                    <input type="number" id="m-ingresso-inst" placeholder="Ano Ingresso na Instituição (Ex: 2024)">
-                    <div class="grid-form col-full" style="grid-template-columns: 2fr 1fr; gap:5px; margin:0;">
-                        <input type="number" id="m-ingresso-liga" placeholder="Ano Ingresso na Liga (Ex: 2025)">
-                        <select id="m-semestre-liga">
-                            <option value="1">1º Sem.</option>
-                            <option value="2">2º Sem.</option>
-                        </select>
-                    </div>
+                    <input type="text" id="m-periodo" placeholder="Período (Ex: 5º)">
+                    <input type="number" id="m-ingresso-liga" placeholder="Ano Ingresso (Ex: 2026)">
                     <select id="m-cargo" class="col-full">
                         <option value="Ligante">Ligante</option>
                         <option value="Presidente">Presidente</option>
-                        <option value="Vice-Presidente">Vice-Presidente</option>
-                        <option value="Diretor Científico">Diretor Científico</option>
-                        <option value="Tesoureiro">Tesoureiro</option>
                     </select>
                 </div>
-                <button class="btn-salvar" onclick="cadastrarMembro()">Cadastrar Membro e Gerar Código</button>
+                <button class="btn-salvar" onclick="cadastrarMembro()">Salvar e Gerar Código</button>
             </div>
         </div>
 
@@ -83,110 +70,47 @@
         <!-- ABA 3: CADASTRAR ATIVIDADES -->
         <div id="secao-cadastro-atividades" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
-                <h3>Cadastrar Nova Atividade</h3>
-                <p class="subtexto-admin">Preencha os dados abaixo para registrar uma nova atividade na liga.</p>
+                <h3>Nova Atividade</h3>
                 <div class="grid-form">
-                    <input type="text" id="at-titulo" placeholder="Título da Atividade *" class="col-full">
+                    <input type="text" id="at-titulo" placeholder="Título *" class="col-full">
                     <input type="date" id="at-data">
                     <input type="time" id="at-hora">
                     <input type="text" id="at-local" placeholder="Local">
                     <input type="number" id="at-ch" placeholder="Carga Horária (h)">
-                    <textarea id="at-desc" rows="3" placeholder="Descrição completa..." class="col-full"></textarea>
+                    <textarea id="at-desc" rows="3" placeholder="Descrição..." class="col-full"></textarea>
                 </div>
-                <button class="btn-salvar" onclick="cadastrarAtividade()">Salvar e Criar Atividade</button>
+                <button class="btn-salvar" onclick="cadastrarAtividade()">Criar Atividade na Nuvem</button>
             </div>
         </div>
 
         <!-- ABA 4: LISTA DE ATIVIDADES -->
         <div id="secao-lista-atividades" class="admin-secao" style="display: none;">
-            <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
-                <h3>Filtrar Atividades por Mês</h3>
-                <select id="filtro-mes-atividades" onchange="renderizarAtividadesEdicao()">
-                    <option value="2026-06">Junho / 2026</option>
-                    <option value="2026-07">Julho / 2026</option>
-                    <option value="2026-08" selected>Agosto / 2026 (Atual)</option>
-                    <option value="2026-09">Setembro / 2026</option>
-                </select>
-            </div>
-            <h3>Atividades Cadastradas no Período</h3>
+            <h3>Atividades Cadastradas</h3>
             <div id="lista-admin-atividades-edicao"></div>
         </div>
 
-        <!-- ABA 5: FREQUÊNCIA -->
+        <!-- ABA 5: FREQUÊNCIA INTEGRADA -->
         <div id="secao-frequencia" class="admin-secao" style="display: none;">
-            <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
-                <h3>Controle de Frequência por Mês</h3>
-                <select id="filtro-mes-frequencia" onchange="renderizarFrequencia()">
-                    <option value="2026-06">Junho / 2026</option>
-                    <option value="2026-07">Julho / 2026</option>
-                    <option value="2026-08" selected>Agosto / 2026 (Atual)</option>
-                    <option value="2026-09">Setembro / 2026</option>
-                </select>
-            </div>
+            <h3>Controle de Frequência e Justificativas</h3>
+            <p class="subtexto-admin">Gerencie as presenças enviadas pelos ligantes em tempo real.</p>
             <div id="lista-admin-frequencia"></div>
         </div>
 
-        <!-- ABA 6: FINANCEIRO -->
-        <div id="secao-financeiro" class="admin-secao" style="display: none;">
-            <div class="admin-card-acao filtro-financeiro">
-                <h3>Mensalidades (R$ 10,00)</h3>
-                <select id="filtro-mes-fin" onchange="renderizarFinanceiro()">
-                    <option value="2026-06">Junho / 2026</option>
-                    <option value="2026-07">Julho / 2026</option>
-                    <option value="2026-08" selected>Agosto / 2026 (Atual)</option>
-                    <option value="2026-09">Setembro / 2026</option>
-                </select>
-            </div>
-            <div class="resumo-financeiro">
-                <div class="res-box pago">Pagos: <b id="res-pagos">0</b></div>
-                <div class="res-box pendente">Pendentes: <b id="res-pendentes">0</b></div>
-            </div>
-            <div id="lista-admin-financeiro"></div>
-        </div>
-
-        <!-- ABA 7: AVISOS -->
+        <!-- ABA 6: AVISOS -->
         <div id="secao-avisos" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
-                <h3>Publicar Aviso no Mural</h3>
+                <h3>Publicar Aviso</h3>
                 <input type="text" id="av-titulo" placeholder="Título">
                 <textarea id="av-texto" rows="3" placeholder="Mensagem..."></textarea>
-                <button class="btn-salvar" onclick="cadastrarAviso()">Publicar</button>
+                <button class="btn-salvar" onclick="cadastrarAviso()">Publicar na Nuvem</button>
             </div>
             <div id="lista-admin-avisos"></div>
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO DE MEMBRO (mantido do original) -->
-    <div id="modal-editar-membro" class="modal-perfil-overlay">
-        <!-- Conteúdo idêntico omitido para brevidade visual, mantido no código -->
-        <div class="modal-perfil-conteudo">
-            <h3>Editar Dados do Membro</h3>
-            <input type="hidden" id="edit-m-id">
-            <div class="grid-form" style="margin-top: 10px;">
-                <input type="text" id="edit-m-nome" placeholder="Nome" class="col-full">
-                <input type="email" id="edit-m-email" placeholder="E-mail" class="col-full">
-                <input type="text" id="edit-m-tel" placeholder="Telefone">
-                <input type="text" id="edit-m-curso" placeholder="Curso">
-                <input type="text" id="edit-m-periodo" placeholder="Período">
-                <select id="edit-m-cargo">
-                    <option value="Ligante">Ligante</option>
-                    <option value="Presidente">Presidente</option>
-                    <option value="Vice-Presidente">Vice-Presidente</option>
-                    <option value="Diretor Científico">Diretor Científico</option>
-                    <option value="Tesoureiro">Tesoureiro</option>
-                </select>
-            </div>
-            <div class="botoes-modal" style="margin-top: 15px;">
-                <button class="btn-cancelar" onclick="fecharModalEdicaoMembro()">Cancelar</button>
-                <button class="btn-enviar" onclick="salvarEdicaoMembro()">Salvar Alterações</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        let membros = [];
-        let atividades = [];
-        let avisos = [];
+        let membrosCache = [];
+        let atividadesCache = [];
 
         function mudarAba(nome, evento) {
             document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
@@ -195,91 +119,66 @@
             evento.target.classList.add('ativo');
         }
 
-        // Carrega dados REAIS do Firebase
-        async function carregarDadosNuvem() {
+        async function carregarDadosAdmin() {
             // Membros
             let mSnap = await db.collection("membros").get();
-            membros = [];
-            mSnap.forEach(doc => membros.push({ id: doc.id, ...doc.data() }));
-            renderizarMembros();
+            membrosCache = [];
+            let divM = document.getElementById("lista-admin-membros");
+            divM.innerHTML = "";
+            document.getElementById("total-membros").innerText = `${mSnap.size} cadastrados`;
+
+            mSnap.forEach(doc => {
+                let m = { id: doc.id, ...doc.data() };
+                membrosCache.push(m);
+                divM.innerHTML += `
+                    <div class="card-admin-item">
+                        <h4>${m.nome}</h4>
+                        <p><strong>Código:</strong> <code>${m.codigo}</code> | <strong>Senha:</strong> ${m.senhaPadrao}</p>
+                        <p><strong>Curso:</strong> ${m.curso} | <strong>Cargo:</strong> ${m.cargo}</p>
+                        <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir</button>
+                    </div>
+                `;
+            });
 
             // Atividades
             let atSnap = await db.collection("atividades").get();
-            atividades = [];
-            atSnap.forEach(doc => atividades.push({ id: doc.id, ...doc.data() }));
-            renderizarAtividadesEdicao();
+            atividadesCache = [];
+            atSnap.forEach(doc => {
+                atividadesCache.push({ id: doc.id, ...doc.data() });
+            });
 
-            // Avisos
-            let avSnap = await db.collection("avisos").get();
-            avisos = [];
-            avSnap.forEach(doc => avisos.push({ id: doc.id, ...doc.data() }));
-            renderizarAvisos();
+            renderizarAtividadesEdicao();
+            renderizarFrequenciaAdmin();
+            carregarAvisosAdmin();
         }
 
         async function cadastrarMembro() {
             let nome = document.getElementById('m-nome').value;
             let email = document.getElementById('m-email').value;
             let anoIng = document.getElementById('m-ingresso-liga').value;
-            let semIng = document.getElementById('m-semestre-liga').value;
 
-            if(!nome || !email || !anoIng) {
-                alert("Preencha pelo menos Nome, E-mail e o Ano de Ingresso.");
-                return;
-            }
-
-            let sequencial = String(membros.length + 1).padStart(3, '0');
-            let codigoGerado = `${anoIng}${semIng}${sequencial}`;
+            if(!nome || !email || !anoIng) { alert("Preencha Nome, E-mail e Ano de Ingresso."); return; }
+            let codigoGerado = `${anoIng}1${Math.floor(Math.random() * 900) + 100}`;
 
             await db.collection("membros").add({
                 codigo: codigoGerado,
                 senhaPadrao: "LAPE2026",
-                nome: nome,
-                email: email,
+                nome, email,
                 tel: document.getElementById('m-tel').value,
-                nasc: document.getElementById('m-nasc').value,
                 curso: document.getElementById('m-curso').value,
-                turno: document.getElementById('m-turno').value,
                 periodo: document.getElementById('m-periodo').value,
-                ingressoInst: document.getElementById('m-ingresso-inst').value,
-                ingressoLiga: anoIng,
-                semestreLiga: semIng,
                 cargo: document.getElementById('m-cargo').value
             });
 
-            alert(`Membro cadastrado!\nLogin gerado: ${codigoGerado}\nSenha Padrão: LAPE2026`);
-            carregarDadosNuvem();
+            alert(`Membro cadastrado!\nCódigo: ${codigoGerado}\nSenha: LAPE2026`);
+            carregarDadosAdmin();
             mudarAba('lista-membros', { target: document.querySelectorAll('.aba-btn')[1] });
         }
 
-        function renderizarMembros() {
-            const div = document.getElementById("lista-admin-membros");
-            document.getElementById("total-membros").innerText = `${membros.length} cadastrados`;
-            div.innerHTML = "";
-
-            membros.forEach(m => {
-                div.innerHTML += `
-                    <div class="card-admin-item">
-                        <div class="flex-row">
-                            <h4 style="margin:0;">${m.nome}</h4>
-                            <span class="tag-status ${m.cargo !== 'Ligante' ? 'destaque-admin' : 'pendente'}">${m.cargo}</span>
-                        </div>
-                        <div class="ligante-detalhes-lista">
-                            <p><strong>Login/Código:</strong> <code>${m.codigo}</code> | <strong>Senha:</strong> ${m.senhaPadrao}</p>
-                            <p><strong>Curso:</strong> ${m.curso} (${m.periodo} - ${m.turno || 'N/I'})</p>
-                            <p><strong>Contato:</strong> ${m.tel || '-'} | ${m.email}</p>
-                        </div>
-                        <div class="botoes-acao-card">
-                            <button class="btn-acao txt-vermelho" onclick="removerMembro('${m.id}')">Excluir Membro</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
         async function removerMembro(id) {
-            if(confirm("Deseja remover este membro do sistema?")) {
+            if(confirm("Deseja apagar este membro?")) {
                 await db.collection("membros").doc(id).delete();
-                carregarDadosNuvem();
+                carregarDadosAdmin();
             }
         }
 
@@ -290,49 +189,115 @@
 
             await db.collection("atividades").add({
                 titulo, data,
-                hora: document.getElementById('at-hora').value,
-                local: document.getElementById('at-local').value,
+                hora: document.getElementById('at-hora').value || "19:00",
+                local: document.getElementById('at-local').value || "Local a definir",
                 ch: Number(document.getElementById('at-ch').value || 0),
-                desc: document.getElementById('at-desc').value
+                desc: document.getElementById('at-desc').value || "",
+                frequencias: {}
             });
 
-            alert("Atividade criada com sucesso na nuvem!");
-            document.getElementById('filtro-mes-atividades').value = data.substring(0, 7);
-            carregarDadosNuvem();
+            alert("Atividade criada com sucesso!");
+            carregarDadosAdmin();
             mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
         }
 
         function renderizarAtividadesEdicao() {
-            let mesFiltro = document.getElementById("filtro-mes-atividades").value;
-            const div = document.getElementById("lista-admin-atividades-edicao");
+            let div = document.getElementById("lista-admin-atividades-edicao");
             div.innerHTML = "";
+            if(atividadesCache.length === 0) { div.innerHTML = "<p class='cinza'>Nenhuma atividade cadastrada.</p>"; return; }
 
-            let ativFiltradas = atividades.filter(a => a.data && a.data.startsWith(mesFiltro));
-            if(ativFiltradas.length === 0) {
-                div.innerHTML = "<p class='cinza'>Nenhuma atividade cadastrada para este mês.</p>";
-                return;
-            }
-
-            ativFiltradas.forEach(a => {
+            atividadesCache.forEach(a => {
                 div.innerHTML += `
                     <div class="card-admin-item flex-row">
-                        <div>
-                            <h4 style="margin:0;">${a.titulo}</h4>
-                            <p class="cinza">${a.data} às ${a.hora} | CH: ${a.ch}h | Local: ${a.local || '-'}</p>
-                        </div>
-                        <div>
-                            <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">Apagar</button>
-                        </div>
+                        <div><h4>${a.titulo}</h4><p class="cinza">${a.data} - ${a.hora} | CH: ${a.ch}h</p></div>
+                        <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">Apagar</button>
                     </div>
                 `;
             });
         }
 
         async function removerAtividade(id) {
-            if(confirm("Apagar esta atividade da nuvem?")) {
+            if(confirm("Apagar atividade?")) {
                 await db.collection("atividades").doc(id).delete();
-                carregarDadosNuvem();
+                carregarDadosAdmin();
             }
+        }
+
+        // --- FREQUÊNCIA INTEGRADA ---
+        function renderizarFrequenciaAdmin() {
+            let div = document.getElementById("lista-admin-frequencia");
+            div.innerHTML = "";
+
+            if(atividadesCache.length === 0) {
+                div.innerHTML = "<p class='cinza'>Nenhuma atividade disponível para gerenciar frequência.</p>";
+                return;
+            }
+
+            atividadesCache.forEach(a => {
+                let frequenciasMap = a.frequencias || {};
+                let htmlMembros = "";
+
+                membrosCache.forEach(m => {
+                    let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '' };
+                    let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
+                    
+                    if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente</span>`;
+                    if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">Justificativa Pendente</span>`;
+                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">Justif. Negada</span>`;
+
+                    let blocoJustificativa = (reg.status === 'justificado' && reg.texto) ? `
+                        <div class="caixa-justificativa-admin" style="margin:5px 0;">
+                            <p><strong>Justificativa:</strong> "${reg.texto}"</p>
+                            <div class="botoes-justica" style="margin-top:4px;">
+                                <button class="btn-mini verde" onclick="avaliarJustificativa('${a.id}', '${m.id}', 'presente')">Aceitar</button>
+                                <button class="btn-mini vermelho" onclick="avaliarJustificativa('${a.id}', '${m.id}', 'negado')">Negar</button>
+                            </div>
+                        </div>
+                    ` : '';
+
+                    htmlMembros += `
+                        <div class="item-chamada" style="margin-bottom:8px;">
+                            <div class="chamada-info">
+                                <strong>${m.nome}</strong>
+                                ${badgeStatus}
+                            </div>
+                            ${blocoJustificativa}
+                            <div class="botoes-presenca" style="margin-top:4px;">
+                                <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Dar Presença</button>
+                                <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Marcar Falta</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                div.innerHTML += `
+                    <div class="card-admin-item">
+                        <h4>${a.titulo}</h4>
+                        <p class="cinza">${a.data} • CH: ${a.ch}h</p>
+                        <div class="bloco-chamada-membros" style="margin-top:10px;">
+                            ${htmlMembros}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function mudarStatusAdmin(ativId, ligId, novoStatus) {
+            let ativ = atividadesCache.find(x => x.id === ativId);
+            if(!ativ) return;
+            if(!ativ.frequencias) ativ.frequencias = {};
+            if(!ativ.frequencias[ligId]) ativ.frequencias[ligId] = {};
+            
+            ativ.frequencias[ligId].status = novoStatus;
+
+            await db.collection("atividades").doc(ativId).update({
+                frequencias: ativ.frequencias
+            });
+            carregarDadosAdmin();
+        }
+
+        async function avaliarJustificativa(ativId, ligId, acao) {
+            await mudarStatusAdmin(ativId, ligId, acao);
         }
 
         async function cadastrarAviso() {
@@ -340,33 +305,21 @@
             let texto = document.getElementById('av-texto').value;
             if(!titulo) return;
             await db.collection("avisos").add({ titulo, texto });
-            document.getElementById('av-titulo').value = "";
-            document.getElementById('av-texto').value = "";
-            carregarDadosNuvem();
+            alert("Aviso publicado!");
+            carregarDadosAdmin();
         }
 
-        function renderizarAvisos() {
-            const div = document.getElementById("lista-admin-avisos");
+        async function carregarAvisosAdmin() {
+            let div = document.getElementById("lista-admin-avisos");
             div.innerHTML = "";
-            avisos.forEach(a => {
-                div.innerHTML += `
-                    <div class="card-admin-item flex-row">
-                        <div><h4 style="margin:0;">${a.titulo}</h4><p class="cinza">${a.texto}</p></div>
-                        <button class="btn-mini vermelho" onclick="removerAviso('${a.id}')">Apagar</button>
-                    </div>
-                `;
+            let snap = await db.collection("avisos").get();
+            snap.forEach(doc => {
+                let a = doc.data();
+                div.innerHTML += `<div class="card-admin-item"><h4>${a.titulo}</h4><p class="cinza">${a.texto}</p></div>`;
             });
         }
 
-        async function removerAviso(id) {
-            await db.collection("avisos").doc(id).delete();
-            carregarDadosNuvem();
-        }
-
-        function renderizarFrequencia() { document.getElementById("lista-admin-frequencia").innerHTML = "<p class='cinza'>Integração da Frequência ativa.</p>"; }
-        function renderizarFinanceiro() { document.getElementById("lista-admin-financeiro").innerHTML = "<p class='cinza'>Integração Financeira ativa.</p>"; }
-
-        window.onload = carregarDadosNuvem;
+        window.onload = carregarDadosAdmin;
     </script>
 </body>
 </html>
