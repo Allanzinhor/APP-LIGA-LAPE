@@ -24,20 +24,12 @@
     <div class="celular-container" style="max-width: 620px;">
         
         <header class="cabecalho">
-            <h2>Gestão da Liga (Admin)</h2>
+            <h2 id="titulo-painel-topo">Gestão da Liga (Admin)</h2>
             <button class="btn-perfil" onclick="window.location.href='index.html'">Sair</button>
         </header>
 
-        <!-- Navegação por Abas -->
-        <nav class="admin-abas-complexa" style="grid-template-columns: repeat(3, 1fr);">
-            <button class="aba-btn ativo" onclick="mudarAba('cadastro-membros', event)">➕ Membros</button>
-            <button class="aba-btn" onclick="mudarAba('lista-membros', event)">👥 Alunos</button>
-            <button class="aba-btn" onclick="mudarAba('cadastro-atividades', event)">➕ Ativ.</button>
-            <button class="aba-btn" onclick="mudarAba('lista-atividades', event)">📅 Gerenciar</button>
-            <button class="aba-btn" onclick="mudarAba('frequencia', event)">📋 Frequência</button>
-            <button class="aba-btn" onclick="mudarAba('financeiro', event)">💰 Financeiro</button>
-            <button class="aba-btn" onclick="mudarAba('avisos', event)">⚠️ Avisos</button>
-        </nav>
+        <!-- Navegação por Abas (Controlada por Permissões) -->
+        <nav class="admin-abas-complexa" id="menu-abas-admin" style="grid-template-columns: repeat(3, 1fr);"></nav>
 
         <!-- ABA 1: CADASTRAR / EDITAR MEMBROS -->
         <div id="secao-cadastro-membros" class="admin-secao">
@@ -98,13 +90,21 @@
             </div>
         </div>
 
-        <!-- ABA 2: LISTA DE MEMBROS -->
+        <!-- ABA 2: LISTA DE MEMBROS (SEPARADA POR SEÇÕES) -->
         <div id="secao-lista-membros" class="admin-secao" style="display: none;">
             <div class="cabecalho-lista">
                 <h3>Alunos Cadastrados</h3>
                 <span class="badge-total" id="total-membros">0 cadastrados</span>
             </div>
-            <div id="lista-admin-membros"></div>
+            
+            <h4 style="margin: 15px 0 5px 0; color: #0056b3; font-size:14px;">👔 Diretoria</h4>
+            <div id="lista-diretoria"></div>
+
+            <h4 style="margin: 20px 0 5px 0; color: #2b8a3e; font-size:14px;">🎓 Ligantes Ativos</h4>
+            <div id="lista-ligantes"></div>
+
+            <h4 style="margin: 20px 0 5px 0; color: #e03131; font-size:14px;">⛔ Ligantes Desligados</h4>
+            <div id="lista-desligados"></div>
         </div>
 
         <!-- ABA 3: CADASTRAR ATIVIDADES -->
@@ -205,19 +205,88 @@
         </div>
     </div>
 
+    <!-- MODAL DESLIGAMENTO -->
+    <div id="modal-desligamento" class="modal" style="display:none;">
+        <div class="modal-conteudo">
+            <h3>Desligar Ligante</h3>
+            <input type="hidden" id="desligar-membro-id">
+            <label style="font-size:12px; font-weight:bold; margin-top:10px; display:block;">Data do Desligamento:</label>
+            <input type="date" id="desligar-data" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:6px;">
+            <label style="font-size:12px; font-weight:bold; display:block;">Motivo:</label>
+            <textarea id="desligar-motivo" rows="3" placeholder="Explique o motivo do desligamento..."></textarea>
+            <div class="botoes-modal" style="display:flex; gap:8px; margin-top:10px;">
+                <button class="btn-salvar" onclick="confirmarDesligamento()">Confirmar Desligamento</button>
+                <button class="btn-cancelar" onclick="fecharModalDesligamento()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let membrosCache = [];
         let atividadesCache = [];
         let avisosCache = [];
+        let usuarioSessao = null;
+
+        // Configuração de Permissões de Abas por Cargo
+        const permissoesCargos = {
+            "presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos"],
+            "vice-presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos"],
+            "secretaria": ["cadastro-membros", "lista-membros", "financeiro", "avisos"],
+            "tesoureira": ["financeiro", "avisos"],
+            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "frequencia", "avisos"],
+            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "frequencia", "avisos"],
+            "diretora de marketing": ["avisos"],
+            "marketing": ["avisos"],
+            "ligante": ["avisos"]
+        };
+
+        function verificarPermissoesAdmin() {
+            let sessao = localStorage.getItem("lape_sessao_usuario");
+            if (sessao) {
+                usuarioSessao = JSON.parse(sessao);
+            } else {
+                // Se acessou direto pelo admin sem logar, assume master para testes
+                usuarioSessao = { cargo: "Presidente", nome: "Diretoria Master" };
+            }
+
+            let cargoLower = (usuarioSessao.cargo || "ligante").toLowerCase().trim();
+            let abasPermitidas = permissoesCargos[cargoLower] || ["avisos"];
+
+            let menuNav = document.getElementById("menu-abas-admin");
+            menuNav.innerHTML = "";
+
+            const labelsAbas = {
+                "cadastro-membros": "➕ Membros",
+                "lista-membros": "👥 Alunos",
+                "cadastro-atividades": "➕ Ativ.",
+                "lista-atividades": "📅 Gerenciar",
+                "frequencia": "📋 Frequência",
+                "financeiro": "💰 Financeiro",
+                "avisos": "⚠️ Avisos"
+            };
+
+            let primeiraAba = null;
+            abasPermitidas.forEach((aba, idx) => {
+                if (idx === 0) primeiraAba = aba;
+                menuNav.innerHTML += `<button class="aba-btn ${idx === 0 ? 'ativo' : ''}" onclick="mudarAba('${aba}', event)">${labelsAbas[aba]}</button>`;
+            });
+
+            // Ajusta colunas do menu conforme quantidade de abas
+            menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
+
+            if (primeiraAba) {
+                mudarAba(primeiraAba, { target: menuNav.children[0] });
+            }
+        }
 
         function mudarAba(nome, evento) {
             document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativo'));
-            document.getElementById(`secao-${nome}`).style.display = 'block';
-            evento.target.classList.add('ativo');
+            let secaoAlvo = document.getElementById(`secao-${nome}`);
+            if (secaoAlvo) secaoAlvo.style.display = 'block';
+            if (evento && evento.target) evento.target.classList.add('ativo');
         }
 
-        // Máscara para telefone: (DDD) 00000-0000
         function mascaraTelefone(input) {
             let v = input.value.replace(/\D/g, "");
             if (v.length > 11) v = v.substring(0, 11);
@@ -231,7 +300,6 @@
             input.value = v;
         }
 
-        // Cálculo automático de formatura considerando 10 semestres
         function calcularFormatura() {
             let anoIng = parseInt(document.getElementById('m-ano-ingresso-inst').value);
             let semIng = parseInt(document.getElementById('m-sem-ingresso-inst').value);
@@ -239,29 +307,34 @@
                 document.getElementById('m-previsao-formatura').value = "";
                 return;
             }
-            // 10 semestres equivalem a 5 anos letivos completos a partir do semestre de ingresso
             let anosAdicionais = Math.floor((semIng - 1 + 9) / 2);
             let anoFormatura = anoIng + anosAdicionais;
             let semFormatura = (semIng === 1) ? 1 : 2;
-
             document.getElementById('m-previsao-formatura').value = `${semFormatura}º Semestre de ${anoFormatura}`;
         }
 
         async function carregarDadosAdmin() {
             let mSnap = await db.collection("membros").get();
             membrosCache = [];
-            let divM = document.getElementById("lista-admin-membros");
-            divM.innerHTML = "";
+            
+            let divDiretoria = document.getElementById("lista-diretoria");
+            let divLigantes = document.getElementById("lista-ligantes");
+            let divDesligados = document.getElementById("lista-desligados");
+
+            divDiretoria.innerHTML = "";
+            divLigantes.innerHTML = "";
+            divDesligados.innerHTML = "";
+
             let totalAtivos = 0;
 
             mSnap.forEach(doc => {
                 let m = { id: doc.id, ...doc.data() };
                 membrosCache.push(m);
-                
-                if (m.desligado) return; // Se estiver desligado, não aparece na lista ativa
-                totalAtivos++;
 
-                // Cálculo do tempo na liga (Meses e Dias)
+                let cargoLower = (m.cargo || "ligante").toLowerCase();
+                let isDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+
+                // Tempo na liga
                 let tempoLigaStr = "Recém-chegado";
                 if (m.ingressoLiga) {
                     let dIngresso = new Date(m.ingressoLiga + "T00:00:00");
@@ -275,22 +348,43 @@
                     }
                 }
 
-                divM.innerHTML += `
-                    <div class="card-admin-item">
-                        <h4>${m.nome} ${m.desligado ? '<span class="badge-fin pendente">Desligado</span>' : ''}</h4>
-                        <p><strong>Código:</strong> <code>${m.codigo}</code> | <strong>Senha:</strong> ${m.senhaPadrao}</p>
-                        <p><strong>Cargo:</strong> ${m.cargo || 'Ligante'} | <strong>Tempo na Liga:</strong> ${tempoLigaStr}</p>
-                        <p><strong>E-mail:</strong> ${m.email} | <strong>Tel:</strong> ${m.tel || '-'}</p>
-                        <p><strong>Curso:</strong> ${m.curso || 'Enfermagem'} (${m.turno || '-'}) | <strong>Matrícula:</strong> ${m.matricula || '-'}</p>
-                        <p><strong>Instituição:</strong> ${m.instituicao || 'Centro Universitario Facimp Wyden'}</p>
-                        <p><strong>Previsão Formatura:</strong> ${m.previsaoFormatura || '-'}</p>
-                        <div style="margin-top:10px; display:flex; gap:6px;">
-                            <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')">Editar</button>
-                            <button class="btn-mini vermelho" onclick="desligarMembro('${m.id}')">Desligar</button>
-                            <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
+                let htmlCard = `
+                    <div class="card-admin-item card-aluno-recolhido" id="card-aluno-${m.id}">
+                        <div class="aluno-resumo" onclick="toggleExpandirAluno('${m.id}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span><br>
+                                <small>Código: <code>${m.codigo}</code> | Senha: ${m.senhaPadrao}</small>
+                            </div>
+                            <span style="font-size:12px; color:#0056b3; font-weight:bold;">▼ Ver Detalhes</span>
+                        </div>
+                        <div class="aluno-detalhes-completo" id="detalhes-aluno-${m.id}" style="display:none; margin-top:12px; border-top:1px solid #eee; padding-top:10px;">
+                            <p><strong>Nascimento:</strong> ${m.nascimento || '-'}</p>
+                            <p><strong>E-mail:</strong> ${m.email} | <strong>Tel:</strong> ${m.tel || '-'}</p>
+                            <p><strong>Curso:</strong> ${m.curso || 'Enfermagem'} (${m.turno || '-'}) | <strong>Matrícula:</strong> ${m.matricula || '-'}</p>
+                            <p><strong>Instituição:</strong> ${m.instituicao || 'Centro Universitario Facimp Wyden'}</p>
+                            <p><strong>Previsão Formatura:</strong> ${m.previsaoFormatura || '-'}</p>
+                            <p><strong>Tempo na Liga:</strong> ${tempoLigaStr}</p>
+                            ${m.desligado ? `<p style="color:#e03131;"><strong>Desligado em:</strong> ${m.dataDesligamento || '-'} | <strong>Motivo:</strong> ${m.motivoDesligamento || '-'}</p>` : ''}
+                            
+                            <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')">Editar</button>
+                                ${!m.desligado ? `<button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')">Desligar</button>` : ''}
+                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
+                            </div>
                         </div>
                     </div>
                 `;
+
+                if (m.desligado) {
+                    divDesligados.innerHTML += htmlCard;
+                } else {
+                    totalAtivos++;
+                    if (isDiretoria) {
+                        divDiretoria.innerHTML += htmlCard;
+                    } else {
+                        divLigantes.innerHTML += htmlCard;
+                    }
+                }
             });
 
             document.getElementById("total-membros").innerText = `${totalAtivos} ativos`;
@@ -306,6 +400,15 @@
             renderizarFrequenciaAdmin();
             renderizarFinanceiroAdmin();
             carregarAvisosAdmin();
+        }
+
+        function toggleExpandirAluno(id) {
+            let detalhes = document.getElementById(`detalhes-aluno-${id}`);
+            if (detalhes.style.display === "none") {
+                detalhes.style.display = "block";
+            } else {
+                detalhes.style.display = "none";
+            }
         }
 
         async function salvarMembro() {
@@ -392,11 +495,35 @@
             document.getElementById('btn-cancelar-membro').style.display = "none";
         }
 
-        async function desligarMembro(id) {
-            if(confirm("Deseja desligar este ligante? Ele ficará invisível em todo o sistema.")) {
-                await db.collection("membros").doc(id).update({ desligado: true });
-                carregarDadosAdmin();
+        function abrirModalDesligamento(id) {
+            document.getElementById('desligar-membro-id').value = id;
+            document.getElementById('desligar-data').value = new Date().toISOString().split('T')[0];
+            document.getElementById('desligar-motivo').value = '';
+            document.getElementById('modal-desligamento').style.display = 'flex';
+        }
+
+        function fecharModalDesligamento() {
+            document.getElementById('modal-desligamento').style.display = 'none';
+        }
+
+        async function confirmarDesligamento() {
+            let id = document.getElementById('desligar-membro-id').value;
+            let dataDesligamento = document.getElementById('desligar-data').value;
+            let motivoDesligamento = document.getElementById('desligar-motivo').value.trim();
+
+            if (!dataDesligamento || !motivoDesligamento) {
+                alert("Preencha a data e o motivo do desligamento.");
+                return;
             }
+
+            await db.collection("membros").doc(id).update({
+                desligado: true,
+                dataDesligamento,
+                motivoDesligamento
+            });
+
+            fecharModalDesligamento();
+            carregarDadosAdmin();
         }
 
         async function removerMembro(id) {
@@ -431,6 +558,7 @@
         function renderizarAtividadesEdicao() {
             let mesFiltro = document.getElementById("filtro-mes-atividades").value;
             let div = document.getElementById("lista-admin-atividades-edicao");
+            if (!div) return;
             div.innerHTML = "";
 
             let filtradas = atividadesCache.filter(a => a.data && a.data.startsWith(mesFiltro));
@@ -459,6 +587,7 @@
         function renderizarFrequenciaAdmin() {
             let mesFiltro = document.getElementById("filtro-mes-frequencia").value;
             let div = document.getElementById("lista-admin-frequencia");
+            if (!div) return;
             div.innerHTML = "";
 
             let ativFiltradas = atividadesCache.filter(a => a.data && a.data.startsWith(mesFiltro));
@@ -548,10 +677,12 @@
         }
 
         function renderizarFinanceiroAdmin() {
-            let mesFiltro = document.getElementById("filtro-mes-financeiro").value;
+            let mesFiltroSelect = document.getElementById("filtro-mes-financeiro");
             let div = document.getElementById("lista-admin-financeiro");
+            if (!div || !mesFiltroSelect) return;
             div.innerHTML = "";
 
+            let mesFiltro = mesFiltroSelect.value;
             let [anoF, mesF] = mesFiltro.split('-').map(Number);
             let anoMesNum = anoF * 100 + mesF;
             let cobravel = anoMesNum >= 202508;
@@ -638,6 +769,7 @@
 
         async function carregarAvisosAdmin() {
             let div = document.getElementById("lista-admin-avisos");
+            if (!div) return;
             div.innerHTML = "";
             let snap = await db.collection("avisos").get();
             avisosCache = [];
@@ -693,7 +825,10 @@
             }
         }
 
-        window.onload = carregarDadosAdmin;
+        window.onload = () => {
+            verificarPermissoesAdmin();
+            carregarDadosAdmin();
+        };
     </script>
 </body>
 </html>
