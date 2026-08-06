@@ -1,0 +1,73 @@
+/* Isso tira as margens padrão do navegador e escolhe uma fonte limpa */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* O fundo do app e o alinhamento central */
+body {
+    background-color: #f0f2f5; /* Um cinza bem clarinho */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ocupa 100% da altura da tela */
+}
+
+/* A caixinha branca de login (parecendo um cartão) */
+#tela-login {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px; /* Deixa as bordas redondinhas */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Dá uma sombra de aplicativo */
+    width: 90%; /* Em celulares, ocupa quase a tela toda */
+    max-width: 350px; /* Em computadores, não fica gigante */
+    text-align: center;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* Espaçamento entre os campos */
+form div {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* O visual das caixas de digitar */
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* O botão de Entrar */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0056b3; /* AQUI VOCÊ MUDA A COR PRINCIPAL DO APP */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #004494; /* Cor ao passar o mouse */
+}
