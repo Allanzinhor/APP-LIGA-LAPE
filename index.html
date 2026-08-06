@@ -55,19 +55,25 @@
     <!-- TELA PRINCIPAL DO APP -->
     <div class="celular-container" id="conteudo-principal-app" style="display: none;">
         <header class="cabecalho">
-            <h2 id="titulo-boas-vindas">Minha Liga</h2>
-            <div style="display: flex; gap: 8px; align-items: center;">
-                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()">
-                    <!-- Renderizado dinamicamente via JS (Foto ou Inicial) -->
+            <div>
+                <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
+                <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;">
+                    <!-- Renderizado dinamicamente via JS -->
                 </div>
-                <button onclick="fazerLogout()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">Sair</button>
             </div>
         </header>
 
-        <div id="painel-diretoria-link" style="display: none;" class="banner-diretoria">
-            <span>⚙️ Modo Diretoria Ativo</span>
-            <button onclick="window.location.href='diretoria.html'">Painel Admin</button>
-        </div>
+        <!-- AVISOS IMPORTANTES NO TOPO -->
+        <section class="quadro-avisos" style="margin-top: 15px;">
+            <div class="avisos-header">
+                <span>⚠️ Avisos Importantes</span>
+                <span id="contador-slide">1/1</span>
+            </div>
+            <div class="slides-container" id="container-slides"></div>
+        </section>
 
         <!-- Histórico Geral Acumulado -->
         <section class="secao-historico-geral">
@@ -93,15 +99,6 @@
                 </div>
                 <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()">Pagar Mensalidade do Mês (Pix)</button>
             </div>
-        </section>
-
-        <!-- Avisos (Slides) -->
-        <section class="quadro-avisos">
-            <div class="avisos-header">
-                <span>⚠️ Avisos Importantes</span>
-                <span id="contador-slide">1/1</span>
-            </div>
-            <div class="slides-container" id="container-slides"></div>
         </section>
 
         <!-- Calendário -->
@@ -158,16 +155,19 @@
     <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
         <div class="modal-perfil-conteudo">
             <div class="perfil-topo">
-                <div class="avatar-grande" id="perfil-avatar-container" onclick="alterarFotoPerfil()" style="cursor: pointer;" title="Clique para alterar a foto">
+                <div class="avatar-grande" id="perfil-avatar-container" style="position: relative;">
                     <!-- Foto ou Inicial do nome -->
                 </div>
-                <div class="botao-trocar-foto" onclick="alterarFotoPerfil()">✏️</div>
+                <div class="botao-trocar-foto" onclick="document.getElementById('input-arquivo-foto').click()" title="Escolher foto da galeria">📷</div>
+                <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
+                
                 <h3 id="perfil-nome" style="margin-top: 8px;">Nome</h3>
                 <span class="perfil-codigo" id="perfil-codigo">20261000</span>
                 <p class="perfil-cargo" id="perfil-cargo">Ligante</p>
+                <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: bold;"></div>
             </div>
 
-            <div class="perfil-detalhes" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 4px;">
+            <div class="perfil-detalhes" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;">
                 <div class="info-grupo"><span class="info-label">E-mail</span><span class="info-valor" id="perfil-email">-</span></div>
                 <div class="info-grupo"><span class="info-label">Telefone</span><span class="info-valor" id="perfil-tel">-</span></div>
                 <div class="info-grupo"><span class="info-label">Data de Nascimento</span><span class="info-valor" id="perfil-nascimento">-</span></div>
@@ -226,22 +226,18 @@
             corpo.style.backgroundColor = "#e9ecef";
             document.getElementById('conteudo-principal-app').style.display = 'block';
             document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
+            document.getElementById('subtitulo-cargo').innerText = user.cargo || "Ligante";
 
-            let cargoLower = (user.cargo || "").toLowerCase();
-            if(!cargoLower.includes("ligante") && !cargoLower.includes("membro")) {
-                document.getElementById('painel-diretoria-link').style.display = "flex";
-            }
-            
             renderizarAvatarTopo();
             carregarDadosDinamicosApp();
         }
 
-        // Renderiza foto ou a inicial do nome no topo
         function renderizarAvatarTopo() {
             let container = document.getElementById("container-avatar-topo");
             if (!usuarioLogado) return;
 
-            if (usuarioLogado.fotoUrl && usuarioLogado.fotoUrl.trim() !== "") {
+            // Se a foto foi aprovada, exibe ela. Se estiver em análise, mostra inicial mas com aviso
+            if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
                 container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
@@ -256,6 +252,7 @@
                     usuarioLogado = { id: userDoc.id, ...userDoc.data() };
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                     renderizarAvatarTopo();
+                    document.getElementById('subtitulo-cargo').innerText = usuarioLogado.cargo || "Ligante";
                 }
             } catch(e) { console.log(e); }
 
@@ -432,7 +429,6 @@
             }
         }
 
-        // --- GESTÃO DO MODAL DE PERFIL ---
         function abrirPerfilModal() {
             document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
             document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo || "-";
@@ -448,16 +444,26 @@
             document.getElementById("perfil-formatura").innerText = usuarioLogado.previsaoFormatura || "-";
             document.getElementById("perfil-ingresso").innerText = usuarioLogado.ingressoLiga ? new Date(usuarioLogado.ingressoLiga + "T00:00:00").toLocaleDateString('pt-BR') : "-";
 
-            // Renderiza foto ou inicial dentro do modal
+            // Status da foto no perfil
+            let statusMsg = document.getElementById("status-foto-msg");
+            if (usuarioLogado.fotoStatus === 'analise') {
+                statusMsg.innerText = "⏳ Aguardando análise da diretoria";
+                statusMsg.style.color = "#f59f00";
+            } else if (usuarioLogado.fotoStatus === 'negada') {
+                statusMsg.innerText = "❌ Imagem não permitida";
+                statusMsg.style.color = "#fa5252";
+            } else {
+                statusMsg.innerText = "";
+            }
+
             let avatarModal = document.getElementById("perfil-avatar-container");
-            if (usuarioLogado.fotoUrl && usuarioLogado.fotoUrl.trim() !== "") {
+            if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
                 avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
                 avatarModal.innerHTML = `<div style="width:100%; height:100%; background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:28px;">${inicial}</div>`;
             }
 
-            // Botão do Painel da Diretoria (Exibido apenas para quem tem cargo de diretoria)
             let cargoLower = (usuarioLogado.cargo || "").toLowerCase().trim();
             let containerAdminBtn = document.getElementById("btn-container-painel-admin");
             
@@ -472,23 +478,31 @@
 
         function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
 
-        async function alterarFotoPerfil() {
-            let novaUrl = prompt("Insira o link da sua foto de perfil (URL da imagem):", usuarioLogado.fotoUrl || "");
-            if (novaUrl !== null) {
-                usuarioLogado.fotoUrl = novaUrl.trim();
+        // Anexar foto escolhendo da galeria (converte para Base64 para salvar no Firestore)
+        function anexarFotoGaleria(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+
+            let reader = new FileReader();
+            reader.onload = async function(uploadEvent) {
+                let base64Image = uploadEvent.target.result;
+                usuarioLogado.fotoTempUrl = base64Image;
+                usuarioLogado.fotoStatus = 'analise';
+
                 try {
                     await db.collection("membros").doc(usuarioLogado.id).update({
-                        fotoUrl: usuarioLogado.fotoUrl
+                        fotoTempUrl: base64Image,
+                        fotoStatus: 'analise'
                     });
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
-                    renderizarAvatarTopo();
                     abrirPerfilModal();
-                    alert("Foto de perfil atualizada com sucesso!");
+                    alert("Foto enviada para análise da diretoria!");
                 } catch(e) {
                     console.error(e);
-                    alert("Erro ao salvar a foto.");
+                    alert("Erro ao enviar a foto.");
                 }
-            }
+            };
+            reader.readAsDataURL(file);
         }
 
         function fazerLogout() {
