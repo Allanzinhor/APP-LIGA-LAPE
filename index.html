@@ -1,1 +1,36 @@
-teste
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Essa linha abaixo é mágica: ela garante que o app vai se adaptar ao tamanho da tela do celular -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App da Liga Acadêmica</title>
+</head>
+<body>
+
+    <div id="tela-login">
+        <h2>Bem-vindo à Liga</h2>
+        
+        <form>
+            <div>
+                <label for="codigo">Código de Registro do Ligante:</label>
+                <!-- A caixa de texto para o código -->
+                <input type="text" id="codigo" placeholder="Digite seu código" required>
+            </div>
+            
+            <br> <!-- Isso dá um espaço em branco -->
+
+            <div>
+                <label for="senha">Senha:</label>
+                <!-- A caixa de senha oculta os caracteres -->
+                <input type="password" id="senha" placeholder="Digite sua senha" required>
+            </div>
+
+            <br>
+
+            <button type="button">Entrar</button>
+        </form>
+    </div>
+
+</body>
+</html>
