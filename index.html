@@ -6,6 +6,86 @@
     <title>LAPE - Portal do Ligante</title>
     <link rel="stylesheet" href="style.css">
 
+    <!-- ESTILO FORÇADO PARA GARANTIR O DESIGN DA TELA DE LOGIN -->
+    <style>
+        body.fundo-login-forcado {
+            background-color: #e9ecef !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+        }
+        .caixa-login-moderna {
+            background-color: #ffffff !important;
+            padding: 30px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+            width: 90% !important;
+            max-width: 350px !important;
+            text-align: center !important;
+        }
+        .caixa-login-moderna h2 {
+            color: #0056b3 !important;
+            margin-bottom: 5px !important;
+            font-size: 24px !important;
+        }
+        .caixa-login-moderna p {
+            color: #666 !important;
+            font-size: 13px !important;
+            margin-bottom: 25px !important;
+        }
+        .grupo-input-login {
+            margin-bottom: 15px !important;
+            text-align: left !important;
+        }
+        .grupo-input-login label {
+            display: block !important;
+            margin-bottom: 5px !important;
+            font-size: 13px !important;
+            font-weight: bold !important;
+            color: #555 !important;
+        }
+        .grupo-input-login input {
+            width: 100% !important;
+            padding: 11px !important;
+            border: 1px solid #ccc !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+            box-sizing: border-box !important;
+        }
+        .btn-entrar-app {
+            width: 100% !important;
+            padding: 12px !important;
+            background-color: #0056b3 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-size: 15px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            margin-top: 5px !important;
+        }
+        .btn-entrar-app:hover {
+            background-color: #004494 !important;
+        }
+        .btn-admin-portal {
+            width: 100% !important;
+            padding: 10px !important;
+            background-color: #f1f3f5 !important;
+            color: #495057 !important;
+            border: none !important;
+            border-radius: 8px !important;
+            font-size: 12px !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            margin-top: 10px !important;
+        }
+        .btn-admin-portal:hover {
+            background-color: #e2e6ea !important;
+        }
+    </style>
+
     <!-- Importando o Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -19,29 +99,28 @@
       const db = firebase.firestore();
     </script>
 </head>
-<body>
+<body id="corpo-pagina" class="fundo-login-forcado">
 
-    <div class="celular-container">
+    <div class="celular-container" id="container-geral" style="width: 100%;">
         
         <!-- TELA DE LOGIN ESTILIZADA -->
-        <div id="tela-login" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;">
-            <div id="login-box" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 330px; text-align: center;">
-                <h2 style="color: #333; margin-bottom: 8px;">LAPE</h2>
-                <p style="color: #666; font-size: 13px; margin-bottom: 25px;">Portal do Ligante</p>
+        <div id="tela-login">
+            <div class="caixa-login-moderna">
+                <h2>LAPE</h2>
+                <p>Portal do Ligante</p>
                 
-                <div style="margin-bottom: 15px; text-align: left;">
-                    <label style="display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #555;">Código do Ligante</label>
-                    <input type="text" id="login-codigo" placeholder="Ex: 20261001" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+                <div class="grupo-input-login">
+                    <label>Código do Ligante</label>
+                    <input type="text" id="login-codigo" placeholder="Ex: 20261001">
                 </div>
 
-                <div style="margin-bottom: 20px; text-align: left;">
-                    <label style="display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #555;">Senha</label>
-                    <input type="password" id="login-senha" placeholder="Sua senha" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+                <div class="grupo-input-login">
+                    <label>Senha</label>
+                    <input type="password" id="login-senha" placeholder="Sua senha">
                 </div>
 
-                <button onclick="fazerLogin()" style="width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">Entrar</button>
-                
-                <button onclick="window.location.href='diretoria.html'" style="width: 100%; padding: 10px; background-color: #f1f3f5; color: #495057; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">Acesso da Diretoria (Admin)</button>
+                <button class="btn-entrar-app" onclick="fazerLogin()">Entrar</button>
+                <button class="btn-admin-portal" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
             </div>
         </div>
 
@@ -152,6 +231,11 @@
 
         function iniciarAppComUsuario(user) {
             usuarioLogado = user;
+            // Remove a classe de centralização do login e ajusta o fundo para o app
+            document.getElementById('corpo-pagina').classList.remove('fundo-login-forcado');
+            document.getElementById('corpo-pagina').style.backgroundColor = "#f4f7f6";
+            document.getElementById('corpo-pagina').style.alignItems = "flex-start";
+            
             document.getElementById('tela-login').style.display = 'none';
             document.getElementById('conteudo-principal-app').style.display = 'block';
 
