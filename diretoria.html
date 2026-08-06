@@ -393,7 +393,6 @@
                     fotoCardHtml = `<div style="width:36px; height:36px; border-radius:50%; background:#0056b3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:14px;">${inicial}</div>`;
                 }
 
-                // Bloco de Moderação de Foto no Painel
                 let moderacaoFotoHtml = "";
                 if (m.fotoStatus === 'analise' && m.fotoTempUrl) {
                     moderacaoFotoHtml = `
@@ -655,7 +654,7 @@
             if (filtroFreq) filtroFreq.value = data.substring(0, 7);
 
             carregarDadosAdmin();
-            mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[1] });
+            mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
         }
 
         function renderizarAtividadesEdicao() {
@@ -672,17 +671,91 @@
             }
 
             filtradas.forEach(a => {
+                let statusCancelada = a.cancelada ? `<span style="color: #e03131; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">⚠️ Atividade Cancelada</span>` : "";
+                let textoBotaoCancelar = a.cancelada ? "Ativar" : "Cancelar";
+                let corBotaoCancelar = a.cancelada ? "verde" : "cinza";
+
                 div.innerHTML += `
-                    <div class="card-admin-item flex-row">
-                        <div><h4>${a.titulo}</h4><p class="cinza">${a.data} - ${a.hora} | CH: ${a.ch}h</p></div>
-                        <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">Apagar</button>
+                    <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h4 style="margin: 0; color: #0056b3;">${a.titulo}</h4>
+                                <p class="cinza" style="margin: 4px 0; font-size: 12px;">${a.data} às ${a.hora} | Local: ${a.local || 'N/D'} | CH: ${a.ch}h</p>
+                                <p style="font-size: 11px; color: #555; margin: 4px 0;">${a.desc || 'Sem descrição'}</p>
+                                ${statusCancelada}
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="btn-mini cinza" onclick="prepararEdicaoAtividade('${a.id}')">✏️ Editar</button>
+                            <button class="btn-mini ${corBotaoCancelar}" onclick="alternarCancelarAtividade('${a.id}', ${!a.cancelada})">🚫 ${textoBotaoCancelar}</button>
+                            <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">🗑️ Excluir</button>
+                        </div>
                     </div>
                 `;
             });
         }
 
+        function prepararEdicaoAtividade(id) {
+            let ativ = atividadesCache.find(x => x.id === id);
+            if (!ativ) return;
+
+            document.getElementById('at-titulo').value = ativ.titulo || '';
+            document.getElementById('at-data').value = ativ.data || '';
+            document.getElementById('at-hora').value = ativ.hora || '19:00';
+            document.getElementById('at-local').value = ativ.local || '';
+            document.getElementById('at-ch').value = ativ.ch || 0;
+            document.getElementById('at-desc').value = ativ.desc || '';
+
+            let btnCadastrar = document.querySelector('#secao-cadastro-atividades .btn-salvar');
+            btnCadastrar.innerText = "Salvar Alterações da Atividade";
+            btnCadastrar.setAttribute("onclick", `salvarEdicaoAtividade('${id}')`);
+
+            mudarAba('cadastro-atividades', { target: document.querySelectorAll('.aba-btn')[2] });
+        }
+
+        async function salvarEdicaoAtividade(id) {
+            let titulo = document.getElementById('at-titulo').value;
+            let data = document.getElementById('at-data').value;
+            if(!titulo || !data) { alert("Preencha Título e Data."); return; }
+
+            await db.collection("atividades").doc(id).update({
+                titulo, 
+                data,
+                hora: document.getElementById('at-hora').value || "19:00",
+                local: document.getElementById('at-local').value || "Local a definir",
+                ch: Number(document.getElementById('at-ch').value || 0),
+                desc: document.getElementById('at-desc').value || ""
+            });
+
+            alert("Atividade atualizada com sucesso!");
+
+            let btnCadastrar = document.querySelector('#secao-cadastro-atividades .btn-salvar');
+            btnCadastrar.innerText = "Criar Atividade na Nuvem";
+            btnCadastrar.setAttribute("onclick", "cadastrarAtividade()");
+
+            document.getElementById('at-titulo').value = "";
+            document.getElementById('at-data').value = "";
+            document.getElementById('at-hora').value = "";
+            document.getElementById('at-local').value = "";
+            document.getElementById('at-ch').value = "";
+            document.getElementById('at-desc').value = "";
+
+            carregarDadosAdmin();
+            mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
+        }
+
+        async function alternarCancelarAtividade(id, statusCancelamento) {
+            let msg = statusCancelamento ? "Deseja cancelar esta atividade?" : "Deseja reativar esta atividade?";
+            if (confirm(msg)) {
+                await db.collection("atividades").doc(id).update({
+                    cancelada: statusCancelamento
+                });
+                carregarDadosAdmin();
+            }
+        }
+
         async function removerAtividade(id) {
-            if(confirm("Apagar atividade?")) {
+            if(confirm("Apagar atividade definitivamente?")) {
                 await db.collection("atividades").doc(id).delete();
                 carregarDadosAdmin();
             }
