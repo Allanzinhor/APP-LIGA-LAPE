@@ -8,10 +8,12 @@
     <link rel="icon" href="brasao.png" type="image/png">
     <link rel="apple-touch-icon" href="brasao.png">
     <link rel="stylesheet" href="style.css">
-    
-<meta name="color-scheme" content="light">
+
+    <meta name="color-scheme" content="light">
+
     <style>
-        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #000; }
+        input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
         #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; }
         #tela-login h2 { color: #0056b3; font-size: 26px; margin-bottom: 5px; }
         #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
@@ -60,11 +62,9 @@
 
     <!-- TELA PRINCIPAL DO APP -->
     <div class="celular-container" id="conteudo-principal-app" style="display: none;">
-<header class="cabecalho">
+        <header class="cabecalho">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <!-- Brasão adicionado aqui -->
                 <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
-                
                 <div>
                     <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
                     <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
@@ -211,7 +211,6 @@
         let indiceSlideAtual = 0;
         let eventoInstalacaoPWA = null;
 
-        // Captura o evento de instalação do navegador
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             eventoInstalacaoPWA = e;
@@ -224,14 +223,12 @@
                 eventoInstalacaoPWA.prompt();
                 eventoInstalacaoPWA.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        console.log('Usuário aceitou instalar o aplicativo');
                         document.getElementById('btn-instalar-app').style.display = 'none';
                     }
                     eventoInstalacaoPWA = null;
                 });
             } else {
-                // Se estiver no iPhone/Safari ou navegador que não dispara o prompt automático
-                alert("Para instalar na tela inicial:\n\n1. No iPhone (Safari): Toque no botão de Compartilhar (quadrado com seta) e escolha 'Adicionar à Tela de Início'.\n\n2. No Android (Chrome): Toque nos 3 pontinhos do menu do navegador e selecione 'Instalar aplicativo' ou 'Adicionar à tela inicial'.");
+                alert("Para instalar na tela inicial:\n\n1. No iPhone (Safari): Toque no botão de Compartilhar e escolha 'Adicionar à Tela de Início'.\n\n2. No Android (Chrome): Toque nos 3 pontinhos do menu e selecione 'Instalar aplicativo' ou 'Adicionar à tela inicial'.");
             }
         }
 
@@ -319,6 +316,7 @@
                         local: d.local || "Local a definir",
                         ch: Number(d.ch || 0),
                         desc: d.desc || "",
+                        cancelada: d.cancelada || false,
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
@@ -576,7 +574,7 @@
             for (let i = 0; i < primeiroDiaMes; i++) { gridDias.innerHTML += `<div class="dia-calendario vazio"></div>`; }
             for (let dia = 1; dia <= totalDiasMes; dia++) {
                 let dataFormatada = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                let temAtividade = atividades.some(ativ => ativ.data === dataFormatada);
+                let temAtividade = atividades.some(ativ => ativ.data === dataFormatada && !ativ.cancelada);
                 let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
                 let hoje = new Date();
                 let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "dia-hoje" : "";
@@ -589,10 +587,10 @@
         }
 
         function renderizarHistoricoGeral() {
-            let totalGeralAtividades = atividades.length;
-            let totalGeralPresencas = atividades.filter(a => a.statusAdmin === 'presente').length;
-            let totalGeralJustificativas = atividades.filter(a => a.statusAdmin === 'justificado').length;
-            let totalGeralCH = atividades.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
+            let totalGeralAtividades = atividades.filter(a => !a.cancelada).length;
+            let totalGeralPresencas = atividades.filter(a => !a.cancelada && a.statusAdmin === 'presente').length;
+            let totalGeralJustificativas = atividades.filter(a => !a.cancelada && a.statusAdmin === 'justificado').length;
+            let totalGeralCH = atividades.filter(a => !a.cancelada && a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("geral-atividades").innerText = totalGeralAtividades;
             document.getElementById("geral-presencas").innerText = totalGeralPresencas;
@@ -611,11 +609,12 @@
                 return dataAtiv.getMonth() === mesAtual && dataAtiv.getFullYear() === anoAtual;
             });
 
-            let totalAtividades = atividadesDesteMes.length;
-            let totalPresencas = atividadesDesteMes.filter(a => a.statusAdmin === 'presente').length;
-            let totalFaltas = atividadesDesteMes.filter(a => a.statusAdmin === 'negado').length;
-            let totalJustificativas = atividadesDesteMes.filter(a => a.statusAdmin === 'justificado').length;
-            let totalCH = atividadesDesteMes.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
+            let ativValidas = atividadesDesteMes.filter(a => !a.cancelada);
+            let totalAtividades = ativValidas.length;
+            let totalPresencas = ativValidas.filter(a => a.statusAdmin === 'presente').length;
+            let totalFaltas = ativValidas.filter(a => a.statusAdmin === 'negado').length;
+            let totalJustificativas = ativValidas.filter(a => a.statusAdmin === 'justificado').length;
+            let totalCH = ativValidas.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("stat-total").innerText = totalAtividades;
             document.getElementById("stat-presencas").innerText = totalPresencas;
@@ -623,7 +622,7 @@
             document.getElementById("stat-justificativas").innerText = totalJustificativas;
             document.getElementById("stat-ch").innerText = totalCH + "h";
 
-            if (totalAtividades === 0) {
+            if (atividadesDesteMes.length === 0) {
                 listaAtividades.innerHTML = "<p class='sem-atividade'>Não há atividades agendadas para este mês.</p>";
                 return;
             }
@@ -633,31 +632,42 @@
                 let botoesCardHtml = "";
                 let statusOficialHtml = "";
 
-                if (ativ.statusAdmin === 'presente') {
-                    statusOficialHtml = `<p class="tag-justificado">✓ Presença validada pela Diretoria</p>`;
-                } else if (ativ.statusAdmin === 'negado') {
-                    statusOficialHtml = `<p class="tag-falta">✕ Falta registrada / Justificativa Negada</p>`;
-                } else if (ativ.statusAdmin === 'justificado') {
-                    statusOficialHtml = `<p class="tag-justificado">✓ Justificativa Aceita (Abonada)</p>`;
-                } else if (ativ.statusAdmin === 'aguardando_analise') {
-                    statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 6px;">⏳ Justificativa em análise</p>`;
-                    botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
+                if (ativ.cancelada) {
+                    statusOficialHtml = `
+                        <div style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                            <p style="color: #e67700; font-size: 13px; font-weight: bold; margin: 0;">🚫 Atividade Cancelada</p>
+                            <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                        </div>
+                    `;
                 } else {
-                    if (ativ.confirmadoAluno) {
-                        botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                    if (ativ.statusAdmin === 'presente') {
+                        statusOficialHtml = `<p class="tag-justificado">✓ Presença validada pela Diretoria</p>`;
+                    } else if (ativ.statusAdmin === 'negado') {
+                        statusOficialHtml = `<p class="tag-falta">✕ Falta registrada / Justificativa Negada</p>`;
+                    } else if (ativ.statusAdmin === 'justificado') {
+                        statusOficialHtml = `<p class="tag-justificado">✓ Justificativa Aceita (Abonada)</p>`;
+                    } else if (ativ.statusAdmin === 'aguardando_analise') {
+                        statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 6px;">⏳ Justificativa em análise</p>`;
+                        botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
                     } else {
-                        botoesCardHtml = `
-                            <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
-                            <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
-                        `;
+                        if (ativ.confirmadoAluno) {
+                            botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                        } else {
+                            botoesCardHtml = `
+                                <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
+                                <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
+                            `;
+                        }
                     }
                 }
 
+                let badgeCanceladaEstilo = ativ.cancelada ? 'opacity: 0.75; border: 1.5px dashed #f59f00;' : '';
+
                 listaAtividades.innerHTML += `
-                    <div class="card-atividade">
+                    <div class="card-atividade" style="${badgeCanceladaEstilo}">
                         <div class="badges">
                             <span class="badge-dias">${ativ.ch}h de CH</span>
-                            <span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>
+                            ${!ativ.cancelada ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Cancelada</span>'}
                         </div>
                         <h3 class="titulo-atividade">${ativ.titulo}</h3>
                         <p class="desc-atividade">${ativ.desc}</p>
@@ -666,9 +676,7 @@
                             <p><strong>Local:</strong> ${ativ.local}</p>
                             ${statusOficialHtml}
                         </div>
-                        <div class="botoes-card" style="margin-top: 15px;">
-                            ${botoesCardHtml}
-                        </div>
+                        ${!ativ.cancelada ? `<div class="botoes-card" style="margin-top: 15px;">${botoesCardHtml}</div>` : ''}
                     </div>
                 `;
             });
