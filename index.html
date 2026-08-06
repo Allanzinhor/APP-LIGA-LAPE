@@ -66,7 +66,7 @@
             <button onclick="window.location.href='diretoria.html'">Painel Admin</button>
         </div>
 
-        <!-- Histórico Geral -->
+        <!-- Histórico Geral Acumulado -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
             <div class="dashboard-estatisticas geral">
@@ -174,13 +174,19 @@
             avSnap.forEach(doc => avisos.push(doc.data()));
             renderizarAvisos();
 
-            // Atividades e Presenças salvas na nuvem
+            // Atividades e frequências da nuvem
             let atSnap = await db.collection("atividades").get();
             atividades = [];
             atSnap.forEach(doc => {
                 let d = doc.data();
                 let frequenciasMap = d.frequencias || {};
-                let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: null, texto: '' };
+                let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
+
+                // Conta quantos alunos confirmaram presença prévia
+                let totalConfirmados = 0;
+                Object.values(frequenciasMap).forEach(reg => {
+                    if(reg.confirmadoAluno === true) totalConfirmados++;
+                });
 
                 atividades.push({
                     id: doc.id,
@@ -190,38 +196,42 @@
                     local: d.local || "Local a definir",
                     ch: Number(d.ch || 0),
                     desc: d.desc || "",
-                    status: meuRegistro.status, // 'presente', 'falta', 'justificado', etc.
-                    textoJustificativa: meuRegistro.texto || ''
+                    confirmadoAluno: meuRegistro.confirmadoAluno || false, // Se o aluno marcou presença prévia
+                    statusAdmin: reg.status, // O status oficial dado pela diretoria ('presente', 'falta', 'justificado', 'negado')
+                    textoJustificativa: meuRegistro.texto || '',
+                    totalConfirmados: totalConfirmados
                 });
             });
             renderizarApp();
         }
 
-        async function alterarStatusPresencaNoFirebase(ativId, novoStatus, textoJust = "") {
+        async function alterarRegistroFirebase(ativId, dadosAtualizados) {
             try {
                 let docRef = db.collection("atividades").doc(ativId);
                 let docSnap = await docRef.get();
                 if(docSnap.exists) {
                     let data = docSnap.data();
                     let frequencias = data.frequencias || {};
-                    frequencias[usuarioLogado.id] = { status: novoStatus, texto: textoJust };
+                    let atual = frequencias[usuarioLogado.id] || {};
+                    
+                    frequencias[usuarioLogado.id] = { ...atual, ...dadosAtualizados };
                     await docRef.update({ frequencias: frequencias });
                     carregarDadosDinamicosApp();
                 }
             } catch(e) {
-                console.error("Erro ao salvar status:", e);
-                alert("Erro ao registrar no banco de dados.");
+                console.error("Erro ao salvar:", e);
+                alert("Erro ao conectar com o banco de dados.");
             }
         }
 
-        function confirmarPresenca(id) {
-            alterarStatusPresencaNoFirebase(id, 'presente');
+        function confirmarPresencaAluno(id) {
+            alterarRegistroFirebase(id, { confirmadoAluno: true });
         }
 
         function abrirModalJust(id) {
             let motivo = prompt("Explique o motivo da ausência:");
             if (motivo && motivo.trim() !== "") {
-                alterarStatusPresencaNoFirebase(id, 'justificado', motivo);
+                alterarRegistroFirebase(id, { confirmadoAluno: false, status: 'justificado', texto: motivo });
             }
         }
 
@@ -256,11 +266,12 @@
             renderizarCardsENumeros();
         }
 
+        // HISTÓRICO GERAL E MENSAL SÓ CONTA SE A DIRETORIA DEU O STATUS DE 'presente'
         function renderizarHistoricoGeral() {
             let totalGeralAtividades = atividades.length;
-            let totalGeralPresencas = atividades.filter(a => a.status === 'presente').length;
-            let totalGeralJustificativas = atividades.filter(a => a.status === 'justificado' || a.status === 'negado').length;
-            let totalGeralCH = atividades.filter(a => a.status === 'presente').reduce((s, a) => s + a.ch, 0);
+            let totalGeralPresencas = atividades.filter(a => a.statusAdmin === 'presente').length;
+            let totalGeralJustificativas = atividades.filter(a => a.statusAdmin === 'justificado' || a.statusAdmin === 'negado').length;
+            let totalGeralCH = atividades.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("geral-atividades").innerText = totalGeralAtividades;
             document.getElementById("geral-presencas").innerText = totalGeralPresencas;
@@ -279,9 +290,9 @@
             });
 
             let totalAtividades = atividadesDesteMes.length;
-            let totalPresencas = atividadesDesteMes.filter(a => a.status === 'presente').length;
-            let totalJustificativas = atividadesDesteMes.filter(a => a.status === 'justificado' || a.status === 'negado').length;
-            let totalCH = atividadesDesteMes.filter(a => a.status === 'presente').reduce((s, a) => s + a.ch, 0);
+            let totalPresencas = atividadesDesteMes.filter(a => a.statusAdmin === 'presente').length;
+            let totalJustificativas = atividadesDesteMes.filter(a => a.statusAdmin === 'justificado' || a.statusAdmin === 'negado').length;
+            let totalCH = atividadesDesteMes.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
             document.getElementById("stat-total").innerText = totalAtividades;
             document.getElementById("stat-presencas").innerText = totalPresencas;
@@ -295,24 +306,33 @@
 
             atividadesDesteMes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
-                let botaoHtml = `<button class="btn-confirmar" onclick="confirmarPresenca('${ativ.id}')">Confirmar Presença</button>`;
                 
-                if (ativ.status === 'presente') {
+                // Botão do Aluno (indica presença prévia, sem alterar contadores do topo)
+                let botaoHtml = `<button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>`;
+                if (ativ.confirmadoAluno) {
                     botaoHtml = `<button class="btn-confirmado" disabled>✓ Presença Confirmada</button>`;
-                } else if (ativ.status === 'justificado') {
-                    botaoHtml = `<button class="btn-justificado-badge" disabled>Justificativa em Análise</button>`;
-                } else if (ativ.status === 'negado') {
-                    botaoHtml = `<button class="btn-cancelar" style="font-size:13px; padding:10px;" disabled>Justificativa Negada (Falta)</button>`;
+                }
+
+                // Se a diretoria já validou oficialmente a presença ou falta
+                let statusOficialHtml = "";
+                if (ativ.statusAdmin === 'presente') {
+                    statusOficialHtml = `<p style="color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px;">✓ Presença validada pela Diretoria</p>`;
+                } else if (ativ.statusAdmin === 'justificado') {
+                    statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 6px;">⏳ Justificativa em análise</p>`;
                 }
 
                 listaAtividades.innerHTML += `
                     <div class="card-atividade">
-                        <div class="badges"><span class="badge-confirmados">${ativ.ch}h de CH</span></div>
+                        <div class="badges">
+                            <span class="badge-dias">${ativ.ch}h de CH</span>
+                            <span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>
+                        </div>
                         <h3 class="titulo-atividade">${ativ.titulo}</h3>
                         <p class="desc-atividade">${ativ.desc}</p>
                         <div class="info-atividade">
                             <p><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
                             <p><strong>Local:</strong> ${ativ.local}</p>
+                            ${statusOficialHtml}
                         </div>
                         <div class="botoes-card">
                             ${botaoHtml}
