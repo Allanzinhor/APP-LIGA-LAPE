@@ -478,29 +478,57 @@
 
         function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
 
-        // Anexar foto escolhendo da galeria (converte para Base64 para salvar no Firestore)
-        function anexarFotoGaleria(event) {
+function anexarFotoGaleria(event) {
             let file = event.target.files[0];
             if (!file) return;
 
             let reader = new FileReader();
-            reader.onload = async function(uploadEvent) {
-                let base64Image = uploadEvent.target.result;
-                usuarioLogado.fotoTempUrl = base64Image;
-                usuarioLogado.fotoStatus = 'analise';
+            reader.onload = function(uploadEvent) {
+                let img = new Image();
+                img.src = uploadEvent.target.result;
+                img.onload = async function() {
+                    // Redimensiona a imagem para caber perfeitamente no limite do banco de dados
+                    let canvas = document.createElement('canvas');
+                    let maxDim = 300; // Define largura/altura máxima de 300px
+                    let width = img.width;
+                    let height = img.height;
 
-                try {
-                    await db.collection("membros").doc(usuarioLogado.id).update({
-                        fotoTempUrl: base64Image,
-                        fotoStatus: 'analise'
-                    });
-                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
-                    abrirPerfilModal();
-                    alert("Foto enviada para análise da diretoria!");
-                } catch(e) {
-                    console.error(e);
-                    alert("Erro ao enviar a foto.");
-                }
+                    if (width > height) {
+                        if (width > maxDim) {
+                            height *= maxDim / width;
+                            width = maxDim;
+                        }
+                    } else {
+                        if (height > maxDim) {
+                            width *= maxDim / height;
+                            height = maxDim;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    let ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Converte para JPEG comprimido (peso leve)
+                    let base64Image = canvas.toDataURL('image/jpeg', 0.7);
+
+                    usuarioLogado.fotoTempUrl = base64Image;
+                    usuarioLogado.fotoStatus = 'analise';
+
+                    try {
+                        await db.collection("membros").doc(usuarioLogado.id).update({
+                            fotoTempUrl: base64Image,
+                            fotoStatus: 'analise'
+                        });
+                        localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                        abrirPerfilModal();
+                        alert("Foto enviada para análise da diretoria com sucesso!");
+                    } catch(e) {
+                        console.error(e);
+                        alert("Erro ao salvar a foto compactada. Tente uma imagem menor.");
+                    }
+                };
             };
             reader.readAsDataURL(file);
         }
