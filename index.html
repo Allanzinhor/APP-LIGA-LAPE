@@ -19,26 +19,33 @@
       const db = firebase.firestore();
     </script>
 </head>
-<body class="fundo-app">
+<body>
 
     <div class="celular-container">
         
-        <!-- TELA DE LOGIN -->
-        <div id="tela-login" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;">
-            <div style="background: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 340px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
-                <h2>LAPE</h2>
-                <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Portal do Ligante</p>
+        <!-- TELA DE LOGIN ESTILIZADA -->
+        <div id="tela-login" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;">
+            <div id="login-box" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 330px; text-align: center;">
+                <h2 style="color: #333; margin-bottom: 8px;">LAPE</h2>
+                <p style="color: #666; font-size: 13px; margin-bottom: 25px;">Portal do Ligante</p>
                 
-                <input type="text" id="login-codigo" placeholder="Código do Ligante (Ex: 20261001)" style="width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px;">
-                <input type="password" id="login-senha" placeholder="Senha (Padrão: LAPE2026)" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px;">
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #555;">Código do Ligante</label>
+                    <input type="text" id="login-codigo" placeholder="Ex: 20261001" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+                </div>
+
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #555;">Senha</label>
+                    <input type="password" id="login-senha" placeholder="Sua senha" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px;">
+                </div>
+
+                <button onclick="fazerLogin()" style="width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">Entrar</button>
                 
-                <button onclick="fazerLogin()" style="width: 100%; background: #0056b3; color: white; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Entrar no App</button>
-                
-                <button onclick="window.location.href='diretoria.html'" style="width: 100%; background: #f1f3f5; color: #495057; padding: 8px; border: none; border-radius: 8px; font-size: 11px; margin-top: 10px; cursor: pointer;">Acesso da Diretoria (Admin)</button>
+                <button onclick="window.location.href='diretoria.html'" style="width: 100%; padding: 10px; background-color: #f1f3f5; color: #495057; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">Acesso da Diretoria (Admin)</button>
             </div>
         </div>
 
-        <!-- TELA PRINCIPAL DO APP (Incialmente oculta até o login) -->
+        <!-- TELA PRINCIPAL DO APP (Incialmente oculta) -->
         <div id="conteudo-principal-app" style="display: none;">
             <header class="cabecalho">
                 <h2 id="titulo-boas-vindas">Minha Liga</h2>
@@ -50,7 +57,6 @@
                 </div>
             </header>
 
-            <!-- Botão da Diretoria (Se o usuário logado for cargo de gestão) -->
             <div id="painel-diretoria-link" style="display: none;" class="banner-diretoria">
                 <span>⚙️ Modo Diretoria Ativo</span>
                 <button onclick="window.location.href='diretoria.html'">Painel Admin</button>
@@ -106,7 +112,6 @@
         </div>
     </div>
 
-    <!-- Modais de Perfil / Pix mantidos -->
     <script>
         let usuarioLogado = null;
         let atividades = [];
@@ -136,12 +141,11 @@
                     return;
                 }
 
-                // Salva na sessão do navegador e libera o app
                 localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
                 iniciarAppComUsuario(dadosUser);
 
             } catch(e) {
-                console.error("Erro ao fazer login:", e);
+                console.error("Erro no login:", e);
                 alert("Erro ao conectar com o banco de dados.");
             }
         }
@@ -153,7 +157,6 @@
 
             document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
             
-            // Verifica se é diretoria para mostrar o botão admin
             let cargoLower = (user.cargo || "").toLowerCase();
             if(!cargoLower.includes("ligante") && !cargoLower.includes("membro")) {
                 document.getElementById('painel-diretoria-link').style.display = "flex";
@@ -163,13 +166,11 @@
         }
 
         async function carregarDadosDinamicosApp() {
-            // Puxa avisos
             let avSnap = await db.collection("avisos").get();
             avisos = [];
             avSnap.forEach(doc => avisos.push(doc.data()));
             renderizarAvisos();
 
-            // Puxa atividades
             let atSnap = await db.collection("atividades").get();
             atividades = [];
             atSnap.forEach(doc => atividades.push({ id: doc.id, ...doc.data() }));
@@ -181,7 +182,6 @@
             location.reload();
         }
 
-        // Funções de apoio do calendário e slides
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
@@ -222,7 +222,6 @@
         document.getElementById("btn-prev-mes").addEventListener("click", () => { mesAtual--; if (mesAtual < 0) { mesAtual = 11; anoAtual--; } renderizarApp(); });
         document.getElementById("btn-next-mes").addEventListener("click", () => { mesAtual++; if (mesAtual > 11) { mesAtual = 0; anoAtual++; } renderizarApp(); });
 
-        // Verifica ao abrir se já estava logado na sessão
         window.onload = () => {
             let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
             if(sessaoSalva) {
