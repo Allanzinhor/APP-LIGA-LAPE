@@ -1,0 +1,20 @@
+{
+  "name": "LAPE",
+  "short_name": "LAPE",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0056b3",
+  "icons": [
+    {
+      "src": "brasao.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "brasao.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

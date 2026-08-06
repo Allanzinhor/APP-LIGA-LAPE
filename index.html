@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LAPE - Portal do Ligante</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="brasao.png" type="image/png">
+    <link rel="apple-touch-icon" href="brasao.png">
     <link rel="stylesheet" href="style.css">
 
     <style>
@@ -16,6 +19,7 @@
         .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
         .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-admin { width: 100%; padding: 10px; background-color: #f1f3f5; color: #495057; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 12px; }
+        .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; }
         .btn-desconfirmar { background-color: #e03131 !important; color: white !important; }
         .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
@@ -49,6 +53,7 @@
             <input type="password" id="login-senha" placeholder="Sua senha">
         </div>
         <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
+        <button class="btn-instalar" id="btn-instalar-app" onclick="instalarAppPWA()">📱 Instalar App na Tela Inicial</button>
         <button class="btn-admin" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
     </div>
 
@@ -198,6 +203,31 @@
         let atividades = [];
         let avisos = [];
         let indiceSlideAtual = 0;
+        let eventoInstalacaoPWA = null;
+
+        // Captura o evento de instalação do navegador
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            eventoInstalacaoPWA = e;
+            let btnInstalar = document.getElementById('btn-instalar-app');
+            if (btnInstalar) btnInstalar.style.display = 'block';
+        });
+
+        function instalarAppPWA() {
+            if (eventoInstalacaoPWA) {
+                eventoInstalacaoPWA.prompt();
+                eventoInstalacaoPWA.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou instalar o aplicativo');
+                        document.getElementById('btn-instalar-app').style.display = 'none';
+                    }
+                    eventoInstalacaoPWA = null;
+                });
+            } else {
+                // Se estiver no iPhone/Safari ou navegador que não dispara o prompt automático
+                alert("Para instalar na tela inicial:\n\n1. No iPhone (Safari): Toque no botão de Compartilhar (quadrado com seta) e escolha 'Adicionar à Tela de Início'.\n\n2. No Android (Chrome): Toque nos 3 pontinhos do menu do navegador e selecione 'Instalar aplicativo' ou 'Adicionar à tela inicial'.");
+            }
+        }
 
         async function fazerLogin() {
             let codigoInput = document.getElementById('login-codigo').value.trim();
@@ -236,7 +266,6 @@
             let container = document.getElementById("container-avatar-topo");
             if (!usuarioLogado) return;
 
-            // Se a foto foi aprovada, exibe ela. Se estiver em análise, mostra inicial mas com aviso
             if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
                 container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
@@ -444,7 +473,6 @@
             document.getElementById("perfil-formatura").innerText = usuarioLogado.previsaoFormatura || "-";
             document.getElementById("perfil-ingresso").innerText = usuarioLogado.ingressoLiga ? new Date(usuarioLogado.ingressoLiga + "T00:00:00").toLocaleDateString('pt-BR') : "-";
 
-            // Status da foto no perfil
             let statusMsg = document.getElementById("status-foto-msg");
             if (usuarioLogado.fotoStatus === 'analise') {
                 statusMsg.innerText = "⏳ Aguardando análise da diretoria";
@@ -478,7 +506,7 @@
 
         function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
 
-function anexarFotoGaleria(event) {
+        function anexarFotoGaleria(event) {
             let file = event.target.files[0];
             if (!file) return;
 
@@ -487,22 +515,15 @@ function anexarFotoGaleria(event) {
                 let img = new Image();
                 img.src = uploadEvent.target.result;
                 img.onload = async function() {
-                    // Redimensiona a imagem para caber perfeitamente no limite do banco de dados
                     let canvas = document.createElement('canvas');
-                    let maxDim = 300; // Define largura/altura máxima de 300px
+                    let maxDim = 300;
                     let width = img.width;
                     let height = img.height;
 
                     if (width > height) {
-                        if (width > maxDim) {
-                            height *= maxDim / width;
-                            width = maxDim;
-                        }
+                        if (width > maxDim) { height *= maxDim / width; width = maxDim; }
                     } else {
-                        if (height > maxDim) {
-                            width *= maxDim / height;
-                            height = maxDim;
-                        }
+                        if (height > maxDim) { width *= maxDim / height; height = maxDim; }
                     }
 
                     canvas.width = width;
@@ -510,7 +531,6 @@ function anexarFotoGaleria(event) {
                     let ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Converte para JPEG comprimido (peso leve)
                     let base64Image = canvas.toDataURL('image/jpeg', 0.7);
 
                     usuarioLogado.fotoTempUrl = base64Image;
