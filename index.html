@@ -59,10 +59,15 @@
 
     <!-- TELA PRINCIPAL DO APP -->
     <div class="celular-container" id="conteudo-principal-app" style="display: none;">
-        <header class="cabecalho">
-            <div>
-                <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
-                <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
+<header class="cabecalho">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <!-- Brasão adicionado aqui -->
+                <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+                
+                <div>
+                    <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
+                    <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
+                </div>
             </div>
             <div style="display: flex; align-items: center;">
                 <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;">
