@@ -1115,21 +1115,24 @@ textarea:focus { border-color: #0056b3; }
 }
 .btn-acao.txt-vermelho { color: #dc3545; }
 
-/* Correção global para quebra de texto (nunca mais vaza da caixa) */
+/* Correção universal de quebra de texto (nunca mais vaza da caixa) */
 p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide {
     word-break: break-word;
     overflow-wrap: break-word;
 }
 
-/* Estilização e transição lateral dos Avisos (Carrossel Horizontal) */
+/* =========================================
+   QUADRO DE AVISOS (COM DESTAQUE AMARELO)
+   ========================================= */
 .quadro-avisos {
-    background: #ffffff;
+    background: #fffdf4; /* Fundo amarelo clarinho de destaque */
     border-radius: 12px;
     padding: 15px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     margin-bottom: 20px;
-    overflow: hidden; /* Oculta o que sai da caixa */
+    overflow: hidden;
     position: relative;
+    border-left: 5px solid #ffc107; /* Barra lateral amarela de atenção */
 }
 
 .avisos-header {
@@ -1138,9 +1141,9 @@ p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide
     align-items: center;
     font-size: 13px;
     font-weight: bold;
-    color: #495057;
+    color: #b7791f; /* Tom de amarelo escuro/laranja elegante para o cabeçalho */
     margin-bottom: 10px;
-    border-bottom: 1px solid #f1f3f5;
+    border-bottom: 1px solid #fef3c7;
     padding-bottom: 5px;
 }
 
@@ -1154,7 +1157,7 @@ p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide
 .slide {
     min-width: 100%;
     box-sizing: border-box;
-    display: none; /* Escondidos por padrão */
+    display: none;
     opacity: 0;
     transition: opacity 0.6s ease-in-out;
 }
@@ -1179,7 +1182,7 @@ p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide
 .slide h4 {
     margin: 0 0 5px 0;
     font-size: 14px;
-    color: #0056b3;
+    color: #744210; /* Título do aviso com cor destacada original */
 }
 
 .slide p {
