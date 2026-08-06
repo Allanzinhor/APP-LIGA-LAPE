@@ -210,6 +210,7 @@
         let avisos = [];
         let indiceSlideAtual = 0;
         let eventoInstalacaoPWA = null;
+        let intervaloCronometro = null;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -298,10 +299,23 @@
             try {
                 let atSnap = await db.collection("atividades").get();
                 atividades = [];
-                atSnap.forEach(doc => {
+                
+                for (let doc of atSnap.docs) {
                     let d = doc.data();
                     let frequenciasMap = d.frequencias || {};
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
+
+                    // Validação automática de 24 horas antes do prazo limite
+                    let dataHoraAtiv = new Date(`${d.data}T${d.hora || "19:00"}:00`);
+                    let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
+                    let agora = new Date();
+
+                    if (agora > limitePrazo && meuRegistro.status === 'pendente' && !meuRegistro.confirmadoAluno && !d.cancelada) {
+                        // Se passou do prazo e não confirmou nem justificou, aplica falta automaticamente
+                        frequenciasMap[usuarioLogado.id] = { ...meuRegistro, status: 'negado' };
+                        await db.collection("atividades").doc(doc.id).update({ frequencias: frequenciasMap });
+                        meuRegistro.status = 'negado';
+                    }
 
                     let totalConfirmados = 0;
                     Object.values(frequenciasMap).forEach(reg => {
@@ -316,14 +330,14 @@
                         local: d.local || "Local a definir",
                         ch: Number(d.ch || 0),
                         desc: d.desc || "",
-                        publico: d.publico || "todos", // "todos" ou "diretoria"
+                        publico: d.publico || "todos",
                         cancelada: d.cancelada || false,
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
                         totalConfirmados: totalConfirmados
                     });
-                });
+                }
 
                 atividades.sort((a, b) => new Date(a.data + "T" + a.hora) - new Date(b.data + "T" + b.hora));
             } catch(e) { console.log(e); }
@@ -648,6 +662,8 @@
                 return;
             }
 
+            if (intervaloCronometro) clearInterval(intervaloCronometro);
+
             atividadesDesteMes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
                 let botoesCardHtml = "";
@@ -670,8 +686,20 @@
                         </div>
                     `;
                 } else {
+                    let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
+                    let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
+                    let agora = new Date();
+                    let expirado = agora > limitePrazo;
+
                     if (ativ.statusAdmin === 'presente') {
                         statusOficialHtml = `<p class="tag-justificado">✓ Presença validada pela Diretoria</p>`;
+                    } else if (ativ.statusAdmin === 'negado' && expirado && !ativ.confirmadoAluno && ativ.statusAdmin !== 'aguardando_analise') {
+                        statusOficialHtml = `
+                            <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                            </div>
+                        `;
                     } else if (ativ.statusAdmin === 'negado') {
                         statusOficialHtml = `<p class="tag-falta">✕ Falta registrada / Justificativa Negada</p>`;
                     } else if (ativ.statusAdmin === 'justificado') {
@@ -680,13 +708,34 @@
                         statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 6px;">⏳ Justificativa em análise</p>`;
                         botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
                     } else {
-                        if (ativ.confirmadoAluno) {
-                            botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
-                        } else {
-                            botoesCardHtml = `
-                                <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
-                                <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
+                        if (expirado) {
+                            statusOficialHtml = `
+                                <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                    <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                    <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                </div>
                             `;
+                        } else {
+                            let diffTempo = limitePrazo.getTime() - agora.getTime();
+                            let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
+                            let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
+                            let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
+
+                            statusOficialHtml = `
+                                <div id="timer-${ativ.id}" style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #664d03; font-weight: bold;">
+                                    ⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s
+                                </div>
+                            `;
+
+                            if (ativ.confirmadoAluno) {
+                                botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                            } else {
+                                botoesCardHtml = `
+                                    <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
+                                    <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
+                                `;
+                            }
                         }
                     }
                 }
@@ -707,10 +756,33 @@
                             <p><strong>Local:</strong> ${ativ.local}</p>
                             ${statusOficialHtml}
                         </div>
-                        ${!ativ.cancelada ? `<div class="botoes-card" style="margin-top: 15px;">${botoesCardHtml}</div>` : ''}
+                        ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 15px;">${botoesCardHtml}</div>` : ''}
                     </div>
                 `;
             });
+
+            // Atualiza o relógio na tela a cada 1 segundo em tempo real
+            intervaloCronometro = setInterval(() => {
+                atividadesDesteMes.forEach(ativ => {
+                    let timerEl = document.getElementById(`timer-${ativ.id}`);
+                    if (timerEl && !ativ.cancelada) {
+                        let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
+                        let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
+                        let agora = new Date();
+                        let diffTempo = limitePrazo.getTime() - agora.getTime();
+
+                        if (diffTempo <= 0) {
+                            carregarDadosDinamicosApp(); // Atualiza a tela se o prazo estourar
+                        } else {
+                            let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
+                            let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
+                            let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
+                            timerEl.innerHTML = `⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+                        }
+                    }
+                });
+            }, 1000);
         }
 
         function renderizarAvisos() {
