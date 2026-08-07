@@ -33,8 +33,8 @@
             <button class="btn-perfil" onclick="window.location.href='index.html'">Portal do Aluno</button>
         </header>
 
-        <!-- PERFIL DO DIRETOR LOGADO NO TOPO -->
-        <div class="admin-card-acao" style="margin: 15px 0 10px 0; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <!-- PERFIL DO DIRETOR LOGADO NO TOPO (ALINHADO) -->
+        <div class="admin-card-acao" style="margin: 15px 0 10px 0; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: 100%;">
             <div id="admin-perfil-foto-container" style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
             <div style="flex: 1; min-width: 220px;">
                 <h3 id="admin-perfil-nome" style="margin: 0; color: #0056b3; font-size: 18px;">Nome do Diretor</h3>
@@ -53,7 +53,7 @@
             <!-- Recados Fixados Estáticos -->
             <div id="container-avisos-fixos"></div>
 
-            <!-- Slides Rotativos com Altura Mínima Fixa para Estética Perfeita -->
+            <!-- Slides Rotativos com Altura Mínima Fixa -->
             <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justify-content: center;"></div>
         </div>
 
@@ -416,17 +416,11 @@
                 "migracao-papel": "📥 Migrar Papel"
             };
 
-            let primeiraAba = null;
-            abasPermitidas.forEach((aba, idx) => {
-                if (idx === 0) primeiraAba = aba;
-                menuNav.innerHTML += `<button class="aba-btn ${idx === 0 ? 'ativo' : ''}" onclick="mudarAba('${aba}', event)">${labelsAbas[aba]}</button>`;
+            abasPermitidas.forEach((aba) => {
+                menuNav.innerHTML += `<button class="aba-btn" onclick="mudarAba('${aba}', event)">${labelsAbas[aba]}</button>`;
             });
 
             menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
-
-            if (primeiraAba) {
-                mudarAba(primeiraAba, { target: menuNav.children[0] });
-            }
         }
 
         function renderizarPerfilTopoAdmin() {
