@@ -932,3 +932,35 @@
     </script>
 </body>
 </html>
+
+// No seu código principal onde você carrega os avisos do Firestore:
+
+let ultimoAvisoId = localStorage.getItem('ultimoAvisoId') || null;
+
+db.collection("avisos")
+  .orderBy("data", "desc")
+  .limit(1)
+  .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+              const aviso = change.doc.data();
+              const idAviso = change.doc.id;
+
+              // Se já temos um ID salvo e entra um novo diferente
+              if (ultimoAvisoId && ultimoAvisoId !== idAviso) {
+                  // Dispara a notificação local se o Service Worker estiver ativo
+                  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                      navigator.serviceWorker.controller.postMessage({
+                          type: 'MOSTRAR_AVISO',
+                          titulo: aviso.titulo || "Novo Aviso da LAPE",
+                          texto: aviso.texto || "Confira o novo comunicado no portal."
+                      });
+                  }
+              }
+
+              // Atualiza o último ID registrado
+              ultimoAvisoId = idAviso;
+              localStorage.setItem('ultimoAvisoId', idAviso);
+          }
+      });
+  });
