@@ -443,7 +443,7 @@
                         publico: d.publico || "todos",
                         cancelada: d.cancelada || false,
                         concluida: d.concluida || false,
-                        prazoFechadoManual: d.prazoFechadoManual, // Mantém o valor booleano ou undefined
+                        prazoFechadoManual: d.prazoFechadoManual,
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
@@ -852,9 +852,10 @@
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                     let agora = new Date();
+                    let prazoNaturalExpirado = agora > limitePrazo;
 
-                    // PRIORIDADE ABSOLUTA: Se a diretoria abriu manualmente, ignora qualquer bloqueio de tempo
-                    if (ativ.prazoFechadoManual === false) {
+                    // SÓ EXIBE O AVISO DE PRAZO EXTRA SE O PRAZO NATURAL JÁ PASSOU E A DIRETORIA REABRIU MANUALMENTE
+                    if (prazoNaturalExpirado && ativ.prazoFechadoManual === false) {
                         statusOficialHtml = `
                             <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
                                 🔓 Prazo extra aberto pela diretoria
@@ -870,7 +871,7 @@
                             `;
                         }
                     } else {
-                        let expirado = ativ.prazoFechadoManual === true || agora > limitePrazo;
+                        let expirado = ativ.prazoFechadoManual === true || prazoNaturalExpirado;
 
                         if (ativ.statusAdmin === 'presente') {
                             statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
