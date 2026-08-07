@@ -387,7 +387,6 @@
                 return;
             }
 
-            // Enfermagem costuma ter 5 anos (10 semestres) na faculdade
             let semestresCurso = 10;
             let totalSemestres = (anoIngresso * 2) + (semestreIngresso === "2" ? 1 : 0) + semestresCurso;
             
@@ -474,14 +473,12 @@
         // OUVINTES EM TEMPO REAL (AO VIVO NO PAINEL)
         // ==========================================
         function iniciarOuvintesTempoRealAdmin() {
-            // 1. Ouvir Membros em Tempo Real
             db.collection("membros").onSnapshot((snapshot) => {
                 membrosCache = [];
                 snapshot.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
                 renderizarListaMembrosAdmin();
             });
 
-            // 2. Ouvir Atividades em Tempo Real
             db.collection("atividades").onSnapshot((snapshot) => {
                 atividadesCache = [];
                 snapshot.forEach(doc => atividadesCache.push({ id: doc.id, ...doc.data() }));
@@ -491,12 +488,10 @@
                 renderizarFrequenciaAdmin();
             });
 
-            // 3. Ouvir Avisos da Diretoria em Tempo Real
             db.collection("avisos_diretoria").onSnapshot(() => {
                 carregarAvisosDiretoria();
             });
 
-            // 4. Ouvir Avisos Gerais em Tempo Real
             db.collection("avisos").onSnapshot(() => {
                 carregarAvisosAdmin();
             });
@@ -551,7 +546,7 @@
             if (!container) return;
             container.innerHTML = "";
             contadorBlocosLote = 0;
-            adicionarBlocoAtividadeLote(); // Adiciona o primeiro bloco padrão
+            adicionarBlocoAtividadeLote();
         }
 
         function adicionarBlocoAtividadeLote() {
@@ -619,7 +614,7 @@
                 let data = document.getElementById(`bloco-${idMatch}-data`).value;
                 let ch = Number(document.getElementById(`bloco-${idMatch}-ch`).value || 0);
 
-                if (!titulo || !data) continue; // Pula se faltar dados básicos
+                if (!titulo || !data) continue;
 
                 let frequenciasMap = {};
                 let membrosAtivos = membrosCache.filter(m => !m.desligado);
@@ -629,7 +624,6 @@
                     if (selectStatus) {
                         let statusEscolhido = selectStatus.value;
                         if (statusEscolhido !== 'pendente') {
-                            // Verifica se o ligante já tinha entrado na liga antes da data da atividade
                             if (m.ingressoLiga && data < m.ingressoLiga) return;
 
                             frequenciasMap[m.id] = {
@@ -651,6 +645,7 @@
                     publico: "todos",
                     concluida: true,
                     cancelada: false,
+                    prazoFechadoManual: false,
                     frequencias: frequenciasMap
                 });
                 contadorSalvos++;
@@ -822,7 +817,7 @@
         }
 
         // ==========================================
-        // DEMAIS FUNÇÕES DE APOIO (Avisos, Atividades, etc.)
+        // DEMAIS FUNÇÕES DE APOIO
         // ==========================================
         async function salvarAvisoDiretoria() {
             let cargoLogado = (usuarioSessao.cargo || "").toLowerCase().trim();
@@ -1094,7 +1089,6 @@
                 await db.collection("membros").doc(id).update(dadosMembro);
                 alert("Ligante atualizado com sucesso!");
             } else {
-                // Geração correta do código baseada no ano e semestre de ingresso na liga
                 let anoIngLig = ingressoLiga.substring(0, 4) || "2026";
                 let mesIngresso = new Date(ingressoLiga + "T00:00:00").getMonth() + 1;
                 let semestreLiga = mesIngresso <= 6 ? "1" : "2";
@@ -1223,6 +1217,7 @@
                 publico: publico,
                 concluida: false,
                 cancelada: false,
+                prazoFechadoManual: false,
                 frequencias: {}
             });
 
@@ -1247,6 +1242,7 @@
                 let statusExtra = "";
                 if (a.cancelada) statusExtra = `<span style="color: #e03131; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">⚠️ Atividade Cancelada</span>`;
                 if (a.concluida) statusExtra = `<span style="color: #2b8a3e; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">✅ Atividade Concluída</span>`;
+                if (a.prazoFechadoManual) statusExtra += `<span style="color: #e67700; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">🔒 Prazo Fechado Manualmente</span>`;
 
                 let tagPublico = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Para Todos</span>`;
                 
@@ -1254,6 +1250,9 @@
                 let corBotaoCancelar = a.cancelada ? "verde" : "cinza";
                 let textoBotaoConcluir = a.concluida ? "Reabrir" : "Concluir";
                 let corBotaoConcluir = a.concluida ? "cinza" : "verde";
+                
+                let textoPrazo = a.prazoFechadoManual ? "🔓 Abrir Prazo" : "🔒 Fechar Prazo";
+                let corPrazo = a.prazoFechadoManual ? "verde" : "vermelho";
                 let tituloSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
                 div.innerHTML += `
@@ -1268,12 +1267,21 @@
                             <button class="btn-mini cinza" onclick="prepararEdicaoAtividade('${a.id}')">✏️ Editar</button>
                             <button class="btn-mini ${corBotaoConcluir}" onclick="alternarConcluirAtividade('${a.id}', ${!a.concluida})">✅ ${textoBotaoConcluir}</button>
                             <button class="btn-mini ${corBotaoCancelar}" onclick="alternarCancelarAtividade('${a.id}', ${!a.cancelada})">🚫 ${textoBotaoCancelar}</button>
+                            <button class="btn-mini ${corPrazo}" onclick="alternarPrazoManual('${a.id}', ${!a.prazoFechadoManual})">${textoPrazo}</button>
                             <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('Aviso de Atividade', 'Lembrete sobre a atividade: ${tituloSeguro}')">📢 Notificar</button>
                             <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">🗑️ Excluir</button>
                         </div>
                     </div>
                 `;
             });
+        }
+
+        async function alternarPrazoManual(id, statusFechamento) {
+            let msg = statusFechamento ? "Deseja fechar o prazo de confirmação desta atividade para os ligantes?" : "Deseja reabrir o prazo de confirmação desta atividade?";
+            if (confirm(msg)) {
+                await db.collection("atividades").doc(id).update({ prazoFechadoManual: statusFechamento });
+                alert(statusFechamento ? "Prazo fechado com sucesso!" : "Prazo reaberto com sucesso!");
+            }
         }
 
         function prepararEdicaoAtividade(id) {
