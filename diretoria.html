@@ -33,7 +33,7 @@
             <button class="btn-perfil" onclick="window.location.href='index.html'">Portal do Ligante</button>
         </header>
 
-        <!-- PERFIL DO DIRETOR LOGADO NO TOPO (ALINHADO E SEM ENCOSTAR NAS BORDAS) -->
+        <!-- PERFIL DO DIRETOR LOGADO NO TOPO -->
         <div class="admin-card-acao" style="margin: 15px; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: calc(100% - 30px);">
             <div id="admin-perfil-foto-container" style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
             <div style="flex: 1; min-width: 200px;">
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <!-- MURAL DE AVISOS DA DIRETORIA (FIXO NO TOPO) -->
+        <!-- MURAL DE AVISOS DA DIRETORIA -->
         <div class="quadro-avisos" style="margin: 0 15px 15px 15px;">
             <div class="avisos-header">
                 <span>🛡️ MURAL INTERNO DA DIRETORIA</span>
@@ -56,7 +56,7 @@
         <!-- Navegação por Abas -->
         <nav class="admin-abas-complexa" id="menu-abas-admin" style="margin: 0 15px 15px 15px; display: grid; gap: 6px;"></nav>
 
-        <!-- ABA: RECADOS INTERNOS (NOVA ABA EXCLUSIVA) -->
+        <!-- ABA: RECADOS INTERNOS -->
         <div id="secao-recados-internos" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao" id="painel-criacao-aviso-dir" style="background: #fff8e1; border: 1px solid #ffe066;">
                 <h3 id="titulo-form-aviso-dir" style="margin: 0 0 8px 0; color: #b7791f; font-size: 15px;">✍️ Publicar Recado para a Diretoria</h3>
@@ -67,7 +67,7 @@
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                     <div>
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Origem (Quem pediu):</label>
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Origem:</label>
                         <select id="av-dir-origem" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
                             <option value="Presidência">Presidência</option>
                             <option value="Diretoria de Pesquisa">Diretoria de Pesquisa</option>
@@ -122,7 +122,7 @@
         <!-- ABA: CADASTRAR / EDITAR MEMBROS -->
         <div id="secao-cadastro-membros" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao">
-                <h3 id="titulo-form-membro">Cadastrar Novo Membro</h3>
+                <h3 id="titulo-form-membro">Cadastrar Novo Ligante</h3>
                 <input type="hidden" id="m-id-editando">
                 <div class="grid-form">
                     <input type="text" id="m-nome" placeholder="Nome Completo *" class="col-full" required>
@@ -132,12 +132,11 @@
                         <input type="date" id="m-nascimento">
                     </div>
                     <div>
-                        <label style="font-size:11px; margin-bottom:2px;">Telefone ((DDD) 00000-0000)</label>
+                        <label style="font-size:11px; margin-bottom:2px;">Telefone</label>
                         <input type="text" id="m-tel" placeholder="(99) 99999-9999" oninput="mascaraTelefone(this)" maxlength="15">
                     </div>
 
                     <input type="email" id="m-email" placeholder="E-mail *" class="col-full" required>
-                    
                     <input type="text" id="m-curso" placeholder="Curso (Ex: Enfermagem)">
                     <input type="text" id="m-instituicao" value="Centro Universitario Facimp Wyden" readonly style="background:#e9ecef; color:#495057;">
                     
@@ -148,13 +147,13 @@
                         <option value="Noturno">Noturno</option>
                     </select>
 
-                    <input type="number" id="m-ano-ingresso-inst" placeholder="Ano Ingresso na Instituição (Ex: 2024)" oninput="calcularFormatura()">
+                    <input type="number" id="m-ano-ingresso-inst" placeholder="Ano Ingresso Instituição (Ex: 2024)" oninput="calcularFormatura()">
                     <select id="m-sem-ingresso-inst" onchange="calcularFormatura()">
                         <option value="1">1º Semestre</option>
                         <option value="2">2º Semestre</option>
                     </select>
 
-                    <input type="text" id="m-previsao-formatura" placeholder="Previsão de Formatura (Automático)" readonly class="col-full" style="background:#e9ecef; font-weight:bold; color:#0056b3;">
+                    <input type="text" id="m-previsao-formatura" placeholder="Previsão de Formatura" readonly class="col-full" style="background:#e9ecef; font-weight:bold; color:#0056b3;">
 
                     <div class="col-full">
                         <label style="font-size:11px; margin-bottom:2px;">Data de Ingresso na Liga</label>
@@ -207,7 +206,7 @@
                     <input type="number" id="at-ch" placeholder="Carga Horária (h)">
                     
                     <div class="col-full" style="margin-top: 5px;">
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Visibilidade da Atividade:</label>
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Visibilidade:</label>
                         <select id="at-publico" class="col-full" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
                             <option value="todos">Para Todos (Ligantes e Diretoria)</option>
                             <option value="diretoria">Apenas Diretoria</option>
@@ -317,23 +316,17 @@
             <div id="lista-admin-avisos"></div>
         </div>
 
-        <!-- ABA TEMPORÁRIA: MIGRAR PAPEL -->
+        <!-- ABA MELHORADA: MIGRAR PAPEL EM LOTE (MULTIPLAS ATIVIDADES) -->
         <div id="secao-migracao-papel" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao" style="background: #fff8e1; border: 2px dashed #f59f00;">
-                <h3 style="color: #e67700; margin-top: 0;">📥 Aba Temporária: Migração de Registros (Papel)</h3>
-                <p style="font-size: 12px; color: #555;">Use esta ferramenta para cadastrar uma atividade passada e marcar rapidamente a presença/falta de todos os ligantes de uma só vez.</p>
+                <h3 style="color: #e67700; margin-top: 0;">📥 Migração de Atividades em Lote (Papel)</h3>
+                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Adicione quantas atividades precisar clicando em <strong>"+ Adicionar Outra Atividade"</strong>. Preencha as datas e marque rapidamente a presença padrão em lote. Quando terminar, clique em <strong>Salvar Tudo</strong>.</p>
                 
-                <div class="grid-form" style="margin-top: 10px;">
-                    <input type="text" id="mig-titulo" placeholder="Título da Atividade Passada *" class="col-full">
-                    <input type="date" id="mig-data">
-                    <input type="number" id="mig-ch" placeholder="Carga Horária (h)">
-                    <textarea id="mig-desc" rows="2" placeholder="Breve descrição..." class="col-full"></textarea>
-                </div>
+                <div id="container-lote-atividades"></div>
 
-                <h4 style="margin: 15px 0 8px 0; font-size: 14px; color: #0056b3;">Chamada em Lote para os Ligantes Ativos:</h4>
-                <div id="mig-lista-ligantes-container" style="max-height: 300px; overflow-y: auto; border: 1px solid #ced4da; border-radius: 6px; padding: 8px; background: #fff;"></div>
+                <button type="button" class="btn-mini cinza" style="width: 100%; padding: 10px; font-size: 13px; margin-top: 10px; background: #e9ecef; border: 1px solid #ced4da; color: #333; font-weight: bold;" onclick="adicionarBlocoAtividadeLote()">➕ Adicionar Outra Atividade na Lista</button>
 
-                <button class="btn-salvar" style="margin-top: 15px; background: #2b8a3e;" onclick="salvarMigracaoPapel()">🚀 Salvar Atividade e Chamada em Lote</button>
+                <button class="btn-salvar" style="margin-top: 15px; background: #2b8a3e; padding: 12px; font-size: 14px;" onclick="salvarMigracaoEmLote()">🚀 Salvar Todas as Atividades de uma Vez</button>
             </div>
         </div>
 
@@ -362,6 +355,7 @@
         let avisosDiretoriaCache = [];
         let indiceSlideDirAtual = 0;
         let usuarioSessao = null;
+        let contadorBlocosLote = 0;
 
         const permissoesCargos = {
             "presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
@@ -384,7 +378,6 @@
             }
 
             let cargoLower = (usuarioSessao.cargo || "ligante").toLowerCase().trim();
-            
             if (cargoLower === "ligante" || !permissoesCargos[cargoLower]) {
                 alert("Você não possui permissão para acessar o painel da diretoria.");
                 window.location.href = "index.html";
@@ -392,7 +385,7 @@
             }
 
             renderizarPerfilTopoAdmin();
-            carregarAvisosDiretoria();
+            iniciarOuvintesTempoRealAdmin();
 
             let abasPermitidas = permissoesCargos[cargoLower];
             let menuNav = document.getElementById("menu-abas-admin");
@@ -407,7 +400,7 @@
                 "frequencia": "📋 Frequência",
                 "financeiro": "💰 Financeiro",
                 "avisos": "⚠️ Avisos",
-                "migracao-papel": "📥 Migrar"
+                "migracao-papel": "📥 Migrar Lote"
             };
 
             abasPermitidas.forEach((aba) => {
@@ -415,6 +408,38 @@
             });
 
             menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
+        }
+
+        // ==========================================
+        // OUVINTES EM TEMPO REAL (AO VIVO NO PAINEL)
+        // ==========================================
+        function iniciarOuvintesTempoRealAdmin() {
+            // 1. Ouvir Membros em Tempo Real
+            db.collection("membros").onSnapshot((snapshot) => {
+                membrosCache = [];
+                snapshot.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
+                renderizarListaMembrosAdmin();
+            });
+
+            // 2. Ouvir Atividades em Tempo Real
+            db.collection("atividades").onSnapshot((snapshot) => {
+                atividadesCache = [];
+                snapshot.forEach(doc => atividadesCache.push({ id: doc.id, ...doc.data() }));
+                atividadesCache.sort((a, b) => new Date(a.data + "T" + (a.hora || "00:00")) - new Date(b.data + "T" + (b.hora || "00:00")));
+                
+                renderizarAtividadesEdicao();
+                renderizarFrequenciaAdmin();
+            });
+
+            // 3. Ouvir Avisos da Diretoria em Tempo Real
+            db.collection("avisos_diretoria").onSnapshot(() => {
+                carregarAvisosDiretoria();
+            });
+
+            // 4. Ouvir Avisos Gerais em Tempo Real
+            db.collection("avisos").onSnapshot(() => {
+                carregarAvisosAdmin();
+            });
         }
 
         function renderizarPerfilTopoAdmin() {
@@ -454,81 +479,136 @@
             if (evento && evento.target) evento.target.classList.add('ativo');
             
             if (nome === 'migracao-papel') {
-                renderizarInterfaceMigracao();
+                inicializarMigracaoLote();
             }
         }
 
-        function alternarCampoPersonalizado(valor) {
-            let divPers = document.getElementById('div-data-personalizada');
-            if (valor === 'personalizado') {
-                divPers.style.display = 'block';
-            } else {
-                divPers.style.display = 'none';
-            }
+        // ==========================================
+        // SISTEMA DE MIGRAÇÃO EM LOTE MELHORADO
+        // ==========================================
+        function inicializarMigracaoLote() {
+            let container = document.getElementById('container-lote-atividades');
+            if (!container) return;
+            container.innerHTML = "";
+            contadorBlocosLote = 0;
+            adicionarBlocoAtividadeLote(); // Adiciona o primeiro bloco padrão
         }
 
-        function mascaraTelefone(input) {
-            let v = input.value.replace(/\D/g, "");
-            if (v.length > 11) v = v.substring(0, 11);
-            if (v.length > 6) {
-                v = `(${v.substring(0, 2)}) ${v.substring(2, 7)}-${v.substring(7)}`;
-            } else if (v.length > 2) {
-                v = `(${v.substring(0, 2)}) ${v.substring(2)}`;
-            } else if (v.length > 0) {
-                v = `(${v}`;
-            }
-            input.value = v;
+        function adicionarBlocoAtividadeLote() {
+            contadorBlocosLote++;
+            let idBloco = contadorBlocosLote;
+            let container = document.getElementById('container-lote-atividades');
+
+            let membrosAtivos = membrosCache.filter(m => !m.desligado);
+            let opcoesMembrosHtml = "";
+            membrosAtivos.forEach(m => {
+                opcoesMembrosHtml += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f3f5;">
+                        <span style="font-size: 11px;"><strong>${m.nome}</strong> (${m.cargo || 'Ligante'})</span>
+                        <select id="bloco-${idBloco}-status-${m.id}" style="padding: 3px 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px;">
+                            <option value="presente" selected>Presente (+CH)</option>
+                            <option value="negado">Falta</option>
+                            <option value="justificado">Justificado (Abonado)</option>
+                            <option value="pendente">Não participava / Ausente</option>
+                        </select>
+                    </div>
+                `;
+            });
+
+            let htmlBloco = `
+                <div class="bloco-ativ-lote" id="bloco-ativ-${idBloco}" style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px; margin-bottom: 15px; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+                        <strong style="color: #0056b3; font-size: 13px;">📋 Atividade #${idBloco}</strong>
+                        ${idBloco > 1 ? `<button type="button" class="btn-mini vermelho" style="padding: 2px 6px; font-size: 10px;" onclick="removerBlocoAtividadeLote(${idBloco})">🗑️ Remover</button>` : ''}
+                    </div>
+
+                    <div class="grid-form" style="margin-bottom: 8px;">
+                        <input type="text" id="bloco-${idBloco}-titulo" placeholder="Título da Atividade *" class="col-full" style="padding: 8px; font-size: 12px;">
+                        <input type="date" id="bloco-${idBloco}-data" style="padding: 6px; font-size: 11px;">
+                        <input type="number" id="bloco-${idBloco}-ch" placeholder="CH (h)" style="padding: 6px; font-size: 11px;">
+                    </div>
+
+                    <details style="margin-top: 8px; background: #f8f9fa; padding: 8px; border-radius: 6px;">
+                        <summary style="font-size: 11px; font-weight: bold; color: #495057; cursor: pointer;">👥 Ajustar Chamada Individual (Opcional - Padrão é Presente)</summary>
+                        <div style="margin-top: 6px; max-height: 180px; overflow-y: auto;">
+                            ${opcoesMembrosHtml}
+                        </div>
+                    </details>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', htmlBloco);
         }
 
-        function calcularFormatura() {
-            let anoIng = parseInt(document.getElementById('m-ano-ingresso-inst').value);
-            let semIng = parseInt(document.getElementById('m-sem-ingresso-inst').value);
-            if (!anoIng) {
-                document.getElementById('m-previsao-formatura').value = "";
+        function removerBlocoAtividadeLote(idBloco) {
+            let el = document.getElementById(`bloco-ativ-${idBloco}`);
+            if (el) el.remove();
+        }
+
+        async function salvarMigracaoEmLote() {
+            let blocos = document.querySelectorAll('.bloco-ativ-lote');
+            if (blocos.length === 0) {
+                alert("Adicione pelo menos uma atividade.");
                 return;
             }
-            let anosAdicionais = Math.floor((semIng - 1 + 9) / 2);
-            let anoFormatura = anoIng + anosAdicionais;
-            let semFormatura = (semIng === 1) ? 1 : 2;
-            document.getElementById('m-previsao-formatura').value = `${semFormatura}º Semestre de ${anoFormatura}`;
-        }
 
-        async function dispararNotificacaoGlobal(titulo, texto) {
-            try {
-                await db.collection("notificacoes_push_manual").add({
-                    titulo: titulo,
-                    texto: texto,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            let contadorSalvos = 0;
+            for (let bloco of blocos) {
+                let idMatch = bloco.id.replace('bloco-ativ-', '');
+                let titulo = document.getElementById(`bloco-${idMatch}-titulo`).value.trim();
+                let data = document.getElementById(`bloco-${idMatch}-data`).value;
+                let ch = Number(document.getElementById(`bloco-${idMatch}-ch`).value || 0);
+
+                if (!titulo || !data) continue; // Pula se faltar dados básicos
+
+                let frequenciasMap = {};
+                let membrosAtivos = membrosCache.filter(m => !m.desligado);
+
+                membrosAtivos.forEach(m => {
+                    let selectStatus = document.getElementById(`bloco-${idMatch}-status-${m.id}`);
+                    if (selectStatus) {
+                        let statusEscolhido = selectStatus.value;
+                        if (statusEscolhido !== 'pendente') {
+                            // Verifica se o ligante já tinha entrado na liga antes da data da atividade
+                            if (m.ingressoLiga && data < m.ingressoLiga) return;
+
+                            frequenciasMap[m.id] = {
+                                status: statusEscolhido,
+                                texto: statusEscolhido === 'justificado' ? 'Migrado de registro em papel' : '',
+                                confirmadoAluno: true
+                            };
+                        }
+                    }
                 });
-            } catch(e) {
-                console.error("Erro ao disparar push global:", e);
+
+                await db.collection("atividades").add({
+                    titulo,
+                    data,
+                    hora: "19:00",
+                    local: "Migração de Registro Físico",
+                    ch,
+                    desc: "Atividade passada migrada dos registros em papel.",
+                    publico: "todos",
+                    concluida: true,
+                    cancelada: false,
+                    frequencias: frequenciasMap
+                });
+                contadorSalvos++;
+            }
+
+            if (contadorSalvos > 0) {
+                await dispararNotificacaoGlobal("Atualização de Histórico", `${contadorSalvos} novas atividades passadas foram migradas para o sistema.`);
+                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos os ligantes instantaneamente.`);
+                mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
+            } else {
+                alert("Nenhuma atividade válida foi preenchida. Verifique os títulos e datas.");
             }
         }
 
-        async function dispararNotificacaoIndividual(membroId, titulo, texto) {
-            try {
-                await db.collection("notificacoes_individuais").add({
-                    membroId: membroId,
-                    titulo: titulo,
-                    texto: texto,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            } catch(e) {
-                console.error("Erro ao disparar push individual:", e);
-            }
-        }
-
-        async function carregarDadosAdmin() {
-            let mSnap = await db.collection("membros").get();
-            let atSnap = await db.collection("atividades").get();
-            
-            atividadesCache = [];
-            atSnap.forEach(doc => {
-                atividadesCache.push({ id: doc.id, ...doc.data() });
-            });
-            atividadesCache.sort((a, b) => new Date(a.data + "T" + (a.hora || "00:00")) - new Date(b.data + "T" + (b.hora || "00:00")));
-
-            membrosCache = [];
+        // ==========================================
+        // RENDERIZAÇÃO DA LISTA DE MEMBROS
+        // ==========================================
+        function renderizarListaMembrosAdmin() {
             let divDiretoria = document.getElementById("lista-diretoria");
             let divLigantes = document.getElementById("lista-ligantes");
             let divDesligados = document.getElementById("lista-desligados");
@@ -541,10 +621,7 @@
             let cargoLogado = (usuarioSessao.cargo || "").toLowerCase();
             let podeEditarExcluir = ["presidente", "vice-presidente", "secretaria"].includes(cargoLogado);
 
-            mSnap.forEach(doc => {
-                let m = { id: doc.id, ...doc.data() };
-                membrosCache.push(m);
-
+            membrosCache.forEach(m => {
                 if (m.id === usuarioSessao.id) {
                     usuarioSessao = m;
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioSessao));
@@ -611,7 +688,6 @@
                             <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-mini verde" onclick="aprovarFoto('${m.id}')">Permitir Foto</button>
                                 <button class="btn-mini vermelho" onclick="negarFoto('${m.id}')">Negar Foto</button>
-                                <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Atualização de Perfil', 'Sua foto de perfil foi avaliada pela diretoria.')">📢 Notificar</button>
                             </div>
                         </div>
                     `;
@@ -682,16 +758,12 @@
             let badgeTotal = document.getElementById("total-membros");
             if (badgeTotal) badgeTotal.innerText = `${totalAtivos} ativos`;
 
-            renderizarAtividadesEdicao();
-            renderizarFrequenciaAdmin();
             renderizarFinanceiroAdmin();
-            carregarAvisosAdmin();
-            carregarAvisosDiretoria();
-            if (document.getElementById('secao-migracao-papel').style.display === 'block') {
-                renderizarInterfaceMigracao();
-            }
         }
 
+        // ==========================================
+        // DEMAIS FUNÇÕES DE APOIO (Avisos, Atividades, etc.)
+        // ==========================================
         async function salvarAvisoDiretoria() {
             let cargoLogado = (usuarioSessao.cargo || "").toLowerCase().trim();
             if (cargoLogado !== "presidente") {
@@ -721,14 +793,7 @@
                 expiraEm = firebase.firestore.Timestamp.fromDate(dataExp);
             }
 
-            let dadosAviso = {
-                titulo,
-                texto,
-                origem,
-                alvo,
-                fixo,
-                expiraEm
-            };
+            let dadosAviso = { titulo, texto, origem, alvo, fixo, expiraEm };
 
             if (idEditando) {
                 await db.collection("avisos_diretoria").doc(idEditando).update(dadosAviso);
@@ -740,7 +805,6 @@
             }
 
             cancelarEdicaoAvisoDiretoria();
-            carregarAvisosDiretoria();
         }
 
         function prepararEdicaoAvisoDiretoria(id) {
@@ -906,89 +970,7 @@
 
             if (confirm("Apagar este recado interno?")) {
                 await db.collection("avisos_diretoria").doc(id).delete();
-                carregarAvisosDiretoria();
             }
-        }
-
-        function renderizarInterfaceMigracao() {
-            let container = document.getElementById('mig-lista-ligantes-container');
-            if (!container) return;
-            container.innerHTML = "";
-
-            let membrosAtivos = membrosCache.filter(m => !m.desligado);
-            if (membrosAtivos.length === 0) {
-                container.innerHTML = "<p class='cinza'>Nenhum ligante ativo cadastrado.</p>";
-                return;
-            }
-
-            membrosAtivos.forEach(m => {
-                container.innerHTML += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee;">
-                        <div>
-                            <strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span>
-                        </div>
-                        <select id="mig-status-${m.id}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
-                            <option value="pendente">Pendente / Não Registrado</option>
-                            <option value="presente" selected>Presente (+CH)</option>
-                            <option value="negado">Falta</option>
-                            <option value="justificado">Justificado (Abonado)</option>
-                        </select>
-                    </div>
-                `;
-            });
-        }
-
-        async function salvarMigracaoPapel() {
-            let titulo = document.getElementById('mig-titulo').value.trim();
-            let data = document.getElementById('mig-data').value;
-            let ch = Number(document.getElementById('mig-ch').value || 0);
-            let desc = document.getElementById('mig-desc').value.trim();
-
-            if (!titulo || !data) {
-                alert("Preencha o Título e a Data da atividade passada.");
-                return;
-            }
-
-            let frequenciasMap = {};
-            let membrosAtivos = membrosCache.filter(m => !m.desligado);
-
-            membrosAtivos.forEach(m => {
-                let selectStatus = document.getElementById(`mig-status-${m.id}`);
-                if (selectStatus) {
-                    let statusEscolhido = selectStatus.value;
-                    if (statusEscolhido !== 'pendente') {
-                        frequenciasMap[m.id] = {
-                            status: statusEscolhido,
-                            texto: statusEscolhido === 'justificado' ? 'Migrado de registro em papel' : '',
-                            confirmadoAluno: true
-                        };
-                    }
-                }
-            });
-
-            await db.collection("atividades").add({
-                titulo,
-                data,
-                hora: "19:00",
-                local: "Migração de Registro Físico",
-                ch,
-                desc: desc || "Atividade passada migrada dos registros em papel.",
-                publico: "todos",
-                concluida: true,
-                cancelada: false,
-                frequencias: frequenciasMap
-            });
-
-            await dispararNotificacaoGlobal("Nova Atividade Registrada", `A atividade passada '${titulo}' (${data}) foi adicionada ao histórico.`);
-
-            alert("Atividade e chamadas migradas com sucesso para o banco de dados!");
-            document.getElementById('mig-titulo').value = "";
-            document.getElementById('mig-data').value = "";
-            document.getElementById('mig-ch').value = "";
-            document.getElementById('mig-desc').value = "";
-
-            carregarDadosAdmin();
-            mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
         }
 
         async function aprovarFoto(id) {
@@ -1001,7 +983,6 @@
             });
             await dispararNotificacaoIndividual(id, "Foto Aprovada! ✅", `Sua foto de perfil foi aprovada pela diretoria.`);
             alert("Foto aprovada e notificação enviada!");
-            carregarDadosAdmin();
         }
 
         async function negarFoto(id) {
@@ -1011,7 +992,6 @@
             });
             await dispararNotificacaoIndividual(id, "Foto Recusada ❌", `Sua foto de perfil não foi aceita. Por favor, envie outra.`);
             alert("Foto negada e notificação enviada!");
-            carregarDadosAdmin();
         }
 
         function toggleExpandirAluno(id) {
@@ -1052,7 +1032,7 @@
 
             if(id) {
                 await db.collection("membros").doc(id).update(dadosMembro);
-                alert("Membro atualizado com sucesso!");
+                alert("Ligante atualizado com sucesso!");
             } else {
                 let anoIngLig = ingressoLiga.substring(0, 4) || "2026";
                 let mesIngresso = new Date(ingressoLiga + "T00:00:00").getMonth() + 1;
@@ -1072,11 +1052,10 @@
 
                 let docRef = await db.collection("membros").add(dadosMembro);
                 await dispararNotificacaoIndividual(docRef.id, "Bem-vindo(a) à LAPE!", `Seu cadastro foi realizado. Seu código de acesso é ${codigoGerado}.`);
-                alert(`Membro cadastrado!\nCódigo de Acesso: ${codigoGerado}\nSenha Padrão: LAPE2026`);
+                alert(`Ligante cadastrado!\nCódigo de Acesso: ${codigoGerado}\nSenha Padrão: LAPE2026`);
             }
 
             cancelarEdicaoMembro();
-            carregarDadosAdmin();
             mudarAba('lista-membros', { target: document.querySelectorAll('.aba-btn')[1] });
         }
 
@@ -1115,7 +1094,7 @@
             document.getElementById('m-ano-ingresso-inst').value = "";
             document.getElementById('m-previsao-formatura').value = "";
             document.getElementById('m-ingresso-liga').value = "";
-            document.getElementById('titulo-form-membro').innerText = "Cadastrar Novo Membro";
+            document.getElementById('titulo-form-membro').innerText = "Cadastrar Novo Ligante";
             document.getElementById('btn-salvar-membro').innerText = "Salvar e Gerar Código";
             document.getElementById('btn-cancelar-membro').style.display = "none";
         }
@@ -1148,25 +1127,22 @@
             });
 
             fecharModalDesligamento();
-            carregarDadosAdmin();
         }
 
         async function reativarMembro(id) {
-            if (confirm("Deseja reativar este ligante na liga? O acesso dele ao aplicativo será restabelecido.")) {
+            if (confirm("Deseja reativar este ligante na liga?")) {
                 await db.collection("membros").doc(id).update({
                     desligado: false,
                     dataDesligamento: firebase.firestore.FieldValue.delete(),
                     motivoDesligamento: firebase.firestore.FieldValue.delete()
                 });
                 alert("Ligante reativado com sucesso!");
-                carregarDadosAdmin();
             }
         }
 
         async function removerMembro(id) {
             if(confirm("ATENÇÃO: Deseja excluir definitivamente este membro do banco de dados?")) {
                 await db.collection("membros").doc(id).delete();
-                carregarDadosAdmin();
             }
         }
 
@@ -1190,15 +1166,7 @@
             });
 
             await dispararNotificacaoGlobal("Nova Atividade Cadastrada", `Confira: ${titulo} agendada para ${data}.`);
-
             alert("Atividade criada com sucesso!");
-            let filtroAtiv = document.getElementById('filtro-mes-atividades');
-            let filtroFreq = document.getElementById('filtro-mes-frequencia');
-            if (filtroAtiv) filtroAtiv.value = data.substring(0, 7);
-            if (filtroFreq) filtroFreq.value = data.substring(0, 7);
-
-            carregarDadosAdmin();
-            mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
         }
 
         function renderizarAtividadesEdicao() {
@@ -1223,20 +1191,17 @@
                 
                 let textoBotaoCancelar = a.cancelada ? "Ativar" : "Cancelar";
                 let corBotaoCancelar = a.cancelada ? "verde" : "cinza";
-                
                 let textoBotaoConcluir = a.concluida ? "Reabrir" : "Concluir";
                 let corBotaoConcluir = a.concluida ? "cinza" : "verde";
                 let tituloSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
                 div.innerHTML += `
                     <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #dee2e6;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <h4 style="margin: 0; color: #0056b3;">${a.titulo} ${tagPublico}</h4>
-                                <p class="cinza" style="margin: 4px 0; font-size: 12px;">${a.data} às ${a.hora} | Local: ${a.local || 'N/D'} | CH: ${a.ch}h</p>
-                                <p style="font-size: 11px; color: #555; margin: 4px 0;">${a.desc || 'Sem descrição'}</p>
-                                ${statusExtra}
-                            </div>
+                        <div>
+                            <h4 style="margin: 0; color: #0056b3;">${a.titulo} ${tagPublico}</h4>
+                            <p class="cinza" style="margin: 4px 0; font-size: 12px;">${a.data} às ${a.hora} | Local: ${a.local || 'N/D'} | CH: ${a.ch}h</p>
+                            <p style="font-size: 11px; color: #555; margin: 4px 0;">${a.desc || 'Sem descrição'}</p>
+                            ${statusExtra}
                         </div>
                         <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
                             <button class="btn-mini cinza" onclick="prepararEdicaoAtividade('${a.id}')">✏️ Editar</button>
@@ -1278,8 +1243,7 @@
             if(!titulo || !data) { alert("Preencha Título e Data."); return; }
 
             await db.collection("atividades").doc(id).update({
-                titulo, 
-                data,
+                titulo, data,
                 hora: document.getElementById('at-hora').value || "19:00",
                 local: document.getElementById('at-local').value || "Local a definir",
                 ch: Number(document.getElementById('at-ch').value || 0),
@@ -1294,43 +1258,23 @@
             btnCadastrar.innerText = "Criar Atividade na Nuvem";
             btnCadastrar.setAttribute("onclick", "cadastrarAtividade()");
             document.getElementById('titulo-form-atividade').innerText = "Nova Atividade";
-
-            document.getElementById('at-titulo').value = "";
-            document.getElementById('at-data').value = "";
-            document.getElementById('at-hora').value = "";
-            document.getElementById('at-local').value = "";
-            document.getElementById('at-ch').value = "";
-            document.getElementById('at-desc').value = "";
-            document.getElementById('at-publico').value = "todos";
-
-            carregarDadosAdmin();
-            mudarAba('lista-atividades', { target: document.querySelectorAll('.aba-btn')[3] });
         }
 
         async function alternarCancelarAtividade(id, statusCancelamento) {
-            let msg = statusCancelamento ? "Deseja cancelar esta atividade?" : "Deseja reativar esta atividade?";
-            if (confirm(msg)) {
-                await db.collection("atividades").doc(id).update({
-                    cancelada: statusCancelamento
-                });
-                carregarDadosAdmin();
+            if (confirm(statusCancelamento ? "Cancelar atividade?" : "Reativar atividade?")) {
+                await db.collection("atividades").doc(id).update({ cancelada: statusCancelamento });
             }
         }
 
         async function alternarConcluirAtividade(id, statusConclusao) {
-            let msg = statusConclusao ? "Deseja marcar esta atividade como concluída?" : "Deseja reabrir esta atividade?";
-            if (confirm(msg)) {
-                await db.collection("atividades").doc(id).update({
-                    concluida: statusConclusao
-                });
-                carregarDadosAdmin();
+            if (confirm(statusConclusao ? "Marcar como concluída?" : "Reabrir atividade?")) {
+                await db.collection("atividades").doc(id).update({ concluida: statusConclusao });
             }
         }
 
         async function removerAtividade(id) {
             if(confirm("Apagar atividade definitivamente?")) {
                 await db.collection("atividades").doc(id).delete();
-                carregarDadosAdmin();
             }
         }
 
@@ -1376,8 +1320,8 @@
                             <div class="caixa-justificativa-admin" style="margin:5px 0; background:#fff8e1; padding:6px; border-radius:4px;">
                                 <p style="font-size:11px;"><strong>Justificativa do Ligante:</strong> "${reg.texto}"</p>
                                 <div class="botoes-justica" style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
-                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '', '${tituloAtivSeguro}')">Aceitar Justificativa</button>
-                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Negar Justificativa (Falta)</button>
+                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '', '${tituloAtivSeguro}')">Aceitar</button>
+                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Negar</button>
                                 </div>
                             </div>
                         `;
@@ -1387,14 +1331,13 @@
                                 <button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Resetar</button>
                                 <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Atualização de Frequência', 'Sua frequência na atividade ${tituloAtivSeguro} foi revisada.')">📢 Notificar</button>
                             </div>
-                            ${reg.status === 'justificado' && reg.texto ? `<p style="font-size:11px; color:#2b8a3e; margin-top:4px;"><strong>Justificativa Manual:</strong> "${reg.texto}"</p>` : ''}
                         `;
                     } else {
                         blocoBotoesAcoes = `
                             <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'presente', '', '${tituloAtivSeguro}')">Dar Presença (+CH)</button>
                                 <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Marcar Falta</button>
-                                <button class="btn-mini cinza" onclick="abrirJustificativaManual('${a.id}', '${m.id}', '${tituloAtivSeguro}')">📝 Justificar Manual</button>
+                                <button class="btn-mini cinza" onclick="abrirJustificativaManual('${a.id}', '${m.id}', '${tituloAtivSeguro}')">📝 Justificar</button>
                             </div>
                         `;
                     }
@@ -1413,7 +1356,7 @@
                     `;
                 });
 
-                let estiloCardAtiv = "background: #fff; border: 1px solid #dee2e6; margin-bottom: 12px; border-radius: 8px; overflow: hidden; transition: all 0.2s;";
+                let estiloCardAtiv = "background: #fff; border: 1px solid #dee2e6; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
                 let textoConcluidoBadge = "";
                 let tagPublicoFreq = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : "";
 
@@ -1469,17 +1412,15 @@
             };
 
             await docRef.update({ frequencias: frequencias });
-            await carregarDadosAdmin();
         }
 
         async function mudarStatusAdminComNotif(ativId, ligId, novoStatus, textoCustomizado = '', tituloAtiv = '') {
             await mudarStatusAdmin(ativId, ligId, novoStatus, textoCustomizado);
-            let msgStatus = novoStatus === 'justificado' ? 'Sua justificativa foi aceita!' : 'Sua frequência foi atualizada.';
-            await dispararNotificacaoIndividual(ligId, `Atualização na Chamada (${tituloAtiv})`, msgStatus);
+            await dispararNotificacaoIndividual(ligId, `Atualização na Chamada (${tituloAtiv})`, "Sua frequência foi atualizada.");
         }
 
         function abrirJustificativaManual(ativId, ligId, tituloAtiv) {
-            let motivo = prompt("Digite o motivo da justificativa manual para este ligante:");
+            let motivo = prompt("Digite o motivo da justificativa manual:");
             if (motivo && motivo.trim() !== "") {
                 mudarStatusAdminComNotif(ativId, ligId, 'justificado', motivo, tituloAtiv);
             }
@@ -1502,7 +1443,6 @@
             }
 
             let membrosAtivos = membrosCache.filter(m => !m.desligado);
-
             let htmlTabela = `
                 <div class="card-admin-item">
                     <h4>Controle Financeiro - ${mesFiltro}</h4>
@@ -1523,14 +1463,14 @@
 
                 let badge = `<span class="badge-fin pendente">Pendente</span>`;
                 if(status === 'pago') badge = `<span class="badge-fin pago">Pago ✓</span>`;
-                if(status === 'analise') badge = `<span class="badge-fin analise">Aguardando Confirmação</span>`;
-                if(status === 'abonado') badge = `<span class="badge-fin abonado">Abonado (R$ 0)</span>`;
+                if(status === 'analise') badge = `<span class="badge-fin analise">Aguardando</span>`;
+                if(status === 'abonado') badge = `<span class="badge-fin abonado">Abonado</span>`;
 
                 let botoesFin = `
                     <button class="btn-mini verde" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pago')">Recebido</button>
                     <button class="btn-mini cinza" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'abonado')">Abonar</button>
-                    <button class="btn-mini vermelho" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pendente')">Resetar</button>
-                    <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Situação Financeira', 'Sua situação de mensalidade de ${mesFiltro} foi atualizada.')">📢 Notificar</button>
+                    <button class="btn-mini vermelho" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pendente')">Reset</button>
+                    <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Situação Financeira', 'Sua mensalidade de ${mesFiltro} foi atualizada.')">📢 Notificar</button>
                 `;
 
                 htmlTabela += `
@@ -1552,17 +1492,10 @@
             if(!membro.financeiro) membro.financeiro = {};
             membro.financeiro[mesAno] = novoStatus;
 
-            await db.collection("membros").doc(membroId).update({
-                financeiro: membro.financeiro
-            });
-
+            await db.collection("membros").doc(membroId).update({ financeiro: membro.financeiro });
             if (novoStatus === 'pago') {
-                await dispararNotificacaoIndividual(membroId, "Mensalidade Confirmada! ✅", `Seu pagamento referente a ${mesAno} foi confirmado pela diretoria.`);
-            } else if (novoStatus === 'abonado') {
-                await dispararNotificacaoIndividual(membroId, "Mensalidade Abonada", `Sua mensalidade de ${mesAno} foi abonada.`);
+                await dispararNotificacaoIndividual(membroId, "Mensalidade Confirmada! ✅", `Seu pagamento de ${mesAno} foi confirmado.`);
             }
-
-            carregarDadosAdmin();
         }
 
         async function salvarAviso() {
@@ -1570,20 +1503,16 @@
             let titulo = document.getElementById('av-titulo').value.trim();
             let texto = document.getElementById('av-texto').value.trim();
 
-            if(!titulo || !texto) { alert("Preencha o título e a mensagem do aviso."); return; }
+            if(!titulo || !texto) { alert("Preencha o título e a mensagem."); return; }
 
             if(id) {
                 await db.collection("avisos").doc(id).update({ titulo, texto });
                 await dispararNotificacaoGlobal(`[Atualizado] ${titulo}`, texto);
-                alert("Aviso atualizado com sucesso!");
             } else {
                 await db.collection("avisos").add({ titulo, texto });
                 await dispararNotificacaoGlobal(titulo, texto);
-                alert("Aviso publicado com sucesso!");
             }
-
             cancelarEdicaoAviso();
-            carregarAvisosAdmin();
         }
 
         async function carregarAvisosAdmin() {
@@ -1611,7 +1540,7 @@
                             <p class="cinza">${a.texto}</p>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 4px; min-width: 110px;">
-                            <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('${tituloSeguro}', '${textoSeguro}')">📢 Enviar Push</button>
+                            <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('${tituloSeguro}', '${textoSeguro}')">📢 Push</button>
                             <button class="btn-mini cinza" onclick="prepararEdicaoAviso('${a.id}')">Editar</button>
                             <button class="btn-mini vermelho" onclick="removerAviso('${a.id}')">Apagar</button>
                         </div>
@@ -1633,7 +1562,7 @@
         }
 
         function cancelarEdicaoAviso() {
-            document.getElementById('av-id-editando').value = "";
+            document.getElementById('av-id-editando', "").value = "";
             document.getElementById('av-titulo').value = "";
             document.getElementById('av-texto').value = "";
             document.getElementById('titulo-form-aviso').innerText = "Publicar Novo Aviso";
@@ -1642,15 +1571,13 @@
         }
 
         async function removerAviso(id) {
-            if(confirm("Deseja realmente apagar este aviso?")) {
+            if(confirm("Deseja apagar este aviso?")) {
                 await db.collection("avisos").doc(id).delete();
-                carregarAvisosAdmin();
             }
         }
 
         window.onload = () => {
             verificarPermissoesAdmin();
-            carregarDadosAdmin();
         };
     </script>
 </body>
