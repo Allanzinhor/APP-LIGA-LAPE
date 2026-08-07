@@ -367,6 +367,36 @@
             "diretora de marketing": ["recados-internos", "avisos"]
         };
 
+        // ==========================================
+        // FUNÇÕES DE DISPARO DE NOTIFICAÇÕES PUSH
+        // ==========================================
+        async function dispararNotificacaoGlobal(titulo, texto) {
+            try {
+                await db.collection("notificacoes_push_manual").add({
+                    titulo: titulo,
+                    texto: texto,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log("Notificação global disparada com sucesso!");
+            } catch (e) {
+                console.error("Erro ao enviar notificação global:", e);
+            }
+        }
+
+        async function dispararNotificacaoIndividual(membroId, titulo, texto) {
+            try {
+                await db.collection("notificacoes_individuais").add({
+                    membroId: membroId,
+                    titulo: titulo,
+                    texto: texto,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log("Notificação individual disparada com sucesso!");
+            } catch (e) {
+                console.error("Erro ao enviar notificação individual:", e);
+            }
+        }
+
         function verificarPermissoesAdmin() {
             let sessao = localStorage.getItem("lape_sessao_usuario");
             if (sessao) {

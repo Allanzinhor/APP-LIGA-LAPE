@@ -182,6 +182,20 @@
         </div>
     </div>
 
+    <!-- MODAL DE JUSTIFICATIVA PERSONALIZADO (BONITO) -->
+    <div id="modal-justificativa" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="text-align: left; max-width: 380px;">
+            <h3 style="color: #0056b3; margin-top: 0; font-size: 18px;">Justificar Ausência</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Explique o motivo da sua ausência para avaliação da diretoria:</p>
+            <input type="hidden" id="justificativa-ativ-id">
+            <textarea id="texto-justificativa-input" rows="4" placeholder="Digite sua justificativa detalhadamente..." style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
+            <div style="display: flex; gap: 8px; margin-top: 15px;">
+                <button class="btn-salvar" style="flex: 1; padding: 10px;" onclick="enviarJustificativaCustomizada()">Enviar Justificativa</button>
+                <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalJustificativa()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE PERFIL COMPLETO -->
     <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
         <div class="modal-perfil-conteudo">
@@ -465,10 +479,24 @@
         }
 
         function abrirModalJust(id) {
-            let motivo = prompt("Explique o motivo da ausência:");
-            if (motivo && motivo.trim() !== "") {
-                alterarRegistroFirebase(id, { confirmadoAluno: false, status: 'aguardando_analise', texto: motivo });
+            document.getElementById('justificativa-ativ-id').value = id;
+            document.getElementById('texto-justificativa-input').value = '';
+            document.getElementById('modal-justificativa').style.display = 'flex';
+        }
+
+        function fecharModalJustificativa() {
+            document.getElementById('modal-justificativa').style.display = 'none';
+        }
+
+        async function enviarJustificativaCustomizada() {
+            let id = document.getElementById('justificativa-ativ-id').value;
+            let motivo = document.getElementById('texto-justificativa-input').value.trim();
+            if (!motivo) {
+                alert("Por favor, digite o motivo da justificativa.");
+                return;
             }
+            await alterarRegistroFirebase(id, { confirmadoAluno: false, status: 'aguardando_analise', texto: motivo });
+            fecharModalJustificativa();
         }
 
         let dataAtual = new Date();
@@ -817,7 +845,7 @@
                     let expirado = agora > limitePrazo;
 
                     if (ativ.statusAdmin === 'presente') {
-                        statusOficialHtml = `<p class="tag-justificado">✓ Presença validada pela Diretoria</p>`;
+                        statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
                     } else if (ativ.statusAdmin === 'negado' && expirado && !ativ.confirmadoAluno && ativ.statusAdmin !== 'aguardando_analise') {
                         statusOficialHtml = `
                             <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
@@ -826,11 +854,11 @@
                             </div>
                         `;
                     } else if (ativ.statusAdmin === 'negado') {
-                        statusOficialHtml = `<p class="tag-falta">✕ Falta registrada / Justificativa Negada</p>`;
+                        statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta registrada / Justificativa Negada</p>`;
                     } else if (ativ.statusAdmin === 'justificado') {
-                        statusOficialHtml = `<p class="tag-justificado">✓ Justificativa Aceita (Abonada)</p>`;
+                        statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
                     } else if (ativ.statusAdmin === 'aguardando_analise') {
-                        statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 6px;">⏳ Justificativa em análise</p>`;
+                        statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 8px;">⏳ Justificativa em análise</p>`;
                         botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
                     } else {
                         if (expirado) {
@@ -867,25 +895,31 @@
 
                 let badgeCanceladaEstilo = (ativ.cancelada || ativ.concluida) ? 'opacity: 0.85;' : '';
 
-                // CARD COLAPSÁVEL (Sanfona): Oculta a descrição e botões por padrão, revelando ao clicar no cabeçalho
+                // CARD COLAPSÁVEL COM GRID NO TÍTULO PARA EVITAR QUEBRA DA SETA
                 listaAtividades.innerHTML += `
-                    <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo} cursor: pointer;">
-                        <div onclick="toggleExpandirAtividadeApp('${ativ.id}')">
-                            ${sinalizacaoDiretoriaHtml}
-                            <div class="badges" style="margin-bottom: 6px;">
-                                <span class="badge-dias">${ativ.ch}h de CH</span>
-                                ${!ativ.cancelada && !ativ.concluida ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Status Final</span>'}
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <h3 class="titulo-atividade" style="margin: 0; font-size: 15px;">${ativ.titulo}</h3>
-                                <span style="font-size: 11px; color: #0056b3; font-weight: bold;" id="seta-ativ-${ativ.id}">▼ Detalhes</span>
-                            </div>
-                            <div class="info-atividade" style="margin-top: 8px;">
-                                <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
-                                <p style="margin: 2px 0;"><strong>Local:</strong> ${ativ.local}</p>
-                                ${statusOficialHtml}
+                    <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo}">
+                        ${sinalizacaoDiretoriaHtml}
+                        <div class="badges" style="margin-bottom: 6px;">
+                            <span class="badge-dias">${ativ.ch}h de CH</span>
+                            ${!ativ.cancelada && !ativ.concluida ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Status Final</span>'}
+                        </div>
+                        
+                        <!-- Grid para garantir que o título longo quebre linha sem empurrar a seta -->
+                        <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
+                            <div style="text-align: right; white-space: nowrap; color: #0056b3; font-weight: bold; font-size: 11px; padding-top: 2px;">
+                                <span id="seta-ativ-${ativ.id}">▼ Detalhes</span>
                             </div>
                         </div>
+
+                        <div class="info-atividade" style="margin-top: 8px;" onclick="toggleExpandirAtividadeApp('${ativ.id}')" style="cursor: pointer;">
+                            <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            <p style="margin: 2px 0;"><strong>Local:</strong> ${ativ.local}</p>
+                        </div>
+
+                        <!-- Status oficial agora fica visível no card principal -->
+                        ${statusOficialHtml}
+
                         <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: none; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
                             <p class="desc-atividade" style="margin-bottom: 10px;">${ativ.desc}</p>
                             ${!ativ.cancelada && !ativ.concluida && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
