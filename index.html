@@ -405,7 +405,7 @@
                                 navigator.serviceWorker.controller.postMessage({
                                     type: 'MOSTRAR_AVISO',
                                     titulo: dadosPush.titulo || "Atualização na LAPE",
-                                    texto: dadosPush.texto || "Você tem uma nova atualização no portal."
+                                    texto: dadosPush.texto || "Você tiene uma nova atualização no portal."
                                 });
                             }
                         }
@@ -987,16 +987,16 @@
 
             if (intervaloCronometro) clearInterval(intervaloCronometro);
             intervaloCronometro = setInterval(() => {
-                let agoraIntervalo = new Date();
                 atividadesDesteMes.forEach(ativ => {
                     let timerEl = document.getElementById(`timer-${ativ.id}`);
                     let timerExtraEl = document.getElementById(`timer-extra-${ativ.id}`);
                     
+                    let agoraLoop = new Date();
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
 
                     if (timerEl && !ativ.cancelada && !ativ.concluida && ativ.prazoFechadoManual !== false) {
-                        let diffTempo = limitePrazo.getTime() - agoraIntervalo.getTime();
+                        let diffTempo = limitePrazo.getTime() - agoraLoop.getTime();
                         if (diffTempo <= 0) {
                             renderizarApp();
                         } else {
@@ -1010,7 +1010,7 @@
 
                     if (timerExtraEl && ativ.prazoExtraExpiraEm) {
                         let expiraEmDate = ativ.prazoExtraExpiraEm.toDate ? ativ.prazoExtraExpiraEm.toDate() : new Date(ativ.prazoExtraExpiraEm);
-                        let diffTempExtra = expiraEmDate.getTime() - agoraIntervalo.getTime();
+                        let diffTempExtra = expiraEmDate.getTime() - agoraLoop.getTime();
                         if (diffTempExtra <= 0) {
                             renderizarApp();
                         } else {
