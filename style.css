@@ -1237,3 +1237,65 @@ body {
     background-color: #f4f7f6 !important;
     color: #000000 !important;
 }
+
+/* =========================================
+   CORREÇÃO DA TABELA FINANCEIRA E ELEMENTOS
+   ========================================= */
+.tabela-financeiro {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    table-layout: fixed; /* Força as colunas a respeitarem os tamanhos definidos */
+}
+
+.tabela-financeiro th, .tabela-financeiro td {
+    padding: 8px 6px;
+    font-size: 11px;
+    text-align: left;
+    border-bottom: 1px solid #f1f3f5;
+    vertical-align: middle;
+    word-break: normal;
+}
+
+/* Larguras específicas para cada coluna da tabela financeira */
+.tabela-financeiro th:nth-child(1), .tabela-financeiro td:nth-child(1) {
+    width: 42%;
+}
+
+.tabela-financeiro th:nth-child(2), .tabela-financeiro td:nth-child(2) {
+    width: 25%;
+    text-align: center;
+}
+
+.tabela-financeiro th:nth-child(3), .tabela-financeiro td:nth-child(3) {
+    width: 33%;
+    text-align: right;
+}
+
+/* Garante que o texto do badge não quebre verticalmente */
+.badge-fin {
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: bold;
+    white-space: nowrap; 
+}
+
+/* Agrupamento compacto dos botões de ação na tabela */
+.tabela-financeiro td:nth-child(3) div, 
+.tabela-financeiro td:nth-child(3) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: flex-end;
+}
+
+.tabela-financeiro .btn-mini {
+    padding: 3px 6px;
+    font-size: 10px;
+    margin: 0;
+}
