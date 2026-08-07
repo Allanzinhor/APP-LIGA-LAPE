@@ -1089,18 +1089,34 @@
                 let a = { id: doc.id, ...doc.data() };
                 avisosCache.push(a);
                 div.innerHTML += `
-                    <div class="card-admin-item flex-row">
+                    <div class="card-admin-item flex-row" style="align-items: flex-start; justify-content: space-between;">
                         <div>
                             <h4>${a.titulo}</h4>
                             <p class="cinza">${a.texto}</p>
                         </div>
-                        <div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 110px;">
+                            <button class="btn-mini verde" onclick="dispararNotificacaoManual('${a.titulo.replace(/'/g, "\\'")}', '${a.texto.replace(/'/g, "\\'")}')">📢 Enviar Push</button>
                             <button class="btn-mini cinza" onclick="prepararEdicaoAviso('${a.id}')">Editar</button>
                             <button class="btn-mini vermelho" onclick="removerAviso('${a.id}')">Apagar</button>
                         </div>
                     </div>
                 `;
             });
+        }
+
+        async function dispararNotificacaoManual(titulo, texto) {
+            try {
+                await db.collection("avisos").add({
+                    titulo: `[Reenvio] ${titulo}`,
+                    texto: texto,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("Notificação disparada com sucesso para os ligantes online!");
+                carregarAvisosAdmin();
+            } catch(e) {
+                console.error(e);
+                alert("Erro ao disparar notificação.");
+            }
         }
 
         function prepararEdicaoAviso(id) {

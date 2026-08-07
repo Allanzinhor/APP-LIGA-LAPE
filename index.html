@@ -343,28 +343,38 @@
                 }
             } catch(e) { console.log(e); }
 
-            // Escuta em tempo real os avisos da nuvem e dispara notificação local
-            db.collection("avisos").onSnapshot((snapshot) => {
-                let novosAvisos = [];
-                snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
-                
-                // Se houver aumento de avisos ou alteração, dispara notificação do mais recente se necessário
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const avisoData = change.doc.data();
-                        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                            navigator.serviceWorker.controller.postMessage({
-                                type: 'MOSTRAR_AVISO',
-                                titulo: avisoData.titulo || "Novo Aviso da LAPE",
-                                texto: avisoData.texto || "Confira o novo comunicado no portal."
-                            });
-                        }
-                    }
-                });
+// Escuta em tempo real os avisos da nuvem
+        db.collection("avisos").onSnapshot((snapshot) => {
+            let novosAvisos = [];
+            let ultimoAvisoSalvo = localStorage.getItem("lape_ultimo_aviso_id");
+            let primeiraVez = (ultimoAvisoSalvo === null);
 
-                avisos = novosAvisos;
-                renderizarAvisos();
+            snapshot.forEach(doc => {
+                novosAvisos.push({ id: doc.id, ...doc.data() });
             });
+
+            // Ordena se necessário ou pega o mais recente
+            if (novosAvisos.length > 0) {
+                let avisoMaisRecente = novosAvisos[novosAvisos.length - 1];
+
+                // Se não for a primeira vez que abre o app e entrar um ID que a pessoa não viu
+                if (!primeiraVez && ultimoAvisoSalvo !== avisoMaisRecente.id) {
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({
+                            type: 'MOSTRAR_AVISO',
+                            titulo: avisoMaisRecente.titulo || "Novo Aviso da LAPE",
+                            texto: avisoMaisRecente.texto || "Confira o novo comunicado no portal."
+                        });
+                    }
+                }
+
+                // Salva o ID mais recente atual
+                localStorage.setItem("lape_ultimo_aviso_id", avisoMaisRecente.id);
+            }
+
+            avisos = novosAvisos;
+            renderizarAvisos();
+        });
 
             try {
                 let atSnap = await db.collection("atividades").get();
