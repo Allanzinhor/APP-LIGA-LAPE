@@ -331,7 +331,6 @@
         function iniciarOuvintesTempoReal() {
             let momentoAberturaApp = new Date();
 
-            // 1. Dados do próprio usuário
             db.collection("membros").doc(usuarioLogado.id).onSnapshot((doc) => {
                 if (doc.exists) {
                     usuarioLogado = { id: doc.id, ...doc.data() };
@@ -351,7 +350,6 @@
                 }
             });
 
-            // 2. Avisos Globais
             db.collection("avisos").onSnapshot((snapshot) => {
                 let novosAvisos = [];
                 snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
@@ -359,7 +357,6 @@
                 renderizarAvisos();
             });
 
-            // 3. Push Globais
             db.collection("notificacoes_push_manual").orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
                 if (primeiraCargaPush) {
                     primeiraCargaPush = false;
@@ -381,7 +378,6 @@
                 });
             });
 
-            // 4. Push Individuais (Apenas para este ligante específico)
             db.collection("notificacoes_individuais").where("membroId", "==", usuarioLogado.id).onSnapshot((snapshot) => {
                 if (primeiraCargaIndividual) {
                     primeiraCargaIndividual = false;
@@ -403,7 +399,6 @@
                 });
             });
 
-            // 5. Atividades e Chamada
             db.collection("atividades").onSnapshot(async (snapshot) => {
                 atividades = [];
                 let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
@@ -872,21 +867,29 @@
 
                 let badgeCanceladaEstilo = (ativ.cancelada || ativ.concluida) ? 'opacity: 0.85;' : '';
 
+                // CARD COLAPSÁVEL (Sanfona): Oculta a descrição e botões por padrão, revelando ao clicar no cabeçalho
                 listaAtividades.innerHTML += `
-                    <div class="card-atividade" style="${badgeCanceladaEstilo}">
-                        ${sinalizacaoDiretoriaHtml}
-                        <div class="badges">
-                            <span class="badge-dias">${ativ.ch}h de CH</span>
-                            ${!ativ.cancelada && !ativ.concluida ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Status Final</span>'}
+                    <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo} cursor: pointer;">
+                        <div onclick="toggleExpandirAtividadeApp('${ativ.id}')">
+                            ${sinalizacaoDiretoriaHtml}
+                            <div class="badges" style="margin-bottom: 6px;">
+                                <span class="badge-dias">${ativ.ch}h de CH</span>
+                                ${!ativ.cancelada && !ativ.concluida ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Status Final</span>'}
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 class="titulo-atividade" style="margin: 0; font-size: 15px;">${ativ.titulo}</h3>
+                                <span style="font-size: 11px; color: #0056b3; font-weight: bold;" id="seta-ativ-${ativ.id}">▼ Detalhes</span>
+                            </div>
+                            <div class="info-atividade" style="margin-top: 8px;">
+                                <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                                <p style="margin: 2px 0;"><strong>Local:</strong> ${ativ.local}</p>
+                                ${statusOficialHtml}
+                            </div>
                         </div>
-                        <h3 class="titulo-atividade">${ativ.titulo}</h3>
-                        <p class="desc-atividade">${ativ.desc}</p>
-                        <div class="info-atividade">
-                            <p><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
-                            <p><strong>Local:</strong> ${ativ.local}</p>
-                            ${statusOficialHtml}
+                        <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: none; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
+                            <p class="desc-atividade" style="margin-bottom: 10px;">${ativ.desc}</p>
+                            ${!ativ.cancelada && !ativ.concluida && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
                         </div>
-                        ${!ativ.cancelada && !ativ.concluida && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 15px;">${botoesCardHtml}</div>` : ''}
                     </div>
                 `;
             });
@@ -912,6 +915,18 @@
                     }
                 });
             }, 1000);
+        }
+
+        function toggleExpandirAtividadeApp(id) {
+            let detalhes = document.getElementById(`detalhes-ativ-${id}`);
+            let seta = document.getElementById(`seta-ativ-${id}`);
+            if (detalhes.style.display === "none") {
+                detalhes.style.display = "block";
+                seta.innerText = "▲ Ocultar";
+            } else {
+                detalhes.style.display = "none";
+                seta.innerText = "▼ Detalhes";
+            }
         }
 
         function renderizarAvisos() {
