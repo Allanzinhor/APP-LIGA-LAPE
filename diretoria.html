@@ -368,6 +368,36 @@
         };
 
         // ==========================================
+        // FUNÇÕES AUXILIARES DE MÁSCARA E CÁLCULO
+        // ==========================================
+        function mascaraTelefone(input) {
+            let v = input.value.replace(/\D/g, "");
+            v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+            v = v.replace(/(\d)(\d{4})$/, "$1-$2");
+            input.value = v;
+        }
+
+        function calcularFormatura() {
+            let anoIngresso = parseInt(document.getElementById('m-ano-ingresso-inst').value);
+            let semestreIngresso = document.getElementById('m-sem-ingresso-inst').value;
+            let campoFormatura = document.getElementById('m-previsao-formatura');
+
+            if (!anoIngresso || isNaN(anoIngresso) || anoIngresso < 2000) {
+                campoFormatura.value = "";
+                return;
+            }
+
+            // Enfermagem costuma ter 5 anos (10 semestres) na faculdade
+            let semestresCurso = 10;
+            let totalSemestres = (anoIngresso * 2) + (semestreIngresso === "2" ? 1 : 0) + semestresCurso;
+            
+            let anoFormatura = Math.floor((totalSemestres - 1) / 2);
+            let semFormatura = (totalSemestres - 1) % 2 === 0 ? "1º Semestre" : "2º Semestre";
+
+            campoFormatura.value = `${semFormatura} de ${anoFormatura}`;
+        }
+
+        // ==========================================
         // FUNÇÕES DE DISPARO DE NOTIFICAÇÕES PUSH
         // ==========================================
         async function dispararNotificacaoGlobal(titulo, texto) {
@@ -1064,6 +1094,7 @@
                 await db.collection("membros").doc(id).update(dadosMembro);
                 alert("Ligante atualizado com sucesso!");
             } else {
+                // Geração correta do código baseada no ano e semestre de ingresso na liga
                 let anoIngLig = ingressoLiga.substring(0, 4) || "2026";
                 let mesIngresso = new Date(ingressoLiga + "T00:00:00").getMonth() + 1;
                 let semestreLiga = mesIngresso <= 6 ? "1" : "2";
