@@ -847,6 +847,13 @@
                             <p style="color: ${corStatus}; font-size: 13px; font-weight: bold; margin: 0;">${mensagemConcluida}</p>
                         </div>
                     `;
+                } else if (ativ.statusAdmin === 'aguardando_analise') {
+                    statusOficialHtml = `
+                        <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #f59f00; font-weight: bold;">
+                            ⏳ Justificativa em análise pela diretoria
+                        </div>
+                    `;
+                    botoesCardHtml = `<span style="font-size: 11px; color: #888;">Aguardando avaliação da diretoria</span>`;
                 } else {
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
@@ -894,7 +901,7 @@
 
                         if (ativ.statusAdmin === 'presente') {
                             statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
-                        } else if (ativ.statusAdmin === 'negado' && expirado && !ativ.confirmadoAluno && ativ.statusAdmin !== 'aguardando_analise') {
+                        } else if (ativ.statusAdmin === 'negado' && expirado && !ativ.confirmadoAluno) {
                             statusOficialHtml = `
                                 <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
                                     <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
@@ -905,9 +912,6 @@
                             statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta registrada / Justificativa Negada</p>`;
                         } else if (ativ.statusAdmin === 'justificado') {
                             statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
-                        } else if (ativ.statusAdmin === 'aguardando_analise') {
-                            statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 8px;">⏳ Justificativa em análise</p>`;
-                            botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
                         } else {
                             if (expirado) {
                                 statusOficialHtml = `
@@ -973,22 +977,20 @@
             iniciarMotorGlobalCronometros();
         }
 
-        // MOTOR ISOLADO E INDEPENDENTE DE CRONÔMETROS EM TEMPO REAL
         function iniciarMotorGlobalCronometros() {
             if (motorCronometroGlobal) clearInterval(motorCronometroGlobal);
 
             motorCronometroGlobal = setInterval(() => {
                 let agoraMs = new Date().getTime();
 
-                // Atualiza todos os timers normais que possuem o atributo data-limite
                 document.querySelectorAll('[id^="timer-"]').forEach(el => {
-                    if (el.id.includes('extra')) return; // ignora os extras por enquanto
+                    if (el.id.includes('extra')) return;
                     let limiteMs = Number(el.getAttribute('data-limite'));
                     if (!limiteMs) return;
 
                     let diffTempo = limiteMs - agoraMs;
                     if (diffTempo <= 0) {
-                        renderizarApp(); // se expirou, redesenha o app
+                        renderizarApp();
                     } else {
                         let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                         let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -998,7 +1000,6 @@
                     }
                 });
 
-                // Atualiza todos os timers extras que possuem o atributo data-expira
                 document.querySelectorAll('[id^="timer-extra-"]').forEach(el => {
                     let expiraMs = Number(el.getAttribute('data-expira'));
                     if (!expiraMs) return;
