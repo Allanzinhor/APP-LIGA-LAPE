@@ -43,18 +43,18 @@
             </div>
         </div>
 
-        <!-- MURAL DE AVISOS DA DIRETORIA (EM SLIDES + FIXOS) -->
+        <!-- MURAL DE AVISOS DA DIRETORIA (SLIDES COM ALTURA FIXA E CONTAGEM) -->
         <div class="quadro-avisos" style="margin-bottom: 15px;">
             <div class="avisos-header">
-                <span>🛡️ Mural Interno da Diretoria</span>
+                <span>🛡️ MURAL INTERNO DA DIRETORIA</span>
                 <span id="contador-slide-dir">1/1</span>
             </div>
             
             <!-- Recados Fixados Estáticos -->
             <div id="container-avisos-fixos"></div>
 
-            <!-- Slides Rotativos -->
-            <div class="slides-container" id="container-slides-dir"></div>
+            <!-- Slides Rotativos com Altura Mínima Fixa para Estética Perfeita -->
+            <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justify-content: center;"></div>
         </div>
 
         <!-- FORMULÁRIO DE CRIAÇÃO / EDIÇÃO EXCLUSIVO DO PRESIDENTE -->
@@ -66,6 +66,17 @@
             <textarea id="av-dir-texto" rows="2" placeholder="Escreva a mensagem..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 8px;"></textarea>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div>
+                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Origem (Quem pediu):</label>
+                    <select id="av-dir-origem" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                        <option value="Presidência">Presidência</option>
+                        <option value="Diretoria de Pesquisa">Diretoria de Pesquisa</option>
+                        <option value="Diretoria de Extensão">Diretoria de Extensão</option>
+                        <option value="Diretoria de Marketing">Diretoria de Marketing</option>
+                        <option value="Tesouraria">Tesouraria</option>
+                        <option value="Secretaria">Secretaria</option>
+                    </select>
+                </div>
                 <div>
                     <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Público-Alvo:</label>
                     <select id="av-dir-alvo" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
@@ -79,14 +90,22 @@
                         <option value="Diretora de Marketing">Apenas Diretora de Marketing</option>
                     </select>
                 </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                 <div>
                     <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Duração:</label>
-                    <select id="av-dir-duracao" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                    <select id="av-dir-duracao" onchange="alternarCampoPersonalizado(this.value)" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
                         <option value="permanente">Permanente</option>
                         <option value="1">1 Dia</option>
                         <option value="3">3 Dias</option>
                         <option value="7">7 Dias</option>
+                        <option value="personalizado">Data/Hora Personalizada</option>
                     </select>
+                </div>
+                <div id="div-data-personalizada" style="display: none;">
+                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Expira em:</label>
+                    <input type="datetime-local" id="av-dir-expira-personalizada" style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; box-sizing: border-box;">
                 </div>
             </div>
 
@@ -451,6 +470,15 @@
             }
         }
 
+        function alternarCampoPersonalizado(valor) {
+            let divPers = document.getElementById('div-data-personalizada');
+            if (valor === 'personalizado') {
+                divPers.style.display = 'block';
+            } else {
+                divPers.style.display = 'none';
+            }
+        }
+
         function mascaraTelefone(input) {
             let v = input.value.replace(/\D/g, "");
             if (v.length > 11) v = v.substring(0, 11);
@@ -686,6 +714,7 @@
             let idEditando = document.getElementById('av-dir-id-editando').value;
             let titulo = document.getElementById('av-dir-titulo').value.trim();
             let texto = document.getElementById('av-dir-texto').value.trim();
+            let origem = document.getElementById('av-dir-origem').value;
             let alvo = document.getElementById('av-dir-alvo').value;
             let duracao = document.getElementById('av-dir-duracao').value;
             let fixo = document.getElementById('av-dir-fixo').checked;
@@ -693,7 +722,11 @@
             if (!titulo || !texto) { alert("Preencha o título e o texto do recado interno."); return; }
 
             let expiraEm = null;
-            if (duracao !== "permanente") {
+            if (duracao === "personalizado") {
+                let valData = document.getElementById('av-dir-expira-personalizada').value;
+                if (!valData) { alert("Selecione a data e hora de expiração personalizada."); return; }
+                expiraEm = firebase.firestore.Timestamp.fromDate(new Date(valData));
+            } else if (duracao !== "permanente") {
                 let dias = parseInt(duracao);
                 let dataExp = new Date();
                 dataExp.setDate(dataExp.getDate() + dias);
@@ -703,10 +736,10 @@
             let dadosAviso = {
                 titulo,
                 texto,
+                origem,
                 alvo,
                 fixo,
-                expiraEm,
-                autor: usuarioSessao.nome
+                expiraEm
             };
 
             if (idEditando) {
@@ -729,9 +762,11 @@
             document.getElementById('av-dir-id-editando').value = aviso.id;
             document.getElementById('av-dir-titulo').value = aviso.titulo || '';
             document.getElementById('av-dir-texto').value = aviso.texto || '';
+            document.getElementById('av-dir-origem').value = aviso.origem || 'Presidência';
             document.getElementById('av-dir-alvo').value = aviso.alvo || 'todos';
             document.getElementById('av-dir-fixo').checked = aviso.fixo || false;
-            document.getElementById('av-dir-duracao').value = 'permanente'; // Padrão na edição
+            document.getElementById('av-dir-duracao').value = 'permanente';
+            document.getElementById('div-data-personalizada').style.display = 'none';
 
             document.getElementById('titulo-form-aviso-dir').innerText = "✏️ Editar Recado da Diretoria";
             document.getElementById('btn-salvar-aviso-dir').innerText = "Salvar Alterações";
@@ -743,13 +778,40 @@
             document.getElementById('av-dir-id-editando').value = "";
             document.getElementById('av-dir-titulo').value = "";
             document.getElementById('av-dir-texto').value = "";
+            document.getElementById('av-dir-origem').value = "Presidência";
             document.getElementById('av-dir-alvo').value = "todos";
             document.getElementById('av-dir-fixo').checked = false;
             document.getElementById('av-dir-duracao').value = "permanente";
+            document.getElementById('div-data-personalizada').style.display = "none";
 
             document.getElementById('titulo-form-aviso-dir').innerText = "✍️ Publicar Recado para a Diretoria";
             document.getElementById('btn-salvar-aviso-dir').innerText = "Publicar Recado";
             document.getElementById('btn-cancelar-aviso-dir').style.display = "none";
+        }
+
+        function calcularTempoRestante(timestampExpira) {
+            if (!timestampExpira) return "Permanente";
+            let agora = new Date();
+            let exp = timestampExpira.toDate();
+            let diffMs = exp - agora;
+            if (diffMs <= 0) return "Expirando...";
+
+            let diffSeg = Math.floor(diffMs / 1000);
+            let diffMin = Math.floor(diffSeg / 60);
+            let diffHoras = Math.floor(diffMin / 60);
+            let diffDias = Math.floor(diffHoras / 24);
+
+            if (diffDias > 0) {
+                let hRest = diffHoras % 24;
+                return `Expira em ${diffDias}d ${hRest}h`;
+            } else if (diffHoras > 0) {
+                let mRest = diffMin % 60;
+                return `Expira em ${diffHoras}h ${mRest}m`;
+            } else if (diffMin > 0) {
+                return `Expira em ${diffMin} min`;
+            } else {
+                return `Expira em instantes`;
+            }
         }
 
         async function carregarAvisosDiretoria() {
@@ -792,20 +854,23 @@
                         <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
                     </div>
                 ` : "";
-                let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">Para: ${a.alvo}</span>` : "";
+                let tagOrigem = `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">De: ${a.origem || 'Presidência'}</span>`;
+                let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 4px;">Para: ${a.alvo}</span>` : "";
+                let tempoStr = calcularTempoRestante(a.expiraEm);
                 
                 containerFixos.innerHTML += `
                     <div style="background: #fff; border-left: 4px solid #f59f00; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #ffe066;">
                         ${botoesAcao}
-                        <h4 style="color: #b7791f; margin: 0; font-size: 13px;">📌 [FIXO] ${a.titulo} ${tagAlvo}</h4>
-                        <p class="cinza" style="margin: 4px 0 0 0; font-size: 11px;">${a.texto}</p>
+                        <h4 style="color: #b7791f; margin: 0; font-size: 13px;">📌 [FIXO] ${a.titulo} ${tagOrigem} ${tagAlvo}</h4>
+                        <p class="cinza" style="margin: 4px 0 2px 0; font-size: 11px;">${a.texto}</p>
+                        <small style="color: #e67700; font-size: 9px; font-weight: bold;">⏳ ${tempoStr}</small>
                     </div>
                 `;
             });
 
             if (rotativos.length === 0) {
                 if (fixos.length === 0) {
-                    containerSlides.innerHTML = "<p style='font-size:11px; padding:5px;'>Nenhum recado interno no momento.</p>";
+                    containerSlides.innerHTML = "<p style='font-size:11px; padding:5px; text-align:center; color:#666;'>Nenhum recado interno no momento.</p>";
                     if (contador) contador.innerText = "0/0";
                 } else {
                     if (contador) contador.innerText = "0/0";
@@ -823,13 +888,16 @@
                         <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
                     </div>
                 ` : "";
-                let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">Para: ${a.alvo}</span>` : "";
+                let tagOrigem = `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">De: ${a.origem || 'Presidência'}</span>`;
+                let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 4px;">Para: ${a.alvo}</span>` : "";
+                let tempoStr = calcularTempoRestante(a.expiraEm);
 
                 containerSlides.innerHTML += `
                     <div class="slide ${classeAtiva}">
                         ${botoesAcaoSlide}
-                        <h4 style="font-size: 13px; margin: 0 0 4px 0;">${a.titulo} ${tagAlvo}</h4>
-                        <p style="font-size: 11px; margin: 0;">${a.texto}</p>
+                        <h4 style="font-size: 13px; margin: 0 0 4px 0;">${a.titulo} ${tagOrigem} ${tagAlvo}</h4>
+                        <p style="font-size: 11px; margin: 0 0 4px 0;">${a.texto}</p>
+                        <small style="color: #888; font-size: 9px; font-weight: bold;">⏳ ${tempoStr}</small>
                     </div>
                 `;
             });
