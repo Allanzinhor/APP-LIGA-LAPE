@@ -229,7 +229,6 @@
         let intervaloCronometro = null;
         let primeiraCargaPush = true;
         let primeiraCargaIndividual = true;
-        let primeiraCargaUsuario = true;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -332,7 +331,7 @@
         function iniciarOuvintesTempoReal() {
             let momentoAberturaApp = new Date();
 
-            // 1. Dados do próprio usuário em tempo real
+            // 1. Dados do próprio usuário
             db.collection("membros").doc(usuarioLogado.id).onSnapshot((doc) => {
                 if (doc.exists) {
                     usuarioLogado = { id: doc.id, ...doc.data() };
@@ -360,7 +359,7 @@
                 renderizarAvisos();
             });
 
-            // 3. Notificações Push Globais
+            // 3. Push Globais
             db.collection("notificacoes_push_manual").orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
                 if (primeiraCargaPush) {
                     primeiraCargaPush = false;
@@ -382,8 +381,8 @@
                 });
             });
 
-            // 4. Notificações Push Individuais (Apenas para este usuário específico)
-            db.collection("notificacoes_individuais").where("membroId", "==", usuarioLogado.id).orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
+            // 4. Push Individuais (Apenas para este ligante específico)
+            db.collection("notificacoes_individuais").where("membroId", "==", usuarioLogado.id).onSnapshot((snapshot) => {
                 if (primeiraCargaIndividual) {
                     primeiraCargaIndividual = false;
                     return;
@@ -404,7 +403,7 @@
                 });
             });
 
-            // 5. Atividades e Chamada em Tempo Real
+            // 5. Atividades e Chamada
             db.collection("atividades").onSnapshot(async (snapshot) => {
                 atividades = [];
                 let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();

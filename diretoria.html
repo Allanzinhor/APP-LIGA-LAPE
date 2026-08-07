@@ -346,7 +346,6 @@
             document.getElementById('m-previsao-formatura').value = `${semFormatura}º Semestre de ${anoFormatura}`;
         }
 
-        // Envio Global (para todos)
         async function dispararNotificacaoGlobal(titulo, texto) {
             try {
                 await db.collection("notificacoes_push_manual").add({
@@ -359,7 +358,6 @@
             }
         }
 
-        // Envio Específico (apenas para um membro específico)
         async function dispararNotificacaoIndividual(membroId, titulo, texto) {
             try {
                 await db.collection("notificacoes_individuais").add({
@@ -459,8 +457,8 @@
                             <p style="font-size:11px; margin-bottom:4px; font-weight:bold;">📸 Foto Enviada para Análise:</p>
                             <img src="${m.fotoTempUrl}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; margin-bottom:6px; display:block;">
                             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-mini verde" onclick="aprovarFoto('${m.id}', '${nomeMembroSeguro}')">Permitir Foto</button>
-                                <button class="btn-mini vermelho" onclick="negarFoto('${m.id}', '${nomeMembroSeguro}')">Negar Foto</button>
+                                <button class="btn-mini verde" onclick="aprovarFoto('${m.id}')">Permitir Foto</button>
+                                <button class="btn-mini vermelho" onclick="negarFoto('${m.id}')">Negar Foto</button>
                                 <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Atualização de Perfil', 'Sua foto de perfil foi avaliada pela diretoria.')">📢 Notificar</button>
                             </div>
                         </div>
@@ -538,7 +536,7 @@
             carregarAvisosAdmin();
         }
 
-        async function aprovarFoto(id, nomeMembro) {
+        async function aprovarFoto(id) {
             let membro = membrosCache.find(x => x.id === id);
             if (!membro) return;
             await db.collection("membros").doc(id).update({
@@ -551,7 +549,7 @@
             carregarDadosAdmin();
         }
 
-        async function negarFoto(id, nomeMembro) {
+        async function negarFoto(id) {
             await db.collection("membros").doc(id).update({
                 fotoStatus: 'negada',
                 fotoTempUrl: null
@@ -915,7 +913,6 @@
                     if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">✕ Falta / Justif. Negada</span>`;
 
                     let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:#1e88e5; display:block;">(Aluno confirmou interesse no app)</span>` : "";
-                    let nomeMembroSeguro = (m.nome || "").replace(/'/g, "\\'");
                     let tituloAtivSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
                     let blocoBotoesAcoes = "";
@@ -924,13 +921,12 @@
                             <div class="caixa-justificativa-admin" style="margin:5px 0; background:#fff8e1; padding:6px; border-radius:4px;">
                                 <p style="font-size:11px;"><strong>Justificativa do Aluno:</strong> "${reg.texto}"</p>
                                 <div class="botoes-justica" style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
-                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '', '${m.id}', '${nomeMembroSeguro}', '${tituloAtivSeguro}')">Aceitar Justificativa</button>
-                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${m.id}', '${nomeMembroSeguro}', '${tituloAtivSeguro}')">Negar Justificativa (Falta)</button>
+                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '', '${tituloAtivSeguro}')">Aceitar Justificativa</button>
+                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Negar Justificativa (Falta)</button>
                                 </div>
                             </div>
                         `;
                     } else if (reg.status !== 'pendente') {
-                        // Se já tem status definido (Presente, Falta ou Justificado), exibe APENAS Resetar e Notificar conforme solicitado
                         blocoBotoesAcoes = `
                             <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Resetar</button>
@@ -939,12 +935,11 @@
                             ${reg.status === 'justificado' && reg.texto ? `<p style="font-size:11px; color:#2b8a3e; margin-top:4px;"><strong>Justificativa Manual:</strong> "${reg.texto}"</p>` : ''}
                         `;
                     } else {
-                        // Se está pendente, exibe os botões normais de marcação
                         blocoBotoesAcoes = `
                             <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'presente', '', '${m.id}', '${nomeMembroSeguro}', '${tituloAtivSeguro}')">Dar Presença (+CH)</button>
-                                <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${m.id}', '${nomeMembroSeguro}', '${tituloAtivSeguro}')">Marcar Falta</button>
-                                <button class="btn-mini cinza" onclick="abrirJustificativaManual('${a.id}', '${m.id}', '${m.id}', '${nomeMembroSeguro}', '${tituloAtivSeguro}')">📝 Justificar Manual</button>
+                                <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'presente', '', '${tituloAtivSeguro}')">Dar Presença (+CH)</button>
+                                <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Marcar Falta</button>
+                                <button class="btn-mini cinza" onclick="abrirJustificativaManual('${a.id}', '${m.id}', '${tituloAtivSeguro}')">📝 Justificar Manual</button>
                             </div>
                         `;
                     }
@@ -1004,34 +999,34 @@
         }
 
         async function mudarStatusAdmin(ativId, ligId, novoStatus, textoCustomizado = '') {
-            let ativ = atividadesCache.find(x => x.id === ativId);
-            if(!ativ) return;
-            if(!ativ.frequencias) ativ.frequencias = {};
-            if(!ativ.frequencias[ligId]) ativ.frequencias[ligId] = {};
-            
-            ativ.frequencias[ligId].status = novoStatus;
-            if(textoCustomizado !== '') {
-                ativ.frequencias[ligId].texto = textoCustomizado;
-            } else if(novoStatus === 'pendente') {
-                ativ.frequencias[ligId].texto = '';
-            }
+            let docRef = db.collection("atividades").doc(ativId);
+            let docSnap = await docRef.get();
+            if(!docSnap.exists) return;
 
-            await db.collection("atividades").doc(ativId).update({
-                frequencias: ativ.frequencias
-            });
-            carregarDadosAdmin();
+            let data = docSnap.data();
+            let frequencias = data.frequencias || {};
+            let atual = frequencias[ligId] || {};
+
+            frequencias[ligId] = {
+                ...atual,
+                status: novoStatus,
+                texto: textoCustomizado !== '' ? textoCustomizado : (novoStatus === 'pendente' ? '' : (atual.texto || ''))
+            };
+
+            await docRef.update({ frequencias: frequencias });
+            await carregarDadosAdmin();
         }
 
-        async function mudarStatusAdminComNotif(ativId, ligId, membroId, novoStatus, textoCustomizado = '', nomeMembro = '', tituloAtiv = '') {
+        async function mudarStatusAdminComNotif(ativId, ligId, novoStatus, textoCustomizado = '', tituloAtiv = '') {
             await mudarStatusAdmin(ativId, ligId, novoStatus, textoCustomizado);
             let msgStatus = novoStatus === 'justificado' ? 'Sua justificativa foi aceita!' : 'Sua frequência foi atualizada.';
-            await dispararNotificacaoIndividual(membroId, `Atualização na Chamada (${tituloAtiv})`, `${nomeMembro}, ${msgStatus}`);
+            await dispararNotificacaoIndividual(ligId, `Atualização na Chamada (${tituloAtiv})`, msgStatus);
         }
 
-        function abrirJustificativaManual(ativId, ligId, membroId, nomeMembro, tituloAtiv) {
+        function abrirJustificativaManual(ativId, ligId, tituloAtiv) {
             let motivo = prompt("Digite o motivo da justificativa manual para este ligante:");
             if (motivo && motivo.trim() !== "") {
-                mudarStatusAdminComNotif(ativId, ligId, membroId, 'justificado', motivo, nomeMembro, tituloAtiv);
+                mudarStatusAdminComNotif(ativId, ligId, 'justificado', motivo, tituloAtiv);
             }
         }
 
@@ -1076,12 +1071,10 @@
                 if(status === 'analise') badge = `<span class="badge-fin analise">Aguardando Confirmação</span>`;
                 if(status === 'abonado') badge = `<span class="badge-fin abonado">Abonado (R$ 0)</span>`;
 
-                let nomeMembroSeguro = (m.nome || "").replace(/'/g, "\\'");
-
                 let botoesFin = `
-                    <button class="btn-mini verde" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pago', '${nomeMembroSeguro}')">Recebido</button>
-                    <button class="btn-mini cinza" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'abonado', '${nomeMembroSeguro}')">Abonar</button>
-                    <button class="btn-mini vermelho" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pendente', '${nomeMembroSeguro}')">Resetar</button>
+                    <button class="btn-mini verde" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pago')">Recebido</button>
+                    <button class="btn-mini cinza" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'abonado')">Abonar</button>
+                    <button class="btn-mini vermelho" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pendente')">Resetar</button>
                     <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Situação Financeira', 'Sua situação de mensalidade de ${mesFiltro} foi atualizada.')">📢 Notificar</button>
                 `;
 
@@ -1098,7 +1091,7 @@
             div.innerHTML = htmlTabela;
         }
 
-        async function alterarFinanceiroAdmin(membroId, mesAno, novoStatus, nomeMembro) {
+        async function alterarFinanceiroAdmin(membroId, mesAno, novoStatus) {
             let membro = membrosCache.find(x => x.id === membroId);
             if(!membro) return;
             if(!membro.financeiro) membro.financeiro = {};
