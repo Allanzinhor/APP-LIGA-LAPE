@@ -23,7 +23,6 @@
         .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; }
         
-        /* Spinner de Carregamento */
         .spinner-login {
             width: 45px;
             height: 45px;
@@ -46,7 +45,6 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
@@ -77,7 +75,6 @@
             <button class="btn-instalar" id="btn-instalar-app" onclick="instalarAppPWA()">📱 Instalar App na Tela Inicial</button>
         </div>
 
-        <!-- TELA DE CARREGAMENTO (SPINNER) -->
         <div id="loading-login" style="display: none; padding: 20px 0;">
             <div class="spinner-login"></div>
             <p style="font-weight: bold; color: #0056b3; font-size: 15px; margin: 0;">Fazendo Login...</p>
@@ -96,9 +93,7 @@
                 </div>
             </div>
             <div style="display: flex; align-items: center;">
-                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;">
-                    <!-- Renderizado dinamicamente via JS -->
-                </div>
+                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;"></div>
             </div>
         </header>
 
@@ -191,9 +186,7 @@
     <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
         <div class="modal-perfil-conteudo">
             <div class="perfil-topo">
-                <div class="avatar-grande" id="perfil-avatar-container" style="position: relative;">
-                    <!-- Foto ou Inicial do nome -->
-                </div>
+                <div class="avatar-grande" id="perfil-avatar-container" style="position: relative;"></div>
                 <div class="botao-trocar-foto" onclick="document.getElementById('input-arquivo-foto').click()" title="Escolher foto da galeria">📷</div>
                 <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
                 
@@ -218,9 +211,7 @@
             </div>
 
             <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
-                <div id="btn-container-painel-admin">
-                    <!-- Botão do Painel da Diretoria (Exibido apenas se tiver cargo) -->
-                </div>
+                <div id="btn-container-painel-admin"></div>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1;" onclick="fazerLogout()">Sair</button>
                     <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1;" onclick="fecharPerfilModal()">Fechar</button>
@@ -258,6 +249,19 @@
             }
         }
 
+        async function registrarServiceWorkerENotificacoes() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    await navigator.serviceWorker.register('sw.js');
+                    if ('Notification' in window && Notification.permission !== 'granted') {
+                        await Notification.requestPermission();
+                    }
+                } catch (err) {
+                    console.log("Erro ao registrar service worker:", err);
+                }
+            }
+        }
+
         async function fazerLogin() {
             let codigoInput = document.getElementById('login-codigo').value.trim();
             let senhaInput = document.getElementById('login-senha').value.trim();
@@ -272,7 +276,6 @@
 
                 if(dadosUser.senhaPadrao !== senhaInput) { alert("Senha incorreta!"); return; }
 
-                // REGRA: Impede login de membros desligados
                 if(dadosUser.desligado === true) {
                     alert("Acesso negado. Este cadastro encontra-se desligado da liga.");
                     return;
@@ -289,31 +292,7 @@
             } catch(e) { console.error(e); alert("Erro ao logar."); }
         }
 
-        async function inicializarNotificacoesPush() {
-            if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-            // REGRA: Se estiver desligado, não registra token de notificação
-            if (!usuarioLogado || usuarioLogado.desligado === true) return;
-
-            try {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    const registration = await navigator.serviceWorker.register('sw.js');
-                    const messaging = firebase.messaging();
-                    const token = await messaging.getToken({
-                        serviceWorkerRegistration: registration,
-                        vapidKey: 'COLOQUE_AQUI_SUA_CHAVE_VAPID_PUBLICA'
-                    });
-                    if (token) {
-                        await db.collection("membros").doc(usuarioLogado.id).update({ fcmToken: token });
-                    }
-                }
-            } catch (error) {
-                console.error("Erro ao registrar notificações push:", error);
-            }
-        }
-
         function iniciarAppComUsuario(user) {
-            // REGRA EXTRA DE SEGURANÇA: Bloqueia sessão salva caso tenha sido desligado recentemente
             if(user.desligado === true) {
                 localStorage.removeItem("lape_sessao_usuario");
                 alert("Sua conta foi desligada da liga.");
@@ -332,7 +311,7 @@
 
             renderizarAvatarTopo();
             carregarDadosDinamicosApp();
-            inicializarNotificacoesPush();
+            registrarServiceWorkerENotificacoes();
         }
 
         function renderizarAvatarTopo() {
@@ -364,12 +343,28 @@
                 }
             } catch(e) { console.log(e); }
 
-            try {
-                let avSnap = await db.collection("avisos").get();
-                avisos = [];
-                avSnap.forEach(doc => avisos.push({ id: doc.id, ...doc.data() }));
+            // Escuta em tempo real os avisos da nuvem e dispara notificação local
+            db.collection("avisos").onSnapshot((snapshot) => {
+                let novosAvisos = [];
+                snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
+                
+                // Se houver aumento de avisos ou alteração, dispara notificação do mais recente se necessário
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const avisoData = change.doc.data();
+                        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'MOSTRAR_AVISO',
+                                titulo: avisoData.titulo || "Novo Aviso da LAPE",
+                                texto: avisoData.texto || "Confira o novo comunicado no portal."
+                            });
+                        }
+                    }
+                });
+
+                avisos = novosAvisos;
                 renderizarAvisos();
-            } catch(e) { console.log(e); }
+            });
 
             try {
                 let atSnap = await db.collection("atividades").get();
