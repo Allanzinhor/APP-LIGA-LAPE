@@ -815,6 +815,7 @@
                 return;
             }
 
+            // Na frequência do painel admin, exibe todos os membros ativos (incluindo diretoria)
             let membrosAtivos = membrosCache.filter(m => !m.desligado);
 
             ativFiltradas.forEach(a => {
@@ -822,6 +823,15 @@
                 let htmlMembros = "";
 
                 membrosAtivos.forEach(m => {
+                    let cargoMembroLower = (m.cargo || "ligante").toLowerCase().trim();
+                    let membroEhDiretoria = cargoMembroLower !== "ligante" && cargoMembroLower !== "membro";
+
+                    // REGRAS DE EXIBIÇÃO NA CHAMADA:
+                    // Se a atividade for exclusiva da diretoria, ignora e pula os membros que são ligantes comuns
+                    if (a.publico === 'diretoria' && !membroEhDiretoria) {
+                        return; 
+                    }
+
                     let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '' };
                     let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
                     
@@ -858,7 +868,7 @@
                         <div class="item-chamada" style="margin-bottom:8px; background:#f8f9fa; padding:8px; border-radius:6px; border:1px solid #e9ecef;">
                             <div class="chamada-info" style="display:flex; justify-content:space-between; align-items:center;">
                                 <div>
-                                    <strong>${m.nome}</strong>
+                                    <strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span>
                                     ${indicacaoAluno}
                                 </div>
                                 ${badgeStatus}
@@ -869,8 +879,8 @@
                 });
 
                 let estiloCardAtiv = "background: #fff; border: 1px solid #dee2e6; margin-bottom: 12px; border-radius: 8px; overflow: hidden; transition: all 0.2s;";
-                let estiloBadgeConcluida = "";
                 let textoConcluidoBadge = "";
+                let tagPublicoFreq = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : "";
 
                 if (a.concluida) {
                     estiloCardAtiv = "background: #f4fbf7; border: 2px solid #2b8a3e; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
@@ -881,7 +891,7 @@
                     <div class="card-frequencia-colapsavel" style="${estiloCardAtiv}">
                         <div onclick="toggleExpandirFrequencia('${a.id}')" style="padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${a.concluida ? '#e6fcf5' : '#f8f9fa'};">
                             <div>
-                                <h4 style="margin: 0; color: #0056b3; font-size: 15px;">${a.titulo} ${textoConcluidoBadge}</h4>
+                                <h4 style="margin: 0; color: #0056b3; font-size: 15px;">${a.titulo} ${tagPublicoFreq} ${textoConcluidoBadge}</h4>
                                 <p class="cinza" style="margin: 2px 0 0 0; font-size: 12px;">📅 ${a.data} às ${a.hora} | ⏳ CH: ${a.ch}h</p>
                             </div>
                             <span style="font-size: 12px; color: #0056b3; font-weight: bold;" id="seta-freq-${a.id}">▼ Gerenciar Chamada</span>
