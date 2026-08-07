@@ -30,11 +30,34 @@
         
         <header class="cabecalho">
             <h2 id="titulo-painel-topo">Gestão da Liga (Admin)</h2>
-            <button class="btn-perfil" onclick="window.location.href='index.html'">Sair</button>
+            <button class="btn-perfil" onclick="window.location.href='index.html'">Portal do Aluno</button>
         </header>
 
-        <!-- Navegação por Abas (Incluindo a aba temporária de migração) -->
+        <!-- PERFIL DO DIRETOR LOGADO NO TOPO -->
+        <div class="admin-card-acao" style="margin: 15px 0; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <div id="admin-perfil-foto-container" style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
+            <div style="flex: 1; min-width: 220px;">
+                <h3 id="admin-perfil-nome" style="margin: 0; color: #0056b3; font-size: 18px;">Nome do Diretor</h3>
+                <p id="admin-perfil-cargo" style="margin: 2px 0; font-weight: bold; color: #2b8a3e; font-size: 13px; text-transform: uppercase;">Cargo</p>
+                <p id="admin-perfil-tempo" style="margin: 0; font-size: 12px; color: #555;">Tempo na diretoria: Calculando...</p>
+            </div>
+        </div>
+
+        <!-- Navegação por Abas -->
         <nav class="admin-abas-complexa" id="menu-abas-admin" style="grid-template-columns: repeat(3, 1fr);"></nav>
+
+        <!-- ABA 0: AVISOS EXCLUSIVOS DA DIRETORIA -->
+        <div id="secao-avisos-diretoria" class="admin-secao" style="display: none;">
+            <div class="admin-card-acao">
+                <h3>💬 Mural Interno da Diretoria</h3>
+                <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Recados e diretrizes exclusivas para a equipe gestora.</p>
+                <input type="text" id="av-dir-titulo" placeholder="Título do Recado Interno">
+                <textarea id="av-dir-texto" rows="3" placeholder="Escreva a mensagem para a diretoria..."></textarea>
+                <button class="btn-salvar" onclick="publicarAvisoDiretoria()">Publicar para a Diretoria</button>
+            </div>
+            <h3>Recados Internos Publicados</h3>
+            <div id="lista-admin-avisos-diretoria"></div>
+        </div>
 
         <!-- ABA 1: CADASTRAR / EDITAR MEMBROS -->
         <div id="secao-cadastro-membros" class="admin-secao" style="display: none;">
@@ -220,25 +243,25 @@
             <div id="lista-admin-financeiro"></div>
         </div>
 
-        <!-- ABA 7: AVISOS -->
+        <!-- ABA 7: AVISOS GLOBAIS -->
         <div id="secao-avisos" class="admin-secao" style="display: none;">
             <div class="admin-card-acao">
-                <h3 id="titulo-form-aviso">Publicar Novo Aviso</h3>
+                <h3 id="titulo-form-aviso">Publicar Novo Aviso (Geral)</h3>
                 <input type="hidden" id="av-id-editando">
                 <input type="text" id="av-titulo" placeholder="Título">
                 <textarea id="av-texto" rows="3" placeholder="Mensagem..."></textarea>
                 <button class="btn-salvar" id="btn-salvar-aviso" onclick="salvarAviso()">Publicar na Nuvem</button>
                 <button class="btn-mini cinza" id="btn-cancelar-aviso" style="display:none; width:100%; margin-top:5px; padding:10px;" onclick="cancelarEdicaoAviso()">Cancelar Edição</button>
             </div>
-            <h3>Avisos Publicados</h3>
+            <h3>Avisos Globais Publicados</h3>
             <div id="lista-admin-avisos"></div>
         </div>
 
-        <!-- ABA TEMPORÁRIA: MIGRAR PAPEL (REMOVER QUANDO TERMINAR) -->
+        <!-- ABA TEMPORÁRIA: MIGRAR PAPEL -->
         <div id="secao-migracao-papel" class="admin-secao" style="display: none;">
             <div class="admin-card-acao" style="background: #fff8e1; border: 2px dashed #f59f00;">
                 <h3 style="color: #e67700; margin-top: 0;">📥 Aba Temporária: Migração de Registros (Papel)</h3>
-                <p style="font-size: 12px; color: #555;">Use esta ferramenta para cadastrar uma atividade passada e marcar rapidamente a presença/falta de todos os ligantes de uma só vez. Tudo será enviado direto para o app e frequência.</p>
+                <p style="font-size: 12px; color: #555;">Use esta ferramenta para cadastrar uma atividade passada e marcar rapidamente a presença/falta de todos os ligantes de uma só vez.</p>
                 
                 <div class="grid-form" style="margin-top: 10px;">
                     <input type="text" id="mig-titulo" placeholder="Título da Atividade Passada *" class="col-full">
@@ -276,16 +299,17 @@
         let membrosCache = [];
         let atividadesCache = [];
         let avisosCache = [];
+        let avisosDiretoriaCache = [];
         let usuarioSessao = null;
 
         const permissoesCargos = {
-            "presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "vice-presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "secretaria": ["lista-membros", "frequencia", "avisos", "migracao-papel"],
-            "tesoureira": ["financeiro", "avisos"],
-            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de marketing": ["avisos"]
+            "presidente": ["avisos-diretoria", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "vice-presidente": ["avisos-diretoria", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "secretaria": ["avisos-diretoria", "lista-membros", "frequencia", "avisos", "migracao-papel"],
+            "tesoureira": ["avisos-diretoria", "financeiro", "avisos"],
+            "diretora de extensão": ["avisos-diretoria", "cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de pesquisa": ["avisos-diretoria", "cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de marketing": ["avisos-diretoria", "avisos"]
         };
 
         function verificarPermissoesAdmin() {
@@ -300,25 +324,28 @@
 
             let cargoLower = (usuarioSessao.cargo || "ligante").toLowerCase().trim();
             
-            if (cargoLower === "marketing" || cargoLower === "ligante" || !permissoesCargos[cargoLower]) {
+            if (cargoLower === "ligante" || !permissoesCargos[cargoLower]) {
                 alert("Você não possui permissão para acessar o painel da diretoria.");
                 window.location.href = "index.html";
                 return;
             }
+
+            renderizarPerfilTopoAdmin();
 
             let abasPermitidas = permissoesCargos[cargoLower];
             let menuNav = document.getElementById("menu-abas-admin");
             menuNav.innerHTML = "";
 
             const labelsAbas = {
+                "avisos-diretoria": "🛡️ Avisos Diretoria",
                 "cadastro-membros": "➕ Membros",
                 "lista-membros": "👥 Alunos",
                 "cadastro-atividades": "➕ Ativ.",
                 "lista-atividades": "📅 Gerenciar",
                 "frequencia": "📋 Frequência",
                 "financeiro": "💰 Financeiro",
-                "avisos": "⚠️ Avisos",
-                "migracao-papel": "📥 Migrar Papel" // Aba temporária
+                "avisos": "⚠️ Avisos Gerais",
+                "migracao-papel": "📥 Migrar Papel"
             };
 
             let primeiraAba = null;
@@ -334,6 +361,35 @@
             }
         }
 
+        function renderizarPerfilTopoAdmin() {
+            if (!usuarioSessao) return;
+            document.getElementById('admin-perfil-nome').innerText = usuarioSessao.nome || "Diretor(a)";
+            document.getElementById('admin-perfil-cargo').innerText = usuarioSessao.cargo || "Diretoria";
+
+            let containerFoto = document.getElementById('admin-perfil-foto-container');
+            if (usuarioSessao.fotoStatus === 'aprovada' && usuarioSessao.fotoUrl) {
+                containerFoto.innerHTML = `<img src="${usuarioSessao.fotoUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                let inicial = usuarioSessao.nome ? usuarioSessao.nome.charAt(0).toUpperCase() : "D";
+                containerFoto.innerHTML = `<div style="width:100%; height:100%; background:#0056b3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:24px;">${inicial}</div>`;
+            }
+
+            let tempoStr = "Tempo na diretoria: Recém-chegado";
+            let dataBaseStr = usuarioSessao.ingressoLiga;
+            if (dataBaseStr) {
+                let dIngresso = new Date(dataBaseStr + "T00:00:00");
+                let hoje = new Date();
+                let diffTime = hoje - dIngresso;
+                let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays >= 0) {
+                    let meses = Math.floor(diffDays / 30);
+                    let diasRestantes = diffDays % 30;
+                    tempoStr = `Tempo na diretoria: ${meses} mes(es) e ${diasRestantes} dia(s)`;
+                }
+            }
+            document.getElementById('admin-perfil-tempo').innerText = tempoStr;
+        }
+
         function mudarAba(nome, evento) {
             document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativo'));
@@ -343,6 +399,8 @@
             
             if (nome === 'migracao-papel') {
                 renderizarInterfaceMigracao();
+            } else if (nome === 'avisos-diretoria') {
+                carregarAvisosDiretoria();
             }
         }
 
@@ -423,6 +481,12 @@
             mSnap.forEach(doc => {
                 let m = { id: doc.id, ...doc.data() };
                 membrosCache.push(m);
+
+                if (m.id === usuarioSessao.id) {
+                    usuarioSessao = m;
+                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioSessao));
+                    renderizarPerfilTopoAdmin();
+                }
 
                 let cargoLower = (m.cargo || "ligante").toLowerCase();
                 let isDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
@@ -559,8 +623,63 @@
             renderizarFrequenciaAdmin();
             renderizarFinanceiroAdmin();
             carregarAvisosAdmin();
+            carregarAvisosDiretoria();
             if (document.getElementById('secao-migracao-papel').style.display === 'block') {
                 renderizarInterfaceMigracao();
+            }
+        }
+
+        async function publicarAvisoDiretoria() {
+            let titulo = document.getElementById('av-dir-titulo').value.trim();
+            let texto = document.getElementById('av-dir-texto').value.trim();
+            if (!titulo || !texto) { alert("Preencha o título e o texto do recado interno."); return; }
+
+            await db.collection("avisos_diretoria").add({
+                titulo,
+                texto,
+                autor: usuarioSessao.nome,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            document.getElementById('av-dir-titulo').value = "";
+            document.getElementById('av-dir-texto').value = "";
+            alert("Recado publicado para a diretoria!");
+            carregarAvisosDiretoria();
+        }
+
+        async function carregarAvisosDiretoria() {
+            let div = document.getElementById("lista-admin-avisos-diretoria");
+            if (!div) return;
+            div.innerHTML = "";
+            let snap = await db.collection("avisos_diretoria").get();
+            avisosDiretoriaCache = [];
+
+            if (snap.empty) {
+                div.innerHTML = "<p class='cinza'>Nenhum recado interno publicado.</p>";
+                return;
+            }
+
+            snap.forEach(doc => {
+                let a = { id: doc.id, ...doc.data() };
+                avisosDiretoriaCache.push(a);
+
+                div.innerHTML += `
+                    <div class="card-admin-item flex-row" style="align-items: flex-start; justify-content: space-between; background: #fff8e1; border-left: 4px solid #f59f00;">
+                        <div>
+                            <h4 style="color: #b7791f; margin:0;">${a.titulo}</h4>
+                            <p class="cinza" style="margin:4px 0;">${a.texto}</p>
+                            <small style="color: #888;">Por: ${a.autor || 'Diretoria'}</small>
+                        </div>
+                        <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
+                    </div>
+                `;
+            });
+        }
+
+        async function removerAvisoDiretoria(id) {
+            if (confirm("Apagar este recado interno?")) {
+                await db.collection("avisos_diretoria").doc(id).delete();
+                carregarAvisosDiretoria();
             }
         }
 
@@ -628,7 +747,7 @@
                 ch,
                 desc: desc || "Atividade passada migrada dos registros em papel.",
                 publico: "todos",
-                concluida: true, // Já entra como concluída para pontuar direto
+                concluida: true,
                 cancelada: false,
                 frequencias: frequenciasMap
             });
