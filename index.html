@@ -15,14 +15,29 @@
         body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #000; }
         input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
         #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; }
-        #tela-login h2 { color: #0056b3; font-size: 26px; margin-bottom: 5px; }
+        #tela-login h2 { color: #0056b3; font-size: 26px; margin: 10px 0 2px 0; }
         #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
         .grupo-input { margin-bottom: 15px; text-align: left; }
         .grupo-input label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold; color: #555; }
         .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
         .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-admin { width: 100%; padding: 10px; background-color: #f1f3f5; color: #495057; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 12px; }
         .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; }
+        
+        /* Spinner de Carregamento */
+        .spinner-login {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #0056b3;
+            border-radius: 50%;
+            animation: girarSpinner 0.8s linear infinite;
+            margin: 20px auto 15px auto;
+        }
+        @keyframes girarSpinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .btn-desconfirmar { background-color: #e03131 !important; color: white !important; }
         .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
@@ -45,19 +60,28 @@
 
     <!-- TELA DE LOGIN -->
     <div id="tela-login">
-        <h2>LAPE</h2>
-        <p>Portal do Ligante</p>
-        <div class="grupo-input">
-            <label>Código do Ligante</label>
-            <input type="text" id="login-codigo" placeholder="Ex: 20261001">
+        <div id="conteudo-formulario-login">
+            <img src="brasao.png" alt="Brasão LAPE" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid #0056b3; margin-bottom: 5px;">
+            <h2>LAPE</h2>
+            <p>Portal do Ligante</p>
+            <div class="grupo-input">
+                <label>Código do Ligante</label>
+                <input type="text" id="login-codigo" placeholder="Ex: 20261001">
+            </div>
+            <div class="grupo-input">
+                <label>Senha</label>
+                <input type="password" id="login-senha" placeholder="Sua senha">
+            </div>
+            <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
+            <button class="btn-instalar" id="btn-instalar-app" onclick="instalarAppPWA()">📱 Instalar App na Tela Inicial</button>
         </div>
-        <div class="grupo-input">
-            <label>Senha</label>
-            <input type="password" id="login-senha" placeholder="Sua senha">
+
+        <!-- TELA DE CARREGAMENTO (SPINNER) -->
+        <div id="loading-login" style="display: none; padding: 20px 0;">
+            <div class="spinner-login"></div>
+            <p style="font-weight: bold; color: #0056b3; font-size: 15px; margin: 0;">Fazendo Login...</p>
+            <p style="color: #888; font-size: 12px; margin-top: 5px;">Carregando dados do portal</p>
         </div>
-        <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
-        <button class="btn-instalar" id="btn-instalar-app" onclick="instalarAppPWA()">📱 Instalar App na Tela Inicial</button>
-        <button class="btn-admin" onclick="window.location.href='diretoria.html'">Acesso da Diretoria (Admin)</button>
     </div>
 
     <!-- TELA PRINCIPAL DO APP -->
@@ -247,8 +271,15 @@
 
                 if(dadosUser.senhaPadrao !== senhaInput) { alert("Senha incorreta!"); return; }
 
-                localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
-                iniciarAppComUsuario(dadosUser);
+                // Oculta formulário e exibe o spinner de carregamento por 3 segundos
+                document.getElementById('conteudo-formulario-login').style.display = 'none';
+                document.getElementById('loading-login').style.display = 'block';
+
+                setTimeout(() => {
+                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
+                    iniciarAppComUsuario(dadosUser);
+                }, 3000);
+
             } catch(e) { console.error(e); alert("Erro ao logar."); }
         }
 
