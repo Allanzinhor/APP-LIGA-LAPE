@@ -57,10 +57,11 @@
             <div class="slides-container" id="container-slides-dir"></div>
         </div>
 
-        <!-- FORMULÁRIO DE CRIAÇÃO EXCLUSIVO DO PRESIDENTE -->
+        <!-- FORMULÁRIO DE CRIAÇÃO / EDIÇÃO EXCLUSIVO DO PRESIDENTE -->
         <div class="admin-card-acao" id="painel-criacao-aviso-dir" style="display: none; margin-bottom: 15px; background: #fff8e1; border: 1px solid #ffe066;">
-            <h3 style="margin: 0 0 8px 0; color: #b7791f; font-size: 15px;">✍️ Publicar Recado para a Diretoria</h3>
+            <h3 id="titulo-form-aviso-dir" style="margin: 0 0 8px 0; color: #b7791f; font-size: 15px;">✍️ Publicar Recado para a Diretoria</h3>
             
+            <input type="hidden" id="av-dir-id-editando">
             <input type="text" id="av-dir-titulo" placeholder="Título do Recado" style="margin-bottom: 6px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
             <textarea id="av-dir-texto" rows="2" placeholder="Escreva a mensagem..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 8px;"></textarea>
             
@@ -94,7 +95,8 @@
                 <label for="av-dir-fixo" style="font-size: 12px; font-weight: bold; color: #b7791f; cursor: pointer;">Fixar recado (Fica estático no topo)</label>
             </div>
 
-            <button class="btn-salvar" style="padding: 8px; font-size: 13px;" onclick="publicarAvisoDiretoria()">Publicar Recado</button>
+            <button class="btn-salvar" id="btn-salvar-aviso-dir" style="padding: 8px; font-size: 13px;" onclick="salvarAvisoDiretoria()">Publicar Recado</button>
+            <button class="btn-mini cinza" id="btn-cancelar-aviso-dir" style="display:none; width:100%; margin-top:5px; padding:8px;" onclick="cancelarEdicaoAvisoDiretoria()">Cancelar Edição</button>
         </div>
 
         <!-- Navegação por Abas -->
@@ -674,13 +676,14 @@
             }
         }
 
-        async function publicarAvisoDiretoria() {
+        async function salvarAvisoDiretoria() {
             let cargoLogado = (usuarioSessao.cargo || "").toLowerCase().trim();
             if (cargoLogado !== "presidente") {
                 alert("Apenas o Presidente pode publicar recados no mural da diretoria.");
                 return;
             }
 
+            let idEditando = document.getElementById('av-dir-id-editando').value;
             let titulo = document.getElementById('av-dir-titulo').value.trim();
             let texto = document.getElementById('av-dir-texto').value.trim();
             let alvo = document.getElementById('av-dir-alvo').value;
@@ -697,21 +700,56 @@
                 expiraEm = firebase.firestore.Timestamp.fromDate(dataExp);
             }
 
-            await db.collection("avisos_diretoria").add({
+            let dadosAviso = {
                 titulo,
                 texto,
                 alvo,
                 fixo,
                 expiraEm,
-                autor: usuarioSessao.nome,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+                autor: usuarioSessao.nome
+            };
 
+            if (idEditando) {
+                await db.collection("avisos_diretoria").doc(idEditando).update(dadosAviso);
+                alert("Recado atualizado com sucesso!");
+            } else {
+                dadosAviso.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection("avisos_diretoria").add(dadosAviso);
+                alert("Recado publicado com sucesso!");
+            }
+
+            cancelarEdicaoAvisoDiretoria();
+            carregarAvisosDiretoria();
+        }
+
+        function prepararEdicaoAvisoDiretoria(id) {
+            let aviso = avisosDiretoriaCache.find(x => x.id === id);
+            if (!aviso) return;
+
+            document.getElementById('av-dir-id-editando').value = aviso.id;
+            document.getElementById('av-dir-titulo').value = aviso.titulo || '';
+            document.getElementById('av-dir-texto').value = aviso.texto || '';
+            document.getElementById('av-dir-alvo').value = aviso.alvo || 'todos';
+            document.getElementById('av-dir-fixo').checked = aviso.fixo || false;
+            document.getElementById('av-dir-duracao').value = 'permanente'; // Padrão na edição
+
+            document.getElementById('titulo-form-aviso-dir').innerText = "✏️ Editar Recado da Diretoria";
+            document.getElementById('btn-salvar-aviso-dir').innerText = "Salvar Alterações";
+            document.getElementById('btn-cancelar-aviso-dir').style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelarEdicaoAvisoDiretoria() {
+            document.getElementById('av-dir-id-editando').value = "";
             document.getElementById('av-dir-titulo').value = "";
             document.getElementById('av-dir-texto').value = "";
+            document.getElementById('av-dir-alvo').value = "todos";
             document.getElementById('av-dir-fixo').checked = false;
-            alert("Recado publicado com sucesso!");
-            carregarAvisosDiretoria();
+            document.getElementById('av-dir-duracao').value = "permanente";
+
+            document.getElementById('titulo-form-aviso-dir').innerText = "✍️ Publicar Recado para a Diretoria";
+            document.getElementById('btn-salvar-aviso-dir').innerText = "Publicar Recado";
+            document.getElementById('btn-cancelar-aviso-dir').style.display = "none";
         }
 
         async function carregarAvisosDiretoria() {
@@ -733,11 +771,11 @@
                 let data = doc.data();
                 if (data.expiraEm) {
                     let dataExp = data.expiraEm.toDate();
-                    if (agora > dataExp) return; // Expirado
+                    if (agora > dataExp) return;
                 }
 
                 if (data.alvo !== "todos" && data.alvo !== cargoLogado && !ehPresidente) {
-                    return; // Não é para este cargo
+                    return;
                 }
 
                 avisosDiretoriaCache.push({ id: doc.id, ...data });
@@ -748,12 +786,17 @@
 
             // Renderizar Fixos
             fixos.forEach(a => {
-                let botaoApagar = ehPresidente ? `<button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')" style="float: right;">Apagar</button>` : "";
+                let botoesAcao = ehPresidente ? `
+                    <div style="float: right; display: flex; gap: 4px;">
+                        <button class="btn-mini cinza" onclick="prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
+                        <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
+                    </div>
+                ` : "";
                 let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">Para: ${a.alvo}</span>` : "";
                 
                 containerFixos.innerHTML += `
                     <div style="background: #fff; border-left: 4px solid #f59f00; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #ffe066;">
-                        ${botaoApagar}
+                        ${botoesAcao}
                         <h4 style="color: #b7791f; margin: 0; font-size: 13px;">📌 [FIXO] ${a.titulo} ${tagAlvo}</h4>
                         <p class="cinza" style="margin: 4px 0 0 0; font-size: 11px;">${a.texto}</p>
                     </div>
@@ -774,12 +817,17 @@
 
             rotativos.forEach((a, index) => {
                 let classeAtiva = (index === indiceSlideDirAtual) ? "ativo" : "";
-                let botaoApagarSlide = ehPresidente ? `<button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')" style="float: right; margin-top: -4px;">Apagar</button>` : "";
+                let botoesAcaoSlide = ehPresidente ? `
+                    <div style="float: right; display: flex; gap: 4px; margin-top: -4px;">
+                        <button class="btn-mini cinza" onclick="prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
+                        <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
+                    </div>
+                ` : "";
                 let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">Para: ${a.alvo}</span>` : "";
 
                 containerSlides.innerHTML += `
                     <div class="slide ${classeAtiva}">
-                        ${botaoApagarSlide}
+                        ${botoesAcaoSlide}
                         <h4 style="font-size: 13px; margin: 0 0 4px 0;">${a.titulo} ${tagAlvo}</h4>
                         <p style="font-size: 11px; margin: 0;">${a.texto}</p>
                     </div>
