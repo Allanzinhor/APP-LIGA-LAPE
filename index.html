@@ -305,13 +305,11 @@
                     let frequenciasMap = d.frequencias || {};
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
 
-                    // Validação automática de 24 horas antes do prazo limite
                     let dataHoraAtiv = new Date(`${d.data}T${d.hora || "19:00"}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                     let agora = new Date();
 
-                    if (agora > limitePrazo && meuRegistro.status === 'pendente' && !meuRegistro.confirmadoAluno && !d.cancelada) {
-                        // Se passou do prazo e não confirmou nem justificou, aplica falta automaticamente
+                    if (agora > limitePrazo && meuRegistro.status === 'pendente' && !meuRegistro.confirmadoAluno && !d.cancelada && !d.concluida) {
                         frequenciasMap[usuarioLogado.id] = { ...meuRegistro, status: 'negado' };
                         await db.collection("atividades").doc(doc.id).update({ frequencias: frequenciasMap });
                         meuRegistro.status = 'negado';
@@ -332,6 +330,7 @@
                         desc: d.desc || "",
                         publico: d.publico || "todos",
                         cancelada: d.cancelada || false,
+                        concluida: d.concluida || false,
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
@@ -685,6 +684,33 @@
                             <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                         </div>
                     `;
+                } else if (ativ.concluida) {
+                    let mensagemConcluida = "Atividade Concluída";
+                    let corStatus = "#2b8a3e";
+                    let fundoStatus = "#ebfbee";
+                    let bordaStatus = "#2b8a3e";
+
+                    if (ativ.statusAdmin === 'presente') {
+                        mensagemConcluida = "✅ Atividade Concluída — Presença Validada (+ " + ativ.ch + "h)";
+                    } else if (ativ.statusAdmin === 'justificado') {
+                        mensagemConcluida = "✅ Atividade Concluída — Justificativa Aceita (Abonada)";
+                    } else if (ativ.statusAdmin === 'negado') {
+                        mensagemConcluida = "❌ Atividade Concluída — Falta Registrada / Justificativa Negada";
+                        corStatus = "#c92a2a";
+                        fundoStatus = "#ffe3e3";
+                        bordaStatus = "#e03131";
+                    } else {
+                        mensagemConcluida = "🚫 Atividade Concluída — Sem registro de presença ou falta";
+                        corStatus = "#e67700";
+                        fundoStatus = "#fff3bf";
+                        bordaStatus = "#f59f00";
+                    }
+
+                    statusOficialHtml = `
+                        <div style="background: ${fundoStatus}; border-left: 4px solid ${bordaStatus}; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                            <p style="color: ${corStatus}; font-size: 13px; font-weight: bold; margin: 0;">${mensagemConcluida}</p>
+                        </div>
+                    `;
                 } else {
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
@@ -740,14 +766,14 @@
                     }
                 }
 
-                let badgeCanceladaEstilo = ativ.cancelada ? 'opacity: 0.75; border: 1.5px dashed #f59f00;' : '';
+                let badgeCanceladaEstilo = (ativ.cancelada || ativ.concluida) ? 'opacity: 0.85;' : '';
 
                 listaAtividades.innerHTML += `
                     <div class="card-atividade" style="${badgeCanceladaEstilo}">
                         ${sinalizacaoDiretoriaHtml}
                         <div class="badges">
                             <span class="badge-dias">${ativ.ch}h de CH</span>
-                            ${!ativ.cancelada ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Cancelada</span>'}
+                            ${!ativ.cancelada && !ativ.concluida ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Status Final</span>'}
                         </div>
                         <h3 class="titulo-atividade">${ativ.titulo}</h3>
                         <p class="desc-atividade">${ativ.desc}</p>
@@ -756,23 +782,22 @@
                             <p><strong>Local:</strong> ${ativ.local}</p>
                             ${statusOficialHtml}
                         </div>
-                        ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 15px;">${botoesCardHtml}</div>` : ''}
+                        ${!ativ.cancelada && !ativ.concluida && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 15px;">${botoesCardHtml}</div>` : ''}
                     </div>
                 `;
             });
 
-            // Atualiza o relógio na tela a cada 1 segundo em tempo real
             intervaloCronometro = setInterval(() => {
                 atividadesDesteMes.forEach(ativ => {
                     let timerEl = document.getElementById(`timer-${ativ.id}`);
-                    if (timerEl && !ativ.cancelada) {
+                    if (timerEl && !ativ.cancelada && !ativ.concluida) {
                         let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                         let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                         let agora = new Date();
                         let diffTempo = limitePrazo.getTime() - agora.getTime();
 
                         if (diffTempo <= 0) {
-                            carregarDadosDinamicosApp(); // Atualiza a tela se o prazo estourar
+                            carregarDadosDinamicosApp();
                         } else {
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                             let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

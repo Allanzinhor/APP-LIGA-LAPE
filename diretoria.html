@@ -846,8 +846,10 @@
                             <div class="botoes-presenca" style="margin-top:6px;">
                                 <button class="btn-mini verde" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'presente')">Dar Presença (+CH)</button>
                                 <button class="btn-mini vermelho" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'negado')">Marcar Falta</button>
-                                ${reg.status !== 'pendente' ? `<button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Remover Status</button>` : ''}
+                                <button class="btn-mini cinza" onclick="abrirJustificativaManual('${a.id}', '${m.id}')">📝 Justificar Manual</button>
+                                ${reg.status !== 'pendente' ? `<button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Resetar</button>` : ''}
                             </div>
+                            ${reg.status === 'justificado' && reg.texto ? `<p style="font-size:11px; color:#2b8a3e; margin-top:4px;"><strong>Justificativa Manual:</strong> "${reg.texto}"</p>` : ''}
                         `;
                     }
 
@@ -877,14 +879,16 @@
             });
         }
 
-        async function mudarStatusAdmin(ativId, ligId, novoStatus) {
+        async function mudarStatusAdmin(ativId, ligId, novoStatus, textoCustomizado = '') {
             let ativ = atividadesCache.find(x => x.id === ativId);
             if(!ativ) return;
             if(!ativ.frequencias) ativ.frequencias = {};
             if(!ativ.frequencias[ligId]) ativ.frequencias[ligId] = {};
             
             ativ.frequencias[ligId].status = novoStatus;
-            if(novoStatus === 'pendente') {
+            if(textoCustomizado !== '') {
+                ativ.frequencias[ligId].texto = textoCustomizado;
+            } else if(novoStatus === 'pendente') {
                 ativ.frequencias[ligId].texto = '';
             }
 
@@ -892,6 +896,13 @@
                 frequencias: ativ.frequencias
             });
             carregarDadosAdmin();
+        }
+
+        function abrirJustificativaManual(ativId, ligId) {
+            let motivo = prompt("Digite o motivo da justificativa manual para este ligante:");
+            if (motivo && motivo.trim() !== "") {
+                mudarStatusAdmin(ativId, ligId, 'justificado', motivo);
+            }
         }
 
         function renderizarFinanceiroAdmin() {
