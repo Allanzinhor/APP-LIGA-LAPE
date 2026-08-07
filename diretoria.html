@@ -395,6 +395,12 @@
                 let chAcumulada = 0;
 
                 atividadesCache.forEach(ativ => {
+                    let cargoMembroLower = (m.cargo || "ligante").toLowerCase().trim();
+                    let membroEhDiretoria = cargoMembroLower !== "ligante" && cargoMembroLower !== "membro";
+
+                    if (ativ.publico === 'diretoria' && !membroEhDiretoria) return;
+                    if (m.ingressoLiga && ativ.data < m.ingressoLiga) return;
+
                     let freqMap = ativ.frequencias || {};
                     let regAluno = freqMap[m.id];
                     if (regAluno) {
@@ -840,9 +846,8 @@
                     let cargoMembroLower = (m.cargo || "ligante").toLowerCase().trim();
                     let membroEhDiretoria = cargoMembroLower !== "ligante" && cargoMembroLower !== "membro";
 
-                    if (a.publico === 'diretoria' && !membroEhDiretoria) {
-                        return; 
-                    }
+                    if (a.publico === 'diretoria' && !membroEhDiretoria) return;
+                    if (m.ingressoLiga && a.data < m.ingressoLiga) return;
 
                     let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '' };
                     let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
