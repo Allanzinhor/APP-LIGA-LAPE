@@ -367,9 +367,6 @@
             "diretora de marketing": ["recados-internos", "avisos"]
         };
 
-        // ==========================================
-        // FUNÇÕES AUXILIARES DE MÁSCARA E CÁLCULO
-        // ==========================================
         function mascaraTelefone(input) {
             let v = input.value.replace(/\D/g, "");
             v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
@@ -396,9 +393,6 @@
             campoFormatura.value = `${semFormatura} de ${anoFormatura}`;
         }
 
-        // ==========================================
-        // FUNÇÕES DE DISPARO DE NOTIFICAÇÕES PUSH
-        // ==========================================
         async function dispararNotificacaoGlobal(titulo, texto) {
             try {
                 await db.collection("notificacoes_push_manual").add({
@@ -406,7 +400,6 @@
                     texto: texto,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                console.log("Notificação global disparada com sucesso!");
             } catch (e) {
                 console.error("Erro ao enviar notificação global:", e);
             }
@@ -420,7 +413,6 @@
                     texto: texto,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                console.log("Notificação individual disparada com sucesso!");
             } catch (e) {
                 console.error("Erro ao enviar notificação individual:", e);
             }
@@ -469,9 +461,6 @@
             menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
         }
 
-        // ==========================================
-        // OUVINTES EM TEMPO REAL (AO VIVO NO PAINEL)
-        // ==========================================
         function iniciarOuvintesTempoRealAdmin() {
             db.collection("membros").onSnapshot((snapshot) => {
                 membrosCache = [];
@@ -538,9 +527,6 @@
             }
         }
 
-        // ==========================================
-        // SISTEMA DE MIGRAÇÃO EM LOTE MELHORADO
-        // ==========================================
         function inicializarMigracaoLote() {
             let container = document.getElementById('container-lote-atividades');
             if (!container) return;
@@ -660,9 +646,6 @@
             }
         }
 
-        // ==========================================
-        // RENDERIZAÇÃO DA LISTA DE MEMBROS
-        // ==========================================
         function renderizarListaMembrosAdmin() {
             let divDiretoria = document.getElementById("lista-diretoria");
             let divLigantes = document.getElementById("lista-ligantes");
@@ -816,9 +799,6 @@
             renderizarFinanceiroAdmin();
         }
 
-        // ==========================================
-        // DEMAIS FUNÇÕES DE APOIO
-        // ==========================================
         async function salvarAvisoDiretoria() {
             let cargoLogado = (usuarioSessao.cargo || "").toLowerCase().trim();
             if (cargoLogado !== "presidente") {
@@ -1225,6 +1205,7 @@
             alert("Atividade criada com sucesso!");
         }
 
+        // RENDERIZAÇÃO DAS ATIVIDADES COM SELETOR DE DURAÇÃO DE PRAZO EXTRA
         function renderizarAtividadesEdicao() {
             let mesFiltroSelect = document.getElementById("filtro-mes-atividades");
             let div = document.getElementById("lista-admin-atividades-edicao");
@@ -1242,7 +1223,7 @@
                 let statusExtra = "";
                 if (a.cancelada) statusExtra = `<span style="color: #e03131; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">⚠️ Atividade Cancelada</span>`;
                 if (a.concluida) statusExtra = `<span style="color: #2b8a3e; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">✅ Atividade Concluída</span>`;
-                if (a.prazoFechadoManual) statusExtra += `<span style="color: #e67700; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">🔒 Prazo Fechado Manualmente</span>`;
+                if (a.prazoFechadoManual === false) statusExtra += `<span style="color: #2b8a3e; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">🔓 Prazo Extra Aberto</span>`;
 
                 let tagPublico = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Para Todos</span>`;
                 
@@ -1250,9 +1231,6 @@
                 let corBotaoCancelar = a.cancelada ? "verde" : "cinza";
                 let textoBotaoConcluir = a.concluida ? "Reabrir" : "Concluir";
                 let corBotaoConcluir = a.concluida ? "cinza" : "verde";
-                
-                let textoPrazo = a.prazoFechadoManual ? "🔓 Abrir Prazo" : "🔒 Fechar Prazo";
-                let corPrazo = a.prazoFechadoManual ? "verde" : "vermelho";
                 let tituloSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
                 div.innerHTML += `
@@ -1263,11 +1241,27 @@
                             <p style="font-size: 11px; color: #555; margin: 4px 0;">${a.desc || 'Sem descrição'}</p>
                             ${statusExtra}
                         </div>
+
+                        <!-- CONTROLE DE PRAZO EXTRA COM OPÇÕES DE TEMPO -->
+                        <div style="margin-top: 10px; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
+                            <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Gerenciar Prazo Extra:</label>
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                                <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <option value="24">24 Horas</option>
+                                    <option value="5">5 Horas</option>
+                                    <option value="manual">Até fechar manualmente</option>
+                                    <option value="personalizado">Personalizado (Data/Hora)</option>
+                                </select>
+                                <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                <button class="btn-mini verde" onclick="abrirPrazoExtraAdmin('${a.id}')">🔓 Abrir Prazo Extra</button>
+                                <button class="btn-mini vermelho" onclick="fecharPrazoExtraAdmin('${a.id}')">🔒 Fechar Prazo</button>
+                            </div>
+                        </div>
+
                         <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
                             <button class="btn-mini cinza" onclick="prepararEdicaoAtividade('${a.id}')">✏️ Editar</button>
                             <button class="btn-mini ${corBotaoConcluir}" onclick="alternarConcluirAtividade('${a.id}', ${!a.concluida})">✅ ${textoBotaoConcluir}</button>
                             <button class="btn-mini ${corBotaoCancelar}" onclick="alternarCancelarAtividade('${a.id}', ${!a.cancelada})">🚫 ${textoBotaoCancelar}</button>
-                            <button class="btn-mini ${corPrazo}" onclick="alternarPrazoManual('${a.id}', ${!a.prazoFechadoManual})">${textoPrazo}</button>
                             <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('Aviso de Atividade', 'Lembrete sobre a atividade: ${tituloSeguro}')">📢 Notificar</button>
                             <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">🗑️ Excluir</button>
                         </div>
@@ -1276,11 +1270,48 @@
             });
         }
 
-        async function alternarPrazoManual(id, statusFechamento) {
-            let msg = statusFechamento ? "Deseja fechar o prazo de confirmação desta atividade para os ligantes?" : "Deseja reabrir o prazo de confirmação desta atividade?";
-            if (confirm(msg)) {
-                await db.collection("atividades").doc(id).update({ prazoFechadoManual: statusFechamento });
-                alert(statusFechamento ? "Prazo fechado com sucesso!" : "Prazo reaberto com sucesso!");
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.id && e.target.id.startsWith('tempo-extra-')) {
+                let idAtiv = e.target.id.replace('tempo-extra-', '');
+                let inputData = document.getElementById(`data-extra-${idAtiv}`);
+                if (inputData) {
+                    inputData.style.display = e.target.value === 'personalizado' ? 'inline-block' : 'none';
+                }
+            }
+        });
+
+        async function abrirPrazoExtraAdmin(id) {
+            let selectTempo = document.getElementById(`tempo-extra-${id}`).value;
+            let expiraEm = null;
+            let agora = new Date();
+
+            if (selectTempo === '24') {
+                expiraEm = new Date(agora.getTime() + 24 * 60 * 60 * 1000);
+            } else if (selectTempo === '5') {
+                expiraEm = new Date(agora.getTime() + 5 * 60 * 60 * 1000);
+            } else if (selectTempo === 'personalizado') {
+                let valInput = document.getElementById(`data-extra-${id}`).value;
+                if (!valInput) {
+                    alert("Selecione a data e hora de expiração personalizada.");
+                    return;
+                }
+                expiraEm = new Date(valInput);
+            }
+
+            await db.collection("atividades").doc(id).update({
+                prazoFechadoManual: false,
+                prazoExtraExpiraEm: expiraEm ? firebase.firestore.Timestamp.fromDate(expiraEm) : null
+            });
+            alert("Prazo extra aberto com sucesso!");
+        }
+
+        async function fecharPrazoExtraAdmin(id) {
+            if (confirm("Deseja fechar o prazo desta atividade?")) {
+                await db.collection("atividades").doc(id).update({
+                    prazoFechadoManual: true,
+                    prazoExtraExpiraEm: null
+                });
+                alert("Prazo fechado com sucesso!");
             }
         }
 
@@ -1631,7 +1662,7 @@
         }
 
         function cancelarEdicaoAviso() {
-            document.getElementById('av-id-editando', "").value = "";
+            document.getElementById('av-id-editando').value = "";
             document.getElementById('av-titulo').value = "";
             document.getElementById('av-texto').value = "";
             document.getElementById('titulo-form-aviso').innerText = "Publicar Novo Aviso";
