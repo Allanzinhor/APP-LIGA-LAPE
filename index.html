@@ -227,6 +227,7 @@
         let indiceSlideAtual = 0;
         let eventoInstalacaoPWA = null;
         let intervaloCronometro = null;
+        let primeiraCargaPush = true;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -343,38 +344,33 @@
                 }
             } catch(e) { console.log(e); }
 
-// Escuta em tempo real os avisos da nuvem
-        db.collection("avisos").onSnapshot((snapshot) => {
-            let novosAvisos = [];
-            let ultimoAvisoSalvo = localStorage.getItem("lape_ultimo_aviso_id");
-            let primeiraVez = (ultimoAvisoSalvo === null);
-
-            snapshot.forEach(doc => {
-                novosAvisos.push({ id: doc.id, ...doc.data() });
+            // 1. Carrega apenas os avisos visíveis (sem disparar notificações na exclusão)
+            db.collection("avisos").onSnapshot((snapshot) => {
+                let novosAvisos = [];
+                snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
+                avisos = novosAvisos;
+                renderizarAvisos();
             });
 
-            // Ordena se necessário ou pega o mais recente
-            if (novosAvisos.length > 0) {
-                let avisoMaisRecente = novosAvisos[novosAvisos.length - 1];
-
-                // Se não for a primeira vez que abre o app e entrar um ID que a pessoa não viu
-                if (!primeiraVez && ultimoAvisoSalvo !== avisoMaisRecente.id) {
-                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({
-                            type: 'MOSTRAR_AVISO',
-                            titulo: avisoMaisRecente.titulo || "Novo Aviso da LAPE",
-                            texto: avisoMaisRecente.texto || "Confira o novo comunicado no portal."
-                        });
-                    }
+            // 2. Escuta os disparos manuais da diretoria em tempo real para enviar a notificação push imediata
+            db.collection("notificacoes_push_manual").orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
+                if (primeiraCargaPush) {
+                    primeiraCargaPush = false;
+                    return;
                 }
-
-                // Salva o ID mais recente atual
-                localStorage.setItem("lape_ultimo_aviso_id", avisoMaisRecente.id);
-            }
-
-            avisos = novosAvisos;
-            renderizarAvisos();
-        });
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const dadosPush = change.doc.data();
+                        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                            navigator.serviceWorker.controller.postMessage({
+                                type: 'MOSTRAR_AVISO',
+                                titulo: dadosPush.titulo || "Novo Aviso da LAPE",
+                                texto: dadosPush.texto || "Confira o novo comunicado no portal."
+                            });
+                        }
+                    }
+                });
+            });
 
             try {
                 let atSnap = await db.collection("atividades").get();

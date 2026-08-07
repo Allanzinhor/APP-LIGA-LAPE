@@ -1106,7 +1106,6 @@
 
         async function dispararNotificacaoManual(titulo, texto) {
             try {
-                // Atualiza um campo de controle no Firestore ou dispara o evento para os navegadores conectados sem duplicar documento
                 await db.collection("notificacoes_push_manual").add({
                     titulo: titulo,
                     texto: texto,
@@ -1143,7 +1142,7 @@
         async function removerAviso(id) {
             if(confirm("Deseja realmente apagar este aviso?")) {
                 await db.collection("avisos").doc(id).delete();
-                carregarAvisosAdmin();
+                carregarDadosAdmin();
             }
         }
 
