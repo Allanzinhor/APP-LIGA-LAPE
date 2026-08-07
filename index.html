@@ -352,7 +352,9 @@
                 renderizarAvisos();
             });
 
-            // 2. Escuta os disparos manuais da diretoria em tempo real para enviar a notificação push imediata
+            // 2. Escuta os disparos manuais da diretoria (ignora disparos antigos acumulados em segundo plano)
+            let momentoAberturaApp = new Date();
+
             db.collection("notificacoes_push_manual").orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
                 if (primeiraCargaPush) {
                     primeiraCargaPush = false;
@@ -361,12 +363,15 @@
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const dadosPush = change.doc.data();
-                        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                            navigator.serviceWorker.controller.postMessage({
-                                type: 'MOSTRAR_AVISO',
-                                titulo: dadosPush.titulo || "Novo Aviso da LAPE",
-                                texto: dadosPush.texto || "Confira o novo comunicado no portal."
-                            });
+                        
+                        if (dadosPush.timestamp && dadosPush.timestamp.toDate() > momentoAberturaApp) {
+                            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                                navigator.serviceWorker.controller.postMessage({
+                                    type: 'MOSTRAR_AVISO',
+                                    titulo: dadosPush.titulo || "Novo Aviso da LAPE",
+                                    texto: dadosPush.texto || "Confira o novo comunicado no portal."
+                                });
+                            }
                         }
                     }
                 });
