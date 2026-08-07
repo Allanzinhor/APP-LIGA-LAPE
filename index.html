@@ -443,7 +443,7 @@
                         publico: d.publico || "todos",
                         cancelada: d.cancelada || false,
                         concluida: d.concluida || false,
-                        prazoFechadoManual: d.prazoFechadoManual || false, // CAPTURA O FECHAMENTO MANUAL DO PAINEL
+                        prazoFechadoManual: d.prazoFechadoManual || false,
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
@@ -844,8 +844,8 @@
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                     let agora = new Date();
                     
-                    // AQUI ESTÁ A CORREÇÃO: Verifica se passaram 24h OU se o admin fechou manualmente no painel
-                    let expirado = agora > limitePrazo || ativ.prazoFechadoManual === true;
+                    // CORREÇÃO APLICADA AQUI: Permite reabrir manualmente mesmo se o prazo natural de 24h já tiver passado
+                    let expirado = ativ.prazoFechadoManual === true || (agora > limitePrazo && ativ.prazoFechadoManual !== false);
 
                     if (ativ.statusAdmin === 'presente') {
                         statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
@@ -938,7 +938,7 @@
                         let diffTempo = limitePrazo.getTime() - agora.getTime();
 
                         if (diffTempo <= 0 || ativ.prazoFechadoManual) {
-                            renderizarApp(); // Atualiza a tela se o prazo fechar
+                            renderizarApp();
                         } else {
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                             let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
