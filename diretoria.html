@@ -33,7 +33,7 @@
             <button class="btn-perfil" onclick="window.location.href='index.html'">Sair</button>
         </header>
 
-        <!-- Navegação por Abas -->
+        <!-- Navegação por Abas (Incluindo a aba temporária de migração) -->
         <nav class="admin-abas-complexa" id="menu-abas-admin" style="grid-template-columns: repeat(3, 1fr);"></nav>
 
         <!-- ABA 1: CADASTRAR / EDITAR MEMBROS -->
@@ -233,6 +233,27 @@
             <h3>Avisos Publicados</h3>
             <div id="lista-admin-avisos"></div>
         </div>
+
+        <!-- ABA TEMPORÁRIA: MIGRAR PAPEL (REMOVER QUANDO TERMINAR) -->
+        <div id="secao-migracao-papel" class="admin-secao" style="display: none;">
+            <div class="admin-card-acao" style="background: #fff8e1; border: 2px dashed #f59f00;">
+                <h3 style="color: #e67700; margin-top: 0;">📥 Aba Temporária: Migração de Registros (Papel)</h3>
+                <p style="font-size: 12px; color: #555;">Use esta ferramenta para cadastrar uma atividade passada e marcar rapidamente a presença/falta de todos os ligantes de uma só vez. Tudo será enviado direto para o app e frequência.</p>
+                
+                <div class="grid-form" style="margin-top: 10px;">
+                    <input type="text" id="mig-titulo" placeholder="Título da Atividade Passada *" class="col-full">
+                    <input type="date" id="mig-data">
+                    <input type="number" id="mig-ch" placeholder="Carga Horária (h)">
+                    <textarea id="mig-desc" rows="2" placeholder="Breve descrição..." class="col-full"></textarea>
+                </div>
+
+                <h4 style="margin: 15px 0 8px 0; font-size: 14px; color: #0056b3;">Chamada em Lote para os Ligantes Ativos:</h4>
+                <div id="mig-lista-ligantes-container" style="max-height: 300px; overflow-y: auto; border: 1px solid #ced4da; border-radius: 6px; padding: 8px; background: #fff;"></div>
+
+                <button class="btn-salvar" style="margin-top: 15px; background: #2b8a3e;" onclick="salvarMigracaoPapel()">🚀 Salvar Atividade e Chamada em Lote</button>
+            </div>
+        </div>
+
     </div>
 
     <!-- MODAL DESLIGAMENTO -->
@@ -258,9 +279,9 @@
         let usuarioSessao = null;
 
         const permissoesCargos = {
-            "presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos"],
-            "vice-presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos"],
-            "secretaria": ["lista-membros", "frequencia", "avisos"],
+            "presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "vice-presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "secretaria": ["lista-membros", "frequencia", "avisos", "migracao-papel"],
             "tesoureira": ["financeiro", "avisos"],
             "diretora de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
             "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
@@ -296,7 +317,8 @@
                 "lista-atividades": "📅 Gerenciar",
                 "frequencia": "📋 Frequência",
                 "financeiro": "💰 Financeiro",
-                "avisos": "⚠️ Avisos"
+                "avisos": "⚠️ Avisos",
+                "migracao-papel": "📥 Migrar Papel" // Aba temporária
             };
 
             let primeiraAba = null;
@@ -318,6 +340,10 @@
             let secaoAlvo = document.getElementById(`secao-${nome}`);
             if (secaoAlvo) secaoAlvo.style.display = 'block';
             if (evento && evento.target) evento.target.classList.add('ativo');
+            
+            if (nome === 'migracao-papel') {
+                renderizarInterfaceMigracao();
+            }
         }
 
         function mascaraTelefone(input) {
@@ -451,7 +477,6 @@
 
                 let moderacaoFotoHtml = "";
                 if (m.fotoStatus === 'analise' && m.fotoTempUrl) {
-                    let nomeMembroSeguro = (m.nome || "").replace(/'/g, "\\'");
                     moderacaoFotoHtml = `
                         <div style="background:#fff3cd; padding:8px; border-radius:6px; margin:8px 0; border-left:3px solid #ffc107;">
                             <p style="font-size:11px; margin-bottom:4px; font-weight:bold;">📸 Foto Enviada para Análise:</p>
@@ -534,6 +559,90 @@
             renderizarFrequenciaAdmin();
             renderizarFinanceiroAdmin();
             carregarAvisosAdmin();
+            if (document.getElementById('secao-migracao-papel').style.display === 'block') {
+                renderizarInterfaceMigracao();
+            }
+        }
+
+        function renderizarInterfaceMigracao() {
+            let container = document.getElementById('mig-lista-ligantes-container');
+            if (!container) return;
+            container.innerHTML = "";
+
+            let membrosAtivos = membrosCache.filter(m => !m.desligado);
+            if (membrosAtivos.length === 0) {
+                container.innerHTML = "<p class='cinza'>Nenhum ligante ativo cadastrado.</p>";
+                return;
+            }
+
+            membrosAtivos.forEach(m => {
+                container.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee;">
+                        <div>
+                            <strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span>
+                        </div>
+                        <select id="mig-status-${m.id}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                            <option value="pendente">Pendente / Não Registrado</option>
+                            <option value="presente" selected>Presente (+CH)</option>
+                            <option value="negado">Falta</option>
+                            <option value="justificado">Justificado (Abonado)</option>
+                        </select>
+                    </div>
+                `;
+            });
+        }
+
+        async function salvarMigracaoPapel() {
+            let titulo = document.getElementById('mig-titulo').value.trim();
+            let data = document.getElementById('mig-data').value;
+            let ch = Number(document.getElementById('mig-ch').value || 0);
+            let desc = document.getElementById('mig-desc').value.trim();
+
+            if (!titulo || !data) {
+                alert("Preencha o Título e a Data da atividade passada.");
+                return;
+            }
+
+            let frequenciasMap = {};
+            let membrosAtivos = membrosCache.filter(m => !m.desligado);
+
+            membrosAtivos.forEach(m => {
+                let selectStatus = document.getElementById(`mig-status-${m.id}`);
+                if (selectStatus) {
+                    let statusEscolhido = selectStatus.value;
+                    if (statusEscolhido !== 'pendente') {
+                        frequenciasMap[m.id] = {
+                            status: statusEscolhido,
+                            texto: statusEscolhido === 'justificado' ? 'Migrado de registro em papel' : '',
+                            confirmadoAluno: true
+                        };
+                    }
+                }
+            });
+
+            await db.collection("atividades").add({
+                titulo,
+                data,
+                hora: "19:00",
+                local: "Migração de Registro Físico",
+                ch,
+                desc: desc || "Atividade passada migrada dos registros em papel.",
+                publico: "todos",
+                concluida: true, // Já entra como concluída para pontuar direto
+                cancelada: false,
+                frequencias: frequenciasMap
+            });
+
+            await dispararNotificacaoGlobal("Nova Atividade Registrada", `A atividade passada '${titulo}' (${data}) foi adicionada ao histórico.`);
+
+            alert("Atividade e chamadas migradas com sucesso para o banco de dados!");
+            document.getElementById('mig-titulo').value = "";
+            document.getElementById('mig-data').value = "";
+            document.getElementById('mig-ch').value = "";
+            document.getElementById('mig-desc').value = "";
+
+            carregarDadosAdmin();
+            mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
         }
 
         async function aprovarFoto(id) {
