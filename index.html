@@ -443,7 +443,7 @@
                         publico: d.publico || "todos",
                         cancelada: d.cancelada || false,
                         concluida: d.concluida || false,
-                        prazoFechadoManual: d.prazoFechadoManual || false,
+                        prazoFechadoManual: d.prazoFechadoManual, // Mantém o valor booleano ou undefined
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
@@ -852,31 +852,60 @@
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                     let agora = new Date();
-                    
-                    let expirado = ativ.prazoFechadoManual === true || (agora > limitePrazo && ativ.prazoFechadoManual !== false);
 
-                    if (ativ.statusAdmin === 'presente') {
-                        statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
-                    } else if (ativ.statusAdmin === 'negado' && expirado && !ativ.confirmadoAluno && ativ.statusAdmin !== 'aguardando_analise') {
+                    // PRIORIDADE ABSOLUTA: Se a diretoria abriu manualmente, ignora qualquer bloqueio de tempo
+                    if (ativ.prazoFechadoManual === false) {
                         statusOficialHtml = `
-                            <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                                <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
-                                <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                            <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
+                                🔓 Prazo extra aberto pela diretoria
                             </div>
                         `;
-                    } else if (ativ.statusAdmin === 'negado') {
-                        statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta registrada / Justificativa Negada</p>`;
-                    } else if (ativ.statusAdmin === 'justificado') {
-                        statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
-                    } else if (ativ.statusAdmin === 'aguardando_analise') {
-                        statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 8px;">⏳ Justificativa em análise</p>`;
-                        botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
+
+                        if (ativ.confirmadoAluno) {
+                            botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                        } else {
+                            botoesCardHtml = `
+                                <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
+                                <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
+                            `;
+                        }
                     } else {
-                        if (expirado) {
-                            if (ativ.prazoFechadoManual === false) {
+                        let expirado = ativ.prazoFechadoManual === true || agora > limitePrazo;
+
+                        if (ativ.statusAdmin === 'presente') {
+                            statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
+                        } else if (ativ.statusAdmin === 'negado' && expirado && !ativ.confirmadoAluno && ativ.statusAdmin !== 'aguardando_analise') {
+                            statusOficialHtml = `
+                                <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                    <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                    <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                </div>
+                            `;
+                        } else if (ativ.statusAdmin === 'negado') {
+                            statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta registrada / Justificativa Negada</p>`;
+                        } else if (ativ.statusAdmin === 'justificado') {
+                            statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
+                        } else if (ativ.statusAdmin === 'aguardando_analise') {
+                            statusOficialHtml = `<p style="color: #f59f00; font-size: 12px; font-weight: bold; margin-top: 8px;">⏳ Justificativa em análise</p>`;
+                            botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
+                        } else {
+                            if (expirado) {
                                 statusOficialHtml = `
-                                    <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
-                                        🔓 Prazo extra aberto pela diretoria
+                                    <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                        <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                        <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                    </div>
+                                `;
+                            } else {
+                                let diffTempo = limitePrazo.getTime() - agora.getTime();
+                                let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
+                                let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
+                                let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
+
+                                statusOficialHtml = `
+                                    <div id="timer-${ativ.id}" style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #664d03; font-weight: bold;">
+                                        ⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s
                                     </div>
                                 `;
 
@@ -888,34 +917,6 @@
                                         <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
                                     `;
                                 }
-                            } else {
-                                statusOficialHtml = `
-                                    <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                                        <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
-                                        <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
-                                    </div>
-                                `;
-                            }
-                        } else {
-                            let diffTempo = limitePrazo.getTime() - agora.getTime();
-                            let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
-                            let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
-                            let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
-
-                            statusOficialHtml = `
-                                <div id="timer-${ativ.id}" style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #664d03; font-weight: bold;">
-                                    ⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s
-                                </div>
-                            `;
-
-                            if (ativ.confirmadoAluno) {
-                                botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
-                            } else {
-                                botoesCardHtml = `
-                                    <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
-                                    <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
-                                `;
                             }
                         }
                     }
@@ -958,7 +959,7 @@
             intervaloCronometro = setInterval(() => {
                 atividadesDesteMes.forEach(ativ => {
                     let timerEl = document.getElementById(`timer-${ativ.id}`);
-                    if (timerEl && !ativ.cancelada && !ativ.concluida && !ativ.prazoFechadoManual) {
+                    if (timerEl && !ativ.cancelada && !ativ.concluida && ativ.prazoFechadoManual !== false) {
                         let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                         let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                         let agora = new Date();
