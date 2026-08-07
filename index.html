@@ -272,7 +272,12 @@
 
                 if(dadosUser.senhaPadrao !== senhaInput) { alert("Senha incorreta!"); return; }
 
-                // Oculta formulário e exibe o spinner de carregamento por 3 segundos
+                // REGRA: Impede login de membros desligados
+                if(dadosUser.desligado === true) {
+                    alert("Acesso negado. Este cadastro encontra-se desligado da liga.");
+                    return;
+                }
+
                 document.getElementById('conteudo-formulario-login').style.display = 'none';
                 document.getElementById('loading-login').style.display = 'block';
 
@@ -286,6 +291,9 @@
 
         async function inicializarNotificacoesPush() {
             if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+            // REGRA: Se estiver desligado, não registra token de notificação
+            if (!usuarioLogado || usuarioLogado.desligado === true) return;
+
             try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
@@ -295,7 +303,7 @@
                         serviceWorkerRegistration: registration,
                         vapidKey: 'COLOQUE_AQUI_SUA_CHAVE_VAPID_PUBLICA'
                     });
-                    if (token && usuarioLogado) {
+                    if (token) {
                         await db.collection("membros").doc(usuarioLogado.id).update({ fcmToken: token });
                     }
                 }
@@ -305,6 +313,14 @@
         }
 
         function iniciarAppComUsuario(user) {
+            // REGRA EXTRA DE SEGURANÇA: Bloqueia sessão salva caso tenha sido desligado recentemente
+            if(user.desligado === true) {
+                localStorage.removeItem("lape_sessao_usuario");
+                alert("Sua conta foi desligada da liga.");
+                location.reload();
+                return;
+            }
+
             usuarioLogado = user;
             document.getElementById('tela-login').style.display = 'none';
             let corpo = document.getElementById('corpo-pagina');
@@ -336,6 +352,12 @@
                 let userDoc = await db.collection("membros").doc(usuarioLogado.id).get();
                 if(userDoc.exists) {
                     usuarioLogado = { id: userDoc.id, ...userDoc.data() };
+                    
+                    if(usuarioLogado.desligado === true) {
+                        fazerLogout();
+                        return;
+                    }
+
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                     renderizarAvatarTopo();
                     document.getElementById('subtitulo-cargo').innerText = usuarioLogado.cargo || "Ligante";
@@ -353,8 +375,15 @@
                 let atSnap = await db.collection("atividades").get();
                 atividades = [];
                 
+                let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+                let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+
                 for (let doc of atSnap.docs) {
                     let d = doc.data();
+
+                    if (d.publico === 'diretoria' && !ehDiretoria) continue;
+                    if (usuarioLogado.ingressoLiga && d.data < usuarioLogado.ingressoLiga) continue;
+
                     let frequenciasMap = d.frequencias || {};
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
 
@@ -647,6 +676,7 @@
                 let temAtividade = atividades.some(ativ => {
                     if (ativ.data !== dataFormatada || ativ.cancelada) return false;
                     if (ativ.publico === 'diretoria' && !ehDiretoria) return false;
+                    if (usuarioLogado.ingressoLiga && ativ.data < usuarioLogado.ingressoLiga) return false;
                     return true;
                 });
                 let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
@@ -667,6 +697,7 @@
             let ativVisiveis = atividades.filter(a => {
                 if (a.cancelada) return false;
                 if (a.publico === 'diretoria' && !ehDiretoria) return false;
+                if (usuarioLogado.ingressoLiga && a.data < usuarioLogado.ingressoLiga) return false;
                 return true;
             });
 
@@ -692,6 +723,7 @@
             const atividadesDesteMes = atividades.filter(ativ => {
                 if(!ativ.data) return false;
                 if(ativ.publico === 'diretoria' && !ehDiretoria) return false;
+                if(usuarioLogado.ingressoLiga && ativ.data < usuarioLogado.ingressoLiga) return false;
                 const dataAtiv = new Date(ativ.data + "T00:00:00");
                 return dataAtiv.getMonth() === mesAtual && dataAtiv.getFullYear() === anoAtual;
             });

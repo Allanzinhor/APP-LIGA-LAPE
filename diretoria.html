@@ -440,13 +440,22 @@
 
                 let botoesAdminCard = "";
                 if (podeEditarExcluir) {
-                    botoesAdminCard = `
-                        <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
-                            <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')">Editar</button>
-                            ${!m.desligado ? `<button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')">Desligar</button>` : ''}
-                            <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
-                        </div>
-                    `;
+                    if (m.desligado) {
+                        botoesAdminCard = `
+                            <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn-mini verde" onclick="reativarMembro('${m.id}')">🟢 Reativar Membro</button>
+                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
+                            </div>
+                        `;
+                    } else {
+                        botoesAdminCard = `
+                            <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')">Editar</button>
+                                <button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')">Desligar</button>
+                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
+                            </div>
+                        `;
+                    }
                 }
 
                 let htmlCard = `
@@ -655,6 +664,18 @@
 
             fecharModalDesligamento();
             carregarDadosAdmin();
+        }
+
+        async function reativarMembro(id) {
+            if (confirm("Deseja reativar este membro na liga? O acesso dele ao aplicativo será restabelecido.")) {
+                await db.collection("membros").doc(id).update({
+                    desligado: false,
+                    dataDesligamento: firebase.firestore.FieldValue.delete(),
+                    motivoDesligamento: firebase.firestore.FieldValue.delete()
+                });
+                alert("Membro reativado com sucesso!");
+                carregarDadosAdmin();
+            }
         }
 
         async function removerMembro(id) {
