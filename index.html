@@ -228,6 +228,8 @@
         let eventoInstalacaoPWA = null;
         let intervaloCronometro = null;
         let primeiraCargaPush = true;
+        let primeiraCargaUsuario = true;
+        let primeiraCargaAtividades = true;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -288,7 +290,7 @@
                 setTimeout(() => {
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
                     iniciarAppComUsuario(dadosUser);
-                }, 3000);
+                }, 2000);
 
             } catch(e) { console.error(e); alert("Erro ao logar."); }
         }
@@ -311,7 +313,7 @@
             document.getElementById('subtitulo-cargo').innerText = user.cargo || "Ligante";
 
             renderizarAvatarTopo();
-            carregarDadosDinamicosApp();
+            iniciarOuvintesTempoReal();
             registrarServiceWorkerENotificacoes();
         }
 
@@ -327,24 +329,35 @@
             }
         }
 
-        async function carregarDadosDinamicosApp() {
-            try {
-                let userDoc = await db.collection("membros").doc(usuarioLogado.id).get();
-                if(userDoc.exists) {
-                    usuarioLogado = { id: userDoc.id, ...userDoc.data() };
-                    
-                    if(usuarioLogado.desligado === true) {
+        function iniciarOuvintesTempoReal() {
+            let momentoAberturaApp = new Date();
+
+            // 1. Ouvinte em tempo real para os dados do próprio usuário (Atualiza financeiro e aprovação de foto na hora)
+            db.collection("membros").doc(usuarioLogado.id).onSnapshot((doc) => {
+                if (doc.exists) {
+                    usuarioLogado = { id: doc.id, ...doc.data() };
+                    if (usuarioLogado.desligado === true) {
                         fazerLogout();
                         return;
                     }
-
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                     renderizarAvatarTopo();
                     document.getElementById('subtitulo-cargo').innerText = usuarioLogado.cargo || "Ligante";
-                }
-            } catch(e) { console.log(e); }
+                    atualizarFinanceiroApp();
 
-            // 1. Carrega apenas os avisos visíveis (sem disparar notificações na exclusão)
+                    if (primeiraCargaUsuario) {
+                        primeiraCargaUsuario = false;
+                    } else {
+                        // Atualiza modal de perfil se estiver aberto
+                        let modalPerfil = document.getElementById("modal-perfil");
+                        if (modalPerfil && modalPerfil.style.display === "flex") {
+                            abrirPerfilModal();
+                        }
+                    }
+                }
+            });
+
+            // 2. Ouvinte em tempo real para Avisos
             db.collection("avisos").onSnapshot((snapshot) => {
                 let novosAvisos = [];
                 snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
@@ -352,9 +365,7 @@
                 renderizarAvisos();
             });
 
-            // 2. Escuta os disparos manuais da diretoria (ignora disparos antigos acumulados em segundo plano)
-            let momentoAberturaApp = new Date();
-
+            // 3. Ouvinte em tempo real para Notificações Push manuais
             db.collection("notificacoes_push_manual").orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
                 if (primeiraCargaPush) {
                     primeiraCargaPush = false;
@@ -363,7 +374,6 @@
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const dadosPush = change.doc.data();
-                        
                         if (dadosPush.timestamp && dadosPush.timestamp.toDate() > momentoAberturaApp) {
                             if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
                                 navigator.serviceWorker.controller.postMessage({
@@ -377,14 +387,13 @@
                 });
             });
 
-            try {
-                let atSnap = await db.collection("atividades").get();
+            // 4. Ouvinte em tempo real para Atividades e Chamadas / Frequência
+            db.collection("atividades").onSnapshot(async (snapshot) => {
                 atividades = [];
-                
                 let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
                 let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
 
-                for (let doc of atSnap.docs) {
+                for (let doc of snapshot.docs) {
                     let d = doc.data();
 
                     if (d.publico === 'diretoria' && !ehDiretoria) continue;
@@ -392,16 +401,6 @@
 
                     let frequenciasMap = d.frequencias || {};
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
-
-                    let dataHoraAtiv = new Date(`${d.data}T${d.hora || "19:00"}:00`);
-                    let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
-                    let agora = new Date();
-
-                    if (agora > limitePrazo && meuRegistro.status === 'pendente' && !meuRegistro.confirmadoAluno && !d.cancelada && !d.concluida) {
-                        frequenciasMap[usuarioLogado.id] = { ...meuRegistro, status: 'negado' };
-                        await db.collection("atividades").doc(doc.id).update({ frequencias: frequenciasMap });
-                        meuRegistro.status = 'negado';
-                    }
 
                     let totalConfirmados = 0;
                     Object.values(frequenciasMap).forEach(reg => {
@@ -427,9 +426,8 @@
                 }
 
                 atividades.sort((a, b) => new Date(a.data + "T" + a.hora) - new Date(b.data + "T" + b.hora));
-            } catch(e) { console.log(e); }
-
-            renderizarApp();
+                renderizarApp();
+            });
         }
 
         async function alterarRegistroFirebase(ativId, dadosAtualizados) {
@@ -443,7 +441,6 @@
                     
                     frequencias[usuarioLogado.id] = { ...atual, ...dadosAtualizados };
                     await docRef.update({ frequencias: frequencias });
-                    carregarDadosDinamicosApp();
                 }
             } catch(e) { console.error(e); }
         }
@@ -470,7 +467,8 @@
 
         function atualizarFinanceiroApp() {
             let chaveMesAtual = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}`;
-            document.getElementById("mes-financeiro-texto").innerText = `${nomesMeses[mesAtual]} / ${anoAtual}`;
+            let elMesText = document.getElementById("mes-financeiro-texto");
+            if (elMesText) elMesText.innerText = `${nomesMeses[mesAtual]} / ${anoAtual}`;
 
             let finMap = usuarioLogado.financeiro || {};
             let statusMes = finMap[chaveMesAtual] || 'pendente';
@@ -478,6 +476,8 @@
             let btnPix = document.getElementById("btn-acao-pix");
             let valMesEl = document.getElementById("fin-valor-mes");
             let debTotalEl = document.getElementById("fin-debito-total");
+
+            if (!badgeStatus) return;
 
             let anoMesNumAtual = anoAtual * 100 + (mesAtual + 1);
             let cobravelAtual = anoMesNumAtual >= 202508;
@@ -554,10 +554,8 @@
                 await db.collection("membros").doc(usuarioLogado.id).update({
                     financeiro: usuarioLogado.financeiro
                 });
-                localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                 alert("Pagamento notificado! Aguardando confirmação do financeiro.");
                 fecharModalPix();
-                carregarDadosDinamicosApp();
             } catch(e) {
                 console.error(e);
                 alert("Erro ao notificar pagamento.");
@@ -647,7 +645,6 @@
                             fotoTempUrl: base64Image,
                             fotoStatus: 'analise'
                         });
-                        localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                         abrirPerfilModal();
                         alert("Foto enviada para análise da diretoria com sucesso!");
                     } catch(e) {
@@ -888,7 +885,7 @@
                         let diffTempo = limitePrazo.getTime() - agora.getTime();
 
                         if (diffTempo <= 0) {
-                            carregarDadosDinamicosApp();
+                            // Deixa o onSnapshot atualizar
                         } else {
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                             let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
