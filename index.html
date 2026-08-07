@@ -240,7 +240,7 @@
         let avisos = [];
         let indiceSlideAtual = 0;
         let eventoInstalacaoPWA = null;
-        let intervaloCronometro = null;
+        let motorCronometroGlobal = null;
         let primeiraCargaPush = true;
         let primeiraCargaIndividual = true;
 
@@ -799,8 +799,6 @@
                 return;
             }
 
-            if (intervaloCronometro) clearInterval(intervaloCronometro);
-
             atividadesDesteMes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
                 let botoesCardHtml = "";
@@ -867,16 +865,8 @@
                     let estaComPrazoExtraAberto = (prazoNaturalExpirado && ativ.prazoFechadoManual === false && !prazoExtraExpiradoPorTempo);
 
                     if (estaComPrazoExtraAberto) {
-                        let contadorExtraHtml = "";
-                        if (expiraEmDate) {
-                            let diffTempExtra = expiraEmDate.getTime() - agora.getTime();
-                            let hExtra = Math.floor(diffTempExtra / (1000 * 60 * 60));
-                            let mExtra = Math.floor((diffTempExtra % (1000 * 60 * 60)) / (1000 * 60));
-                            let sExtra = Math.floor((diffTempExtra % (1000 * 60)) / 1000);
-                            contadorExtraHtml = `<div id="timer-extra-${ativ.id}" style="font-size: 10px; margin-top: 2px;">⏳ Expira em: ${hExtra}h ${mExtra}m ${sExtra}s</div>`;
-                        } else {
-                            contadorExtraHtml = `<div style="font-size: 10px; margin-top: 2px;">⏳ Prazo aberto manualmente</div>`;
-                        }
+                        let timestampExtraMs = expiraEmDate ? expiraEmDate.getTime() : 0;
+                        let contadorExtraHtml = `<div id="timer-extra-${ativ.id}" data-expira="${timestampExtraMs}" style="font-size: 10px; margin-top: 2px;">⏳ Calculando prazo extra...</div>`;
 
                         statusOficialHtml = `
                             <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
@@ -927,15 +917,10 @@
                                     </div>
                                 `;
                             } else {
-                                let diffTempo = limitePrazo.getTime() - agora.getTime();
-                                let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
-                                let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
-                                let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
-
+                                let limiteMs = limitePrazo.getTime();
                                 statusOficialHtml = `
-                                    <div id="timer-${ativ.id}" style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #664d03; font-weight: bold;">
-                                        ⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s
+                                    <div id="timer-${ativ.id}" data-limite="${limiteMs}" style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #664d03; font-weight: bold;">
+                                        ⏳ Calculando prazo limite...
                                     </div>
                                 `;
 
@@ -985,40 +970,47 @@
                 `;
             });
 
-            if (intervaloCronometro) clearInterval(intervaloCronometro);
-            intervaloCronometro = setInterval(() => {
-                let agoraLoop = new Date();
-                atividadesDesteMes.forEach(ativ => {
-                    let timerEl = document.getElementById(`timer-${ativ.id}`);
-                    let timerExtraEl = document.getElementById(`timer-extra-${ativ.id}`);
-                    
-                    let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
-                    let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
+            iniciarMotorGlobalCronometros();
+        }
 
-                    if (timerEl && !ativ.cancelada && !ativ.concluida && ativ.prazoFechadoManual !== false) {
-                        let diffTempo = limitePrazo.getTime() - agoraLoop.getTime();
-                        if (diffTempo <= 0) {
-                            renderizarApp();
-                        } else {
-                            let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
-                            let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
-                            let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
-                            timerEl.innerHTML = `⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
-                        }
+        // MOTOR ISOLADO E INDEPENDENTE DE CRONÔMETROS EM TEMPO REAL
+        function iniciarMotorGlobalCronometros() {
+            if (motorCronometroGlobal) clearInterval(motorCronometroGlobal);
+
+            motorCronometroGlobal = setInterval(() => {
+                let agoraMs = new Date().getTime();
+
+                // Atualiza todos os timers normais que possuem o atributo data-limite
+                document.querySelectorAll('[id^="timer-"]').forEach(el => {
+                    if (el.id.includes('extra')) return; // ignora os extras por enquanto
+                    let limiteMs = Number(el.getAttribute('data-limite'));
+                    if (!limiteMs) return;
+
+                    let diffTempo = limiteMs - agoraMs;
+                    if (diffTempo <= 0) {
+                        renderizarApp(); // se expirou, redesenha o app
+                    } else {
+                        let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
+                        let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
+                        let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
+                        el.innerHTML = `⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
                     }
+                });
 
-                    if (timerExtraEl && ativ.prazoExtraExpiraEm) {
-                        let expiraEmDate = ativ.prazoExtraExpiraEm.toDate ? ativ.prazoExtraExpiraEm.toDate() : new Date(ativ.prazoExtraExpiraEm);
-                        let diffTempExtra = expiraEmDate.getTime() - agoraLoop.getTime();
-                        if (diffTempExtra <= 0) {
-                            renderizarApp();
-                        } else {
-                            let hExtra = Math.floor(diffTempExtra / (1000 * 60 * 60));
-                            let mExtra = Math.floor((diffTempExtra % (1000 * 60 * 60)) / (1000 * 60));
-                            let sExtra = Math.floor((diffTempExtra % (1000 * 60)) / 1000);
-                            timerExtraEl.innerHTML = `⏳ Expira em: ${hExtra}h ${mExtra}m ${sExtra}s`;
-                        }
+                // Atualiza todos os timers extras que possuem o atributo data-expira
+                document.querySelectorAll('[id^="timer-extra-"]').forEach(el => {
+                    let expiraMs = Number(el.getAttribute('data-expira'));
+                    if (!expiraMs) return;
+
+                    let diffTempExtra = expiraMs - agoraMs;
+                    if (diffTempExtra <= 0) {
+                        renderizarApp();
+                    } else {
+                        let hExtra = Math.floor(diffTempExtra / (1000 * 60 * 60));
+                        let mExtra = Math.floor((diffTempExtra % (1000 * 60 * 60)) / (1000 * 60));
+                        let sExtra = Math.floor((diffTempExtra % (1000 * 60)) / 1000);
+                        el.innerHTML = `⏳ Expira em: ${hExtra}h ${mExtra}m ${sExtra}s`;
                     }
                 });
             }, 1000);
