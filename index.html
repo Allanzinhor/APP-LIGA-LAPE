@@ -444,7 +444,7 @@
                         cancelada: d.cancelada || false,
                         concluida: d.concluida || false,
                         prazoFechadoManual: d.prazoFechadoManual,
-                        prazoExtraExpiraEm: d.prazoExtraExpiraEm || null, // Novo campo para controle de tempo personalizado
+                        prazoExtraExpiraEm: d.prazoExtraExpiraEm || null,
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
@@ -854,10 +854,10 @@
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                     let agora = new Date();
                     
-                    // Verifica se o prazo extra expirou por tempo (caso tenha limite definido)
                     let prazoExtraExpiradoPorTempo = false;
+                    let expiraEmDate = null;
                     if (ativ.prazoExtraExpiraEm) {
-                        let expiraEmDate = ativ.prazoExtraExpiraEm.toDate ? ativ.prazoExtraExpiraEm.toDate() : new Date(ativ.prazoExtraExpiraEm);
+                        expiraEmDate = ativ.prazoExtraExpiraEm.toDate ? ativ.prazoExtraExpiraEm.toDate() : new Date(ativ.prazoExtraExpiraEm);
                         if (agora > expiraEmDate) {
                             prazoExtraExpiradoPorTempo = true;
                         }
@@ -867,14 +867,24 @@
                     let estaComPrazoExtraAberto = (prazoNaturalExpirado && ativ.prazoFechadoManual === false && !prazoExtraExpiradoPorTempo);
 
                     if (estaComPrazoExtraAberto) {
+                        let contadorExtraHtml = "";
+                        if (expiraEmDate) {
+                            let diffTempExtra = expiraEmDate.getTime() - agora.getTime();
+                            let hExtra = Math.floor(diffTempExtra / (1000 * 60 * 60));
+                            let mExtra = Math.floor((diffTempExtra % (1000 * 60 * 60)) / (1000 * 60));
+                            let sExtra = Math.floor((diffTempExtra % (1000 * 60)) / 1000);
+                            contadorExtraHtml = `<div id="timer-extra-${ativ.id}" style="font-size: 10px; margin-top: 2px;">⏳ Expira em: ${hExtra}h ${mExtra}m ${sExtra}s</div>`;
+                        } else {
+                            contadorExtraHtml = `<div style="font-size: 10px; margin-top: 2px;">⏳ Prazo aberto manualmente</div>`;
+                        }
+
                         statusOficialHtml = `
                             <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
                                 🔓 Prazo extra aberto pela diretoria
+                                ${contadorExtraHtml}
                             </div>
                         `;
 
-                        // REGRA: Se o horário atual for ANTES do horário da atividade, mostra confirmar e justificar.
-                        // Se já PASSOU do horário da atividade, mostra APENAS o botão de justificar.
                         if (agora < dataHoraAtiv) {
                             if (ativ.confirmadoAluno) {
                                 botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
@@ -885,7 +895,6 @@
                                 `;
                             }
                         } else {
-                            // Já passou do horário da atividade: apenas botão de justificar
                             botoesCardHtml = `
                                 <button class="btn-justificar" style="width: 100%;" onclick="abrirModalJust('${ativ.id}')">Justificar Ausência</button>
                             `;
@@ -980,12 +989,14 @@
             intervaloCronometro = setInterval(() => {
                 atividadesDesteMes.forEach(ativ => {
                     let timerEl = document.getElementById(`timer-${ativ.id}`);
-                    if (timerEl && !ativ.cancelada && !ativ.concluida && ativ.prazoFechadoManual !== false) {
-                        let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
-                        let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
-                        let agora = new Date();
-                        let diffTempo = limitePrazo.getTime() - agora.getTime();
+                    let timerExtraEl = document.getElementById(`timer-extra-${ativ.id}`);
+                    
+                    let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
+                    let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
+                    let agora = new Date();
 
+                    if (timerEl && !ativ.cancelada && !ativ.concluida && ativ.prazoFechadoManual !== false) {
+                        let diffTempo = limitePrazo.getTime() - agora.getTime();
                         if (diffTempo <= 0) {
                             renderizarApp();
                         } else {
@@ -994,6 +1005,19 @@
                             let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
                             let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
                             timerEl.innerHTML = `⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+                        }
+                    }
+
+                    if (timerExtraEl && ativ.prazoExtraExpiraEm) {
+                        let expiraEmDate = ativ.prazoExtraExpiraEm.toDate ? ativ.prazoExtraExpiraEm.toDate() : new Date(ativ.prazoExtraExpiraEm);
+                        let diffTempExtra = expiraEmDate.getTime() - agora.getTime();
+                        if (diffTempExtra <= 0) {
+                            renderizarApp();
+                        } else {
+                            let hExtra = Math.floor(diffTempExtra / (1000 * 60 * 60));
+                            let mExtra = Math.floor((diffTempExtra % (1000 * 60 * 60)) / (1000 * 60));
+                            let sExtra = Math.floor((diffTempExtra % (1000 * 60)) / 1000);
+                            timerExtraEl.innerHTML = `⏳ Expira em: ${hExtra}h ${mExtra}m ${sExtra}s`;
                         }
                     }
                 });
