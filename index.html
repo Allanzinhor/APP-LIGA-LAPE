@@ -443,6 +443,7 @@
                         publico: d.publico || "todos",
                         cancelada: d.cancelada || false,
                         concluida: d.concluida || false,
+                        prazoFechadoManual: d.prazoFechadoManual || false, // CAPTURA O FECHAMENTO MANUAL DO PAINEL
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
@@ -842,7 +843,9 @@
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                     let agora = new Date();
-                    let expirado = agora > limitePrazo;
+                    
+                    // AQUI ESTÁ A CORREÇÃO: Verifica se passaram 24h OU se o admin fechou manualmente no painel
+                    let expirado = agora > limitePrazo || ativ.prazoFechadoManual === true;
 
                     if (ativ.statusAdmin === 'presente') {
                         statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
@@ -895,7 +898,6 @@
 
                 let badgeCanceladaEstilo = (ativ.cancelada || ativ.concluida) ? 'opacity: 0.85;' : '';
 
-                // CARD COLAPSÁVEL COM GRID NO TÍTULO PARA EVITAR QUEBRA DA SETA
                 listaAtividades.innerHTML += `
                     <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo}">
                         ${sinalizacaoDiretoriaHtml}
@@ -904,7 +906,6 @@
                             ${!ativ.cancelada && !ativ.concluida ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Status Final</span>'}
                         </div>
                         
-                        <!-- Grid para garantir que o título longo quebre linha sem empurrar a seta -->
                         <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
                             <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
                             <div style="text-align: right; white-space: nowrap; color: #0056b3; font-weight: bold; font-size: 11px; padding-top: 2px;">
@@ -917,7 +918,6 @@
                             <p style="margin: 2px 0;"><strong>Local:</strong> ${ativ.local}</p>
                         </div>
 
-                        <!-- Status oficial agora fica visível no card principal -->
                         ${statusOficialHtml}
 
                         <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: none; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
@@ -937,8 +937,8 @@
                         let agora = new Date();
                         let diffTempo = limitePrazo.getTime() - agora.getTime();
 
-                        if (diffTempo <= 0) {
-                            // Atualizado pelo onSnapshot
+                        if (diffTempo <= 0 || ativ.prazoFechadoManual) {
+                            renderizarApp(); // Atualiza a tela se o prazo fechar
                         } else {
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                             let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
