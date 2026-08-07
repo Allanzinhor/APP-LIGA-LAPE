@@ -179,6 +179,7 @@
                     <option value="2026-12">Dezembro / 2026</option>
                 </select>
             </div>
+            <h3>Clique na atividade para gerenciar a chamada:</h3>
             <div id="lista-admin-frequencia"></div>
         </div>
 
@@ -854,8 +855,8 @@
                     }
 
                     htmlMembros += `
-                        <div class="item-chamada" style="margin-bottom:8px; background:#fff; padding:8px; border-radius:6px; border:1px solid #dee2e6;">
-                            <div class="chamada-info">
+                        <div class="item-chamada" style="margin-bottom:8px; background:#f8f9fa; padding:8px; border-radius:6px; border:1px solid #e9ecef;">
+                            <div class="chamada-info" style="display:flex; justify-content:space-between; align-items:center;">
                                 <div>
                                     <strong>${m.nome}</strong>
                                     ${indicacaoAluno}
@@ -867,16 +868,44 @@
                     `;
                 });
 
+                let estiloCardAtiv = "background: #fff; border: 1px solid #dee2e6; margin-bottom: 12px; border-radius: 8px; overflow: hidden; transition: all 0.2s;";
+                let estiloBadgeConcluida = "";
+                let textoConcluidoBadge = "";
+
+                if (a.concluida) {
+                    estiloCardAtiv = "background: #f4fbf7; border: 2px solid #2b8a3e; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
+                    textoConcluidoBadge = `<span style="background: #2b8a3e; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; float: right;">✅ Concluída</span>`;
+                }
+
                 div.innerHTML += `
-                    <div class="card-admin-item">
-                        <h4>${a.titulo}</h4>
-                        <p class="cinza">${a.data} • CH: ${a.ch}h</p>
-                        <div class="bloco-chamada-membros" style="margin-top:10px;">
-                            ${htmlMembros}
+                    <div class="card-frequencia-colapsavel" style="${estiloCardAtiv}">
+                        <div onclick="toggleExpandirFrequencia('${a.id}')" style="padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${a.concluida ? '#e6fcf5' : '#f8f9fa'};">
+                            <div>
+                                <h4 style="margin: 0; color: #0056b3; font-size: 15px;">${a.titulo} ${textoConcluidoBadge}</h4>
+                                <p class="cinza" style="margin: 2px 0 0 0; font-size: 12px;">📅 ${a.data} às ${a.hora} | ⏳ CH: ${a.ch}h</p>
+                            </div>
+                            <span style="font-size: 12px; color: #0056b3; font-weight: bold;" id="seta-freq-${a.id}">▼ Gerenciar Chamada</span>
+                        </div>
+                        <div id="conteudo-freq-${a.id}" style="display: none; padding: 12px; border-top: 1px solid #dee2e6;">
+                            <div class="bloco-chamada-membros">
+                                ${htmlMembros}
+                            </div>
                         </div>
                     </div>
                 `;
             });
+        }
+
+        function toggleExpandirFrequencia(id) {
+            let conteudo = document.getElementById(`conteudo-freq-${id}`);
+            let seta = document.getElementById(`seta-freq-${id}`);
+            if (conteudo.style.display === "none") {
+                conteudo.style.display = "block";
+                seta.innerText = "▲ Ocultar Chamada";
+            } else {
+                conteudo.style.display = "none";
+                seta.innerText = "▼ Gerenciar Chamada";
+            }
         }
 
         async function mudarStatusAdmin(ativId, ligId, novoStatus, textoCustomizado = '') {
