@@ -228,8 +228,8 @@
         let eventoInstalacaoPWA = null;
         let intervaloCronometro = null;
         let primeiraCargaPush = true;
+        let primeiraCargaIndividual = true;
         let primeiraCargaUsuario = true;
-        let primeiraCargaAtividades = true;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -332,7 +332,7 @@
         function iniciarOuvintesTempoReal() {
             let momentoAberturaApp = new Date();
 
-            // 1. Ouvinte em tempo real para os dados do próprio usuário (Atualiza financeiro e aprovação de foto na hora)
+            // 1. Dados do próprio usuário em tempo real
             db.collection("membros").doc(usuarioLogado.id).onSnapshot((doc) => {
                 if (doc.exists) {
                     usuarioLogado = { id: doc.id, ...doc.data() };
@@ -345,19 +345,14 @@
                     document.getElementById('subtitulo-cargo').innerText = usuarioLogado.cargo || "Ligante";
                     atualizarFinanceiroApp();
 
-                    if (primeiraCargaUsuario) {
-                        primeiraCargaUsuario = false;
-                    } else {
-                        // Atualiza modal de perfil se estiver aberto
-                        let modalPerfil = document.getElementById("modal-perfil");
-                        if (modalPerfil && modalPerfil.style.display === "flex") {
-                            abrirPerfilModal();
-                        }
+                    let modalPerfil = document.getElementById("modal-perfil");
+                    if (modalPerfil && modalPerfil.style.display === "flex") {
+                        abrirPerfilModal();
                     }
                 }
             });
 
-            // 2. Ouvinte em tempo real para Avisos
+            // 2. Avisos Globais
             db.collection("avisos").onSnapshot((snapshot) => {
                 let novosAvisos = [];
                 snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
@@ -365,7 +360,7 @@
                 renderizarAvisos();
             });
 
-            // 3. Ouvinte em tempo real para Notificações Push manuais
+            // 3. Notificações Push Globais
             db.collection("notificacoes_push_manual").orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
                 if (primeiraCargaPush) {
                     primeiraCargaPush = false;
@@ -387,7 +382,29 @@
                 });
             });
 
-            // 4. Ouvinte em tempo real para Atividades e Chamadas / Frequência
+            // 4. Notificações Push Individuais (Apenas para este usuário específico)
+            db.collection("notificacoes_individuais").where("membroId", "==", usuarioLogado.id).orderBy("timestamp", "desc").limit(1).onSnapshot((snapshot) => {
+                if (primeiraCargaIndividual) {
+                    primeiraCargaIndividual = false;
+                    return;
+                }
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const dadosPush = change.doc.data();
+                        if (dadosPush.timestamp && dadosPush.timestamp.toDate() > momentoAberturaApp) {
+                            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                                navigator.serviceWorker.controller.postMessage({
+                                    type: 'MOSTRAR_AVISO',
+                                    titulo: dadosPush.titulo || "Atualização na LAPE",
+                                    texto: dadosPush.texto || "Você tem uma nova atualização no portal."
+                                });
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 5. Atividades e Chamada em Tempo Real
             db.collection("atividades").onSnapshot(async (snapshot) => {
                 atividades = [];
                 let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
@@ -885,7 +902,7 @@
                         let diffTempo = limitePrazo.getTime() - agora.getTime();
 
                         if (diffTempo <= 0) {
-                            // Deixa o onSnapshot atualizar
+                            // Atualizado pelo onSnapshot
                         } else {
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                             let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
