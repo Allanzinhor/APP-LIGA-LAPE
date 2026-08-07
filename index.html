@@ -758,6 +758,16 @@
         function renderizarCardsENumeros() {
             const listaAtividades = document.getElementById("lista-atividades");
             if(!listaAtividades) return;
+            
+            // Salva quais IDs de atividades estão com os detalhes abertos no momento para não fechá-los ao atualizar
+            let idsAbertos = [];
+            document.querySelectorAll('.detalhes-expansiveis-ativ').forEach(el => {
+                if(el.style.display === "block") {
+                    let idMatch = el.id.replace('detalhes-ativ-', '');
+                    idsAbertos.push(idMatch);
+                }
+            });
+
             listaAtividades.innerHTML = "";
 
             let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
@@ -844,7 +854,6 @@
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                     let agora = new Date();
                     
-                    // CORREÇÃO APLICADA AQUI: Permite reabrir manualmente mesmo se o prazo natural de 24h já tiver passado
                     let expirado = ativ.prazoFechadoManual === true || (agora > limitePrazo && ativ.prazoFechadoManual !== false);
 
                     if (ativ.statusAdmin === 'presente') {
@@ -865,12 +874,30 @@
                         botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
                     } else {
                         if (expirado) {
-                            statusOficialHtml = `
-                                <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                                    <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
-                                    <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
-                                </div>
-                            `;
+                            // SE O PRAZO FOI ABERTO MANUALMENTE PELA DIRETORIA (MESMO APÓS AS 24H)
+                            if (ativ.prazoFechadoManual === false) {
+                                statusOficialHtml = `
+                                    <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
+                                        🔓 Prazo extra aberto pela diretoria
+                                    </div>
+                                `;
+
+                                if (ativ.confirmadoAluno) {
+                                    botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                                } else {
+                                    botoesCardHtml = `
+                                        <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
+                                        <button class="btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
+                                    `;
+                                }
+                            } else {
+                                statusOficialHtml = `
+                                    <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                        <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                        <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                    </div>
+                                `;
+                            }
                         } else {
                             let diffTempo = limitePrazo.getTime() - agora.getTime();
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
@@ -896,7 +923,8 @@
                     }
                 }
 
-                let badgeCanceladaEstilo = (ativ.cancelada || ativ.concluida) ? 'opacity: 0.85;' : '';
+                let badgeCanceladaEstilo = (ativ.cancelada || nativeIsConcluida = ativ.concluida) ? 'opacity: 0.85;' : '';
+                let estaAberto = idsAbertos.includes(ativ.id);
 
                 listaAtividades.innerHTML += `
                     <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo}">
@@ -909,7 +937,7 @@
                         <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
                             <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
                             <div style="text-align: right; white-space: nowrap; color: #0056b3; font-weight: bold; font-size: 11px; padding-top: 2px;">
-                                <span id="seta-ativ-${ativ.id}">▼ Detalhes</span>
+                                <span id="seta-ativ-${ativ.id}">${estaAberto ? '▲ Ocultar' : '▼ Detalhes'}</span>
                             </div>
                         </div>
 
@@ -920,7 +948,7 @@
 
                         ${statusOficialHtml}
 
-                        <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: none; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
+                        <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: ${estaAberto ? 'block' : 'none'}; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
                             <p class="desc-atividade" style="margin-bottom: 10px;">${ativ.desc}</p>
                             ${!ativ.cancelada && !ativ.concluida && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
                         </div>
@@ -928,17 +956,19 @@
                 `;
             });
 
+            // CRONÔMETRO APENAS ATUALIZA O TEXTO DO TIMER SEM RERENDERIZAR A TELA INTEIRA (EVITA FECHAR OS DETALHES)
+            if (intervaloCronometro) clearInterval(intervaloCronometro);
             intervaloCronometro = setInterval(() => {
                 atividadesDesteMes.forEach(ativ => {
                     let timerEl = document.getElementById(`timer-${ativ.id}`);
-                    if (timerEl && !ativ.cancelada && !ativ.concluida) {
+                    if (timerEl && !ativ.cancelada && !ativ.concluida && !ativ.prazoFechadoManual) {
                         let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                         let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                         let agora = new Date();
                         let diffTempo = limitePrazo.getTime() - agora.getTime();
 
-                        if (diffTempo <= 0 || ativ.prazoFechadoManual) {
-                            renderizarApp();
+                        if (diffTempo <= 0) {
+                            renderizarApp(); // Se virou o prazo agora, atualiza a tela
                         } else {
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                             let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
