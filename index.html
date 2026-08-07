@@ -759,7 +759,6 @@
             const listaAtividades = document.getElementById("lista-atividades");
             if(!listaAtividades) return;
             
-            // Salva quais IDs de atividades estão com os detalhes abertos no momento para não fechá-los ao atualizar
             let idsAbertos = [];
             document.querySelectorAll('.detalhes-expansiveis-ativ').forEach(el => {
                 if(el.style.display === "block") {
@@ -874,7 +873,6 @@
                         botoesCardHtml = `<span style="font-size: 12px; color: #888;">Aguardando avaliação da diretoria</span>`;
                     } else {
                         if (expirado) {
-                            // SE O PRAZO FOI ABERTO MANUALMENTE PELA DIRETORIA (MESMO APÓS AS 24H)
                             if (ativ.prazoFechadoManual === false) {
                                 statusOficialHtml = `
                                     <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
@@ -923,7 +921,7 @@
                     }
                 }
 
-                let badgeCanceladaEstilo = (ativ.cancelada || nativeIsConcluida = ativ.concluida) ? 'opacity: 0.85;' : '';
+                let badgeCanceladaEstilo = (ativ.cancelada || ativ.concluida) ? 'opacity: 0.85;' : '';
                 let estaAberto = idsAbertos.includes(ativ.id);
 
                 listaAtividades.innerHTML += `
@@ -956,7 +954,6 @@
                 `;
             });
 
-            // CRONÔMETRO APENAS ATUALIZA O TEXTO DO TIMER SEM RERENDERIZAR A TELA INTEIRA (EVITA FECHAR OS DETALHES)
             if (intervaloCronometro) clearInterval(intervaloCronometro);
             intervaloCronometro = setInterval(() => {
                 atividadesDesteMes.forEach(ativ => {
@@ -968,7 +965,7 @@
                         let diffTempo = limitePrazo.getTime() - agora.getTime();
 
                         if (diffTempo <= 0) {
-                            renderizarApp(); // Se virou o prazo agora, atualiza a tela
+                            renderizarApp();
                         } else {
                             let dias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
                             let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
