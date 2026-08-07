@@ -1239,7 +1239,7 @@ body {
 }
 
 /* =========================================
-   CORREÇÃO DA TABELA FINANCEIRA E ELEMENTOS
+   CORREÇÃO DEFINITIVA DA TABELA FINANCEIRA
    ========================================= */
 .tabela-financeiro {
     width: 100%;
@@ -1248,54 +1248,59 @@ body {
     background: white;
     border-radius: 8px;
     overflow: hidden;
-    table-layout: fixed; /* Força as colunas a respeitarem os tamanhos definidos */
+    table-layout: fixed;
 }
 
 .tabela-financeiro th, .tabela-financeiro td {
-    padding: 8px 6px;
+    padding: 10px 4px;
     font-size: 11px;
     text-align: left;
     border-bottom: 1px solid #f1f3f5;
-    vertical-align: middle;
-    word-break: normal;
+    vertical-align: top; /* Alinha o conteúdo no topo de cada linha */
 }
 
-/* Larguras específicas para cada coluna da tabela financeira */
+/* Redimensionamento equilibrado das 3 colunas */
 .tabela-financeiro th:nth-child(1), .tabela-financeiro td:nth-child(1) {
-    width: 42%;
+    width: 38%;
 }
 
 .tabela-financeiro th:nth-child(2), .tabela-financeiro td:nth-child(2) {
-    width: 25%;
+    width: 22%;
     text-align: center;
 }
 
 .tabela-financeiro th:nth-child(3), .tabela-financeiro td:nth-child(3) {
-    width: 33%;
-    text-align: right;
+    width: 40%;
+    text-align: left;
 }
 
-/* Garante que o texto do badge não quebre verticalmente */
+/* Badge de status sem quebrar letras */
 .badge-fin {
     display: inline-block;
     padding: 3px 6px;
     border-radius: 12px;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: bold;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
-/* Agrupamento compacto dos botões de ação na tabela */
-.tabela-financeiro td:nth-child(3) div, 
+/* Organiza os botões de ação em uma grade organizada de 2 colunas */
 .tabela-financeiro td:nth-child(3) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
 }
 
-.tabela-financeiro .btn-mini {
-    padding: 3px 6px;
+.tabela-financeiro td:nth-child(3) .btn-mini {
+    width: 100%;
+    padding: 5px 2px;
     font-size: 10px;
     margin: 0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Faz o botão de "Notificar" ocupar a largura inteira embaixo dos outros */
+.tabela-financeiro td:nth-child(3) .btn-mini:nth-child(4) {
+    grid-column: span 2;
 }
