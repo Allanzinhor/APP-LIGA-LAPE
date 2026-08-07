@@ -1106,13 +1106,13 @@
 
         async function dispararNotificacaoManual(titulo, texto) {
             try {
-                await db.collection("avisos").add({
-                    titulo: `[Reenvio] ${titulo}`,
+                // Atualiza um campo de controle no Firestore ou dispara o evento para os navegadores conectados sem duplicar documento
+                await db.collection("notificacoes_push_manual").add({
+                    titulo: titulo,
                     texto: texto,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                alert("Notificação disparada com sucesso para os ligantes online!");
-                carregarAvisosAdmin();
+                alert("Notificação push disparada com sucesso para os ligantes online!");
             } catch(e) {
                 console.error(e);
                 alert("Erro ao disparar notificação.");
