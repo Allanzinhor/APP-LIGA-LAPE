@@ -1205,7 +1205,7 @@
             alert("Atividade criada com sucesso!");
         }
 
-        // RENDERIZAÇÃO DAS ATIVIDADES COM SELETOR DE DURAÇÃO DE PRAZO EXTRA
+        // RENDERIZAÇÃO DAS ATIVIDADES (COM EXIBIÇÃO CONDICIONAL APÓS O PRAZO AUTOMÁTICO)
         function renderizarAtividadesEdicao() {
             let mesFiltroSelect = document.getElementById("filtro-mes-atividades");
             let div = document.getElementById("lista-admin-atividades-edicao");
@@ -1233,6 +1233,54 @@
                 let corBotaoConcluir = a.concluida ? "cinza" : "verde";
                 let tituloSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
+                // Verifica se o prazo automático (24h antes) já expirou
+                let dataHoraAtiv = new Date(`${a.data}T${a.hora || '19:00'}:00`);
+                let limitePrazoAuto = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
+                let agora = new Date();
+                let prazoAutoExpirado = agora > limitePrazoAuto;
+
+                let blocoPrazoExtraHtml = "";
+                if (prazoAutoExpirado && !a.concluida && !a.cancelada) {
+                    let prazoExtraEstaAberto = (a.prazoFechadoManual === false);
+                    
+                    if (!prazoExtraEstaAberto) {
+                        // Se estiver fechado, mostra o seletor e o botão de "Abrir Prazo Extra"
+                        blocoPrazoExtraHtml = `
+                            <div style="margin-top: 10px; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Gerenciar Prazo Extra:</label>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                                    <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                        <option value="24">24 Horas</option>
+                                        <option value="5">5 Horas</option>
+                                        <option value="manual">Até fechar manualmente</option>
+                                        <option value="personalizado">Personalizado (Data/Hora)</option>
+                                    </select>
+                                    <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <button class="btn-mini verde" onclick="abrirPrazoExtraAdmin('${a.id}')">🔓 Abrir Prazo Extra</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Se estiver aberto, esconde o botão de abrir e mostra "Fechar Prazo" e "Editar Prazo Extra"
+                        blocoPrazoExtraHtml = `
+                            <div style="margin-top: 10px; background: #ebfbee; padding: 8px; border-radius: 6px; border: 1px solid #c3e6cb;">
+                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px; color: #155724;">🔓 Prazo Extra em Andamento:</label>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                                    <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                        <option value="24">24 Horas</option>
+                                        <option value="5">5 Horas</option>
+                                        <option value="manual">Até fechar manualmente</option>
+                                        <option value="personalizado">Personalizado (Data/Hora)</option>
+                                    </select>
+                                    <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <button class="btn-mini cinza" onclick="abrirPrazoExtraAdmin('${a.id}')">✏️ Editar Prazo Extra</button>
+                                    <button class="btn-mini vermelho" onclick="fecharPrazoExtraAdmin('${a.id}')">🔒 Fechar Prazo</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
                 div.innerHTML += `
                     <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #dee2e6;">
                         <div>
@@ -1242,21 +1290,7 @@
                             ${statusExtra}
                         </div>
 
-                        <!-- CONTROLE DE PRAZO EXTRA COM OPÇÕES DE TEMPO -->
-                        <div style="margin-top: 10px; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
-                            <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Gerenciar Prazo Extra:</label>
-                            <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                                <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
-                                    <option value="24">24 Horas</option>
-                                    <option value="5">5 Horas</option>
-                                    <option value="manual">Até fechar manualmente</option>
-                                    <option value="personalizado">Personalizado (Data/Hora)</option>
-                                </select>
-                                <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
-                                <button class="btn-mini verde" onclick="abrirPrazoExtraAdmin('${a.id}')">🔓 Abrir Prazo Extra</button>
-                                <button class="btn-mini vermelho" onclick="fecharPrazoExtraAdmin('${a.id}')">🔒 Fechar Prazo</button>
-                            </div>
-                        </div>
+                        ${blocoPrazoExtraHtml}
 
                         <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
                             <button class="btn-mini cinza" onclick="prepararEdicaoAtividade('${a.id}')">✏️ Editar</button>
@@ -1281,7 +1315,8 @@
         });
 
         async function abrirPrazoExtraAdmin(id) {
-            let selectTempo = document.getElementById(`tempo-extra-${id}`).value;
+            let selectElem = document.getElementById(`tempo-extra-${id}`);
+            let selectTempo = selectElem ? selectElem.value : '24';
             let expiraEm = null;
             let agora = new Date();
 
@@ -1296,13 +1331,13 @@
                     return;
                 }
                 expiraEm = new Date(valInput);
-            }
+            } // Se for 'manual', expiraEm fica como null
 
             await db.collection("atividades").doc(id).update({
                 prazoFechadoManual: false,
                 prazoExtraExpiraEm: expiraEm ? firebase.firestore.Timestamp.fromDate(expiraEm) : null
             });
-            alert("Prazo extra aberto com sucesso!");
+            alert("Prazo extra atualizado com sucesso!");
         }
 
         async function fecharPrazoExtraAdmin(id) {
