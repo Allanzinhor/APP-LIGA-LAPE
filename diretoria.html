@@ -30,99 +30,97 @@
         
         <header class="cabecalho">
             <h2 id="titulo-painel-topo">Gestão da Liga (Admin)</h2>
-            <button class="btn-perfil" onclick="window.location.href='index.html'">Portal do Aluno</button>
+            <button class="btn-perfil" onclick="window.location.href='index.html'">Portal do Ligante</button>
         </header>
 
-        <!-- PERFIL DO DIRETOR LOGADO NO TOPO (ALINHADO) -->
-        <div class="admin-card-acao" style="margin: 15px 0 10px 0; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: 100%;">
+        <!-- PERFIL DO DIRETOR LOGADO NO TOPO (ALINHADO E SEM ENCOSTAR NAS BORDAS) -->
+        <div class="admin-card-acao" style="margin: 15px; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: calc(100% - 30px);">
             <div id="admin-perfil-foto-container" style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
-            <div style="flex: 1; min-width: 220px;">
+            <div style="flex: 1; min-width: 200px;">
                 <h3 id="admin-perfil-nome" style="margin: 0; color: #0056b3; font-size: 18px;">Nome do Diretor</h3>
                 <p id="admin-perfil-cargo" style="margin: 2px 0; font-weight: bold; color: #2b8a3e; font-size: 13px; text-transform: uppercase;">Cargo</p>
                 <p id="admin-perfil-tempo" style="margin: 0; font-size: 12px; color: #555;">Tempo na diretoria: Calculando...</p>
             </div>
         </div>
 
-        <!-- MURAL DE AVISOS DA DIRETORIA (SLIDES COM ALTURA FIXA E CONTAGEM) -->
-        <div class="quadro-avisos" style="margin-bottom: 15px;">
+        <!-- MURAL DE AVISOS DA DIRETORIA (FIXO NO TOPO) -->
+        <div class="quadro-avisos" style="margin: 0 15px 15px 15px;">
             <div class="avisos-header">
                 <span>🛡️ MURAL INTERNO DA DIRETORIA</span>
                 <span id="contador-slide-dir">1/1</span>
             </div>
-            
-            <!-- Recados Fixados Estáticos -->
             <div id="container-avisos-fixos"></div>
-
-            <!-- Slides Rotativos com Altura Mínima Fixa -->
             <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justify-content: center;"></div>
         </div>
 
-        <!-- FORMULÁRIO DE CRIAÇÃO / EDIÇÃO EXCLUSIVO DO PRESIDENTE -->
-        <div class="admin-card-acao" id="painel-criacao-aviso-dir" style="display: none; margin-bottom: 15px; background: #fff8e1; border: 1px solid #ffe066;">
-            <h3 id="titulo-form-aviso-dir" style="margin: 0 0 8px 0; color: #b7791f; font-size: 15px;">✍️ Publicar Recado para a Diretoria</h3>
-            
-            <input type="hidden" id="av-dir-id-editando">
-            <input type="text" id="av-dir-titulo" placeholder="Título do Recado" style="margin-bottom: 6px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-            <textarea id="av-dir-texto" rows="2" placeholder="Escreva a mensagem..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 8px;"></textarea>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                <div>
-                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Origem (Quem pediu):</label>
-                    <select id="av-dir-origem" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
-                        <option value="Presidência">Presidência</option>
-                        <option value="Diretoria de Pesquisa">Diretoria de Pesquisa</option>
-                        <option value="Diretoria de Extensão">Diretoria de Extensão</option>
-                        <option value="Diretoria de Marketing">Diretoria de Marketing</option>
-                        <option value="Tesouraria">Tesouraria</option>
-                        <option value="Secretaria">Secretaria</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Público-Alvo:</label>
-                    <select id="av-dir-alvo" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
-                        <option value="todos">Todos da Diretoria</option>
-                        <option value="Presidente">Apenas Presidente</option>
-                        <option value="Vice-Presidente">Apenas Vice-Presidente</option>
-                        <option value="Secretaria">Apenas Secretaria</option>
-                        <option value="Tesoureira">Apenas Tesoureira</option>
-                        <option value="Diretora de Extensão">Apenas Diretora de Extensão</option>
-                        <option value="Diretora de Pesquisa">Apenas Diretora de Pesquisa</option>
-                        <option value="Diretora de Marketing">Apenas Diretora de Marketing</option>
-                    </select>
-                </div>
-            </div>
+        <!-- Navegação por Abas -->
+        <nav class="admin-abas-complexa" id="menu-abas-admin" style="margin: 0 15px 15px 15px; display: grid; gap: 6px;"></nav>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                <div>
-                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Duração:</label>
-                    <select id="av-dir-duracao" onchange="alternarCampoPersonalizado(this.value)" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
-                        <option value="permanente">Permanente</option>
-                        <option value="1">1 Dia</option>
-                        <option value="3">3 Dias</option>
-                        <option value="7">7 Dias</option>
-                        <option value="personalizado">Data/Hora Personalizada</option>
-                    </select>
+        <!-- ABA: RECADOS INTERNOS (NOVA ABA EXCLUSIVA) -->
+        <div id="secao-recados-internos" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
+            <div class="admin-card-acao" id="painel-criacao-aviso-dir" style="background: #fff8e1; border: 1px solid #ffe066;">
+                <h3 id="titulo-form-aviso-dir" style="margin: 0 0 8px 0; color: #b7791f; font-size: 15px;">✍️ Publicar Recado para a Diretoria</h3>
+                
+                <input type="hidden" id="av-dir-id-editando">
+                <input type="text" id="av-dir-titulo" placeholder="Título do Recado" style="margin-bottom: 6px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                <textarea id="av-dir-texto" rows="2" placeholder="Escreva a mensagem..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 8px;"></textarea>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                    <div>
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Origem (Quem pediu):</label>
+                        <select id="av-dir-origem" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                            <option value="Presidência">Presidência</option>
+                            <option value="Diretoria de Pesquisa">Diretoria de Pesquisa</option>
+                            <option value="Diretoria de Extensão">Diretoria de Extensão</option>
+                            <option value="Diretoria de Marketing">Diretoria de Marketing</option>
+                            <option value="Tesouraria">Tesouraria</option>
+                            <option value="Secretaria">Secretaria</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Público-Alvo:</label>
+                        <select id="av-dir-alvo" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                            <option value="todos">Todos da Diretoria</option>
+                            <option value="Presidente">Apenas Presidente</option>
+                            <option value="Vice-Presidente">Apenas Vice-Presidente</option>
+                            <option value="Secretaria">Apenas Secretaria</option>
+                            <option value="Tesoureira">Apenas Tesoureira</option>
+                            <option value="Diretora de Extensão">Apenas Diretora de Extensão</option>
+                            <option value="Diretora de Pesquisa">Apenas Diretora de Pesquisa</option>
+                            <option value="Diretora de Marketing">Apenas Diretora de Marketing</option>
+                        </select>
+                    </div>
                 </div>
-                <div id="div-data-personalizada" style="display: none;">
-                    <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Expira em:</label>
-                    <input type="datetime-local" id="av-dir-expira-personalizada" style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; box-sizing: border-box;">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                    <div>
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Duração:</label>
+                        <select id="av-dir-duracao" onchange="alternarCampoPersonalizado(this.value)" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                            <option value="permanente">Permanente</option>
+                            <option value="1">1 Dia</option>
+                            <option value="3">3 Dias</option>
+                            <option value="7">7 Dias</option>
+                            <option value="personalizado">Data/Hora Personalizada</option>
+                        </select>
+                    </div>
+                    <div id="div-data-personalizada" style="display: none;">
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Expira em:</label>
+                        <input type="datetime-local" id="av-dir-expira-personalizada" style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; box-sizing: border-box;">
+                    </div>
                 </div>
-            </div>
 
-            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
-                <input type="checkbox" id="av-dir-fixo" style="width: 16px; height: 16px;">
-                <label for="av-dir-fixo" style="font-size: 12px; font-weight: bold; color: #b7791f; cursor: pointer;">Fixar recado (Fica estático no topo)</label>
-            </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+                    <input type="checkbox" id="av-dir-fixo" style="width: 16px; height: 16px;">
+                    <label for="av-dir-fixo" style="font-size: 12px; font-weight: bold; color: #b7791f; cursor: pointer;">Fixar recado (Fica estático no topo)</label>
+                </div>
 
-            <button class="btn-salvar" id="btn-salvar-aviso-dir" style="padding: 8px; font-size: 13px;" onclick="salvarAvisoDiretoria()">Publicar Recado</button>
-            <button class="btn-mini cinza" id="btn-cancelar-aviso-dir" style="display:none; width:100%; margin-top:5px; padding:8px;" onclick="cancelarEdicaoAvisoDiretoria()">Cancelar Edição</button>
+                <button class="btn-salvar" id="btn-salvar-aviso-dir" style="padding: 8px; font-size: 13px;" onclick="salvarAvisoDiretoria()">Publicar Recado</button>
+                <button class="btn-mini cinza" id="btn-cancelar-aviso-dir" style="display:none; width:100%; margin-top:5px; padding:8px;" onclick="cancelarEdicaoAvisoDiretoria()">Cancelar Edição</button>
+            </div>
         </div>
 
-        <!-- Navegação por Abas -->
-        <nav class="admin-abas-complexa" id="menu-abas-admin" style="grid-template-columns: repeat(3, 1fr);"></nav>
-
-        <!-- ABA 1: CADASTRAR / EDITAR MEMBROS -->
-        <div id="secao-cadastro-membros" class="admin-secao" style="display: none;">
+        <!-- ABA: CADASTRAR / EDITAR MEMBROS -->
+        <div id="secao-cadastro-membros" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-membro">Cadastrar Novo Membro</h3>
                 <input type="hidden" id="m-id-editando">
@@ -180,11 +178,11 @@
             </div>
         </div>
 
-        <!-- ABA 2: LISTA DE MEMBROS -->
-        <div id="secao-lista-membros" class="admin-secao" style="display: none;">
+        <!-- ABA: LISTA DE MEMBROS -->
+        <div id="secao-lista-membros" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="cabecalho-lista">
-                <h3>Alunos Cadastrados</h3>
-                <span class="badge-total" id="total-membros">0 cadastrados</span>
+                <h3>Ligantes Cadastrados</h3>
+                <span class="badge-total" id="total-membros">0 ativos</span>
             </div>
             
             <h4 style="margin: 15px 0 5px 0; color: #0056b3; font-size:14px;">👔 Diretoria</h4>
@@ -197,8 +195,8 @@
             <div id="lista-desligados"></div>
         </div>
 
-        <!-- ABA 3: CADASTRAR ATIVIDADES -->
-        <div id="secao-cadastro-atividades" class="admin-secao" style="display: none;">
+        <!-- ABA: CADASTRAR ATIVIDADES -->
+        <div id="secao-cadastro-atividades" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-atividade">Nova Atividade</h3>
                 <div class="grid-form">
@@ -222,8 +220,8 @@
             </div>
         </div>
 
-        <!-- ABA 4: LISTA DE ATIVIDADES -->
-        <div id="secao-lista-atividades" class="admin-secao" style="display: none;">
+        <!-- ABA: LISTA DE ATIVIDADES -->
+        <div id="secao-lista-atividades" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Filtrar Atividades por Mês/Ano</h3>
                 <select id="filtro-mes-atividades" onchange="renderizarAtividadesEdicao()">
@@ -250,8 +248,8 @@
             <div id="lista-admin-atividades-edicao"></div>
         </div>
 
-        <!-- ABA 5: FREQUÊNCIA -->
-        <div id="secao-frequencia" class="admin-secao" style="display: none;">
+        <!-- ABA: FREQUÊNCIA -->
+        <div id="secao-frequencia" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Controle de Frequência por Mês/Ano</h3>
                 <select id="filtro-mes-frequencia" onchange="renderizarFrequenciaAdmin()">
@@ -278,8 +276,8 @@
             <div id="lista-admin-frequencia"></div>
         </div>
 
-        <!-- ABA 6: FINANCEIRO -->
-        <div id="secao-financeiro" class="admin-secao" style="display: none;">
+        <!-- ABA: FINANCEIRO -->
+        <div id="secao-financeiro" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
                 <h3>Gestão de Mensalidades por Mês</h3>
                 <select id="filtro-mes-financeiro" onchange="renderizarFinanceiroAdmin()">
@@ -305,8 +303,8 @@
             <div id="lista-admin-financeiro"></div>
         </div>
 
-        <!-- ABA 7: AVISOS GLOBAIS -->
-        <div id="secao-avisos" class="admin-secao" style="display: none;">
+        <!-- ABA: AVISOS GLOBAIS -->
+        <div id="secao-avisos" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-aviso">Publicar Novo Aviso (Geral)</h3>
                 <input type="hidden" id="av-id-editando">
@@ -320,7 +318,7 @@
         </div>
 
         <!-- ABA TEMPORÁRIA: MIGRAR PAPEL -->
-        <div id="secao-migracao-papel" class="admin-secao" style="display: none;">
+        <div id="secao-migracao-papel" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao" style="background: #fff8e1; border: 2px dashed #f59f00;">
                 <h3 style="color: #e67700; margin-top: 0;">📥 Aba Temporária: Migração de Registros (Papel)</h3>
                 <p style="font-size: 12px; color: #555;">Use esta ferramenta para cadastrar uma atividade passada e marcar rapidamente a presença/falta de todos os ligantes de uma só vez.</p>
@@ -366,13 +364,13 @@
         let usuarioSessao = null;
 
         const permissoesCargos = {
-            "presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "vice-presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "secretaria": ["lista-membros", "frequencia", "avisos", "migracao-papel"],
-            "tesoureira": ["financeiro", "avisos"],
-            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de marketing": ["avisos"]
+            "presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "vice-presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "secretaria": ["recados-internos", "lista-membros", "frequencia", "avisos", "migracao-papel"],
+            "tesoureira": ["recados-internos", "financeiro", "avisos"],
+            "diretora de extensão": ["recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de pesquisa": ["recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de marketing": ["recados-internos", "avisos"]
         };
 
         function verificarPermissoesAdmin() {
@@ -394,11 +392,6 @@
             }
 
             renderizarPerfilTopoAdmin();
-
-            if (cargoLower === "presidente") {
-                document.getElementById('painel-criacao-aviso-dir').style.display = 'block';
-            }
-
             carregarAvisosDiretoria();
 
             let abasPermitidas = permissoesCargos[cargoLower];
@@ -406,18 +399,19 @@
             menuNav.innerHTML = "";
 
             const labelsAbas = {
-                "cadastro-membros": "➕ Membros",
-                "lista-membros": "👥 Alunos",
+                "recados-internos": "📢 Recados",
+                "cadastro-membros": "➕ Ligantes",
+                "lista-membros": "👥 Ligantes",
                 "cadastro-atividades": "➕ Ativ.",
                 "lista-atividades": "📅 Gerenciar",
                 "frequencia": "📋 Frequência",
                 "financeiro": "💰 Financeiro",
-                "avisos": "⚠️ Avisos Gerais",
-                "migracao-papel": "📥 Migrar Papel"
+                "avisos": "⚠️ Avisos",
+                "migracao-papel": "📥 Migrar"
             };
 
             abasPermitidas.forEach((aba) => {
-                menuNav.innerHTML += `<button class="aba-btn" onclick="mudarAba('${aba}', event)">${labelsAbas[aba]}</button>`;
+                menuNav.innerHTML += `<button class="aba-btn" onclick="mudarAba('${aba}', event)">${labelsAbas[aba] || aba}</button>`;
             });
 
             menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
@@ -628,7 +622,7 @@
                     if (m.desligado) {
                         botoesAdminCard = `
                             <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-mini verde" onclick="reativarMembro('${m.id}')">🟢 Reativar Membro</button>
+                                <button class="btn-mini verde" onclick="reativarMembro('${m.id}')">🟢 Reativar Ligante</button>
                                 <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
                             </div>
                         `;
@@ -840,7 +834,6 @@
             let fixos = avisosDiretoriaCache.filter(a => a.fixo === true);
             let rotativos = avisosDiretoriaCache.filter(a => !a.fixo);
 
-            // Renderizar Fixos
             fixos.forEach(a => {
                 let botoesAcao = ehPresidente ? `
                     <div style="float: right; display: flex; gap: 4px;">
@@ -1105,7 +1098,7 @@
             document.getElementById('m-ingresso-liga').value = membro.ingressoLiga || '';
             document.getElementById('m-cargo').value = membro.cargo || 'Ligante';
 
-            document.getElementById('titulo-form-membro').innerText = "Editar Membro";
+            document.getElementById('titulo-form-membro').innerText = "Editar Ligante";
             document.getElementById('btn-salvar-membro').innerText = "Salvar Alterações";
             document.getElementById('btn-cancelar-membro').style.display = "block";
             mudarAba('cadastro-membros', { target: document.querySelectorAll('.aba-btn')[0] });
@@ -1159,13 +1152,13 @@
         }
 
         async function reativarMembro(id) {
-            if (confirm("Deseja reativar este membro na liga? O acesso dele ao aplicativo será restabelecido.")) {
+            if (confirm("Deseja reativar este ligante na liga? O acesso dele ao aplicativo será restabelecido.")) {
                 await db.collection("membros").doc(id).update({
                     desligado: false,
                     dataDesligamento: firebase.firestore.FieldValue.delete(),
                     motivoDesligamento: firebase.firestore.FieldValue.delete()
                 });
-                alert("Membro reativado com sucesso!");
+                alert("Ligante reativado com sucesso!");
                 carregarDadosAdmin();
             }
         }
@@ -1374,14 +1367,14 @@
                     if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">✓ Justificado Aceito (Abonado)</span>`;
                     if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">✕ Falta / Justif. Negada</span>`;
 
-                    let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:#1e88e5; display:block;">(Aluno confirmou interesse no app)</span>` : "";
+                    let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:#1e88e5; display:block;">(Ligante confirmou interesse no app)</span>` : "";
                     let tituloAtivSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
                     let blocoBotoesAcoes = "";
                     if (reg.status === 'aguardando_analise') {
                         blocoBotoesAcoes = `
                             <div class="caixa-justificativa-admin" style="margin:5px 0; background:#fff8e1; padding:6px; border-radius:4px;">
-                                <p style="font-size:11px;"><strong>Justificativa do Aluno:</strong> "${reg.texto}"</p>
+                                <p style="font-size:11px;"><strong>Justificativa do Ligante:</strong> "${reg.texto}"</p>
                                 <div class="botoes-justica" style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
                                     <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '', '${tituloAtivSeguro}')">Aceitar Justificativa</button>
                                     <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Negar Justificativa (Falta)</button>
