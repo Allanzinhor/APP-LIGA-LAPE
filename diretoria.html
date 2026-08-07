@@ -34,7 +34,7 @@
         </header>
 
         <!-- PERFIL DO DIRETOR LOGADO NO TOPO -->
-        <div class="admin-card-acao" style="margin: 15px 0; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <div class="admin-card-acao" style="margin: 15px 0 10px 0; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
             <div id="admin-perfil-foto-container" style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
             <div style="flex: 1; min-width: 220px;">
                 <h3 id="admin-perfil-nome" style="margin: 0; color: #0056b3; font-size: 18px;">Nome do Diretor</h3>
@@ -43,21 +43,25 @@
             </div>
         </div>
 
+        <!-- MURAL DE AVISOS DA DIRETORIA (FIXO ACIMA DAS ABAS) -->
+        <div class="admin-card-acao" style="margin-bottom: 15px; background: #fff8e1; border: 1px solid #ffe066;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 style="margin: 0; color: #b7791f; font-size: 15px;">🛡️ Mural Interno da Diretoria</h3>
+            </div>
+            <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Recados e diretrizes exclusivas para a equipe gestora.</p>
+            
+            <!-- Formulário exclusivo do Presidente -->
+            <div id="painel-criacao-aviso-dir" style="display: none; margin-bottom: 12px; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef;">
+                <input type="text" id="av-dir-titulo" placeholder="Título do Recado Interno" style="margin-bottom: 6px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                <textarea id="av-dir-texto" rows="2" placeholder="Escreva a mensagem para a diretoria..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 6px;"></textarea>
+                <button class="btn-salvar" style="padding: 8px; font-size: 13px;" onclick="publicarAvisoDiretoria()">Publicar Recado para a Diretoria</button>
+            </div>
+
+            <div id="lista-admin-avisos-diretoria" style="max-height: 200px; overflow-y: auto;"></div>
+        </div>
+
         <!-- Navegação por Abas -->
         <nav class="admin-abas-complexa" id="menu-abas-admin" style="grid-template-columns: repeat(3, 1fr);"></nav>
-
-        <!-- ABA 0: AVISOS EXCLUSIVOS DA DIRETORIA -->
-        <div id="secao-avisos-diretoria" class="admin-secao" style="display: none;">
-            <div class="admin-card-acao">
-                <h3>💬 Mural Interno da Diretoria</h3>
-                <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Recados e diretrizes exclusivas para a equipe gestora.</p>
-                <input type="text" id="av-dir-titulo" placeholder="Título do Recado Interno">
-                <textarea id="av-dir-texto" rows="3" placeholder="Escreva a mensagem para a diretoria..."></textarea>
-                <button class="btn-salvar" onclick="publicarAvisoDiretoria()">Publicar para a Diretoria</button>
-            </div>
-            <h3>Recados Internos Publicados</h3>
-            <div id="lista-admin-avisos-diretoria"></div>
-        </div>
 
         <!-- ABA 1: CADASTRAR / EDITAR MEMBROS -->
         <div id="secao-cadastro-membros" class="admin-secao" style="display: none;">
@@ -303,13 +307,13 @@
         let usuarioSessao = null;
 
         const permissoesCargos = {
-            "presidente": ["avisos-diretoria", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "vice-presidente": ["avisos-diretoria", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "secretaria": ["avisos-diretoria", "lista-membros", "frequencia", "avisos", "migracao-papel"],
-            "tesoureira": ["avisos-diretoria", "financeiro", "avisos"],
-            "diretora de extensão": ["avisos-diretoria", "cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de pesquisa": ["avisos-diretoria", "cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de marketing": ["avisos-diretoria", "avisos"]
+            "presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "vice-presidente": ["cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
+            "secretaria": ["lista-membros", "frequencia", "avisos", "migracao-papel"],
+            "tesoureira": ["financeiro", "avisos"],
+            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de marketing": ["avisos"]
         };
 
         function verificarPermissoesAdmin() {
@@ -332,12 +336,18 @@
 
             renderizarPerfilTopoAdmin();
 
+            // Verifica se é Presidente para exibir o formulário de envio de avisos internos
+            if (cargoLower === "presidente") {
+                document.getElementById('painel-criacao-aviso-dir').style.display = 'block';
+            }
+
+            carregarAvisosDiretoria();
+
             let abasPermitidas = permissoesCargos[cargoLower];
             let menuNav = document.getElementById("menu-abas-admin");
             menuNav.innerHTML = "";
 
             const labelsAbas = {
-                "avisos-diretoria": "🛡️ Avisos Diretoria",
                 "cadastro-membros": "➕ Membros",
                 "lista-membros": "👥 Alunos",
                 "cadastro-atividades": "➕ Ativ.",
@@ -399,8 +409,6 @@
             
             if (nome === 'migracao-papel') {
                 renderizarInterfaceMigracao();
-            } else if (nome === 'avisos-diretoria') {
-                carregarAvisosDiretoria();
             }
         }
 
@@ -630,6 +638,12 @@
         }
 
         async function publicarAvisoDiretoria() {
+            let cargoLogado = (usuarioSessao.cargo || "").toLowerCase().trim();
+            if (cargoLogado !== "presidente") {
+                alert("Apenas o Presidente pode publicar recados no mural da diretoria.");
+                return;
+            }
+
             let titulo = document.getElementById('av-dir-titulo').value.trim();
             let texto = document.getElementById('av-dir-texto').value.trim();
             if (!titulo || !texto) { alert("Preencha o título e o texto do recado interno."); return; }
@@ -655,28 +669,36 @@
             avisosDiretoriaCache = [];
 
             if (snap.empty) {
-                div.innerHTML = "<p class='cinza'>Nenhum recado interno publicado.</p>";
+                div.innerHTML = "<p class='cinza' style='font-size:11px;'>Nenhum recado interno publicado.</p>";
                 return;
             }
+
+            let cargoLogado = (usuarioSessao.cargo || "").toLowerCase().trim();
+            let ehPresidente = cargoLogado === "presidente";
 
             snap.forEach(doc => {
                 let a = { id: doc.id, ...doc.data() };
                 avisosDiretoriaCache.push(a);
 
+                let botaoApagar = ehPresidente ? `<button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>` : "";
+
                 div.innerHTML += `
-                    <div class="card-admin-item flex-row" style="align-items: flex-start; justify-content: space-between; background: #fff8e1; border-left: 4px solid #f59f00;">
+                    <div class="card-admin-item flex-row" style="align-items: flex-start; justify-content: space-between; background: #fff; border-left: 4px solid #f59f00; margin-bottom: 6px; padding: 8px;">
                         <div>
-                            <h4 style="color: #b7791f; margin:0;">${a.titulo}</h4>
-                            <p class="cinza" style="margin:4px 0;">${a.texto}</p>
-                            <small style="color: #888;">Por: ${a.autor || 'Diretoria'}</small>
+                            <h4 style="color: #b7791f; margin:0; font-size: 13px;">${a.titulo}</h4>
+                            <p class="cinza" style="margin:2px 0; font-size: 11px;">${a.texto}</p>
+                            <small style="color: #888; font-size: 10px;">Por: ${a.autor || 'Presidente'}</small>
                         </div>
-                        <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
+                        ${botaoApagar}
                     </div>
                 `;
             });
         }
 
         async function removerAvisoDiretoria(id) {
+            let cargoLogado = (usuarioSessao.cargo || "").toLowerCase().trim();
+            if (cargoLogado !== "presidente") return;
+
             if (confirm("Apagar este recado interno?")) {
                 await db.collection("avisos_diretoria").doc(id).delete();
                 carregarAvisosDiretoria();
