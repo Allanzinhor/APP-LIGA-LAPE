@@ -41,6 +41,63 @@
         .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
+
+        /* Estilo do Leque / Cartas Empilhadas para Atividades Concluídas */
+        .container-leque-concluidas {
+            position: relative;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .carta-leque {
+            background: #ffffff;
+            border: 1px solid #ced4da;
+            border-radius: 10px;
+            padding: 12px 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .container-leque-concluidas:not(.aberto) .carta-leque {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .container-leque-concluidas:not(.aberto) .carta-leque:nth-last-child(1) { transform: translateY(0px) scale(1); z-index: 3; pointer-events: auto; }
+        .container-leque-concluidas:not(.aberto) .carta-leque:nth-last-child(2) { transform: translateY(6px) scale(0.97); z-index: 2; opacity: 0.85; }
+        .container-leque-concluidas:not(.aberto) .carta-leque:nth-last-child(n+3) { transform: translateY(12px) scale(0.94); z-index: 1; opacity: 0.7; }
+
+        .leque-cabecalho-fechado {
+            background: #f8f9fa;
+            border: 2px dashed #0056b3;
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #0056b3;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            margin-bottom: 5px;
+        }
+
+        .container-leque-concluidas.aberto {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .container-leque-concluidas.aberto .carta-leque {
+            position: relative;
+            transform: none !important;
+            opacity: 1 !important;
+            pointer-events: auto;
+        }
     </style>
 
     <!-- Firebase SDKs -->
@@ -813,7 +870,12 @@
                 return;
             }
 
-            atividadesDesteMes.forEach(ativ => {
+            // Separação entre concluídas e pendentes/andamento
+            let ativConcluidas = atividadesDesteMes.filter(a => a.concluida && !a.cancelada);
+            let ativPendentes = atividadesDesteMes.filter(a => !a.concluida || a.cancelada);
+
+            // Renderiza Atividades em Andamento / Pendentes
+            ativPendentes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
                 let botoesCardHtml = "";
                 let statusOficialHtml = "";
@@ -834,61 +896,6 @@
                             <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                         </div>
                     `;
-                } else if (ativ.concluida) {
-                    let mensagemConcluida = "Atividade Concluída";
-                    let corStatus = "#2b8a3e";
-                    let fundoStatus = "#ebfbee";
-                    let bordaStatus = "#2b8a3e";
-
-                    if (ativ.statusAdmin === 'presente') {
-                        mensagemConcluida = "Atividade Concluída — Presença Validada (" + ativ.ch + "h)";
-                    } else if (ativ.statusAdmin === 'justificado') {
-                        mensagemConcluida = "Atividade Concluída — Justificativa Aceita (Abonada)";
-                    } else if (ativ.statusAdmin === 'negado') {
-                        mensagemConcluida = "Atividade Concluída — Falta Registrada";
-                        corStatus = "#c92a2a";
-                        fundoStatus = "#ffe3e3";
-                        bordaStatus = "#e03131";
-                    } else if (ativ.statusAdmin === 'justificativa_negada') {
-                        mensagemConcluida = "Atividade Concluída — Justificativa Negada (Falta)";
-                        corStatus = "#c92a2a";
-                        fundoStatus = "#ffe3e3";
-                        bordaStatus = "#e03131";
-                    } else {
-                        mensagemConcluida = "Atividade Concluída — Sem registro de presença ou falta";
-                        corStatus = "#e67700";
-                        fundoStatus = "#fff3bf";
-                        bordaStatus = "#f59f00";
-                    }
-
-                    let textoPresente = ativ.totalPresentes === 1 ? "1 presente" : `${ativ.totalPresentes} presentes`;
-                    let textoJust = ativ.totalJustificativas === 1 ? "1 justificativa" : `${ativ.totalJustificativas} justificativas`;
-                    let textoFalta = ativ.totalFaltas === 1 ? "1 falta" : `${ativ.totalFaltas} faltas`;
-                    let textoJustNegadas = ativ.totalJustNegadas === 1 ? "1 just. negada" : `${ativ.totalJustNegadas} just. negadas`;
-
-                    listaAtividades.innerHTML += `
-                        <div class="card-atividade" id="card-ativ-${ativ.id}" style="opacity: 0.95;">
-                            ${sinalizacaoDiretoriaHtml}
-                            <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
-                                <span class="badge-dias" style="background: #e9ecef; color: #343a40; font-weight: bold;">${ativ.ch}h de CH</span>
-                                <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
-                                <span class="badge-dias" style="background: #e7f5ff; color: #1c7ed6; font-weight: bold;">${textoJust}</span>
-                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoFalta}</span>
-                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoJustNegadas}</span>
-                            </div>
-                            
-                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
-
-                            <div class="info-atividade" style="margin-top: 6px;">
-                                <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
-                            </div>
-
-                            <div style="background: ${fundoStatus}; border-left: 4px solid ${bordaStatus}; padding: 8px 10px; border-radius: 6px; margin-top: 8px;">
-                                <p style="color: ${corStatus}; font-size: 12px; font-weight: bold; margin: 0;">✅ ${mensagemConcluida}</p>
-                            </div>
-                        </div>
-                    `;
-                    return; 
                 } else if (ativ.statusAdmin === 'aguardando_analise') {
                     statusOficialHtml = `
                         <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #d97706; font-weight: bold;">
@@ -988,7 +995,6 @@
 
                 let badgeCanceladaEstilo = ativ.cancelada ? 'opacity: 0.85;' : '';
                 let estaAberto = idsAbertos.includes(ativ.id);
-
                 let textoConfirmadoAndamento = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
 
                 listaAtividades.innerHTML += `
@@ -1021,7 +1027,73 @@
                 `;
             });
 
+            // Renderiza Atividades Concluídas em formato de Leque (Cartas Empilhadas)
+            if (ativConcluidas.length > 0) {
+                let htmlCartasConcluidas = "";
+
+                ativConcluidas.forEach(ativ => {
+                    const dataObj = new Date(ativ.data + "T00:00:00");
+                    let mensagemConcluida = "Atividade Concluída";
+                    let corStatus = "#2b8a3e";
+                    let fundoStatus = "#ebfbee";
+                    let bordaStatus = "#2b8a3e";
+
+                    if (ativ.statusAdmin === 'presente') {
+                        mensagemConcluida = "Presença Validada (" + ativ.ch + "h)";
+                    } else if (ativ.statusAdmin === 'justificado') {
+                        mensagemConcluida = "Justificativa Aceita (Abonada)";
+                    } else if (ativ.statusAdmin === 'negado') {
+                        mensagemConcluida = "Falta Registrada";
+                        corStatus = "#c92a2a";
+                        fundoStatus = "#ffe3e3";
+                        bordaStatus = "#e03131";
+                    } else if (ativ.statusAdmin === 'justificativa_negada') {
+                        mensagemConcluida = "Justificativa Negada (Falta)";
+                        corStatus = "#c92a2a";
+                        fundoStatus = "#ffe3e3";
+                        bordaStatus = "#e03131";
+                    }
+
+                    htmlCartasConcluidas += `
+                        <div class="carta-leque">
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 14px; color: #333;">${ativ.titulo}</h3>
+                            <p style="margin: 3px 0; font-size: 11px; color: #666;">📅 ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            <div style="background: ${fundoStatus}; border-left: 3px solid ${bordaStatus}; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
+                                <p style="color: ${corStatus}; font-size: 11px; font-weight: bold; margin: 0;">✓ ${mensagemConcluida}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                listaAtividades.innerHTML += `
+                    <div style="margin-top: 20px;">
+                        <div class="leque-cabecalho-fechado" onclick="toggleLequeConcluidas()">
+                            <span>📂 Atividades Concluídas (${ativConcluidas.length})</span>
+                            <span id="leque-seta">▼ Toque para abrir</span>
+                        </div>
+                        <div class="container-leque-concluidas" id="leque-concluidas-container" style="height: ${ativConcluidas.length > 1 ? '70px' : 'auto'};">
+                            ${htmlCartasConcluidas}
+                        </div>
+                    </div>
+                `;
+            }
+
             iniciarMotorGlobalCronometros();
+        }
+
+        function toggleLequeConcluidas() {
+            let container = document.getElementById("leque-concluidas-container");
+            let seta = document.getElementById("leque-seta");
+            
+            if (container.classList.contains("aberto")) {
+                container.classList.remove("aberto");
+                seta.innerText = "▼ Toque para abrir";
+                container.style.height = "70px";
+            } else {
+                container.classList.add("aberto");
+                seta.innerText = "▲ Ocultar leque";
+                container.style.height = "auto";
+            }
         }
 
         function iniciarMotorGlobalCronometros() {
