@@ -639,7 +639,7 @@
 
             if (contadorSalvos > 0) {
                 await dispararNotificacaoGlobal("Atualização de Histórico", `${contadorSalvos} novas atividades passadas foram migradas para o sistema.`);
-                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos os ligantes instantaneamente.`);
+                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos los ligantes instantaneamente.`);
                 mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
             } else {
                 alert("Nenhuma atividade válida foi preenchida. Verifique os títulos e datas.");
@@ -1205,7 +1205,6 @@
             alert("Atividade criada com sucesso!");
         }
 
-        // RENDERIZAÇÃO DAS ATIVIDADES (COM EXIBIÇÃO CONDICIONAL APÓS O PRAZO AUTOMÁTICO)
         function renderizarAtividadesEdicao() {
             let mesFiltroSelect = document.getElementById("filtro-mes-atividades");
             let div = document.getElementById("lista-admin-atividades-edicao");
@@ -1233,7 +1232,6 @@
                 let corBotaoConcluir = a.concluida ? "cinza" : "verde";
                 let tituloSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
-                // Verifica se o prazo automático (24h antes) já expirou
                 let dataHoraAtiv = new Date(`${a.data}T${a.hora || '19:00'}:00`);
                 let limitePrazoAuto = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
                 let agora = new Date();
@@ -1244,7 +1242,6 @@
                     let prazoExtraEstaAberto = (a.prazoFechadoManual === false);
                     
                     if (!prazoExtraEstaAberto) {
-                        // Se estiver fechado, mostra o seletor e o botão de "Abrir Prazo Extra"
                         blocoPrazoExtraHtml = `
                             <div style="margin-top: 10px; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
                                 <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Gerenciar Prazo Extra:</label>
@@ -1261,7 +1258,6 @@
                             </div>
                         `;
                     } else {
-                        // Se estiver aberto, esconde o botão de abrir e mostra "Fechar Prazo" e "Editar Prazo Extra"
                         blocoPrazoExtraHtml = `
                             <div style="margin-top: 10px; background: #ebfbee; padding: 8px; border-radius: 6px; border: 1px solid #c3e6cb;">
                                 <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px; color: #155724;">🔓 Prazo Extra em Andamento:</label>
@@ -1331,7 +1327,7 @@
                     return;
                 }
                 expiraEm = new Date(valInput);
-            } // Se for 'manual', expiraEm fica como null
+            }
 
             await db.collection("atividades").doc(id).update({
                 prazoFechadoManual: false,
@@ -1417,6 +1413,15 @@
             let mesFiltroSelect = document.getElementById("filtro-mes-frequencia");
             let div = document.getElementById("lista-admin-frequencia");
             if (!div || !mesFiltroSelect) return;
+
+            // Salva quais atividades estavam abertas antes de renderizar novamente
+            let idsAbertos = [];
+            document.querySelectorAll('[id^="conteudo-freq-"]').forEach(el => {
+                if (el.style.display === "block") {
+                    idsAbertos.push(el.id.replace('conteudo-freq-', ''));
+                }
+            });
+
             div.innerHTML = "";
 
             let mesFiltro = mesFiltroSelect.value;
@@ -1491,6 +1496,7 @@
                     `;
                 });
 
+                let estaAberto = idsAbertos.includes(a.id);
                 let estiloCardAtiv = "background: #fff; border: 1px solid #dee2e6; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
                 let textoConcluidoBadge = "";
                 let tagPublicoFreq = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : "";
@@ -1507,9 +1513,9 @@
                                 <h4 style="margin: 0; color: #0056b3; font-size: 15px;">${a.titulo} ${tagPublicoFreq} ${textoConcluidoBadge}</h4>
                                 <p class="cinza" style="margin: 2px 0 0 0; font-size: 12px;">📅 ${a.data} às ${a.hora} | ⏳ CH: ${a.ch}h</p>
                             </div>
-                            <span style="font-size: 12px; color: #0056b3; font-weight: bold;" id="seta-freq-${a.id}">▼ Gerenciar Chamada</span>
+                            <span style="font-size: 12px; color: #0056b3; font-weight: bold;" id="seta-freq-${a.id}">${estaAberto ? '▲ Ocultar Chamada' : '▼ Gerenciar Chamada'}</span>
                         </div>
-                        <div id="conteudo-freq-${a.id}" style="display: none; padding: 12px; border-top: 1px solid #dee2e6;">
+                        <div id="conteudo-freq-${a.id}" style="display: ${estaAberto ? 'block' : 'none'}; padding: 12px; border-top: 1px solid #dee2e6;">
                             <div class="bloco-chamada-membros">
                                 ${htmlMembros}
                             </div>
