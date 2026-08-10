@@ -40,6 +40,7 @@
         .btn-desconfirmar { background-color: #e03131 !important; color: white !important; }
         .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
+        .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
     </style>
 
     <!-- Firebase SDKs -->
@@ -431,12 +432,14 @@
                     let totalPresentes = 0;
                     let totalJustificativas = 0;
                     let totalFaltas = 0;
+                    let totalJustNegadas = 0;
                     
                     Object.values(frequenciasMap).forEach(reg => {
                         if(reg.confirmadoAluno === true) totalConfirmados++;
                         if(reg.status === 'presente') totalPresentes++;
                         if(reg.status === 'justificado') totalJustificativas++;
                         if(reg.status === 'negado') totalFaltas++;
+                        if(reg.status === 'justificativa_negada') totalJustNegadas++;
                     });
 
                     atividades.push({
@@ -458,7 +461,8 @@
                         totalConfirmados: totalConfirmados,
                         totalPresentes: totalPresentes,
                         totalJustificativas: totalJustificativas,
-                        totalFaltas: totalFaltas
+                        totalFaltas: totalFaltas,
+                        totalJustNegadas: totalJustNegadas
                     });
                 }
 
@@ -794,7 +798,7 @@
             let ativValidas = atividadesDesteMes.filter(a => !a.cancelada);
             let totalAtividades = ativValidas.length;
             let totalPresencas = ativValidas.filter(a => a.statusAdmin === 'presente').length;
-            let totalFaltas = ativValidas.filter(a => a.statusAdmin === 'negado').length;
+            let totalFaltas = ativValidas.filter(a => a.statusAdmin === 'negado' || a.statusAdmin === 'justificativa_negada').length;
             let totalJustificativas = ativValidas.filter(a => a.statusAdmin === 'justificado').length;
             let totalCH = ativValidas.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
 
@@ -841,7 +845,12 @@
                     } else if (ativ.statusAdmin === 'justificado') {
                         mensagemConcluida = "Atividade Concluída — Justificativa Aceita (Abonada)";
                     } else if (ativ.statusAdmin === 'negado') {
-                        mensagemConcluida = "Atividade Concluída — Falta Registrada / Justificativa Negada";
+                        mensagemConcluida = "Atividade Concluída — Falta Registrada";
+                        corStatus = "#c92a2a";
+                        fundoStatus = "#ffe3e3";
+                        bordaStatus = "#e03131";
+                    } else if (ativ.statusAdmin === 'justificativa_negada') {
+                        mensagemConcluida = "Atividade Concluída — Justificativa Negada (Falta)";
                         corStatus = "#c92a2a";
                         fundoStatus = "#ffe3e3";
                         bordaStatus = "#e03131";
@@ -855,6 +864,7 @@
                     let textoPresente = ativ.totalPresentes === 1 ? "1 presente" : `${ativ.totalPresentes} presentes`;
                     let textoJust = ativ.totalJustificativas === 1 ? "1 justificativa" : `${ativ.totalJustificativas} justificativas`;
                     let textoFalta = ativ.totalFaltas === 1 ? "1 falta" : `${ativ.totalFaltas} faltas`;
+                    let textoJustNegadas = ativ.totalJustNegadas === 1 ? "1 just. negada" : `${ativ.totalJustNegadas} just. negadas`;
 
                     listaAtividades.innerHTML += `
                         <div class="card-atividade" id="card-ativ-${ativ.id}" style="opacity: 0.95;">
@@ -864,6 +874,7 @@
                                 <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
                                 <span class="badge-dias" style="background: #e7f5ff; color: #1c7ed6; font-weight: bold;">${textoJust}</span>
                                 <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoFalta}</span>
+                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoJustNegadas}</span>
                             </div>
                             
                             <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
@@ -935,7 +946,7 @@
 
                         if (ativ.statusAdmin === 'presente') {
                             statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
-                        } else if (ativ.statusAdmin === 'negado' && expirado && !ativ.confirmadoAluno) {
+                        } else if ((ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada') && expirado && !ativ.confirmadoAluno) {
                             statusOficialHtml = `
                                 <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
                                     <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
@@ -943,7 +954,9 @@
                                 </div>
                             `;
                         } else if (ativ.statusAdmin === 'negado') {
-                            statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta registrada / Justificativa Negada</p>`;
+                            statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta</p>`;
+                        } else if (ativ.statusAdmin === 'justificativa_negada') {
+                            statusOficialHtml = `<p class="tag-justificativa-negada" style="margin-top: 8px;">✕ Justificativa Negada</p>`;
                         } else {
                             if (expirado) {
                                 statusOficialHtml = `

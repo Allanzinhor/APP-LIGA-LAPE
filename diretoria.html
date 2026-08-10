@@ -558,6 +558,7 @@
                         <select id="bloco-${idBloco}-status-${m.id}" style="padding: 3px 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px;">
                             <option value="presente" selected>Presente (+CH)</option>
                             <option value="negado">Falta</option>
+                            <option value="justificativa_negada">Justificativa Negada</option>
                             <option value="justificado">Justificado (Abonado)</option>
                             <option value="pendente">Não participava / Ausente</option>
                         </select>
@@ -623,7 +624,7 @@
 
                             frequenciasMap[m.id] = {
                                 status: statusEscolhido,
-                                texto: statusEscolhido === 'justificado' ? 'Migrado de registro em papel' : '',
+                                texto: statusEscolhido === 'justificado' || statusEscolhido === 'justificativa_negada' ? 'Migrado de registro em papel' : '',
                                 confirmadoAluno: true
                             };
                         }
@@ -648,7 +649,7 @@
 
             if (contadorSalvos > 0) {
                 await dispararNotificacaoGlobal("Atualização de Histórico", `${contadorSalvos} novas atividades passadas foram migradas para o sistema.`);
-                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos los ligantes instantaneamente.`);
+                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos os ligantes instantaneamente.`);
                 mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
             } else {
                 alert("Nenhuma atividade válida foi preenchida. Verifique os títulos e datas.");
@@ -693,6 +694,7 @@
 
                 let totalPresencas = 0;
                 let totalFaltas = 0;
+                let totalJustificativasNegadas = 0;
                 let totalJustificativas = 0;
                 let chAcumulada = 0;
 
@@ -711,6 +713,8 @@
                             chAcumulada += Number(ativ.ch || 0);
                         } else if (regAluno.status === 'negado') {
                             totalFaltas++;
+                        } else if (regAluno.status === 'justificativa_negada') {
+                            totalJustificativasNegadas++;
                         } else if (regAluno.status === 'justificado') {
                             totalJustificativas++;
                         }
@@ -782,7 +786,7 @@
                             <p><strong>Tempo na Liga:</strong> ${tempoLigaStr}</p>
                             <hr style="margin:8px 0; border:0; border-top:1px solid #f1f3f5;">
                             <p style="color:#0056b3;"><strong>📊 Estatísticas na Liga:</strong></p>
-                            <p>• Presenças: ${totalPresencas} | Faltas: ${totalFaltas} | Abonadas: ${totalJustificativas}</p>
+                            <p>• Presenças: ${totalPresencas} | Faltas: ${totalFaltas} | Just. Negadas: ${totalJustificativasNegadas} | Abonadas: ${totalJustificativas}</p>
                             <p>• Carga Horária Acumulada: <strong>${chAcumulada}h</strong></p>
                             ${m.desligado ? `<p style="color:#e03131; margin-top:6px;"><strong>Desligado em:</strong> ${m.dataDesligamento || '-'} | <strong>Motivo:</strong> ${m.motivoDesligamento || '-'}</p>` : ''}
                             ${botoesAdminCard}
@@ -1449,6 +1453,7 @@
                 let totalPresentes = 0;
                 let totalJustificativas = 0;
                 let totalFaltas = 0;
+                let totalJustNegadas = 0;
 
                 membrosAtivos.forEach(m => {
                     let cargoMembroLower = (m.cargo || "ligante").toLowerCase().trim();
@@ -1463,28 +1468,32 @@
                     if (reg.status === 'presente') totalPresentes++;
                     if (reg.status === 'justificado') totalJustificativas++;
                     if (reg.status === 'negado') totalFaltas++;
+                    if (reg.status === 'justificativa_negada') totalJustNegadas++;
 
                     let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
                     
                     if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente (Com CH)</span>`;
                     if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">✓ Justificado Aceito (Abonado)</span>`;
-                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">✕ Falta / Justif. Negada</span>`;
+                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">✕ Falta</span>`;
+                    if(reg.status === 'justificativa_negada') badgeStatus = `<span class="tag-status falta" style="background:#ffe3e3; color:#c92a2a;">✕ Justificativa Negada</span>`;
 
                     let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:#1e88e5; display:block;">(Ligante confirmou interesse no app)</span>` : "";
                     let tituloAtivSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
                     let blocoBotoesAcoes = "";
                     if (reg.status === 'aguardando_analise') {
+                        let textoJustGuardado = (reg.texto || 'Sem texto informado.').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                         blocoBotoesAcoes = `
                             <div class="caixa-justificativa-admin" style="margin:5px 0; background:#fff8e1; padding:6px; border-radius:4px;">
                                 <p style="font-size:11px;"><strong>Justificativa do Ligante:</strong> "${reg.texto}"</p>
                                 <div class="botoes-justica" style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
-                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '${(reg.texto || '').replace(/'/g, "\\'")}', '${tituloAtivSeguro}')">Aceitar</button>
-                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '${(reg.texto || '').replace(/'/g, "\\'")}', '${tituloAtivSeguro}')">Negar</button>
+                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '${textoJustGuardado}', '${tituloAtivSeguro}')">Aceitar</button>
+                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificativa_negada', '${textoJustGuardado}', '${tituloAtivSeguro}')">Negar</button>
+                                    <button class="btn-mini cinza" onclick="abrirModalVerJustificativa('${textoJustGuardado}')">👁️ Ver</button>
                                 </div>
                             </div>
                         `;
-                    } else if (reg.status === 'justificado') {
+                    } else if (reg.status === 'justificado' || reg.status === 'justificativa_negada') {
                         let textoJustGuardado = (reg.texto || 'Sem texto informado.').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                         blocoBotoesAcoes = `
                             <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
@@ -1533,13 +1542,13 @@
                     estiloCardAtiv = "background: #f4fbf7; border: 2px solid #2b8a3e; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
                 }
 
-                // Exibe os números resumidos de confirmados, presentes, justificativas e faltas
                 badgesEstatisticasHeader = `
                     <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
                         <span style="background: #e7f5ff; color: #1c7ed6; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">👥 ${totalConfirmados} confirmados</span>
                         <span style="background: #ebfbee; color: #2b8a3e; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✓ ${totalPresentes} presentes</span>
                         <span style="background: #fff9db; color: #f59f00; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">📝 ${totalJustificativas} abonadas</span>
                         <span style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✕ ${totalFaltas} faltas</span>
+                        <span style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✕ ${totalJustNegadas} just. negadas</span>
                     </div>
                 `;
 
