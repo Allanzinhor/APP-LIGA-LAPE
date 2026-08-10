@@ -852,12 +852,10 @@
                         bordaStatus = "#f59f00";
                     }
 
-                    // Regras de Singular/Plural corretas para 0, 1 e >1
                     let textoPresente = ativ.totalPresentes === 1 ? "1 presente" : `${ativ.totalPresentes} presentes`;
                     let textoJust = ativ.totalJustificativas === 1 ? "1 justificativa" : `${ativ.totalJustificativas} justificativas`;
                     let textoFalta = ativ.totalFaltas === 1 ? "1 falta" : `${ativ.totalFaltas} faltas`;
 
-                    // Renderização de atividade concluída com número de presentes, justificativas e faltas com cores legíveis
                     listaAtividades.innerHTML += `
                         <div class="card-atividade" id="card-ativ-${ativ.id}" style="opacity: 0.95;">
                             ${sinalizacaoDiretoriaHtml}
@@ -882,7 +880,7 @@
                     return; 
                 } else if (ativ.statusAdmin === 'aguardando_analise') {
                     statusOficialHtml = `
-                        <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #f59f00; font-weight: bold;">
+                        <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #d97706; font-weight: bold;">
                             ⏳ Justificativa em análise pela diretoria
                         </div>
                     `;
