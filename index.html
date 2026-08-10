@@ -42,61 +42,84 @@
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* Estilo do Leque / Cartas Empilhadas para Atividades Concluídas */
-        .container-leque-concluidas {
+        /* Estilo do Efeito de Cartas Empilhadas (Pilha tipo Baralho) */
+        .secao-pilha-concluidas {
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .container-cartas-pilha {
             position: relative;
-            margin-top: 15px;
-            margin-bottom: 20px;
-        }
-
-        .carta-leque {
-            background: #ffffff;
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            padding: 12px 15px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
             cursor: pointer;
+            transition: all 0.4s ease;
+            min-height: 110px;
         }
 
-        .container-leque-concluidas:not(.aberto) .carta-leque {
+        /* Estado Fechado: Cartas empilhadas umas sobre as outras */
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             box-sizing: border-box;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
             pointer-events: none;
         }
 
-        .container-leque-concluidas:not(.aberto) .carta-leque:nth-last-child(1) { transform: translateY(0px) scale(1); z-index: 3; pointer-events: auto; }
-        .container-leque-concluidas:not(.aberto) .carta-leque:nth-last-child(2) { transform: translateY(6px) scale(0.97); z-index: 2; opacity: 0.85; }
-        .container-leque-concluidas:not(.aberto) .carta-leque:nth-last-child(n+3) { transform: translateY(12px) scale(0.94); z-index: 1; opacity: 0.7; }
+        /* Efeito de escalonamento elegante para parecer cartas empilhadas */
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(1) { transform: translateY(0px) scale(1); z-index: 3; pointer-events: auto; }
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(5px) scale(0.97); z-index: 2; opacity: 0.9; }
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(10px) scale(0.94); z-index: 1; opacity: 0.75; }
 
-        .leque-cabecalho-fechado {
-            background: #f8f9fa;
-            border: 2px dashed #0056b3;
-            border-radius: 10px;
-            padding: 12px 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Indicador sobreposto na pilha fechada */
+        .indicador-pilha {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            background: #0056b3;
+            color: white;
+            font-size: 10px;
             font-weight: bold;
-            color: #0056b3;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            margin-bottom: 5px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            pointer-events: none;
         }
 
-        .container-leque-concluidas.aberto {
+        /* Estado Aberto: Cartas se expandem virando uma lista normal com botão de recolher */
+        .container-cartas-pilha.aberto {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
-        .container-leque-concluidas.aberto .carta-leque {
+
+        .container-cartas-pilha.aberto .card-atividade-concluida {
             position: relative;
             transform: none !important;
             opacity: 1 !important;
             pointer-events: auto;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .cabecalho-recolher-pilha {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #0056b3;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .container-cartas-pilha.aberto ~ .cabecalho-recolher-pilha,
+        .cabecalho-recolher-pilha.visivel {
+            display: flex;
         }
     </style>
 
@@ -1027,7 +1050,7 @@
                 `;
             });
 
-            // Renderiza Atividades Concluídas em formato de Leque (Cartas Empilhadas)
+            // Renderiza Atividades Concluídas em Pilha de Cartas Estilo Baralho
             if (ativConcluidas.length > 0) {
                 let htmlCartasConcluidas = "";
 
@@ -1054,25 +1077,37 @@
                         bordaStatus = "#e03131";
                     }
 
+                    let textoPresente = ativ.totalPresentes === 1 ? "1 presente" : `${ativ.totalPresentes} presentes`;
+
                     htmlCartasConcluidas += `
-                        <div class="carta-leque">
-                            <h3 class="titulo-atividade" style="margin: 0; font-size: 14px; color: #333;">${ativ.titulo}</h3>
-                            <p style="margin: 3px 0; font-size: 11px; color: #666;">📅 ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
-                            <div style="background: ${fundoStatus}; border-left: 3px solid ${bordaStatus}; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
-                                <p style="color: ${corStatus}; font-size: 11px; font-weight: bold; margin: 0;">✓ ${mensagemConcluida}</p>
+                        <div class="card-atividade card-atividade-concluida" style="opacity: 0.98;">
+                            <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
+                                <span class="badge-dias" style="background: #e9ecef; color: #343a40; font-weight: bold;">${ativ.ch}h de CH</span>
+                                <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
+                            </div>
+                            
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
+
+                            <div class="info-atividade" style="margin-top: 6px;">
+                                <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            </div>
+
+                            <div style="background: ${fundoStatus}; border-left: 4px solid ${bordaStatus}; padding: 8px 10px; border-radius: 6px; margin-top: 8px;">
+                                <p style="color: ${corStatus}; font-size: 12px; font-weight: bold; margin: 0;">✅ ${mensagemConcluida}</p>
                             </div>
                         </div>
                     `;
                 });
 
                 listaAtividades.innerHTML += `
-                    <div style="margin-top: 20px;">
-                        <div class="leque-cabecalho-fechado" onclick="toggleLequeConcluidas()">
+                    <div class="secao-pilha-concluidas">
+                        <div class="cabecalho-recolher-pilha" id="btn-recolher-pilha" onclick="togglePilhaConcluidas()">
                             <span>📂 Atividades Concluídas (${ativConcluidas.length})</span>
-                            <span id="leque-seta">▼ Toque para abrir</span>
+                            <span>▲ Recolher pilha</span>
                         </div>
-                        <div class="container-leque-concluidas" id="leque-concluidas-container" style="height: ${ativConcluidas.length > 1 ? '70px' : 'auto'};">
+                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas" onclick="togglePilhaConcluidas()">
                             ${htmlCartasConcluidas}
+                            <div class="indicador-pilha" id="indicador-contador-pilha">🎴 ${ativConcluidas.length} concluída(s) - Toque para ver</div>
                         </div>
                     </div>
                 `;
@@ -1081,18 +1116,19 @@
             iniciarMotorGlobalCronometros();
         }
 
-        function toggleLequeConcluidas() {
-            let container = document.getElementById("leque-concluidas-container");
-            let seta = document.getElementById("leque-seta");
+        function togglePilhaConcluidas() {
+            let container = document.getElementById("pilha-cartas-concluidas");
+            let btnRecolher = document.getElementById("btn-recolher-pilha");
+            let indicador = document.getElementById("indicador-contador-pilha");
             
             if (container.classList.contains("aberto")) {
                 container.classList.remove("aberto");
-                seta.innerText = "▼ Toque para abrir";
-                container.style.height = "70px";
+                btnRecolher.classList.remove("visivel");
+                indicador.style.display = "block";
             } else {
                 container.classList.add("aberto");
-                seta.innerText = "▲ Ocultar leque";
-                container.style.height = "auto";
+                btnRecolher.classList.add("visivel");
+                indicador.style.display = "none";
             }
         }
 
