@@ -42,7 +42,7 @@
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* Estilo do Baralho de Cartas Empilhadas */
+        /* Estilo do Baralho de Cartas Empilhadas (Sem botões extras, clique direto nas cartas) */
         .secao-pilha-concluidas {
             margin-top: 25px;
             margin-bottom: 15px;
@@ -50,11 +50,12 @@
 
         .container-cartas-pilha {
             position: relative;
+            cursor: pointer;
             transition: all 0.4s ease;
-            min-height: 120px;
+            min-height: 125px;
         }
 
-        /* Estado Fechado: Cartas sobrepostas */
+        /* Estado Fechado: Cartas sobrepostas simulando baralho */
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
             position: absolute;
             top: 0;
@@ -70,22 +71,20 @@
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(6px) scale(0.97); z-index: 2; opacity: 0.9; }
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(12px) scale(0.94); z-index: 1; opacity: 0.75; }
 
-        /* Botão Fixo/Limpo para Abrir a Pilha */
-        .btn-abrir-pilha {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+        /* Badge indicativa flutuante na pilha fechada */
+        .indicador-pilha {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
             background: #0056b3;
             color: white;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            margin-bottom: 10px;
-            text-align: center;
+            padding: 5px 12px;
+            border-radius: 14px;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            pointer-events: none;
         }
 
         /* Estado Aberto: Cartas abertas em lista */
@@ -107,9 +106,9 @@
             display: none;
             text-align: center;
             background: #e9ecef;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #0056b3;
             cursor: pointer;
@@ -120,23 +119,41 @@
             display: block;
         }
 
-        /* Estilo Card de Aniversariantes Clean */
+        /* Estilo Card de Aniversariantes Clean e Alinhado com Foto */
         .card-aniversariantes {
             background: #ffffff;
             border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             margin-bottom: 20px;
             border-left: 4px solid #ff6b6b;
+            box-sizing: border-box;
+            width: 100%;
         }
         .aniversario-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 6px 0;
+            gap: 12px;
+            padding: 8px 0;
         }
         .aniversario-item:not(:last-child) {
             border-bottom: 1px solid #f1f3f5;
+        }
+        .aniversario-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #004494;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
     </style>
 
@@ -230,7 +247,7 @@
             </div>
         </section>
 
-        <!-- Seção de Aniversariantes -->
+        <!-- Seção de Aniversariantes com Fotos e Design Clean -->
         <section style="margin-top: 20px;">
             <p class="titulo-secao-geral">🎉 Aniversariantes</p>
             <div class="card-aniversariantes" id="bloco-aniversariantes">
@@ -457,7 +474,11 @@
                 snap.forEach(doc => {
                     let d = doc.data();
                     if (!d.desligado && d.nascimento) {
-                        membrosCache.push({ nome: d.nome, nascimento: d.nascimento });
+                        membrosCache.push({ 
+                            nome: d.nome, 
+                            nascimento: d.nascimento,
+                            fotoUrl: (d.fotoStatus === 'aprovada' && d.fotoUrl) ? d.fotoUrl : null 
+                        });
                     }
                 });
                 renderizarAniversariantesWidget();
@@ -482,7 +503,6 @@
                 let mesNasc = parseInt(partes[1]);
                 let diaNasc = parseInt(partes[2]);
                 
-                // Calcular distância em dias a partir de hoje
                 let dataNascThisYear = new Date(hoje.getFullYear(), mesNasc - 1, diaNasc);
                 if (dataNascThisYear < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) {
                     dataNascThisYear.setFullYear(hoje.getFullYear() + 1);
@@ -491,6 +511,7 @@
 
                 return {
                     nome: m.nome,
+                    fotoUrl: m.fotoUrl,
                     dia: diaNasc,
                     mes: mesNasc,
                     dataFormatada: `${String(diaNasc).padStart(2,'0')}/${String(mesNasc).padStart(2,'0')}`,
@@ -499,7 +520,6 @@
                 };
             });
 
-            // Ordenar por proximidade (quem faz aniversário hoje ou nos próximos dias)
             listaProcessada.sort((a, b) => a.diffDias - b.diffDias);
 
             let aniversariantesHoje = listaProcessada.filter(x => x.ehHoje);
@@ -509,9 +529,13 @@
 
             if (aniversariantesHoje.length > 0) {
                 aniversariantesHoje.forEach(aniv => {
+                    let avatarHtml = aniv.fotoUrl 
+                        ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                        : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
+
                     html += `
                         <div class="aniversario-item">
-                            <span style="font-size: 20px;">🎂</span>
+                            ${avatarHtml}
                             <div style="flex: 1;">
                                 <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">Hoje é aniversário de ${aniv.nome}! 🥳</p>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Data: ${aniv.dataFormatada}</p>
@@ -522,7 +546,7 @@
             } else {
                 html += `
                     <div class="aniversario-item">
-                        <span style="font-size: 18px;">📅</span>
+                        <div class="aniversario-avatar" style="background: #e9ecef; color: #6c757d;">📅</div>
                         <div style="flex: 1;">
                             <p style="margin: 0; font-size: 12px; font-weight: bold; color: #555;">Nenhum aniversariante hoje</p>
                         </div>
@@ -532,9 +556,13 @@
 
             if (proximoAniversariante) {
                 let textoDias = proximoAniversariante.diffDias === 1 ? "Amanhã" : `Daqui a ${proximoAniversariante.diffDias} dias`;
+                let avatarProximoHtml = proximoAniversariante.fotoUrl 
+                    ? `<div class="aniversario-avatar"><img src="${proximoAniversariante.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                    : `<div class="aniversario-avatar">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
+
                 html += `
                     <div class="aniversario-item" style="margin-top: 4px;">
-                        <span style="font-size: 18px;">⏳</span>
+                        ${avatarProximoHtml}
                         <div style="flex: 1;">
                             <p style="margin: 0; font-size: 12px; font-weight: bold; color: #0056b3;">Próximo: ${proximoAniversariante.nome} (${proximoAniversariante.dataFormatada})</p>
                             <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">${textoDias}</p>
@@ -1173,7 +1201,7 @@
                 `;
             });
 
-            // Renderiza Atividades Concluídas em Pilha com Botão Fixo
+            // Renderiza Atividades Concluídas em Pilha Estilo Baralho (Sem botões extras: clica direto na pilha)
             if (ativConcluidas.length > 0) {
                 let htmlCartasConcluidas = "";
 
@@ -1230,14 +1258,12 @@
 
                 listaAtividades.innerHTML += `
                     <div class="secao-pilha-concluidas">
-                        <div class="btn-abrir-pilha" id="btn-acao-pilha" onclick="togglePilhaConcluidas()">
-                            📂 Ver Atividades Concluídas (${ativConcluidas.length})
-                        </div>
-                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas">
+                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas" onclick="togglePilhaConcluidas()">
                             ${htmlCartasConcluidas}
+                            <div class="indicador-pilha" id="indicador-contador-pilha">🎴 ${ativConcluidas.length} concluída(s) - Toque para abrir</div>
                         </div>
                         <div class="indicador-recolher" id="btn-recolher-pilha" onclick="togglePilhaConcluidas()">
-                            ▲ Recolher pilha de cartas
+                            ▲ Toque aqui para recolher a pilha de cartas
                         </div>
                     </div>
                 `;
@@ -1248,14 +1274,14 @@
 
         function togglePilhaConcluidas() {
             let container = document.getElementById("pilha-cartas-concluidas");
-            let btnAbrir = document.getElementById("btn-acao-pilha");
+            let indicador = document.getElementById("indicador-contador-pilha");
             
             if (container.classList.contains("aberto")) {
                 container.classList.remove("aberto");
-                btnAbrir.style.display = "flex";
+                indicador.style.display = "block";
             } else {
                 container.classList.add("aberto");
-                btnAbrir.style.display = "none";
+                indicador.style.display = "none";
             }
         }
 
