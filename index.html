@@ -827,26 +827,42 @@
                     let bordaStatus = "#2b8a3e";
 
                     if (ativ.statusAdmin === 'presente') {
-                        mensagemConcluida = "✅ Atividade Concluída — Presença Validada (+ " + ativ.ch + "h)";
+                        mensagemConcluida = "Atividade Concluída — Presença Validada (" + ativ.ch + "h)";
                     } else if (ativ.statusAdmin === 'justificado') {
-                        mensagemConcluida = "✅ Atividade Concluída — Justificativa Aceita (Abonada)";
+                        mensagemConcluida = "Atividade Concluída — Justificativa Aceita (Abonada)";
                     } else if (ativ.statusAdmin === 'negado') {
-                        mensagemConcluida = "❌ Atividade Concluída — Falta Registrada / Justificativa Negada";
+                        mensagemConcluida = "Atividade Concluída — Falta Registrada / Justificativa Negada";
                         corStatus = "#c92a2a";
                         fundoStatus = "#ffe3e3";
                         bordaStatus = "#e03131";
                     } else {
-                        mensagemConcluida = "🚫 Atividade Concluída — Sem registro de presença ou falta";
+                        mensagemConcluida = "Atividade Concluída — Sem registro de presença ou falta";
                         corStatus = "#e67700";
                         fundoStatus = "#fff3bf";
                         bordaStatus = "#f59f00";
                     }
 
-                    statusOficialHtml = `
-                        <div style="background: ${fundoStatus}; border-left: 4px solid ${bordaStatus}; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                            <p style="color: ${corStatus}; font-size: 13px; font-weight: bold; margin: 0;">${mensagemConcluida}</p>
+                    // Renderização limpa e enxuta para atividades concluídas (sem local e sem expansível)
+                    listaAtividades.innerHTML += `
+                        <div class="card-atividade" id="card-ativ-${ativ.id}" style="opacity: 0.95;">
+                            ${sinalizacaoDiretoriaHtml}
+                            <div class="badges" style="margin-bottom: 6px;">
+                                <span class="badge-dias">${ativ.ch}h de CH</span>
+                                <span class="badge-dias" style="background: #f59f00;">Status Final</span>
+                            </div>
+                            
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
+
+                            <div class="info-atividade" style="margin-top: 6px;">
+                                <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            </div>
+
+                            <div style="background: ${fundoStatus}; border-left: 4px solid ${bordaStatus}; padding: 8px 10px; border-radius: 6px; margin-top: 8px;">
+                                <p style="color: ${corStatus}; font-size: 12px; font-weight: bold; margin: 0;">✅ ${mensagemConcluida}</p>
+                            </div>
                         </div>
                     `;
+                    return; // Interrompe o fluxo para não renderizar a parte de atividades normais em andamento abaixo
                 } else if (ativ.statusAdmin === 'aguardando_analise') {
                     statusOficialHtml = `
                         <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #f59f00; font-weight: bold;">
@@ -941,7 +957,7 @@
                     }
                 }
 
-                let badgeCanceladaEstilo = (ativ.cancelada || ativ.concluida) ? 'opacity: 0.85;' : '';
+                let badgeCanceladaEstilo = ativ.cancelada ? 'opacity: 0.85;' : '';
                 let estaAberto = idsAbertos.includes(ativ.id);
 
                 listaAtividades.innerHTML += `
@@ -949,7 +965,7 @@
                         ${sinalizacaoDiretoriaHtml}
                         <div class="badges" style="margin-bottom: 6px;">
                             <span class="badge-dias">${ativ.ch}h de CH</span>
-                            ${!ativ.cancelada && !ativ.concluida ? `<span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>` : '<span class="badge-dias" style="background: #f59f00;">Status Final</span>'}
+                            <span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>
                         </div>
                         
                         <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
@@ -968,7 +984,7 @@
 
                         <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: ${estaAberto ? 'block' : 'none'}; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
                             <p class="desc-atividade" style="margin-bottom: 10px;">${ativ.desc}</p>
-                            ${!ativ.cancelada && !ativ.concluida && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
+                            ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
                         </div>
                     </div>
                 `;
