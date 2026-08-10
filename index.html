@@ -42,16 +42,17 @@
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* Estilo do Baralho de Cartas Empilhadas */
+        /* Estilo do Baralho de Cartas Empilhadas (Sem botões extras) */
         .secao-pilha-concluidas {
-            margin-top: 25px;
+            margin-top: 20px;
             margin-bottom: 15px;
         }
 
         .container-cartas-pilha {
             position: relative;
+            cursor: pointer;
             transition: all 0.4s ease;
-            min-height: 120px;
+            min-height: 125px;
         }
 
         /* Estado Fechado: Cartas sobrepostas */
@@ -63,34 +64,13 @@
             box-sizing: border-box;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            pointer-events: none;
         }
 
-        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(1) { transform: translateY(0px) scale(1); z-index: 3; pointer-events: auto; }
-        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(6px) scale(0.97); z-index: 2; opacity: 0.9; }
-        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(12px) scale(0.94); z-index: 1; opacity: 0.75; }
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(1) { transform: translateY(0px) scale(1); z-index: 3; }
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(8px) scale(0.97); z-index: 2; opacity: 0.9; }
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(16px) scale(0.94); z-index: 1; opacity: 0.75; }
 
-        /* Botão Fixo Acima da Pilha */
-        .btn-abrir-pilha {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            background: #0056b3;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            margin-bottom: 12px;
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* Estado Aberto: Cartas abertas em lista */
+        /* Estado Aberto: Cartas abertas em lista simples */
         .container-cartas-pilha.aberto {
             display: flex;
             flex-direction: column;
@@ -101,51 +81,32 @@
             position: relative;
             transform: none !important;
             opacity: 1 !important;
-            pointer-events: auto;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
-        .indicador-recolher {
-            display: none;
-            text-align: center;
-            background: #e9ecef;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #0056b3;
-            cursor: pointer;
-            margin-top: 12px;
-        }
-
-        .container-cartas-pilha.aberto ~ .indicador-recolher {
-            display: block;
-        }
-
-        /* Card de Aniversariantes Sofisticado e Bem Alinhado */
+        /* Card de Aniversariantes Totalmente Integrado e Alinhado */
         .card-aniversariantes {
             background: #ffffff;
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-            margin-top: 8px;
-            margin-bottom: 20px;
-            border-left: 5px solid #ff6b6b;
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #ff6b6b;
             box-sizing: border-box;
             width: 100%;
+            overflow: hidden;
         }
         .aniversario-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 4px;
+            padding: 8px 0;
         }
         .aniversario-item:not(:last-child) {
             border-bottom: 1px solid #f1f3f5;
         }
         .aniversario-avatar {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             overflow: hidden;
             background: #004494;
@@ -154,10 +115,10 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 14px;
             flex-shrink: 0;
             border: 2px solid #fff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
     </style>
 
@@ -251,8 +212,8 @@
             </div>
         </section>
 
-        <!-- Seção de Aniversariantes Perfeita e Bem Alinhada -->
-        <section style="margin-top: 20px;">
+        <!-- Seção de Aniversariantes com Alinhamento Padrão de Margens -->
+        <section class="secao-historico-geral">
             <p class="titulo-secao-geral">🎉 Aniversariantes</p>
             <div class="card-aniversariantes" id="bloco-aniversariantes">
                 <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando aniversariantes...</p>
@@ -1048,7 +1009,7 @@
                 return;
             }
 
-            // Separação entre concluídas e pendentes/andamento
+            // Separação entre concluídas e pendentes
             let ativConcluidas = atividadesDesteMes.filter(a => a.concluida && !a.cancelada);
             let ativPendentes = atividadesDesteMes.filter(a => !a.concluida || a.cancelada);
 
@@ -1205,7 +1166,7 @@
                 `;
             });
 
-            // Renderiza Atividades Concluídas com botão acima da pilha
+            // Renderiza Atividades Concluídas Sem Nenhum Botão Extra (Apenas a Pilha de Cartas)
             if (ativConcluidas.length > 0) {
                 let htmlCartasConcluidas = "";
 
@@ -1238,7 +1199,7 @@
                     let textoJustNegadas = ativ.totalJustNegadas === 1 ? "1 just. negada" : `${ativ.totalJustNegadas} just. negadas`;
 
                     htmlCartasConcluidas += `
-                        <div class="card-atividade card-atividade-concluida" style="opacity: 0.98;">
+                        <div class="card-atividade card-atividade-concluida">
                             <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
                                 <span class="badge-dias" style="background: #e9ecef; color: #343a40; font-weight: bold;">${ativ.ch}h de CH</span>
                                 <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
@@ -1262,14 +1223,8 @@
 
                 listaAtividades.innerHTML += `
                     <div class="secao-pilha-concluidas">
-                        <div class="btn-abrir-pilha" id="btn-acao-pilha" onclick="togglePilhaConcluidas()">
-                            📂 Ver Atividades Concluídas (${ativConcluidas.length})
-                        </div>
-                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas">
+                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas" onclick="togglePilhaConcluidas()">
                             ${htmlCartasConcluidas}
-                        </div>
-                        <div class="indicador-recolher" id="btn-recolher-pilha" onclick="togglePilhaConcluidas()">
-                            ▲ Recolher pilha de cartas
                         </div>
                     </div>
                 `;
@@ -1280,14 +1235,8 @@
 
         function togglePilhaConcluidas() {
             let container = document.getElementById("pilha-cartas-concluidas");
-            let btnAbrir = document.getElementById("btn-acao-pilha");
-            
-            if (container.classList.contains("aberto")) {
-                container.classList.remove("aberto");
-                btnAbrir.style.display = "flex";
-            } else {
-                container.classList.add("aberto");
-                btnAbrir.style.display = "none";
+            if (container) {
+                container.classList.toggle("aberto");
             }
         }
 
