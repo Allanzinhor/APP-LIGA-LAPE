@@ -348,6 +348,15 @@
         </div>
     </div>
 
+    <!-- MODAL PARA VER JUSTIFICATIVA -->
+    <div id="modal-ver-justificativa" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="text-align: left; max-width: 380px;">
+            <h3 style="color: #0056b3; margin-top: 0; font-size: 18px;">Justificativa do Ligante</h3>
+            <p id="texto-justificativa-visualizacao" style="font-size: 13px; color: #333; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ced4da; margin: 12px 0; word-break: break-word;"></p>
+            <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalVerJustificativa()">Fechar</button>
+        </div>
+    </div>
+
     <script>
         let membrosCache = [];
         let atividadesCache = [];
@@ -1414,7 +1423,6 @@
             let div = document.getElementById("lista-admin-frequencia");
             if (!div || !mesFiltroSelect) return;
 
-            // Salva quais atividades estavam abertas antes de renderizar novamente
             let idsAbertos = [];
             document.querySelectorAll('[id^="conteudo-freq-"]').forEach(el => {
                 if (el.style.display === "block") {
@@ -1437,6 +1445,11 @@
                 let frequenciasMap = a.frequencias || {};
                 let htmlMembros = "";
 
+                let totalConfirmados = 0;
+                let totalPresentes = 0;
+                let totalJustificativas = 0;
+                let totalFaltas = 0;
+
                 membrosAtivos.forEach(m => {
                     let cargoMembroLower = (m.cargo || "ligante").toLowerCase().trim();
                     let membroEhDiretoria = cargoMembroLower !== "ligante" && cargoMembroLower !== "membro";
@@ -1445,6 +1458,12 @@
                     if (m.ingressoLiga && a.data < m.ingressoLiga) return;
 
                     let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '' };
+
+                    if (reg.confirmadoAluno === true) totalConfirmados++;
+                    if (reg.status === 'presente') totalPresentes++;
+                    if (reg.status === 'justificado') totalJustificativas++;
+                    if (reg.status === 'negado') totalFaltas++;
+
                     let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
                     
                     if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente (Com CH)</span>`;
@@ -1460,9 +1479,18 @@
                             <div class="caixa-justificativa-admin" style="margin:5px 0; background:#fff8e1; padding:6px; border-radius:4px;">
                                 <p style="font-size:11px;"><strong>Justificativa do Ligante:</strong> "${reg.texto}"</p>
                                 <div class="botoes-justica" style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
-                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '', '${tituloAtivSeguro}')">Aceitar</button>
-                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Negar</button>
+                                    <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '${(reg.texto || '').replace(/'/g, "\\'")}', '${tituloAtivSeguro}')">Aceitar</button>
+                                    <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '${(reg.texto || '').replace(/'/g, "\\'")}', '${tituloAtivSeguro}')">Negar</button>
                                 </div>
+                            </div>
+                        `;
+                    } else if (reg.status === 'justificado') {
+                        let textoJustGuardado = (reg.texto || 'Sem texto informado.').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        blocoBotoesAcoes = `
+                            <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                                <button class="btn-mini cinza" onclick="abrirModalVerJustificativa('${textoJustGuardado}')">👁️ Ver Justificativa</button>
+                                <button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Resetar</button>
+                                <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Atualização de Frequência', 'Sua frequência na atividade ${tituloAtivSeguro} foi revisada.')">📢 Notificar</button>
                             </div>
                         `;
                     } else if (reg.status !== 'pendente') {
@@ -1498,20 +1526,30 @@
 
                 let estaAberto = idsAbertos.includes(a.id);
                 let estiloCardAtiv = "background: #fff; border: 1px solid #dee2e6; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
-                let textoConcluidoBadge = "";
+                let badgesEstatisticasHeader = "";
                 let tagPublicoFreq = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : "";
 
                 if (a.concluida) {
                     estiloCardAtiv = "background: #f4fbf7; border: 2px solid #2b8a3e; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
-                    textoConcluidoBadge = `<span style="background: #2b8a3e; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; float: right;">✅ Concluída</span>`;
                 }
+
+                // Exibe os números resumidos de confirmados, presentes, justificativas e faltas
+                badgesEstatisticasHeader = `
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
+                        <span style="background: #e7f5ff; color: #1c7ed6; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">👥 ${totalConfirmados} confirmados</span>
+                        <span style="background: #ebfbee; color: #2b8a3e; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✓ ${totalPresentes} presentes</span>
+                        <span style="background: #fff9db; color: #f59f00; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">📝 ${totalJustificativas} abonadas</span>
+                        <span style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✕ ${totalFaltas} faltas</span>
+                    </div>
+                `;
 
                 div.innerHTML += `
                     <div class="card-frequencia-colapsavel" style="${estiloCardAtiv}">
                         <div onclick="toggleExpandirFrequencia('${a.id}')" style="padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${a.concluida ? '#e6fcf5' : '#f8f9fa'};">
                             <div>
-                                <h4 style="margin: 0; color: #0056b3; font-size: 15px;">${a.titulo} ${tagPublicoFreq} ${textoConcluidoBadge}</h4>
+                                <h4 style="margin: 0; color: #0056b3; font-size: 15px;">${a.titulo} ${tagPublicoFreq} ${a.concluida ? '<span style="background: #2b8a3e; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; margin-left: 6px;">✅ Concluída</span>' : ''}</h4>
                                 <p class="cinza" style="margin: 2px 0 0 0; font-size: 12px;">📅 ${a.data} às ${a.hora} | ⏳ CH: ${a.ch}h</p>
+                                ${badgesEstatisticasHeader}
                             </div>
                             <span style="font-size: 12px; color: #0056b3; font-weight: bold;" id="seta-freq-${a.id}">${estaAberto ? '▲ Ocultar Chamada' : '▼ Gerenciar Chamada'}</span>
                         </div>
@@ -1523,6 +1561,15 @@
                     </div>
                 `;
             });
+        }
+
+        function abrirModalVerJustificativa(texto) {
+            document.getElementById('texto-justificativa-visualizacao').innerText = texto;
+            document.getElementById('modal-ver-justificativa').style.display = 'flex';
+        }
+
+        function fecharModalVerJustificativa() {
+            document.getElementById('modal-ver-justificativa').style.display = 'none';
         }
 
         function toggleExpandirFrequencia(id) {
