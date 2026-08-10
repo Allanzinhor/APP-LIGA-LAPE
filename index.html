@@ -428,11 +428,13 @@
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
 
                     let totalConfirmados = 0;
+                    let totalPresentes = 0;
                     let totalJustificativas = 0;
                     let totalFaltas = 0;
                     
                     Object.values(frequenciasMap).forEach(reg => {
                         if(reg.confirmadoAluno === true) totalConfirmados++;
+                        if(reg.status === 'presente') totalPresentes++;
                         if(reg.status === 'justificado') totalJustificativas++;
                         if(reg.status === 'negado') totalFaltas++;
                     });
@@ -454,6 +456,7 @@
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
                         totalConfirmados: totalConfirmados,
+                        totalPresentes: totalPresentes,
                         totalJustificativas: totalJustificativas,
                         totalFaltas: totalFaltas
                     });
@@ -849,16 +852,20 @@
                         bordaStatus = "#f59f00";
                     }
 
-                    // Renderização enxuta para atividades concluídas com número de justificativas e faltas adicionados
+                    // Regras de Singular/Plural corretas para 0, 1 e >1
+                    let textoPresente = ativ.totalPresentes === 1 ? "1 presente" : `${ativ.totalPresentes} presentes`;
+                    let textoJust = ativ.totalJustificativas === 1 ? "1 justificativa" : `${ativ.totalJustificativas} justificativas`;
+                    let textoFalta = ativ.totalFaltas === 1 ? "1 falta" : `${ativ.totalFaltas} faltas`;
+
+                    // Renderização de atividade concluída com número de presentes, justificativas e faltas com cores legíveis
                     listaAtividades.innerHTML += `
                         <div class="card-atividade" id="card-ativ-${ativ.id}" style="opacity: 0.95;">
                             ${sinalizacaoDiretoriaHtml}
                             <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
-                                <span class="badge-dias">${ativ.ch}h de CH</span>
-                                <span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>
-                                <span class="badge-dias" style="background: #2b8a3e;">${ativ.totalJustificativas} justificativa(s)</span>
-                                <span class="badge-dias" style="background: #e03131;">${ativ.totalFaltas} falta(s)</span>
-                                <span class="badge-dias" style="background: #f59f00; margin-left: auto;">Status Final</span>
+                                <span class="badge-dias" style="background: #e9ecef; color: #343a40; font-weight: bold;">${ativ.ch}h de CH</span>
+                                <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
+                                <span class="badge-dias" style="background: #e7f5ff; color: #1c7ed6; font-weight: bold;">${textoJust}</span>
+                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoFalta}</span>
                             </div>
                             
                             <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
@@ -970,12 +977,14 @@
                 let badgeCanceladaEstilo = ativ.cancelada ? 'opacity: 0.85;' : '';
                 let estaAberto = idsAbertos.includes(ativ.id);
 
+                let textoConfirmadoAndamento = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
+
                 listaAtividades.innerHTML += `
                     <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo}">
                         ${sinalizacaoDiretoriaHtml}
                         <div class="badges" style="margin-bottom: 6px;">
                             <span class="badge-dias">${ativ.ch}h de CH</span>
-                            <span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>
+                            <span class="badge-confirmados">${textoConfirmadoAndamento}</span>
                         </div>
                         
                         <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
