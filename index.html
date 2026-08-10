@@ -885,6 +885,9 @@
                         </div>
                     `;
                     botoesCardHtml = `<span style="font-size: 11px; color: #888;">Aguardando avaliação da diretoria</span>`;
+                } else if (ativ.statusAdmin === 'justificado') {
+                    statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
+                    botoesCardHtml = `<span style="font-size: 11px; color: #2b8a3e; font-weight: bold;">Sua justificativa foi aceita pela diretoria.</span>`;
                 } else {
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
@@ -941,8 +944,6 @@
                             `;
                         } else if (ativ.statusAdmin === 'negado') {
                             statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta registrada / Justificativa Negada</p>`;
-                        } else if (ativ.statusAdmin === 'justificado') {
-                            statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
                         } else {
                             if (expirado) {
                                 statusOficialHtml = `
