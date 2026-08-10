@@ -522,21 +522,6 @@
             }
         }
 
-        function calcularSigno(dia, mes) {
-            if ((mes == 3 && dia >= 21) || (mes == 4 && dia <= 20)) return "Áries ♈";
-            if ((mes == 4 && dia >= 21) || (mes == 5 && dia <= 20)) return "Touro ♉";
-            if ((mes == 5 && dia >= 21) || (mes == 6 && dia <= 20)) return "Gêmeos ♊";
-            if ((mes == 6 && dia >= 21) || (mes == 7 && dia <= 22)) return "Câncer ♋";
-            if ((mes == 7 && dia >= 23) || (mes == 8 && dia <= 22)) return "Leão ♌";
-            if ((mes == 8 && dia >= 23) || (mes == 9 && dia <= 22)) return "Virgem ♍";
-            if ((mes == 9 && dia >= 23) || (mes == 10 && dia <= 22)) return "Libra ♎";
-            if ((mes == 10 && dia >= 23) || (mes == 11 && dia <= 21)) return "Escorpião ♏";
-            if ((mes == 11 && dia >= 22) || (mes == 12 && dia <= 21)) return "Sagitário ♐";
-            if ((mes == 12 && dia >= 22) || (mes == 1 && dia <= 19)) return "Capricórnio ♑";
-            if ((mes == 1 && dia >= 20) || (mes == 2 && dia <= 18)) return "Aquário ♒";
-            return "Peixes ♓";
-        }
-
         function renderizarAniversariantesWidget() {
             let container = document.getElementById("bloco-aniversariantes");
             if (!container || membrosCache.length === 0) {
@@ -572,7 +557,6 @@
                     dia: diaNasc,
                     mes: mesNasc,
                     idade: idadeCompletando,
-                    signo: calcularSigno(diaNasc, mesNasc),
                     dataFormatada: `${String(diaNasc).padStart(2,'0')}/${String(mesNasc).padStart(2,'0')}`,
                     diffDias: diffDias,
                     ehHoje: (mesNasc === mesHoje && diaNasc === diaHoje),
@@ -611,10 +595,10 @@
                                     <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">${aniv.nome}</p>
                                     <span style="font-size: 11px; background: #ff6b6b; color: white; padding: 1px 6px; border-radius: 4px; font-weight: bold;">Hoje! 🥳</span>
                                 </div>
-                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completando <strong>${aniv.idade} anos</strong> • ${aniv.cargo}</p>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completando <strong>${aniv.idade} anos</strong></p>
                                 <div class="aniv-detalhes-grid">
                                     <span class="aniv-badge-info">📅 ${aniv.dataFormatada}</span>
-                                    <span class="aniv-badge-info">✨ ${aniv.signo}</span>
+                                    <span class="aniv-badge-info">💼 ${aniv.cargo}</span>
                                     <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
                                 </div>
                             </div>
@@ -653,10 +637,10 @@
                                     <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${proximoAniversariante.nome}</p>
                                     <span style="font-size: 10px; background: #e7f5ff; color: #0056b3; padding: 1px 6px; border-radius: 4px; font-weight: bold;">${textoDias}</span>
                                 </div>
-                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completará ${proximoAniversariante.idade} anos • ${proximoAniversariante.cargo}</p>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completará ${proximoAniversariante.idade} anos</p>
                                 <div class="aniv-detalhes-grid">
                                     <span class="aniv-badge-info">📅 ${proximoAniversariante.dataFormatada}</span>
-                                    <span class="aniv-badge-info">✨ ${proximoAniversariante.signo}</span>
+                                    <span class="aniv-badge-info">💼 ${proximoAniversariante.cargo}</span>
                                     <span class="aniv-badge-info">🎓 ${proximoAniversariante.curso}</span>
                                 </div>
                             </div>
@@ -689,7 +673,6 @@
                     dia: diaNasc,
                     mes: mesNasc,
                     idade: idadeCompletando,
-                    signo: calcularSigno(diaNasc, mesNasc),
                     dataFormatada: `${String(diaNasc).padStart(2,'0')}/${String(mesNasc).padStart(2,'0')}`,
                     mesAtual: (mesNasc === mesHoje)
                 };
@@ -714,9 +697,9 @@
                                     <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${aniv.nome}</p>
                                     <span style="font-size: 11px; font-weight: bold; color: #d63384;">${aniv.dataFormatada}</span>
                                 </div>
-                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Vai completar ${aniv.idade} anos • ${aniv.cargo}</p>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Vai completar ${aniv.idade} anos</p>
                                 <div class="aniv-detalhes-grid">
-                                    <span class="aniv-badge-info">✨ ${aniv.signo}</span>
+                                    <span class="aniv-badge-info">💼 ${aniv.cargo}</span>
                                     <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
                                 </div>
                             </div>
