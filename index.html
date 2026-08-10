@@ -42,7 +42,7 @@
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* Estilo do Baralho de Cartas Empilhadas (Sem botões extras, clique direto nas cartas) */
+        /* Estilo do Baralho de Cartas Empilhadas */
         .secao-pilha-concluidas {
             margin-top: 25px;
             margin-bottom: 15px;
@@ -50,12 +50,11 @@
 
         .container-cartas-pilha {
             position: relative;
-            cursor: pointer;
             transition: all 0.4s ease;
-            min-height: 125px;
+            min-height: 120px;
         }
 
-        /* Estado Fechado: Cartas sobrepostas simulando baralho */
+        /* Estado Fechado: Cartas sobrepostas */
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
             position: absolute;
             top: 0;
@@ -71,20 +70,24 @@
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(6px) scale(0.97); z-index: 2; opacity: 0.9; }
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(12px) scale(0.94); z-index: 1; opacity: 0.75; }
 
-        /* Badge indicativa flutuante na pilha fechada */
-        .indicador-pilha {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
+        /* Botão Fixo Acima da Pilha */
+        .btn-abrir-pilha {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             background: #0056b3;
             color: white;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            padding: 5px 12px;
-            border-radius: 14px;
-            z-index: 10;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            pointer-events: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            margin-bottom: 12px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         /* Estado Aberto: Cartas abertas em lista */
@@ -106,27 +109,28 @@
             display: none;
             text-align: center;
             background: #e9ecef;
-            padding: 8px;
+            padding: 10px;
             border-radius: 8px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             color: #0056b3;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .container-cartas-pilha.aberto ~ .indicador-recolher {
             display: block;
         }
 
-        /* Estilo Card de Aniversariantes Clean e Alinhado com Foto */
+        /* Card de Aniversariantes Sofisticado e Bem Alinhado */
         .card-aniversariantes {
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            margin-top: 8px;
             margin-bottom: 20px;
-            border-left: 4px solid #ff6b6b;
+            border-left: 5px solid #ff6b6b;
             box-sizing: border-box;
             width: 100%;
         }
@@ -134,14 +138,14 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 8px 0;
+            padding: 10px 4px;
         }
         .aniversario-item:not(:last-child) {
             border-bottom: 1px solid #f1f3f5;
         }
         .aniversario-avatar {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             overflow: hidden;
             background: #004494;
@@ -150,10 +154,10 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             flex-shrink: 0;
             border: 2px solid #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
         }
     </style>
 
@@ -247,7 +251,7 @@
             </div>
         </section>
 
-        <!-- Seção de Aniversariantes com Fotos e Design Clean -->
+        <!-- Seção de Aniversariantes Perfeita e Bem Alinhada -->
         <section style="margin-top: 20px;">
             <p class="titulo-secao-geral">🎉 Aniversariantes</p>
             <div class="card-aniversariantes" id="bloco-aniversariantes">
@@ -1201,7 +1205,7 @@
                 `;
             });
 
-            // Renderiza Atividades Concluídas em Pilha Estilo Baralho (Sem botões extras: clica direto na pilha)
+            // Renderiza Atividades Concluídas com botão acima da pilha
             if (ativConcluidas.length > 0) {
                 let htmlCartasConcluidas = "";
 
@@ -1258,12 +1262,14 @@
 
                 listaAtividades.innerHTML += `
                     <div class="secao-pilha-concluidas">
-                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas" onclick="togglePilhaConcluidas()">
+                        <div class="btn-abrir-pilha" id="btn-acao-pilha" onclick="togglePilhaConcluidas()">
+                            📂 Ver Atividades Concluídas (${ativConcluidas.length})
+                        </div>
+                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas">
                             ${htmlCartasConcluidas}
-                            <div class="indicador-pilha" id="indicador-contador-pilha">🎴 ${ativConcluidas.length} concluída(s) - Toque para abrir</div>
                         </div>
                         <div class="indicador-recolher" id="btn-recolher-pilha" onclick="togglePilhaConcluidas()">
-                            ▲ Toque aqui para recolher a pilha de cartas
+                            ▲ Recolher pilha de cartas
                         </div>
                     </div>
                 `;
@@ -1274,14 +1280,14 @@
 
         function togglePilhaConcluidas() {
             let container = document.getElementById("pilha-cartas-concluidas");
-            let indicador = document.getElementById("indicador-contador-pilha");
+            let btnAbrir = document.getElementById("btn-acao-pilha");
             
             if (container.classList.contains("aberto")) {
                 container.classList.remove("aberto");
-                indicador.style.display = "block";
+                btnAbrir.style.display = "flex";
             } else {
                 container.classList.add("aberto");
-                indicador.style.display = "none";
+                btnAbrir.style.display = "none";
             }
         }
 
