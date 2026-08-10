@@ -428,8 +428,13 @@
                     let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', texto: '' };
 
                     let totalConfirmados = 0;
+                    let totalJustificativas = 0;
+                    let totalFaltas = 0;
+                    
                     Object.values(frequenciasMap).forEach(reg => {
                         if(reg.confirmadoAluno === true) totalConfirmados++;
+                        if(reg.status === 'justificado') totalJustificativas++;
+                        if(reg.status === 'negado') totalFaltas++;
                     });
 
                     atividades.push({
@@ -448,7 +453,9 @@
                         confirmadoAluno: meuRegistro.confirmadoAluno || false,
                         statusAdmin: meuRegistro.status || 'pendente',
                         textoJustificativa: meuRegistro.texto || '',
-                        totalConfirmados: totalConfirmados
+                        totalConfirmados: totalConfirmados,
+                        totalJustificativas: totalJustificativas,
+                        totalFaltas: totalFaltas
                     });
                 }
 
@@ -842,13 +849,16 @@
                         bordaStatus = "#f59f00";
                     }
 
-                    // Renderização limpa e enxuta para atividades concluídas (sem local e sem expansível)
+                    // Renderização enxuta para atividades concluídas com número de justificativas e faltas adicionados
                     listaAtividades.innerHTML += `
                         <div class="card-atividade" id="card-ativ-${ativ.id}" style="opacity: 0.95;">
                             ${sinalizacaoDiretoriaHtml}
-                            <div class="badges" style="margin-bottom: 6px;">
+                            <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
                                 <span class="badge-dias">${ativ.ch}h de CH</span>
-                                <span class="badge-dias" style="background: #f59f00;">Status Final</span>
+                                <span class="badge-confirmados">${ativ.totalConfirmados} confirmado(s)</span>
+                                <span class="badge-dias" style="background: #2b8a3e;">${ativ.totalJustificativas} justificativa(s)</span>
+                                <span class="badge-dias" style="background: #e03131;">${ativ.totalFaltas} falta(s)</span>
+                                <span class="badge-dias" style="background: #f59f00; margin-left: auto;">Status Final</span>
                             </div>
                             
                             <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
@@ -862,7 +872,7 @@
                             </div>
                         </div>
                     `;
-                    return; // Interrompe o fluxo para não renderizar a parte de atividades normais em andamento abaixo
+                    return; 
                 } else if (ativ.statusAdmin === 'aguardando_analise') {
                     statusOficialHtml = `
                         <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #f59f00; font-weight: bold;">
