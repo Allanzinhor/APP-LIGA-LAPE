@@ -42,7 +42,7 @@
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* Estilo do Baralho de Cartas Empilhadas (Sem botões extras) */
+        /* Estilo do Baralho de Cartas Empilhadas */
         .secao-pilha-concluidas {
             margin-top: 20px;
             margin-bottom: 15px;
@@ -55,7 +55,6 @@
             min-height: 125px;
         }
 
-        /* Estado Fechado: Cartas sobrepostas */
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
             position: absolute;
             top: 0;
@@ -70,7 +69,6 @@
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(8px) scale(0.97); z-index: 2; opacity: 0.9; }
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(16px) scale(0.94); z-index: 1; opacity: 0.75; }
 
-        /* Estado Aberto: Cartas abertas em lista simples */
         .container-cartas-pilha.aberto {
             display: flex;
             flex-direction: column;
@@ -84,29 +82,55 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
 
-        /* Card de Aniversariantes Totalmente Integrado e Alinhado */
-        .card-aniversariantes {
+        /* Aba de Aniversariantes Complexa, Completa e Estilizada */
+        .card-aniversariantes-completo {
             background: #ffffff;
             border-radius: 12px;
-            padding: 14px 16px;
+            padding: 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             border-left: 4px solid #ff6b6b;
             box-sizing: border-box;
             width: 100%;
-            overflow: hidden;
         }
-        .aniversario-item {
+        .aniv-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f3f5;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .aniv-bloco-secao {
+            margin-bottom: 12px;
+        }
+        .aniv-bloco-secao:last-child {
+            margin-bottom: 0;
+        }
+        .aniv-subtitulo {
+            font-size: 11px;
+            font-weight: bold;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .aniversario-item-complexo {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 8px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 6px;
+            transition: background 0.2s;
         }
-        .aniversario-item:not(:last-child) {
-            border-bottom: 1px solid #f1f3f5;
+        .aniversario-item-complexo:hover {
+            background: #f1f3f5;
         }
         .aniversario-avatar {
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             overflow: hidden;
             background: #004494;
@@ -115,10 +139,40 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px;
             flex-shrink: 0;
             border: 2px solid #fff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .aniv-detalhes-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .aniv-badge-info {
+            font-size: 10px;
+            background: #e9ecef;
+            color: #495057;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .btn-ver-todos-aniv {
+            width: 100%;
+            background: #f1f3f5;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #0056b3;
+            cursor: pointer;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .btn-ver-todos-aniv:hover {
+            background: #e9ecef;
         }
     </style>
 
@@ -212,11 +266,11 @@
             </div>
         </section>
 
-        <!-- Seção de Aniversariantes com Alinhamento Padrão de Margens -->
+        <!-- Seção de Aniversariantes Complexa e Completa -->
         <section class="secao-historico-geral">
-            <p class="titulo-secao-geral">🎉 Aniversariantes</p>
-            <div class="card-aniversariantes" id="bloco-aniversariantes">
-                <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando aniversariantes...</p>
+            <p class="titulo-secao-geral">🎉 Aniversariantes & Ciclos</p>
+            <div class="card-aniversariantes-completo" id="bloco-aniversariantes">
+                <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando painel de aniversariantes...</p>
             </div>
         </section>
 
@@ -266,6 +320,20 @@
             <div class="botoes-modal" style="margin-top: 15px; display:flex; gap:8px;">
                 <button class="btn-salvar" onclick="notificarPagamento()">Já realizei o pagamento</button>
                 <button class="btn-cancelar" onclick="fecharModalPix()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE LISTA COMPLETA DE ANIVERSARIANTES DO MÊS -->
+    <div id="modal-todos-aniversariantes" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="text-align: left; max-width: 420px; max-height: 85vh; display: flex; flex-direction: column;">
+            <h3 style="color: #0056b3; margin-top: 0; font-size: 18px;">🎂 Aniversariantes deste Mês</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Todos os membros que completam ano no decorrer deste mês:</p>
+            <div id="lista-modal-aniversariantes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+                <!-- Preenchido via JS -->
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalTodosAniversariantes()">Fechar</button>
             </div>
         </div>
     </div>
@@ -441,6 +509,8 @@
                     if (!d.desligado && d.nascimento) {
                         membrosCache.push({ 
                             nome: d.nome, 
+                            cargo: d.cargo || "Ligante",
+                            curso: d.curso || "Não informado",
                             nascimento: d.nascimento,
                             fotoUrl: (d.fotoStatus === 'aprovada' && d.fotoUrl) ? d.fotoUrl : null 
                         });
@@ -450,6 +520,21 @@
             } catch(e) {
                 console.error("Erro ao carregar aniversariantes:", e);
             }
+        }
+
+        function calcularSigno(dia, mes) {
+            if ((mes == 3 && dia >= 21) || (mes == 4 && dia <= 20)) return "Áries ♈";
+            if ((mes == 4 && dia >= 21) || (mes == 5 && dia <= 20)) return "Touro ♉";
+            if ((mes == 5 && dia >= 21) || (mes == 6 && dia <= 20)) return "Gêmeos ♊";
+            if ((mes == 6 && dia >= 21) || (mes == 7 && dia <= 22)) return "Câncer ♋";
+            if ((mes == 7 && dia >= 23) || (mes == 8 && dia <= 22)) return "Leão ♌";
+            if ((mes == 8 && dia >= 23) || (mes == 9 && dia <= 22)) return "Virgem ♍";
+            if ((mes == 9 && dia >= 23) || (mes == 10 && dia <= 22)) return "Libra ♎";
+            if ((mes == 10 && dia >= 23) || (mes == 11 && dia <= 21)) return "Escorpião ♏";
+            if ((mes == 11 && dia >= 22) || (mes == 12 && dia <= 21)) return "Sagitário ♐";
+            if ((mes == 12 && dia >= 22) || (mes == 1 && dia <= 19)) return "Capricórnio ♑";
+            if ((mes == 1 && dia >= 20) || (mes == 2 && dia <= 18)) return "Aquário ♒";
+            return "Peixes ♓";
         }
 
         function renderizarAniversariantesWidget() {
@@ -465,23 +550,33 @@
 
             let listaProcessada = membrosCache.map(m => {
                 let partes = m.nascimento.split("-"); // yyyy-mm-dd
+                let anoNasc = parseInt(partes[0]);
                 let mesNasc = parseInt(partes[1]);
                 let diaNasc = parseInt(partes[2]);
                 
+                let idadeCompletando = hoje.getFullYear() - anoNasc;
                 let dataNascThisYear = new Date(hoje.getFullYear(), mesNasc - 1, diaNasc);
+                
                 if (dataNascThisYear < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) {
                     dataNascThisYear.setFullYear(hoje.getFullYear() + 1);
+                    idadeCompletando++;
                 }
+                
                 let diffDias = Math.ceil((dataNascThisYear - new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())) / (1000 * 60 * 60 * 24));
 
                 return {
                     nome: m.nome,
+                    cargo: m.cargo,
+                    curso: m.curso,
                     fotoUrl: m.fotoUrl,
                     dia: diaNasc,
                     mes: mesNasc,
+                    idade: idadeCompletando,
+                    signo: calcularSigno(diaNasc, mesNasc),
                     dataFormatada: `${String(diaNasc).padStart(2,'0')}/${String(mesNasc).padStart(2,'0')}`,
                     diffDias: diffDias,
-                    ehHoje: (mesNasc === mesHoje && diaNasc === diaHoje)
+                    ehHoje: (mesNasc === mesHoje && diaNasc === diaHoje),
+                    mesAtual: (mesNasc === mesHoje)
                 };
             });
 
@@ -489,31 +584,54 @@
 
             let aniversariantesHoje = listaProcessada.filter(x => x.ehHoje);
             let proximoAniversariante = listaProcessada.find(x => !x.ehHoje);
+            let totalMesAtual = listaProcessada.filter(x => x.mesAtual).length;
 
-            let html = "";
+            let html = `
+                <div class="aniv-header-info">
+                    <div>
+                        <span style="font-size: 13px; font-weight: bold; color: #0056b3;">🎂 Painel de Aniversariantes</span>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">${totalMesAtual} aniversariante(s) neste mês de ${nomesMeses[mesHoje - 1].toLowerCase()}</p>
+                    </div>
+                    <span style="font-size: 18px;">🎉</span>
+                </div>
+            `;
 
             if (aniversariantesHoje.length > 0) {
+                html += `<div class="aniv-bloco-secao"><div class="aniv-subtitulo">🌟 Aniversariantes de Hoje</div>`;
                 aniversariantesHoje.forEach(aniv => {
                     let avatarHtml = aniv.fotoUrl 
                         ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
                         : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
 
                     html += `
-                        <div class="aniversario-item">
+                        <div class="aniversario-item-complexo" style="border-color: #ff6b6b; background: #fff5f5;">
                             ${avatarHtml}
                             <div style="flex: 1;">
-                                <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">Hoje é aniversário de ${aniv.nome}! 🥳</p>
-                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Data: ${aniv.dataFormatada}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">${aniv.nome}</p>
+                                    <span style="font-size: 11px; background: #ff6b6b; color: white; padding: 1px 6px; border-radius: 4px; font-weight: bold;">Hoje! 🥳</span>
+                                </div>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completando <strong>${aniv.idade} anos</strong> • ${aniv.cargo}</p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">📅 ${aniv.dataFormatada}</span>
+                                    <span class="aniv-badge-info">✨ ${aniv.signo}</span>
+                                    <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
+                                </div>
                             </div>
                         </div>
                     `;
                 });
+                html += `</div>`;
             } else {
                 html += `
-                    <div class="aniversario-item">
-                        <div class="aniversario-avatar" style="background: #e9ecef; color: #6c757d;">📅</div>
-                        <div style="flex: 1;">
-                            <p style="margin: 0; font-size: 12px; font-weight: bold; color: #555;">Nenhum aniversariante hoje</p>
+                    <div class="aniv-bloco-secao">
+                        <div class="aniv-subtitulo">Aniversariante de Hoje</div>
+                        <div class="aniversario-item-complexo">
+                            <div class="aniversario-avatar" style="background: #e9ecef; color: #6c757d;">📅</div>
+                            <div style="flex: 1;">
+                                <p style="margin: 0; font-size: 12px; font-weight: bold; color: #555;">Nenhum aniversariante hoje</p>
+                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #777;">Aproveite para conferir o próximo colega da liga abaixo!</p>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -526,17 +644,93 @@
                     : `<div class="aniversario-avatar">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
 
                 html += `
-                    <div class="aniversario-item" style="margin-top: 4px;">
-                        ${avatarProximoHtml}
-                        <div style="flex: 1;">
-                            <p style="margin: 0; font-size: 12px; font-weight: bold; color: #0056b3;">Próximo: ${proximoAniversariante.nome} (${proximoAniversariante.dataFormatada})</p>
-                            <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">${textoDias}</p>
+                    <div class="aniv-bloco-secao" style="margin-top: 10px;">
+                        <div class="aniv-subtitulo">⏭️ Próximo Aniversariante</div>
+                        <div class="aniversario-item-complexo">
+                            ${avatarProximoHtml}
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${proximoAniversariante.nome}</p>
+                                    <span style="font-size: 10px; background: #e7f5ff; color: #0056b3; padding: 1px 6px; border-radius: 4px; font-weight: bold;">${textoDias}</span>
+                                </div>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completará ${proximoAniversariante.idade} anos • ${proximoAniversariante.cargo}</p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">📅 ${proximoAniversariante.dataFormatada}</span>
+                                    <span class="aniv-badge-info">✨ ${proximoAniversariante.signo}</span>
+                                    <span class="aniv-badge-info">🎓 ${proximoAniversariante.curso}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
             }
 
+            html += `<button class="btn-ver-todos-aniv" onclick="abrirModalTodosAniversariantes()">Ver Lista Completa do Mês (${totalMesAtual})</button>`;
+
             container.innerHTML = html;
+        }
+
+        function abrirModalTodosAniversariantes() {
+            let containerModal = document.getElementById("lista-modal-aniversariantes-conteudo");
+            let hoje = new Date();
+            let mesHoje = hoje.getMonth() + 1;
+
+            let aniversariantesMes = membrosCache.map(m => {
+                let partes = m.nascimento.split("-");
+                let anoNasc = parseInt(partes[0]);
+                let mesNasc = parseInt(partes[1]);
+                let diaNasc = parseInt(partes[2]);
+                let idadeCompletando = hoje.getFullYear() - anoNasc;
+                return {
+                    nome: m.nome,
+                    cargo: m.cargo,
+                    curso: m.curso,
+                    fotoUrl: m.fotoUrl,
+                    dia: diaNasc,
+                    mes: mesNasc,
+                    idade: idadeCompletando,
+                    signo: calcularSigno(diaNasc, mesNasc),
+                    dataFormatada: `${String(diaNasc).padStart(2,'0')}/${String(mesNasc).padStart(2,'0')}`,
+                    mesAtual: (mesNasc === mesHoje)
+                };
+            }).filter(x => x.mesAtual);
+
+            aniversariantesMes.sort((a, b) => a.dia - b.dia);
+
+            let htmlModal = "";
+            if (aniversariantesMes.length === 0) {
+                htmlModal = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Nenhum aniversariante registrado para este mês.</p>`;
+            } else {
+                aniversariantesMes.forEach(aniv => {
+                    let avatarHtml = aniv.fotoUrl 
+                        ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                        : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
+
+                    htmlModal += `
+                        <div class="aniversario-item-complexo">
+                            ${avatarHtml}
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${aniv.nome}</p>
+                                    <span style="font-size: 11px; font-weight: bold; color: #d63384;">${aniv.dataFormatada}</span>
+                                </div>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Vai completar ${aniv.idade} anos • ${aniv.cargo}</p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">✨ ${aniv.signo}</span>
+                                    <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            containerModal.innerHTML = htmlModal;
+            document.getElementById("modal-todos-aniversariantes").style.display = "flex";
+        }
+
+        function fecharModalTodosAniversariantes() {
+            document.getElementById("modal-todos-aniversariantes").style.display = "none";
         }
 
         function iniciarOuvintesTempoReal() {
@@ -1009,11 +1203,9 @@
                 return;
             }
 
-            // Separação entre concluídas e pendentes
             let ativConcluidas = atividadesDesteMes.filter(a => a.concluida && !a.cancelada);
             let ativPendentes = atividadesDesteMes.filter(a => !a.concluida || a.cancelada);
 
-            // Renderiza Atividades em Andamento / Pendentes
             ativPendentes.forEach(ativ => {
                 const dataObj = new Date(ativ.data + "T00:00:00");
                 let botoesCardHtml = "";
@@ -1166,7 +1358,6 @@
                 `;
             });
 
-            // Renderiza Atividades Concluídas Sem Nenhum Botão Extra (Apenas a Pilha de Cartas)
             if (ativConcluidas.length > 0) {
                 let htmlCartasConcluidas = "";
 
