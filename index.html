@@ -68,7 +68,7 @@
             position: relative;
             cursor: pointer;
             transition: all 0.4s ease;
-            min-height: 145px; /* Altura de segurança para a pilha fechada */
+            min-height: 45px;
         }
 
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
@@ -198,6 +198,28 @@
         }
         .btn-ver-todos-aniv:hover {
             background: #e9ecef;
+        }
+
+        /* CARD DE OUVIDORIA / SUGESTÕES COMPLEXO E ANÔNIMO */
+        .card-ouvidoria-completo {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #7950f2;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .ouvidoria-item-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+        .ouvidoria-item-card:hover {
+            background: #f1f3f5;
         }
     </style>
 
@@ -329,6 +351,78 @@
             <h2>Atividades do Mês</h2>
             <div id="lista-atividades"></div>
         </section>
+
+        <!-- NOVA ABA: OUVIDORIA & SUGESTÕES ANÔNIMAS -->
+        <section class="secao-historico-geral">
+            <p class="titulo-secao-geral">💡 Ouvidoria & Sugestões Anônimas</p>
+            <div class="card-ouvidoria-completo" id="bloco-ouvidoria">
+                <div class="aniv-header-info">
+                    <div>
+                        <span style="font-size: 13px; font-weight: bold; color: #7950f2;">🔒 Espaço 100% Confidencial</span>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Envie sugestões, reclamações ou feedbacks gerais sem se identificar</p>
+                    </div>
+                    <span style="font-size: 18px;">🛡️</span>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <button class="btn-salvar" style="flex: 1; padding: 10px; background-color: #7950f2;" onclick="abrirModalNovaSugestao()">✏️ Nova Solicitação</button>
+                    <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="abrirModalHistoricoSugestoes()">📋 Minhas Solicitações</button>
+                </div>
+
+                <div id="resumo-ultimas-sugestoes">
+                    <!-- Preenchido dinamicamente via JS -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL DE NOVA SUGESTÃO / OUVIDORIA -->
+    <div id="modal-nova-sugestao" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="text-align: left; max-width: 390px;">
+            <h3 style="color: #7950f2; margin-top: 0; font-size: 18px;">💡 Nova Solicitação Anônima</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Sua identidade é criptografada e protegida. Nem a diretoria consegue saber quem enviou.</p>
+            
+            <div class="grupo-input" style="margin-bottom: 10px;">
+                <label>Tipo de Manifestação</label>
+                <select id="sugestao-tipo" style="width: 100%; padding: 10px; border-radius: 8px; font-size: 13px;">
+                    <option value="Sugestão">💡 Sugestão de Melhoria</option>
+                    <option value="Reclamação">⚠️ Reclamação / Crítica</option>
+                    <option value="Feedback Geral">💬 Feedback Geral</option>
+                    <option value="Denúncia / Sigiloso">🔒 Relato Sigiloso</option>
+                </select>
+            </div>
+
+            <div class="grupo-input" style="margin-bottom: 10px;">
+                <label>Título ou Assunto Resumido</label>
+                <input type="text" id="sugestao-titulo" placeholder="Ex: Ajustar horário dos plantões" style="width: 100%; padding: 10px; box-sizing: border-box; border-radius: 8px;">
+            </div>
+
+            <div class="grupo-input" style="margin-bottom: 15px;">
+                <label>Descrição Detalhada</label>
+                <textarea id="sugestao-texto" rows="4" placeholder="Descreva detalhadamente sua sugestão, problema ou feedback..." style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-salvar" style="flex: 1; padding: 10px; background-color: #7950f2;" onclick="enviarSugestaoAnonima()">Enviar Anonimamente</button>
+                <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalNovaSugestao()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE MINHAS SOLICITAÇÕES / ACOMPANHAMENTO -->
+    <div id="modal-historico-sugestoes" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="text-align: left; max-width: 420px; max-height: 85vh; display: flex; flex-direction: column;">
+            <h3 style="color: #7950f2; margin-top: 0; font-size: 18px;">📋 Minhas Solicitações Anônimas</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Acompanhe o andamento e a resposta da diretoria em tempo real:</p>
+            
+            <div id="lista-historico-sugestoes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+                <!-- Preenchido via JS -->
+            </div>
+
+            <div style="margin-top: 15px;">
+                <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalHistoricoSugestoes()">Fechar</button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL PIX -->
@@ -422,6 +516,7 @@
         let atividades = [];
         let avisos = [];
         let membrosCache = [];
+        let minhasSugestoesCache = [];
         let indiceSlideAtual = 0;
         let eventoInstalacaoPWA = null;
         let motorCronometroGlobal = null;
@@ -765,6 +860,21 @@
                 }
             });
 
+            // OUVINTE DE SUGESTÕES ANÔNIMAS DO USUÁRIO LOGADO
+            db.collection("sugestoes_ouvidoria").where("autorId", "==", usuarioLogado.id).onSnapshot((snapshot) => {
+                minhasSugestoesCache = [];
+                snapshot.forEach(doc => {
+                    minhasSugestoesCache.push({ id: doc.id, ...doc.data() });
+                });
+                // Ordenar por data mais recente
+                minhasSugestoesCache.sort((a, b) => {
+                    let tA = a.timestamp ? a.timestamp.toMillis() : 0;
+                    let tB = b.timestamp ? b.timestamp.toMillis() : 0;
+                    return tB - tA;
+                });
+                renderizarOuvidoriaWidget();
+            });
+
             db.collection("avisos").onSnapshot((snapshot) => {
                 let novosAvisos = [];
                 snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
@@ -869,6 +979,127 @@
                 atividades.sort((a, b) => new Date(a.data + "T" + a.hora) - new Date(b.data + "T" + b.hora));
                 renderizarApp();
             });
+        }
+
+        // FUNÇÕES DA OUVIDORIA E SUGESTÕES
+        function abrirModalNovaSugestao() {
+            document.getElementById("sugestao-titulo").value = "";
+            document.getElementById("sugestao-texto").value = "";
+            document.getElementById("sugestao-tipo").value = "Sugestão";
+            document.getElementById("modal-nova-sugestao").style.display = "flex";
+        }
+
+        function fecharModalNovaSugestao() {
+            document.getElementById("modal-nova-sugestao").style.display = "none";
+        }
+
+        async function enviarSugestaoAnonima() {
+            let tipo = document.getElementById("sugestao-tipo").value;
+            let titulo = document.getElementById("sugestao-titulo").value.trim();
+            let texto = document.getElementById("sugestao-texto").value.trim();
+
+            if (!titulo || !texto) {
+                alert("Por favor, preencha o título e a descrição da sua solicitação.");
+                return;
+            }
+
+            try {
+                await db.collection("sugestoes_ouvidoria").add({
+                    autorId: usuarioLogado.id, // Armazenado no backend para o aluno acompanhar, mas oculto da diretoria como anônimo
+                    tipo: tipo,
+                    titulo: titulo,
+                    texto: texto,
+                    status: "Em análise pela diretoria", // Status iniciais possíveis: Em análise pela diretoria, Implementado, Concluído, Negado, Precisa de mais detalhes
+                    respostaDiretoria: "",
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("Solicitação enviada com sucesso! Sua identidade foi mantida 100% anônima.");
+                fecharModalNovaSugestao();
+            } catch(e) {
+                console.error(e);
+                alert("Erro ao enviar solicitação.");
+            }
+        }
+
+        function abrirModalHistoricoSugestoes() {
+            renderizarListaHistoricoSugestoesModal();
+            document.getElementById("modal-historico-sugestoes").style.display = "flex";
+        }
+
+        function fecharModalHistoricoSugestoes() {
+            document.getElementById("modal-historico-sugestoes").style.display = "none";
+        }
+
+        function renderizarOuvidoriaWidget() {
+            let container = document.getElementById("resumo-ultimas-sugestoes");
+            if (!container) return;
+
+            if (minhasSugestoesCache.length === 0) {
+                container.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; margin: 4px 0 0 0;">Nenhuma solicitação enviada ainda.</p>`;
+                return;
+            }
+
+            let ultima = minhasSugestoesCache[0];
+            let badgeStyle = getBadgeStatusStyle(ultima.status);
+
+            container.innerHTML = `
+                <div class="ouvidoria-item-card" style="margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${ultima.tipo}]</span>
+                        <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${ultima.status}</span>
+                    </div>
+                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${ultima.titulo}</p>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ultima.texto}</p>
+                </div>
+            `;
+        }
+
+        function renderizarListaHistoricoSugestoesModal() {
+            let container = document.getElementById("lista-historico-sugestoes-conteudo");
+            if (!container) return;
+
+            if (minhasSugestoesCache.length === 0) {
+                container.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Você ainda não enviou nenhuma sugestão ou reclamação.</p>`;
+                return;
+            }
+
+            let html = "";
+            minhasSugestoesCache.forEach(item => {
+                let badgeStyle = getBadgeStatusStyle(item.status);
+                let respostaHtml = item.respostaDiretoria ? `
+                    <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
+                        <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta da Diretoria:</p>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #333;">${item.respostaDiretoria}</p>
+                    </div>
+                ` : "";
+
+                html += `
+                    <div class="ouvidoria-item-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${item.tipo}]</span>
+                            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
+                        </div>
+                        <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${item.titulo}</p>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #555; line-height: 1.3;">${item.texto}</p>
+                        ${respostaHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getBadgeStatusStyle(status) {
+            if (status === 'Implementado' || status === 'Concluído') {
+                return 'background: #ebfbee; color: #2b8a3e;';
+            } else if (status === 'Negado') {
+                return 'background: #ffe3e3; color: #c92a2a;';
+            } else if (status === 'Precisa de mais detalhes') {
+                return 'background: #fff3bf; color: #f59f00;';
+            } else {
+                return 'background: #e7f5ff; color: #1c7ed6;'; // Em análise pela diretoria
+            }
         }
 
         async function alterarRegistroFirebase(ativId, dadosAtualizados) {
