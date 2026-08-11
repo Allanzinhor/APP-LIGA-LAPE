@@ -42,10 +42,26 @@
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* Estilo do Baralho de Cartas Empilhadas */
+        /* Estilo do Baralho de Cartas Empilhadas com Moldura Integrada */
         .secao-pilha-concluidas {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
             margin-top: 20px;
             margin-bottom: 15px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .pilha-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f3f5;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
         }
 
         .container-cartas-pilha {
@@ -80,6 +96,14 @@
             transform: none !important;
             opacity: 1 !important;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .hint-toque-pilha {
+            text-align: center;
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 12px;
+            font-weight: 600;
         }
 
         /* Aba de Aniversariantes Complexa, Completa e Estilizada */
@@ -306,7 +330,7 @@
         </section>
     </div>
 
-<!-- MODAL PIX -->
+    <!-- MODAL PIX -->
     <div id="modal-pix" class="modal" style="display:none;">
         <div class="modal-conteudo text-center" style="text-align:center;">
             <h3>Pagamento via Pix</h3>
@@ -1345,6 +1369,7 @@
 
             if (ativConcluidas.length > 0) {
                 let htmlCartasConcluidas = "";
+                let nomeMesAtual = nomesMeses[mesAtual].toUpperCase();
 
                 ativConcluidas.forEach(ativ => {
                     const dataObj = new Date(ativ.data + "T00:00:00");
@@ -1399,9 +1424,17 @@
 
                 listaAtividades.innerHTML += `
                     <div class="secao-pilha-concluidas">
+                        <div class="pilha-header-info">
+                            <div>
+                                <span style="font-size: 13px; font-weight: bold; color: #0056b3;">✔️ Atividades Concluídas</span>
+                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Histórico do mês de ${nomeMesAtual.toLowerCase()}</p>
+                            </div>
+                            <span style="font-size: 16px;">📚</span>
+                        </div>
                         <div class="container-cartas-pilha" id="pilha-cartas-concluidas" onclick="togglePilhaConcluidas()">
                             ${htmlCartasConcluidas}
                         </div>
+                        <div class="hint-toque-pilha">👆 Toque na pilha para expandir / recolher</div>
                     </div>
                 `;
             }
