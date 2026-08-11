@@ -68,7 +68,7 @@
             position: relative;
             cursor: pointer;
             transition: all 0.4s ease;
-            min-height: 45px;
+            min-height: 165px; /* Altura fixa garantida para acomodar a pilha fechada sem sobrepor */
         }
 
         .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
@@ -866,7 +866,6 @@
                 snapshot.forEach(doc => {
                     minhasSugestoesCache.push({ id: doc.id, ...doc.data() });
                 });
-                // Ordenar por data mais recente
                 minhasSugestoesCache.sort((a, b) => {
                     let tA = a.timestamp ? a.timestamp.toMillis() : 0;
                     let tB = b.timestamp ? b.timestamp.toMillis() : 0;
@@ -1005,11 +1004,11 @@
 
             try {
                 await db.collection("sugestoes_ouvidoria").add({
-                    autorId: usuarioLogado.id, // Armazenado no backend para o aluno acompanhar, mas oculto da diretoria como anônimo
+                    autorId: usuarioLogado.id,
                     tipo: tipo,
                     titulo: titulo,
                     texto: texto,
-                    status: "Em análise pela diretoria", // Status iniciais possíveis: Em análise pela diretoria, Implementado, Concluído, Negado, Precisa de mais detalhes
+                    status: "Em análise pela diretoria",
                     respostaDiretoria: "",
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -1098,7 +1097,7 @@
             } else if (status === 'Precisa de mais detalhes') {
                 return 'background: #fff3bf; color: #f59f00;';
             } else {
-                return 'background: #e7f5ff; color: #1c7ed6;'; // Em análise pela diretoria
+                return 'background: #e7f5ff; color: #1c7ed6;';
             }
         }
 
