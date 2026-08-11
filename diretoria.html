@@ -316,7 +316,7 @@
             <div id="lista-admin-avisos"></div>
         </div>
 
-        <!-- ABA MELHORADA: MIGRAR PAPEL EM LOTE (MULTIPLAS ATIVIDADES) -->
+        <!-- ABA: MIGRAR PAPEL EM LOTE -->
         <div id="secao-migracao-papel" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao" style="background: #fff8e1; border: 2px dashed #f59f00;">
                 <h3 style="color: #e67700; margin-top: 0;">📥 Migração de Atividades em Lote (Papel)</h3>
@@ -330,6 +330,59 @@
             </div>
         </div>
 
+        <!-- NOVA ABA: GESTÃO DE OUVIDORIA & SUGESTÕES -->
+        <div id="secao-ouvidoria-admin" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
+            <div class="admin-card-acao" style="background: #f8f0fc; border: 1px solid #d0bfff;">
+                <h3 style="color: #7950f2; margin-top: 0;">💡 Ouvidoria & Sugestões Anônimas</h3>
+                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Gerencie as manifestações enviadas pelos ligantes. A identidade deles é oculta para preservar o sigilo e a confiabilidade.</p>
+                
+                <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 140px;">
+                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Filtrar por Status:</label>
+                        <select id="filtro-ouvidoria-status" onchange="renderizarOuvidoriaAdmin()" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                            <option value="todos">Todos os Status</option>
+                            <option value="Em análise pela diretoria" selected>Em análise</option>
+                            <option value="Implementado">Implementado</option>
+                            <option value="Concluído">Concluído</option>
+                            <option value="Precisa de mais detalhes">Precisa de mais detalhes</option>
+                            <option value="Negado">Negado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lista-admin-ouvidoria"></div>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE RESPONDER OUVIDORIA -->
+    <div id="modal-responder-ouvidoria" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="text-align: left; max-width: 400px;">
+            <h3 style="color: #7950f2; margin-top: 0; font-size: 18px;">💬 Responder / Atualizar Solicitação</h3>
+            <input type="hidden" id="ouvidoria-id-respondendo">
+            
+            <div class="grupo-input" style="margin-bottom: 10px;">
+                <label style="font-size: 12px; font-weight: bold; display: block; margin-bottom: 4px;">Alterar Status:</label>
+                <select id="ouvidoria-novo-status" style="width: 100%; padding: 10px; border-radius: 8px; font-size: 13px;">
+                    <option value="Em análise pela diretoria">⏳ Em análise pela diretoria</option>
+                    <option value="Implementado">🚀 Implementado na Liga</option>
+                    <option value="Concluído">✅ Concluído</option>
+                    <option value="Precisa de mais detalhes">⚠️ Precisa de mais detalhes</option>
+                    <option value="Negado">❌ Negado</option>
+                </select>
+            </div>
+
+            <div class="grupo-input" style="margin-bottom: 15px;">
+                <label style="font-size: 12px; font-weight: bold; display: block; margin-bottom: 4px;">Resposta Oficial da Diretoria:</label>
+                <textarea id="ouvidoria-resposta-texto" rows="4" placeholder="Escreva uma resposta para o ligante acompanhar..." style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-salvar" style="flex: 1; padding: 10px; background-color: #7950f2;" onclick="salvarRespostaOuvidoriaAdmin()">Salvar Resposta</button>
+                <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalResponderOuvidoria()">Cancelar</button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL DESLIGAMENTO -->
@@ -362,14 +415,15 @@
         let atividadesCache = [];
         let avisosCache = [];
         let avisosDiretoriaCache = [];
+        let ouvidoriaCache = [];
         let indiceSlideDirAtual = 0;
         let usuarioSessao = null;
         let contadorBlocosLote = 0;
 
         const permissoesCargos = {
-            "presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "vice-presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel"],
-            "secretaria": ["recados-internos", "lista-membros", "frequencia", "avisos", "migracao-papel"],
+            "presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "vice-presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "secretaria": ["recados-internos", "lista-membros", "frequencia", "avisos", "migracao-papel", "ouvidoria-admin"],
             "tesoureira": ["recados-internos", "financeiro", "avisos"],
             "diretora de extensão": ["recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
             "diretora de pesquisa": ["recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
@@ -460,7 +514,8 @@
                 "frequencia": "📋 Frequência",
                 "financeiro": "💰 Financeiro",
                 "avisos": "⚠️ Avisos",
-                "migracao-papel": "📥 Migrar Lote"
+                "migracao-papel": "📥 Migrar Lote",
+                "ouvidoria-admin": "💡 Ouvidoria"
             };
 
             abasPermitidas.forEach((aba) => {
@@ -493,6 +548,121 @@
             db.collection("avisos").onSnapshot(() => {
                 carregarAvisosAdmin();
             });
+
+            // OUVINTE EM TEMPO REAL DE OUVIDORIA / SUGESTÕES
+            db.collection("sugestoes_ouvidoria").onSnapshot((snapshot) => {
+                ouvidoriaCache = [];
+                snapshot.forEach(doc => {
+                    ouvidoriaCache.push({ id: doc.id, ...doc.data() });
+                });
+                ouvidoriaCache.sort((a, b) => {
+                    let tA = a.timestamp ? a.timestamp.toMillis() : 0;
+                    let tB = b.timestamp ? b.timestamp.toMillis() : 0;
+                    return tB - tA;
+                });
+                renderizarOuvidoriaAdmin();
+            });
+        }
+
+        // FUNÇÕES DA ABA OUVIDORIA ADMIN
+        function renderizarOuvidoriaAdmin() {
+            let container = document.getElementById("lista-admin-ouvidoria");
+            let filtroStatus = document.getElementById("filtro-ouvidoria-status").value;
+            if (!container) return;
+
+            let listaFiltrada = ouvidoriaCache.filter(item => {
+                if (filtroStatus !== 'todos' && item.status !== filtroStatus) return false;
+                return true;
+            });
+
+            if (listaFiltrada.length === 0) {
+                container.innerHTML = `<div class="card-admin-item"><p class="cinza" style="text-align:center;">Nenhuma solicitação encontrada com este filtro.</p></div>`;
+                return;
+            }
+
+            let html = "";
+            listaFiltrada.forEach(item => {
+                let badgeStyle = getBadgeStatusStyleAdmin(item.status);
+                let respostaHtml = item.respostaDiretoria ? `
+                    <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 8px; border-radius: 4px; margin-top: 8px;">
+                        <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta Enviada pela Diretoria:</p>
+                        <p style="margin: 2px 0 0 0; font-size: 12px; color: #333;">${item.respostaDiretoria}</p>
+                    </div>
+                ` : `<p style="margin: 8px 0 0 0; font-size: 11px; color: #e03131; font-style: italic;">⚠️ Nenhuma resposta enviada ainda.</p>`;
+
+                html += `
+                    <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 14px; border-radius: 8px; border: 1px solid #dee2e6; border-left: 4px solid #7950f2;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-size: 11px; font-weight: bold; color: #7950f2; background: #f3f0ff; padding: 2px 6px; border-radius: 4px;">[${item.tipo}]</span>
+                            <span style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
+                        </div>
+                        <h4 style="margin: 0 0 4px 0; color: #333; font-size: 15px;">${item.titulo}</h4>
+                        <p style="font-size: 12px; color: #555; line-height: 1.4; margin: 0; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #f1f3f5;">${item.texto}</p>
+                        ${respostaHtml}
+                        <div style="margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="btn-mini" style="background: #7950f2; color: white;" onclick="abrirModalResponderOuvidoria('${item.id}')">💬 Responder / Alterar Status</button>
+                            <button class="btn-mini vermelho" onclick="excluirSolicitacaoOuvidoria('${item.id}')">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getBadgeStatusStyleAdmin(status) {
+            if (status === 'Implementado' || status === 'Concluído') {
+                return 'background: #ebfbee; color: #2b8a3e;';
+            } else if (status === 'Negado') {
+                return 'background: #ffe3e3; color: #c92a2a;';
+            } else if (status === 'Precisa de mais detalhes') {
+                return 'background: #fff3bf; color: #f59f00;';
+            } else {
+                return 'background: #e7f5ff; color: #1c7ed6;';
+            }
+        }
+
+        function abrirModalResponderOuvidoria(id) {
+            let item = ouvidoriaCache.find(x => x.id === id);
+            if (!item) return;
+
+            document.getElementById('ouvidoria-id-respondendo').value = item.id;
+            document.getElementById('ouvidoria-novo-status').value = item.status || 'Em análise pela diretoria';
+            document.getElementById('ouvidoria-resposta-texto').value = item.respostaDiretoria || '';
+            document.getElementById('modal-responder-ouvidoria').style.display = 'flex';
+        }
+
+        function fecharModalResponderOuvidoria() {
+            document.getElementById('modal-responder-ouvidoria').style.display = 'none';
+        }
+
+        async function salvarRespostaOuvidoriaAdmin() {
+            let id = document.getElementById('ouvidoria-id-respondendo').value;
+            let novoStatus = document.getElementById('ouvidoria-novo-status').value;
+            let resposta = document.getElementById('ouvidoria-resposta-texto').value.trim();
+
+            try {
+                await db.collection("sugestoes_ouvidoria").doc(id).update({
+                    status: novoStatus,
+                    respostaDiretoria: resposta
+                });
+                alert("Solicitação atualizada e respondida com sucesso!");
+                fecharModalResponderOuvidoria();
+            } catch(e) {
+                console.error(e);
+                alert("Erro ao salvar resposta.");
+            }
+        }
+
+        async function excluirSolicitacaoOuvidoria(id) {
+            if (confirm("Deseja apagar esta solicitação definitivamente?")) {
+                try {
+                    await db.collection("sugestoes_ouvidoria").doc(id).delete();
+                } catch(e) {
+                    console.error(e);
+                    alert("Erro ao excluir.");
+                }
+            }
         }
 
         function renderizarPerfilTopoAdmin() {
