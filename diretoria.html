@@ -320,7 +320,7 @@
         <div id="secao-migracao-papel" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao" style="background: #fff8e1; border: 2px dashed #f59f00;">
                 <h3 style="color: #e67700; margin-top: 0;">📥 Migração de Atividades em Lote (Papel)</h3>
-                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Adicione quantas atividades precisar clicando em <strong>"+ Adicionar Outra Atividade"</strong>. Preencha as datas e marque rapidamente a presença padrão em lote. Quando terminar, clique em <strong>Salvar Tudo</strong>.</p>
+                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Adicione quantas atividades precisar clicando em <strong>"+ Adicionar Outra Atividade"</strong>. Preencha a data para filtrar os ligantes ativos na época e marque rapidamente em ordem alfabética. Quando terminar, clique em <strong>Salvar Tudo</strong>.</p>
                 
                 <div id="container-lote-atividades"></div>
 
@@ -549,7 +549,6 @@
                 carregarAvisosAdmin();
             });
 
-            // OUVINTE EM TEMPO REAL DE OUVIDORIA / SUGESTÕES
             db.collection("sugestoes_ouvidoria").onSnapshot((snapshot) => {
                 ouvidoriaCache = [];
                 snapshot.forEach(doc => {
@@ -564,7 +563,6 @@
             });
         }
 
-        // FUNÇÕES DA ABA OUVIDORIA ADMIN
         function renderizarOuvidoriaAdmin() {
             let container = document.getElementById("lista-admin-ouvidoria");
             let filtroStatus = document.getElementById("filtro-ouvidoria-status").value;
@@ -719,23 +717,6 @@
             let idBloco = contadorBlocosLote;
             let container = document.getElementById('container-lote-atividades');
 
-            let membrosAtivos = membrosCache.filter(m => !m.desligado);
-            let opcoesMembrosHtml = "";
-            membrosAtivos.forEach(m => {
-                opcoesMembrosHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f3f5;">
-                        <span style="font-size: 11px;"><strong>${m.nome}</strong> (${m.cargo || 'Ligante'})</span>
-                        <select id="bloco-${idBloco}-status-${m.id}" style="padding: 3px 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px;">
-                            <option value="presente" selected>Presente (+CH)</option>
-                            <option value="negado">Falta</option>
-                            <option value="justificativa_negada">Justificativa Negada</option>
-                            <option value="justificado">Justificado (Abonado)</option>
-                            <option value="pendente">Não participava / Ausente</option>
-                        </select>
-                    </div>
-                `;
-            });
-
             let htmlBloco = `
                 <div class="bloco-ativ-lote" id="bloco-ativ-${idBloco}" style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px; margin-bottom: 15px; position: relative;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
@@ -745,20 +726,74 @@
 
                     <div class="grid-form" style="margin-bottom: 8px;">
                         <input type="text" id="bloco-${idBloco}-titulo" placeholder="Título da Atividade *" class="col-full" style="padding: 8px; font-size: 12px;">
-                        <input type="date" id="bloco-${idBloco}-data" style="padding: 6px; font-size: 11px;">
+                        <input type="date" id="bloco-${idBloco}-data" onchange="atualizarMembrosBlocoLote(${idBloco})" style="padding: 6px; font-size: 11px;">
                         <input type="number" id="bloco-${idBloco}-ch" placeholder="CH (h)" style="padding: 6px; font-size: 11px;">
                     </div>
 
-                    <details style="margin-top: 8px; background: #f8f9fa; padding: 8px; border-radius: 6px;">
-                        <summary style="font-size: 11px; font-weight: bold; color: #495057; cursor: pointer;">👥 Ajustar Chamada Individual (Opcional - Padrão é Presente)</summary>
-                        <div style="margin-top: 6px; max-height: 180px; overflow-y: auto;">
-                            ${opcoesMembrosHtml}
+                    <details open style="margin-top: 8px; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef;">
+                        <summary style="font-size: 12px; font-weight: bold; color: #0056b3; cursor: pointer; margin-bottom: 8px;">👥 Chamada de Ligantes Ativos na Época</summary>
+                        <div style="margin-bottom: 8px; display: flex; gap: 6px;">
+                            <button type="button" class="btn-mini verde" style="font-size: 10px; padding: 4px 8px;" onclick="marcarTodosBlocoLote(${idBloco}, 'presente')">✓ Marcar Todos como Presente</button>
+                        </div>
+                        <div id="container-membros-bloco-${idBloco}" style="display: flex; flex-direction: column; gap: 6px;">
+                            <p style="font-size: 11px; color: #666; font-style: italic;">Selecione uma data acima para carregar os ligantes da época.</p>
                         </div>
                     </details>
                 </div>
             `;
 
             container.insertAdjacentHTML('beforeend', htmlBloco);
+        }
+
+        function atualizarMembrosBlocoLote(idBloco) {
+            let dataAtividade = document.getElementById(`bloco-${idBloco}-data`).value;
+            let containerMembros = document.getElementById(`container-membros-bloco-${idBloco}`);
+            if (!containerMembros) return;
+
+            if (!dataAtividade) {
+                containerMembros.innerHTML = `<p style="font-size: 11px; color: #666; font-style: italic;">Selecione uma data acima para carregar os ligantes da época.</p>`;
+                return;
+            }
+
+            // Filtra ligantes ativos que já estavam na liga na data da atividade e ordena por ordem alfabética (A-Z)
+            let membrosFiltrados = membrosCache.filter(m => {
+                if (m.desligado) return false;
+                if (m.ingressoLiga && m.ingressoLiga > dataAtividade) return false;
+                return true;
+            });
+
+            membrosFiltrados.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+
+            if (membrosFiltrados.length === 0) {
+                containerMembros.innerHTML = `<p style="font-size: 11px; color: #e03131; font-weight: bold;">Nenhum ligante cadastrado com data de ingresso anterior ou igual a ${dataAtividade}.</p>`;
+                return;
+            }
+
+            let opcoesMembrosHtml = "";
+            membrosFiltrados.forEach(m => {
+                opcoesMembrosHtml += `
+                    <div class="item-membro-lote" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
+                        <span style="font-size: 11px;"><strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span></span>
+                        <select id="bloco-${idBloco}-status-${m.id}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px;">
+                            <option value="presente" selected>Presente (+CH)</option>
+                            <option value="negado">Falta</option>
+                            <option value="justificativa_negada">Justificativa Negada</option>
+                            <option value="justificado">Justificado (Abonado)</option>
+                            <option value="pendente">Ausente / Não participava</option>
+                        </select>
+                    </div>
+                `;
+            });
+
+            containerMembros.innerHTML = opcoesMembrosHtml;
+        }
+
+        function marcarTodosBlocoLote(idBloco, status) {
+            let container = document.getElementById(`container-membros-bloco-${idBloco}`);
+            if (!container) return;
+            container.querySelectorAll('select').forEach(select => {
+                select.value = status;
+            });
         }
 
         function removerBlocoAtividadeLote(idBloco) {
@@ -783,15 +818,17 @@
                 if (!titulo || !data) continue;
 
                 let frequenciasMap = {};
-                let membrosAtivos = membrosCache.filter(m => !m.desligado);
+                let membrosAtivos = membrosCache.filter(m => {
+                    if (m.desligado) return false;
+                    if (m.ingressoLiga && m.ingressoLiga > data) return false;
+                    return true;
+                });
 
                 membrosAtivos.forEach(m => {
                     let selectStatus = document.getElementById(`bloco-${idMatch}-status-${m.id}`);
                     if (selectStatus) {
                         let statusEscolhido = selectStatus.value;
                         if (statusEscolhido !== 'pendente') {
-                            if (m.ingressoLiga && data < m.ingressoLiga) return;
-
                             frequenciasMap[m.id] = {
                                 status: statusEscolhido,
                                 texto: statusEscolhido === 'justificado' || statusEscolhido === 'justificativa_negada' ? 'Migrado de registro em papel' : '',
@@ -822,7 +859,7 @@
                 alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos os ligantes instantaneamente.`);
                 mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
             } else {
-                alert("Nenhuma atividade válida foi preenchida. Verifique os títulos e datas.");
+                alert("Nenhuma atividade válida foi preenchida. Verifique os títulos, datas e chamadas.");
             }
         }
 
