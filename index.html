@@ -306,14 +306,16 @@
         </section>
     </div>
 
-    <!-- MODAL PIX -->
+<!-- MODAL PIX -->
     <div id="modal-pix" class="modal" style="display:none;">
         <div class="modal-conteudo text-center" style="text-align:center;">
             <h3>Pagamento via Pix</h3>
             <p>Escaneie o QR Code ou copie a chave abaixo:</p>
-            <div class="qrcode-box">📱 QR CODE PIX</div>
-            <div class="copia-cola">
-                <input type="text" id="chave-pix-input" value="00020126580014br.gov.pix...lape_oficial" readonly>
+            <div class="qrcode-box" style="padding: 5px; background: #fff;">
+                <img src="qrcode.png" alt="QR Code Pix" style="width: 150px; height: 150px; object-fit: contain; display: block; margin: 0 auto;">
+            </div>
+            <div class="copia-cola" style="margin-top: 10px;">
+                <input type="text" id="chave-pix-input" value="lapewyden@gmail.com" readonly>
                 <button class="btn-copiar" onclick="copiarPix()">Copiar</button>
             </div>
             <p id="aviso-copiado" class="texto-sucesso" style="display:none;">Chave copiada!</p>
