@@ -161,7 +161,7 @@
                 </div>
 
                 <!-- 5. MAPA DE ENGAJAMENTO DA LIGA (Tabela Inteligente & Filtros) -->
-                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px;">
                     <strong style="font-size: 13px; color: #0056b3; display: block; margin-bottom: 8px;">🗺️ Mapa de Engajamento da Liga</strong>
                     
                     <!-- Filtros do Mapa -->
@@ -184,21 +184,6 @@
                     </div>
                 </div>
 
-                <!-- 6. GRÁFICOS DE EVOLUÇÃO (Simulação Visual Analítica em Barras CSS) -->
-                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px;">
-                    <strong style="font-size: 13px; color: #2b8a3e; display: block; margin-bottom: 8px;">📈 Gráficos de Evolução & Adesão</strong>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div>
-                            <span style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 4px;">📅 Presença Mês a Mês</span>
-                            <div id="grafico-presenca-mes" style="display: flex; gap: 4px; align-items: flex-end; height: 60px; background: #f8f9fa; padding: 6px; border-radius: 6px; border: 1px solid #e9ecef;"></div>
-                        </div>
-                        <div>
-                            <span style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 4px;">🔥 Atividades com Maior Adesão</span>
-                            <div id="grafico-atividades-adesao" style="display: flex; flex-direction: column; gap: 4px;"></div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <!-- MURAL DE AVISOS DA DIRETORIA -->
@@ -208,7 +193,7 @@
                     <span id="contador-slide-dir">1/1</span>
                 </div>
                 <div id="container-avisos-fixos"></div>
-                <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justify-content: center;"></div>
+                <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justifyContent: center;"></div>
             </div>
         </div>
 
@@ -895,7 +880,6 @@
             // Renderizar Rankings Complexos e Mapa
             renderizarRankingsComplexos();
             renderizarMapaEngajamento();
-            renderizarGraficosEvolucao(ativFiltradas);
         }
 
         function gerarInsightsIA(taxaPresenca, taxaRetencao, justPendentes, chTotal, ativs) {
@@ -1125,52 +1109,6 @@
 
         function fecharModalPerfilLigante() {
             document.getElementById('modal-perfil-ligante').style.display = 'none';
-        }
-
-        function renderizarGraficosEvolucao(ativs) {
-            let containerBar = document.getElementById('grafico-presenca-mes');
-            let containerAdesao = document.getElementById('grafico-atividades-adesao');
-            if (!containerBar || !containerAdesao) return;
-
-            // Simulação de barras mês a mês
-            containerBar.innerHTML = `
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
-                    <div style="width: 100%; background: #0056b3; height: 60%; border-radius: 2px;"></div>
-                    <span style="font-size: 9px; color: #666; margin-top: 2px;">Jun</span>
-                </div>
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
-                    <div style="width: 100%; background: #0056b3; height: 75%; border-radius: 2px;"></div>
-                    <span style="font-size: 9px; color: #666; margin-top: 2px;">Jul</span>
-                </div>
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
-                    <div style="width: 100%; background: #2b8a3e; height: 90%; border-radius: 2px;"></div>
-                    <span style="font-size: 9px; color: #666; margin-top: 2px;">Ago</span>
-                </div>
-            `;
-
-            // Atividades com maior adesão
-            let ordenadas = [...ativs].sort((a,b) => {
-                let pA = Object.values(a.frequencias || {}).filter(x => x.status === 'presente').length;
-                let pB = Object.values(b.frequencias || {}).filter(x => x.status === 'presente').length;
-                return pB - pA;
-            }).slice(0, 3);
-
-            if (ordenadas.length === 0) {
-                containerAdesao.innerHTML = `<p style="font-size: 11px; color: #666; margin: 0;">Nenhuma atividade no período.</p>`;
-                return;
-            }
-
-            let htmlAdesao = "";
-            ordenadas.forEach(a => {
-                let presentes = Object.values(a.frequencias || {}).filter(x => x.status === 'presente').length;
-                htmlAdesao += `
-                    <div style="background: #f8f9fa; padding: 6px 8px; border-radius: 4px; border: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 11px; font-weight: bold; color: #333;">${a.titulo}</span>
-                        <span style="font-size: 10px; color: #2b8a3e; font-weight: bold;">${presentes} presentes</span>
-                    </div>
-                `;
-            });
-            containerAdesao.innerHTML = htmlAdesao;
         }
 
         async function notificarTodosCriticos() {
