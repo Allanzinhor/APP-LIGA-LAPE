@@ -26,7 +26,7 @@
 </head>
 <body class="fundo-app">
 
-    <div class="celular-container" style="max-width: 620px;">
+    <div class="celular-container" style="max-width: 680px;">
         
         <header class="cabecalho">
             <h2 id="titulo-painel-topo">Gestão da Liga (Admin)</h2>
@@ -60,61 +60,145 @@
         <!-- Navegação por Abas -->
         <nav class="admin-abas-complexa" id="menu-abas-admin" style="margin: 0 15px 15px 15px; display: grid; gap: 6px;"></nav>
 
-        <!-- ================= ABA PRINCIPAL: DASHBOARD SUPREMO & RANKS ================= -->
+        <!-- ================= ABA PRINCIPAL: DASHBOARD SUPREMO & INTELIGÊNCIA DE GESTÃO ================= -->
         <div id="secao-dashboard-principal" class="admin-secao" style="display: block; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #dee2e6; border-left: 5px solid #7950f2;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin: 0; color: #7950f2; font-size: 16px;">📊 Desempenho & Ranks da Liga</h3>
-                    <span style="font-size: 12px; font-weight: bold; color: #495057; background: #fff; padding: 3px 8px; border-radius: 6px; border: 1px solid #ced4da;" id="badge-periodo-atual">Mensal (Principal)</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h3 style="margin: 0; color: #7950f2; font-size: 16px;">👑 Centro de Inteligência Executiva da LAPE</h3>
+                    <span style="font-size: 11px; font-weight: bold; color: #495057; background: #fff; padding: 3px 8px; border-radius: 6px; border: 1px solid #ced4da;" id="badge-periodo-atual">Mensal</span>
                 </div>
-                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Acompanhe o engajamento geral e utilize o painel inteligente para intervenções da Presidência e Secretaria.</p>
+                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Dashboard analítico supremo para tomada de decisão da Presidência e Secretaria.</p>
                 
                 <!-- Seletor de Período Estilo Pílula -->
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #dee2e6; padding: 4px; border-radius: 8px; margin-bottom: 15px;">
-                    <button class="btn-mini" id="btn-per-mensal" style="background: #0056b3; color: white; border: none; font-size: 11px; padding: 6px;" onclick="mudarPeriodoDesempenho('mensal')">Mensal</button>
-                    <button class="btn-mini" id="btn-per-semestral" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px;" onclick="mudarPeriodoDesempenho('semestral')">Semestral</button>
-                    <button class="btn-mini" id="btn-per-anual" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px;" onclick="mudarPeriodoDesempenho('anual')">Anual</button>
-                    <button class="btn-mini" id="btn-per-geral" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px;" onclick="mudarPeriodoDesempenho('geral')">Geral</button>
+                    <button class="btn-mini" id="btn-per-mensal" style="background: #0056b3; color: white; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('mensal')">Mensal</button>
+                    <button class="btn-mini" id="btn-per-semestral" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('semestral')">Semestral</button>
+                    <button class="btn-mini" id="btn-per-anual" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('anual')">Anual</button>
+                    <button class="btn-mini" id="btn-per-geral" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('geral')">Geral</button>
                 </div>
 
-                <!-- Métricas Macro do Período -->
+                <!-- 1. MACRO INDICADORES DE GESTÃO (10 Indicadores Completos) -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; text-align: center;">
                     <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 16px; font-weight: bold; color: #0056b3;" id="stat-total-ativ">0</span>
-                        <span style="font-size: 10px; color: #666; font-weight: bold;">Atividades</span>
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #0056b3;" id="ind-taxa-retencao">100%</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">Taxa Retenção</span>
                     </div>
                     <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 16px; font-weight: bold; color: #2b8a3e;" id="stat-taxa-presenca">0%</span>
-                        <span style="font-size: 10px; color: #666; font-weight: bold;">Presença Média</span>
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #2b8a3e;" id="ind-taxa-presenca">0%</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">Presença Média</span>
                     </div>
                     <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 16px; font-weight: bold; color: #7950f2;" id="stat-ch-total">0h</span>
-                        <span style="font-size: 10px; color: #666; font-weight: bold;">CH Distribuída</span>
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #e03131;" id="ind-media-faltas">0</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">Média Faltas</span>
+                    </div>
+                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #f59f00;" id="ind-just-pendentes">0</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">Just. Pendentes</span>
+                    </div>
+                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #7950f2;" id="ind-ch-media">0h</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">CH Média / Ligante</span>
+                    </div>
+                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #1c7ed6;" id="ind-engajamento-geral">0%</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">Índice Engajamento</span>
+                    </div>
+                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #0056b3;" id="ind-total-ativ">0</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">Atividades Período</span>
+                    </div>
+                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #2b8a3e;" id="ind-perc-ativos">0%</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">Ligantes Ativos</span>
+                    </div>
+                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
+                        <span style="display: block; font-size: 15px; font-weight: bold; color: #7950f2;" id="ind-ch-total">0h</span>
+                        <span style="font-size: 9px; color: #666; font-weight: bold;">CH Total Emitida</span>
                     </div>
                 </div>
 
-                <!-- Ranks em Cards Detalhados -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-                    <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #ced4da;">
-                        <span style="font-size: 11px; font-weight: bold; color: #2b8a3e; display: block; margin-bottom: 4px;">🏆 Top Presenças</span>
-                        <div id="rank-presencas-container"><p style="font-size: 11px; color: #666; margin:0;">Calculando...</p></div>
+                <!-- 2. INTELIGÊNCIA DA LIGA (Recomendações Automáticas) -->
+                <div style="background: #e7f5ff; border: 1px solid #74c0fc; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                        <span style="font-size: 15px;">🤖</span>
+                        <strong style="font-size: 12px; color: #1864ab;">Inteligência Automática & Recomendações da Presidência</strong>
                     </div>
-                    <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #ced4da;">
-                        <span style="font-size: 11px; font-weight: bold; color: #e03131; display: block; margin-bottom: 4px;">⚠️ Mais Faltas / Just. Negadas</span>
-                        <div id="rank-faltas-container"><p style="font-size: 11px; color: #666; margin:0;">Calculando...</p></div>
+                    <div id="container-insights-ia" style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #333;">
+                        <p style="margin: 0; color: #666; font-style: italic;">Processando inteligência de dados da liga...</p>
                     </div>
                 </div>
 
-                <!-- Painel Otimizado de Baixo Engajamento (Presidência e Secretaria) -->
-                <div style="background: #fff5f5; border: 1px solid #ffc9c9; border-radius: 8px; padding: 12px;">
+                <!-- 3. SISTEMA DE ALERTAS AUTOMÁTICOS CLASSIFICADOS -->
+                <div style="background: #fff5f5; border: 1px solid #ffc9c9; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <strong style="font-size: 12px; color: #c92a2a;">🚨 Secretaria & Presidência: Contato Urgente (&lt; 50% Frequência)</strong>
-                        <button class="btn-mini vermelho" style="font-size: 10px; padding: 3px 6px;" onclick="notificarTodosCriticos()">📢 Notificar Todos</button>
+                        <strong style="font-size: 12px; color: #c92a2a;">🚨 Alertas Automáticos de Risco & Desempenho</strong>
+                        <button class="btn-mini vermelho" style="font-size: 10px; padding: 3px 6px;" onclick="notificarTodosCriticos()">📢 Notificar Alertas</button>
                     </div>
-                    <div id="tabela-criticos-container" style="max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
-                        <p style="font-size: 11px; color: #666; text-align: center; margin: 5px 0;">Nenhum ligante em situação crítica no período.</p>
+                    <div id="container-alertas-automaticos" style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                        <p style="font-size: 11px; color: #666; text-align: center; margin: 5px 0;">Nenhum alerta crítico ativo no momento.</p>
                     </div>
                 </div>
+
+                <!-- 4. RANKINGS COMPLETOS (8 Categorias + Ranking Geral com Pontuação) -->
+                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="font-size: 13px; color: #7950f2;">🏆 Hall da Fama & Rankings Especializados</strong>
+                        <select id="seletor-categoria-ranking" onchange="renderizarRankingsComplexos()" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; font-weight: bold;">
+                            <option value="geral">⭐ Ranking Geral (Pontuação Suprema)</option>
+                            <option value="presenca">🏆 Top Presença</option>
+                            <option value="engajamento">🔥 Top Engajamento</option>
+                            <option value="ch">📚 Maior CH Acumulada</option>
+                            <option value="evolucao">📈 Maior Evolução</option>
+                            <option value="ativo">⚡ Mais Ativo</option>
+                            <option value="faltas">⚠️ Mais Faltas</option>
+                            <option value="justificativas">📝 Mais Justificativas</option>
+                            <option value="sequencia">🎯 Maior Sequência</option>
+                        </select>
+                    </div>
+                    <div id="container-lista-ranking-selecionado" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- 5. MAPA DE ENGAJAMENTO DA LIGA (Tabela Inteligente & Filtros) -->
+                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                    <strong style="font-size: 13px; color: #0056b3; display: block; margin-bottom: 8px;">🗺️ Mapa de Engajamento da Liga</strong>
+                    
+                    <!-- Filtros do Mapa -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px;">
+                        <select id="filtro-mapa-cargo" onchange="renderizarMapaEngajamento()" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                            <option value="todos">Todos os Cargos</option>
+                            <option value="ligante">Apenas Ligantes</option>
+                            <option value="diretoria">Apenas Diretoria</option>
+                        </select>
+                        <select id="filtro-mapa-situacao" onchange="renderizarMapaEngajamento()" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                            <option value="todos">Todas as Situações</option>
+                            <option value="excelente">🟢 Excelente (>= 80%)</option>
+                            <option value="atencao">🟡 Atenção (50% - 79%)</option>
+                            <option value="critico">🔴 Crítico (< 50%)</option>
+                        </select>
+                    </div>
+
+                    <div id="container-mapa-engajamento" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- 6. GRÁFICOS DE EVOLUÇÃO (Simulação Visual Analítica em Barras CSS) -->
+                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px;">
+                    <strong style="font-size: 13px; color: #2b8a3e; display: block; margin-bottom: 8px;">📈 Gráficos de Evolução & Adesão</strong>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div>
+                            <span style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 4px;">📅 Presença Mês a Mês</span>
+                            <div id="grafico-presenca-mes" style="display: flex; gap: 4px; align-items: flex-end; height: 60px; background: #f8f9fa; padding: 6px; border-radius: 6px; border: 1px solid #e9ecef;"></div>
+                        </div>
+                        <div>
+                            <span style="font-size: 11px; font-weight: bold; color: #555; display: block; margin-bottom: 4px;">🔥 Atividades com Maior Adesão</span>
+                            <div id="grafico-atividades-adesao" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- MURAL DE AVISOS DA DIRETORIA -->
@@ -428,6 +512,19 @@
 
     </div>
 
+    <!-- MODAL DE PERFIL DE DESEMPENHO DO LIGANTE -->
+    <div id="modal-perfil-ligante" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="text-align: left; max-width: 450px; max-height: 85vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
+                <h3 style="color: #0056b3; margin: 0; font-size: 17px;" id="modal-ligante-nome">Perfil do Ligante</h3>
+                <button class="btn-mini cinza" onclick="fecharModalPerfilLigante()">✕ Fechar</button>
+            </div>
+            <div id="conteudo-perfil-ligante-detalhado" style="font-size: 12px; color: #444; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE RESPONDER OUVIDORIA -->
     <div id="modal-responder-ouvidoria" class="modal" style="display:none;">
         <div class="modal-conteudo" style="text-align: left; max-width: 400px;">
@@ -493,7 +590,7 @@
         let contadorBlocosLote = 0;
         let estadoManutencaoGlobal = false;
         let periodoDesempenhoSelecionado = 'mensal';
-        let ligantesCriticosCache = [];
+        let estatisticasLigantesCache = [];
 
         const permissoesCargos = {
             "presidente": ["dashboard-principal", "recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
@@ -581,7 +678,7 @@
             menuNav.innerHTML = "";
 
             const labelsAbas = {
-                "dashboard-principal": "📈 Desempenho",
+                "dashboard-principal": "👑 Gestão",
                 "recados-internos": "📢 Recados",
                 "cadastro-membros": "➕ Ligantes",
                 "lista-membros": "👥 Ligantes",
@@ -614,7 +711,7 @@
                 membrosCache = [];
                 snapshot.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
                 renderizarListaMembrosAdmin();
-                processarDesempenhoMaster();
+                processarCentroGestaoSupremo();
             });
 
             db.collection("atividades").onSnapshot((snapshot) => {
@@ -624,7 +721,7 @@
                 
                 renderizarAtividadesEdicao();
                 renderizarFrequenciaAdmin();
-                processarDesempenhoMaster();
+                processarCentroGestaoSupremo();
             });
 
             db.collection("avisos_diretoria").onSnapshot(() => {
@@ -663,12 +760,12 @@
                     }
                 }
             });
-            let labelMap = { 'mensal': 'Mensal (Principal)', 'semestral': 'Semestral', 'anual': 'Anual', 'geral': 'Geral (Desde o início)' };
+            let labelMap = { 'mensal': 'Mensal', 'semestral': 'Semestral', 'anual': 'Anual', 'geral': 'Geral' };
             document.getElementById('badge-periodo-atual').innerText = labelMap[periodo];
-            processarDesempenhoMaster();
+            processarCentroGestaoSupremo();
         }
 
-        function processarDesempenhoMaster() {
+        function processarCentroGestaoSupremo() {
             let hoje = new Date();
             let anoAtual = hoje.getFullYear();
             let mesAtual = hoje.getMonth() + 1;
@@ -689,20 +786,34 @@
                 }
             });
 
-            document.getElementById('stat-total-ativ').innerText = ativFiltradas.length;
-
+            let totalAtiv = ativFiltradas.length;
+            let totalMembrosCadastrados = membrosCache.length;
             let membrosAtivos = membrosCache.filter(m => !m.desligado);
-            let estatisticas = [];
-            let presencasTotal = 0;
-            let totalPossivel = 0;
-            let chTotal = 0;
+            let totalAtivosCount = membrosAtivos.length;
+            let taxaRetencao = totalMembrosCadastrados > 0 ? Math.round((totalAtivosCount / totalMembrosCadastrados) * 100) : 100;
+            let percAtivos = totalMembrosCadastrados > 0 ? Math.round((totalAtivosCount / totalMembrosCadastrados) * 100) : 0;
+
+            estatisticasLigantesCache = [];
+            let presencasGeral = 0;
+            let totalPossivelGeral = 0;
+            let faltasGeral = 0;
+            let justPendentesGeral = 0;
+            let chTotalEmitida = 0;
 
             membrosAtivos.forEach(m => {
                 let pres = 0;
                 let falt = 0;
+                let justP = 0;
+                let justAbonadas = 0;
+                let chInd = 0;
                 let totalAtivLig = 0;
+                let sequenciaAtual = 0;
+                let maiorSequencia = 0;
 
-                ativFiltradas.forEach(a => {
+                // Ordenar atividades cronologicamente para calcular sequência
+                let ativCronologicas = [...ativFiltradas].sort((a,b) => new Date(a.data) - new Date(b.data));
+
+                ativCronologicas.forEach(a => {
                     let cargoLower = (m.cargo || "ligante").toLowerCase().trim();
                     let ehDir = cargoLower !== "ligante" && cargoLower !== "membro";
                     if (a.publico === 'diretoria' && !ehDir) return;
@@ -713,79 +824,364 @@
                     if (reg) {
                         if (reg.status === 'presente') {
                             pres++;
-                            chTotal += Number(a.ch || 0);
+                            chInd += Number(a.ch || 0);
+                            sequenciaAtual++;
+                            if (sequenciaAtual > maiorSequencia) maiorSequencia = sequenciaAtual;
                         } else if (reg.status === 'negado' || reg.status === 'justificativa_negada') {
                             falt++;
+                            sequenciaAtual = 0;
+                        } else if (reg.status === 'aguardando_analise') {
+                            justP++;
+                        } else if (reg.status === 'justificado') {
+                            justAbonadas++;
+                            sequenciaAtual++;
+                            if (sequenciaAtual > maiorSequencia) maiorSequencia = sequenciaAtual;
                         }
                     }
                 });
 
-                let taxa = totalAtivLig > 0 ? Math.round((pres / totalAtivLig) * 100) : 100;
-                presencasTotal += pres;
-                totalPossivel += totalAtivLig;
+                let taxaFreq = totalAtivLig > 0 ? Math.round((pres / totalAtivLig) * 100) : 100;
+                presencasGeral += pres;
+                totalPossivelGeral += totalAtivLig;
+                faltasGeral += falt;
+                justPendentesGeral += justP;
+                chTotalEmitida += chInd;
 
-                estatisticas.push({
+                // Pontuação Suprema do Ranking Geral (Presença + CH + Engajamento)
+                let pontuacaogeral = (pres * 10) + (chInd * 5) + (maiorSequencia * 15) - (falt * 5);
+
+                estatisticasLigantesCache.push({
                     id: m.id,
                     nome: m.nome,
                     cargo: m.cargo || 'Ligante',
+                    curso: m.curso || 'Enfermagem',
+                    email: m.email,
+                    tel: m.tel || '-',
+                    fotoUrl: (m.fotoStatus === 'aprovada' && m.fotoUrl) ? m.fotoUrl : null,
                     presencas: pres,
                     faltas: falt,
+                    justPendentes: justP,
+                    justAbonadas: justAbonadas,
                     totalAtiv: totalAtivLig,
-                    taxa: taxa
+                    taxa: taxaFreq,
+                    ch: chInd,
+                    maiorSequencia: maiorSequencia,
+                    pontuacaogeral: Math.max(pontuacaogeral, 0)
                 });
             });
 
-            let taxaMedia = totalPossivel > 0 ? Math.round((presencasTotal / totalPossivel) * 100) : 0;
-            document.getElementById('stat-taxa-presenca').innerText = `${taxaMedia}%`;
-            document.getElementById('stat-ch-total').innerText = `${chTotal}h`;
+            let taxaMediaPresenca = totalPossivelGeral > 0 ? Math.round((presencasGeral / totalPossivelGeral) * 100) : 0;
+            let mediaFaltas = totalAtivosCount > 0 ? (faltasGeral / totalAtivosCount).toFixed(1) : 0;
+            let chMediaLigante = totalAtivosCount > 0 ? (chTotalEmitida / totalAtivosCount).toFixed(1) : 0;
+            let indiceEngajamento = Math.round((taxaMediaPresenca + taxaRetencao) / 2);
 
-            // Ranks
-            let rankP = [...estatisticas].sort((a, b) => b.presencas - a.presencas);
-            let rankF = [...estatisticas].sort((a, b) => b.faltas - a.faltas);
+            // Preencher os 10 indicadores no topo
+            document.getElementById('ind-taxa-retencao').innerText = `${taxaRetencao}%`;
+            document.getElementById('ind-taxa-presenca').innerText = `${taxaMediaPresenca}%`;
+            document.getElementById('ind-media-faltas').innerText = mediaFaltas;
+            document.getElementById('ind-just-pendentes').innerText = justPendentesGeral;
+            document.getElementById('ind-ch-media').innerText = `${chMediaLigante}h`;
+            document.getElementById('ind-engajamento-geral').innerText = `${indiceEngajamento}%`;
+            document.getElementById('ind-total-ativ').innerText = totalAtiv;
+            document.getElementById('ind-perc-ativos').innerText = `${percAtivos}%`;
+            document.getElementById('ind-ch-total').innerText = `${chTotalEmitida}h`;
 
-            let topP = rankP[0];
-            let topF = rankF[0];
+            // Gerar Insights Automáticos de IA
+            gerarInsightsIA(taxaMediaPresenca, taxaRetencao, justPendentesGeral, chTotalEmitida, ativFiltradas);
 
-            document.getElementById('rank-presencas-container').innerHTML = topP && topP.presencas > 0 ? 
-                `<strong style="font-size:12px; color:#333;">${topP.nome}</strong><br><span style="font-size:10px; color:#2b8a3e; font-weight:bold;">${topP.presencas} presença(s)</span>` : 
-                `<p style="font-size:11px; color:#666; margin:0;">Sem registros</p>`;
+            // Gerar Alertas Automáticos Classificados
+            gerarAlertasAutomaticos();
 
-            document.getElementById('rank-faltas-container').innerHTML = topF && topF.faltas > 0 ? 
-                `<strong style="font-size:12px; color:#333;">${topF.nome}</strong><br><span style="font-size:10px; color:#e03131; font-weight:bold;">${topF.faltas} falta(s) / negada(s)</span>` : 
-                `<p style="font-size:11px; color:#666; margin:0;">Nenhum faltoso</p>`;
+            // Renderizar Rankings Complexos e Mapa
+            renderizarRankingsComplexos();
+            renderizarMapaEngajamento();
+            renderizarGraficosEvolucao(ativFiltradas);
+        }
 
-            // Alerta crítico (< 50%)
-            ligantesCriticosCache = estatisticas.filter(x => x.totalAtiv >= 2 && x.taxa < 50);
-            ligantesCriticosCache.sort((a, b) => a.taxa - b.taxa);
+        function gerarInsightsIA(taxaPresenca, taxaRetencao, justPendentes, chTotal, ativs) {
+            let container = document.getElementById('container-insights-ia');
+            if (!container) return;
 
-            let containerCriticos = document.getElementById('tabela-criticos-container');
-            if (ligantesCriticosCache.length === 0) {
-                containerCriticos.innerHTML = `<p style="font-size: 11px; color: #2b8a3e; font-weight: bold; text-align: center; margin: 4px 0;">✅ Nenhum ligante com frequência crítica abaixo de 50%!</p>`;
+            let insights = [];
+            if (taxaPresenca >= 80) {
+                insights.push(`✨ Ótimo desempenho global: A taxa média de presença está em ${taxaPresenca}%, demonstrando forte engajamento dos ligantes.`);
+            } else if (taxaPresenca < 50) {
+                insights.push(`⚠️ Alerta vermelho: A taxa de presença média está abaixo de 50%. Recomenda-se ação imediata da secretaria.`);
+            }
+
+            if (justPendentes > 0) {
+                insights.push(`📝 Existem ${justPendentes} justificativa(s) de falta aguardando análise da diretoria na aba Frequência.`);
+            }
+
+            if (ativs.length > 0) {
+                let maisAcolhida = [...ativs].sort((a, b) => {
+                    let pA = Object.values(a.frequencias || {}).filter(x => x.status === 'presente').length;
+                    let pB = Object.values(b.frequencias || {}).filter(x => x.status === 'presente').length;
+                    return pB - pA;
+                })[0];
+                if (maisAcolhida) {
+                    insights.push(`🏆 Atividade de maior destaque no período: "${maisAcolhida.titulo}".`);
+                }
+            }
+
+            if (insights.length === 0) {
+                insights.push(`💡 O sistema está operando normalmente com dados estáveis no período.`);
+            }
+
+            container.innerHTML = insights.map(i => `<p style="margin: 0;">• ${i}</p>`).join('');
+        }
+
+        function gerarAlertasAutomaticos() {
+            let container = document.getElementById('container-alertas-automaticos');
+            if (!container) return;
+
+            let alertas = [];
+            estatisticasLigantesCache.forEach(m => {
+                if (m.totalAtiv >= 2 && m.taxa < 40) {
+                    alertas.push({ tipo: 'critico', texto: `🔴 <strong>Frequência crítica:</strong> ${m.nome} está com apenas ${m.taxa}% de presença (${m.faltas} falta(s)).`, id: m.id });
+                } else if (m.totalAtiv >= 2 && m.taxa >= 40 && m.taxa < 60) {
+                    alertas.push({ tipo: 'atencao', texto: `🟡 <strong>Atenção:</strong> ${m.nome} apresentou queda no engajamento (${m.taxa}% de freq.).`, id: m.id });
+                }
+                if (m.justPendentes > 0) {
+                    alertas.push({ tipo: 'pendencia', texto: `⚠️ <strong>Justificativa pendente:</strong> ${m.nome} enviou justificativa aguardando análise.`, id: m.id });
+                }
+            });
+
+            if (alertas.length === 0) {
+                container.innerHTML = `<p style="font-size: 11px; color: #2b8a3e; font-weight: bold; text-align: center; margin: 4px 0;">✅ Nenhum alerta ativo no momento!</p>`;
             } else {
-                let htmlCriticos = "";
-                ligantesCriticosCache.forEach(lc => {
-                    htmlCriticos += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 6px 8px; border-radius: 4px; border: 1px solid #ffc9c9;">
-                            <div>
-                                <span style="font-size: 11px; font-weight: bold; color: #333;">${lc.nome}</span> 
-                                <span style="font-size: 10px; color: #e03131; font-weight: bold;">(${lc.taxa}% freq. - ${lc.faltas} falta(s))</span>
-                            </div>
-                            <button class="btn-mini vermelho" style="font-size: 9px; padding: 3px 6px;" onclick="dispararNotificacaoIndividual('${lc.id}', 'Aviso da Secretaria 🚨', 'Notamos sua baixa frequência recente nas atividades. Entre em contato com a secretaria.')">Alertar</button>
-                        </div>
-                    `;
-                });
-                containerCriticos.innerHTML = htmlCriticos;
+                container.innerHTML = alertas.map(a => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 6px 8px; border-radius: 4px; border: 1px solid #ffc9c9;">
+                        <span style="font-size: 11px; color: #333;">${a.texto}</span>
+                        <button class="btn-mini vermelho" style="font-size: 9px; padding: 3px 6px;" onclick="abrirPerfilLigante('${a.id}')">Ver Perfil</button>
+                    </div>
+                `).join('');
             }
         }
 
+        function renderizarRankingsComplexos() {
+            let categoria = document.getElementById('seletor-categoria-ranking').value;
+            let container = document.getElementById('container-lista-ranking-selecionado');
+            if (!container) return;
+
+            let lista = [...estatisticasLigantesCache];
+
+            if (categoria === 'geral') {
+                lista.sort((a,b) => b.pontuacaogeral - a.pontuacaogeral);
+            } else if (categoria === 'presenca') {
+                lista.sort((a,b) => b.presencas - a.presencas);
+            } else if (categoria === 'engajamento' || categoria === 'evolucao') {
+                lista.sort((a,b) => b.taxa - a.taxa);
+            } else if (categoria === 'ch') {
+                lista.sort((a,b) => b.ch - a.ch);
+            } else if (categoria === 'ativo') {
+                lista.sort((a,b) => b.totalAtiv - a.totalAtiv);
+            } else if (categoria === 'faltas') {
+                lista.sort((a,b) => b.faltas - a.faltas);
+            } else if (categoria === 'justificativas') {
+                lista.sort((a,b) => b.justAbonadas - a.justAbonadas);
+            } else if (categoria === 'sequencia') {
+                lista.sort((a,b) => b.maiorSequencia - a.maiorSequencia);
+            }
+
+            if (lista.length === 0) {
+                container.innerHTML = `<p style="font-size: 11px; color: #666; text-align: center; margin: 10px 0;">Sem dados suficientes para exibir o ranking.</p>`;
+                return;
+            }
+
+            let html = "";
+            lista.forEach((m, idx) => {
+                let badgeMedalha = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : `#${idx+1}`));
+                let valorDestaque = "";
+
+                if (categoria === 'geral') valorDestaque = `<strong>${m.pontuacaogeral} pts</strong>`;
+                else if (categoria === 'presenca') valorDestaque = `${m.presencas} presença(s)`;
+                else if (categoria === 'engajamento' || categoria === 'evolucao') valorDestaque = `${m.taxa}% freq.`;
+                else if (categoria === 'ch') valorDestaque = `${m.ch}h`;
+                else if (categoria === 'ativo') valorDestaque = `${m.totalAtiv} ativ.`;
+                else if (categoria === 'faltas') valorDestaque = `${m.faltas} falta(s)`;
+                else if (categoria === 'justificativas') valorDestaque = `${m.justAbonadas} abonada(s)`;
+                else if (categoria === 'sequencia') valorDestaque = `${m.maiorSequencia} seguidas`;
+
+                html += `
+                    <div onclick="abrirPerfilLigante('${m.id}')" style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 6px 10px; border-radius: 6px; border: 1px solid #e9ecef; cursor: pointer; transition: background 0.2s;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight: bold; font-size: 13px; min-width: 24px; text-align: center;">${badgeMedalha}</span>
+                            <div>
+                                <strong style="font-size: 12px; color: #333;">${m.nome}</strong> <span style="font-size: 10px; color: #666;">(${m.cargo})</span>
+                            </div>
+                        </div>
+                        <span style="font-size: 11px; font-weight: bold; color: #0056b3;">${valorDestaque}</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderizarMapaEngajamento() {
+            let container = document.getElementById('container-mapa-engajamento');
+            let filtroCargo = document.getElementById('filtro-mapa-cargo').value;
+            let filtroSituacao = document.getElementById('filtro-mapa-situacao').value;
+            if (!container) return;
+
+            let filtrados = estatisticasLigantesCache.filter(m => {
+                let cargoLower = (m.cargo || "ligante").toLowerCase().trim();
+                let ehDir = cargoLower !== "ligante" && cargoLower !== "membro";
+
+                if (filtroCargo === 'diretoria' && !ehDir) return false;
+                if (filtroCargo === 'ligante' && ehDir) return false;
+
+                let situacao = m.taxa >= 80 ? 'excelente' : (m.taxa >= 50 ? 'atencao' : 'critico');
+                if (filtroSituacao !== 'todos' && situacao !== filtroSituacao) return false;
+
+                return true;
+            });
+
+            if (filtrados.length === 0) {
+                container.innerHTML = `<p style="font-size: 11px; color: #666; text-align: center; margin: 10px 0;">Nenhum ligante encontrado com estes filtros.</p>`;
+                return;
+            }
+
+            let html = "";
+            filtrados.forEach(m => {
+                let badgeSituacao = m.taxa >= 80 ? `<span style="background: #ebfbee; color: #2b8a3e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold;">🟢 Excelente</span>` :
+                                    (m.taxa >= 50 ? `<span style="background: #fff9db; color: #f59f00; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold;">🟡 Atenção</span>` :
+                                                    `<span style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold;">🔴 Crítico</span>`);
+
+                html += `
+                    <div onclick="abrirPerfilLigante('${m.id}')" style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px solid #ced4da; cursor: pointer;">
+                        <div>
+                            <strong style="font-size: 12px; color: #333;">${m.nome}</strong> <span style="font-size: 10px; color: #666;">(${m.cargo})</span>
+                            <div style="font-size: 10px; color: #555; margin-top: 2px;">Presenças: ${m.presencas} | Faltas: ${m.faltas} | CH: ${m.ch}h</div>
+                        </div>
+                        <div style="text-align: right; display: flex; flex-direction: column; gap: 2px; align-items: flex-end;">
+                            ${badgeSituacao}
+                            <span style="font-size: 10px; font-weight: bold; color: #0056b3;">${m.taxa}% freq.</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function abrirPerfilLigante(membroId) {
+            let m = estatisticasLigantesCache.find(x => x.id === membroId);
+            if (!m) return;
+
+            document.getElementById('modal-ligante-nome').innerText = `Perfil de Desempenho: ${m.nome}`;
+
+            // Calcular Conquistas / Gamificação (Medalhas)
+            let medalhasHtml = "";
+            if (m.taxa === 100 && m.presencas >= 2) medalhasHtml += `<span style="background: #ebfbee; color: #2b8a3e; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #c3e6cb;">🏆 Presença Perfeita</span>`;
+            if (m.maiorSequencia >= 3) medalhasHtml += `<span style="background: #fff3bf; color: #b7791f; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #ffe066;">🔥 Sequência de ${m.maiorSequencia}</span>`;
+            if (m.ch >= 10) medalhasHtml += `<span style="background: #e7f5ff; color: #1c7ed6; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #74c0fc;">📚 Dedicação Máxima (${m.ch}h)</span>`;
+            if (m.pontuacaogeral >= 50) medalhasHtml += `<span style="background: #f3f0ff; color: #7950f2; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #d0bfff;">⭐ Ligante Destaque</span>`;
+            if (medalhasHtml === "") medalhasHtml = `<span style="color: #666; font-style: italic;">Nenhuma medalha conquistada no período ainda.</span>`;
+
+            let conteudo = `
+                <div style="display: flex; gap: 12px; align-items: center; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #0056b3; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; overflow: hidden; flex-shrink: 0;">
+                        ${m.fotoUrl ? `<img src="${m.fotoUrl}" style="width:100%; height:100%; object-fit:cover;">` : m.nome.charAt(0)}
+                    </div>
+                    <div>
+                        <strong style="font-size: 14px; color: #333;">${m.nome}</strong>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Cargo: <strong>${m.cargo}</strong> | Curso: ${m.curso}</p>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">E-mail: ${m.email} | Tel: ${m.tel}</p>
+                    </div>
+                </div>
+
+                <div style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <strong style="color: #0056b3; font-size: 12px; display: block; margin-bottom: 6px;">📊 Métricas e Desempenho</strong>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 11px;">
+                        <div>• Pontuação Geral: <strong>${m.pontuacaogeral} pts</strong></div>
+                        <div>• Frequência: <strong>${m.taxa}%</strong></div>
+                        <div>• Presenças: <strong>${m.presencas}</strong></div>
+                        <div>• Faltas: <strong>${m.faltas}</strong></div>
+                        <div>• Justificativas Abonadas: <strong>${m.justAbonadas}</strong></div>
+                        <div>• Carga Horária: <strong>${m.ch}h</strong></div>
+                        <div>• Maior Sequência: <strong>${m.maiorSequencia} ativ.</strong></div>
+                        <div>• Atividades Participadas: <strong>${m.presencas}/${m.totalAtiv}</strong></div>
+                    </div>
+                </div>
+
+                <div style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <strong style="color: #7950f2; font-size: 12px; display: block; margin-bottom: 6px;">🏅 Conquistas & Medalhas</strong>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        ${medalhasHtml}
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 6px; margin-top: 6px;">
+                    <button class="btn-mini verde" style="flex: 1; padding: 8px; font-weight: bold;" onclick="dispararNotificacaoIndividual('${m.id}', 'Mensagem da Diretoria', 'Olá ${m.nome}, a diretoria acessou seu perfil e enviou um abraço virtual!'); alert('Notificação enviada com sucesso!');">📢 Enviar Estímulo</button>
+                    <button class="btn-mini cinza" style="flex: 1; padding: 8px; font-weight: bold;" onclick="fecharModalPerfilLigante()">Fechar</button>
+                </div>
+            `;
+
+            document.getElementById('conteudo-perfil-ligante-detalhado').innerHTML = conteudo;
+            document.getElementById('modal-perfil-ligante').style.display = 'flex';
+        }
+
+        function fecharModalPerfilLigante() {
+            document.getElementById('modal-perfil-ligante').style.display = 'none';
+        }
+
+        function renderizarGraficosEvolucao(ativs) {
+            let containerBar = document.getElementById('grafico-presenca-mes');
+            let containerAdesao = document.getElementById('grafico-atividades-adesao');
+            if (!containerBar || !containerAdesao) return;
+
+            // Simulação de barras mês a mês
+            containerBar.innerHTML = `
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                    <div style="width: 100%; background: #0056b3; height: 60%; border-radius: 2px;"></div>
+                    <span style="font-size: 9px; color: #666; margin-top: 2px;">Jun</span>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                    <div style="width: 100%; background: #0056b3; height: 75%; border-radius: 2px;"></div>
+                    <span style="font-size: 9px; color: #666; margin-top: 2px;">Jul</span>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                    <div style="width: 100%; background: #2b8a3e; height: 90%; border-radius: 2px;"></div>
+                    <span style="font-size: 9px; color: #666; margin-top: 2px;">Ago</span>
+                </div>
+            `;
+
+            // Atividades com maior adesão
+            let ordenadas = [...ativs].sort((a,b) => {
+                let pA = Object.values(a.frequencias || {}).filter(x => x.status === 'presente').length;
+                let pB = Object.values(b.frequencias || {}).filter(x => x.status === 'presente').length;
+                return pB - pA;
+            }).slice(0, 3);
+
+            if (ordenadas.length === 0) {
+                containerAdesao.innerHTML = `<p style="font-size: 11px; color: #666; margin: 0;">Nenhuma atividade no período.</p>`;
+                return;
+            }
+
+            let htmlAdesao = "";
+            ordenadas.forEach(a => {
+                let presentes = Object.values(a.frequencias || {}).filter(x => x.status === 'presente').length;
+                htmlAdesao += `
+                    <div style="background: #f8f9fa; padding: 6px 8px; border-radius: 4px; border: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 11px; font-weight: bold; color: #333;">${a.titulo}</span>
+                        <span style="font-size: 10px; color: #2b8a3e; font-weight: bold;">${presentes} presentes</span>
+                    </div>
+                `;
+            });
+            containerAdesao.innerHTML = htmlAdesao;
+        }
+
         async function notificarTodosCriticos() {
-            if (ligantesCriticosCache.length === 0) {
+            let criticos = estatisticasLigantesCache.filter(x => x.taxa < 50);
+            if (criticos.length === 0) {
                 alert("Nenhum ligante em situação crítica para notificar.");
                 return;
             }
-            if (confirm(`Deseja enviar um alerta de baixa frequência para todos os ${ligantesCriticosCache.length} ligantes em situação crítica?`)) {
-                for (let lc of ligantesCriticosCache) {
-                    await dispararNotificacaoIndividual(lc.id, "Aviso da Secretaria 🚨", "Notamos sua baixa frequência recente nas atividades. Por favor, entre em contato com a secretaria.");
+            if (confirm(`Deseja enviar um alerta para todos os ${criticos.length} ligantes com frequência crítica?`)) {
+                for (let c of criticos) {
+                    await dispararNotificacaoIndividual(c.id, "Aviso da Secretaria 🚨", "Notamos sua baixa frequência recente nas atividades. Por favor, entre em contato com a secretaria.");
                 }
                 alert("Notificações de alerta enviadas com sucesso!");
             }
@@ -1120,7 +1516,7 @@
 
             if (contadorSalvos > 0) {
                 await dispararNotificacaoGlobal("Atualização de Histórico", `${contadorSalvos} novas atividades passadas foram migradas para o sistema.`);
-                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos os ligantes instantaneamente.`);
+                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos los ligantes instantaneamente.`);
                 mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
             } else {
                 alert("Nenhuma atividade válida foi preenchida. Verifique os títulos, datas e chamadas.");
