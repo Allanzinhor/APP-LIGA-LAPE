@@ -870,12 +870,15 @@
         function iniciarOuvintesTempoReal() {
             let momentoAberturaApp = new Date();
 
-            // OUVINTE DE ESTADO DE MANUTENÇÃO GLOBAL DO SISTEMA
+            // OUVINTE DE ESTADO DE MANUTENÇÃO GLOBAL DO SISTEMA (Presidente bypassa a manutenção)
             db.collection("configuracoes").doc("sistema").onSnapshot((doc) => {
                 let overlay = document.getElementById("overlay-manutencao");
                 if (!overlay) return;
 
-                if (doc.exists && doc.data().manutencao === true) {
+                let cargoLower = (usuarioLogado.cargo || "").toLowerCase().trim();
+                let ehPresidente = (cargoLower === "presidente");
+
+                if (doc.exists && doc.data().manutencao === true && !ehPresidente) {
                     overlay.style.display = "flex";
                 } else {
                     overlay.style.display = "none";
