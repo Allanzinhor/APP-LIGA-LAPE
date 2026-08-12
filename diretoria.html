@@ -43,6 +43,20 @@
             </div>
         </div>
 
+        <!-- CARD DE CONTROLE DE MANUTENÇÃO -->
+        <div class="admin-card-acao" style="background: #fff3bf; border: 1px solid #ffe066; margin: 0 15px 15px 15px;">
+            <h3 style="color: #b7791f; margin-top: 0; font-size: 15px;">🛠️ Modo de Manutenção do App</h3>
+            <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Ative este botão para exibir o aviso de paralisação e manutenção para os ligantes, sem alterar os dados do sistema.</p>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef;">
+                <div>
+                    <strong id="status-manutencao-texto" style="font-size: 13px; color: #333;">Status: Desativado</strong>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">O app está funcionando normalmente.</p>
+                </div>
+                <button id="btn-toggle-manutencao" class="btn-mini verde" style="padding: 8px 14px; font-size: 12px;" onclick="alternarModoManutencao()">Ativar Manutenção</button>
+            </div>
+        </div>
+
         <!-- MURAL DE AVISOS DA DIRETORIA -->
         <div class="quadro-avisos" style="margin: 0 15px 15px 15px;">
             <div class="avisos-header">
@@ -419,6 +433,7 @@
         let indiceSlideDirAtual = 0;
         let usuarioSessao = null;
         let contadorBlocosLote = 0;
+        let estadoManutencaoGlobal = false;
 
         const permissoesCargos = {
             "presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
@@ -526,6 +541,14 @@
         }
 
         function iniciarOuvintesTempoRealAdmin() {
+            db.collection("configuracoes").doc("sistema").onSnapshot((doc) => {
+                if (doc.exists) {
+                    let data = doc.data();
+                    estadoManutencaoGlobal = data.manutencao || false;
+                    atualizarVisualBotaoManutencao();
+                }
+            });
+
             db.collection("membros").onSnapshot((snapshot) => {
                 membrosCache = [];
                 snapshot.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
@@ -561,6 +584,43 @@
                 });
                 renderizarOuvidoriaAdmin();
             });
+        }
+
+        function atualizarVisualBotaoManutencao() {
+            let textoStatus = document.getElementById("status-manutencao-texto");
+            let btnToggle = document.getElementById("btn-toggle-manutencao");
+            if (!textoStatus || !btnToggle) return;
+
+            if (estadoManutencaoGlobal) {
+                textoStatus.innerText = "Status: Ativado (Em Manutenção)";
+                textoStatus.style.color = "#c92a2a";
+                btnToggle.innerText = "Desativar Manutenção";
+                btnToggle.className = "btn-mini vermelho";
+            } else {
+                textoStatus.innerText = "Status: Desativado (Normal)";
+                textoStatus.style.color = "#2b8a3e";
+                btnToggle.innerText = "Ativar Manutenção";
+                btnToggle.className = "btn-mini verde";
+            }
+        }
+
+        async function alternarModoManutencao() {
+            let novoEstado = !estadoManutencaoGlobal;
+            try {
+                await db.collection("configuracoes").doc("sistema").set({
+                    manutencao: novoEstado
+                }, { merge: true });
+
+                if (novoEstado) {
+                    await dispararNotificacaoGlobal("Aplicativo em Manutenção 🛠️", "O sistema da liga entrou em manutenção temporária.");
+                    alert("Modo de manutenção ATIVADO com sucesso!");
+                } else {
+                    alert("Modo de manutenção DESATIVADO com sucesso!");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao alterar o modo de manutenção.");
+            }
         }
 
         function renderizarOuvidoriaAdmin() {
@@ -755,7 +815,6 @@
                 return;
             }
 
-            // Filtra ligantes ativos que já estavam na liga na data da atividade e ordena por ordem alfabética (A-Z)
             let membrosFiltrados = membrosCache.filter(m => {
                 if (m.desligado) return false;
                 if (m.ingressoLiga && m.ingressoLiga > dataAtividade) return false;
