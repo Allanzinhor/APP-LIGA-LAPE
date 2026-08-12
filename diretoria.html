@@ -11,6 +11,114 @@
 
     <meta name="color-scheme" content="light">
 
+    <style>
+        /* ESTILOS REFINADOS - PADRÃO PREMIUM / ANIVERSARIANTES */
+        .painel-admin-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+        .card-estatistica-master {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-left: 5px solid #0056b3;
+            margin: 15px;
+            box-sizing: border-box;
+            width: calc(100% - 30px);
+        }
+        .menu-funcionalidades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin: 15px;
+        }
+        .btn-func-menu {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-func-menu:hover, .btn-func-menu.ativo {
+            background: #0056b3;
+            color: #ffffff;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,86,179,0.2);
+        }
+        .filtro-periodo-container {
+            display: flex;
+            background: #f1f3f5;
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+            margin-bottom: 15px;
+        }
+        .btn-filtro-periodo {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #495057;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .btn-filtro-periodo.ativo {
+            background: #ffffff;
+            color: #0056b3;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        .rank-item-completo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 6px;
+        }
+        .rank-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #004494;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .alerta-secretaria-card {
+            background: #fff5f5;
+            border: 1px solid #ffc9c9;
+            border-left: 4px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+    </style>
+
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -26,49 +134,111 @@
 </head>
 <body class="fundo-app">
 
-    <div class="celular-container" style="max-width: 620px;">
+    <div class="celular-container painel-admin-container">
         
-        <header class="cabecalho">
-            <h2 id="titulo-painel-topo">Gestão da Liga (Admin)</h2>
-            <button class="btn-perfil" onclick="window.location.href='index.html'">Portal do Ligante</button>
+        <header class="cabecalho" style="border-radius: 0 0 16px 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="brasao.png" alt="Brasão" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+                <div>
+                    <h2 id="titulo-painel-topo" style="margin: 0; font-size: 18px;">Gestão da Liga (Admin)</h2>
+                    <span id="admin-perfil-cargo" style="font-size: 10px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase;">Diretoria LAPE</span>
+                </div>
+            </div>
+            <button class="btn-perfil" onclick="window.location.href='index.html'" style="font-size: 11px; padding: 6px 10px;">Portal do Ligante</button>
         </header>
 
         <!-- PERFIL DO DIRETOR LOGADO NO TOPO -->
-        <div class="admin-card-acao" style="margin: 15px; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: calc(100% - 30px);">
-            <div id="admin-perfil-foto-container" style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
-            <div style="flex: 1; min-width: 200px;">
-                <h3 id="admin-perfil-nome" style="margin: 0; color: #0056b3; font-size: 18px;">Nome do Diretor</h3>
-                <p id="admin-perfil-cargo" style="margin: 2px 0; font-weight: bold; color: #2b8a3e; font-size: 13px; text-transform: uppercase;">Cargo</p>
-                <p id="admin-perfil-tempo" style="margin: 0; font-size: 12px; color: #555;">Tempo na diretoria: Calculando...</p>
+        <div class="admin-card-acao" style="margin: 15px; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: calc(100% - 30px); border-radius: 12px;">
+            <div id="admin-perfil-foto-container" style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
+            <div style="flex: 1; min-width: 180px;">
+                <h3 id="admin-perfil-nome" style="margin: 0; color: #0056b3; font-size: 16px;">Nome do Diretor</h3>
+                <p id="admin-perfil-tempo" style="margin: 4px 0 0 0; font-size: 11px; color: #555;">Tempo na diretoria: Calculando...</p>
             </div>
         </div>
 
-        <!-- CARD DE CONTROLE DE MANUTENÇÃO -->
-        <div class="admin-card-acao" style="background: #fff3bf; border: 1px solid #ffe066; margin: 0 15px 15px 15px;">
-            <h3 style="color: #b7791f; margin-top: 0; font-size: 15px;">🛠️ Modo de Manutenção do App</h3>
-            <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Ative este botão para exibir o aviso de paralisação e manutenção para os ligantes, sem alterar os dados do sistema.</p>
+        <!-- MENU DE NAVEGAÇÃO POR BOTÕES MODERNOS (FUNCIONALIDADES) -->
+        <div style="padding: 0 15px;">
+            <p style="font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; margin: 0 0 8px 4px; letter-spacing: 0.5px;">⚙️ Menu de Funcionalidades</p>
+            <div class="menu-funcionalidades-grid" id="menu-abas-admin">
+                <!-- Preenchido dinamicamente via JS de acordo com as permissões -->
+            </div>
+        </div>
+
+        <!-- ================= TELA / ABA PRINCIPAL: DASHBOARD & DESEMPENHO MASTER ================= -->
+        <div id="secao-dashboard-principal" class="admin-secao" style="display: block; padding: 0 15px 30px 15px;">
             
-            <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef;">
+            <!-- CARD DE CONTROLE DE MANUTENÇÃO RÁPIDO -->
+            <div style="background: #fff3bf; border: 1px solid #ffe066; border-radius: 12px; padding: 14px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
                 <div>
-                    <strong id="status-manutencao-texto" style="font-size: 13px; color: #333;">Status: Desativado</strong>
-                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">O app está funcionando normalmente.</p>
+                    <strong id="status-manutencao-texto" style="font-size: 12px; color: #b7791f;">🛠️ Manutenção: Desativada</strong>
+                    <p style="margin: 2px 0 0 0; font-size: 10px; color: #666;">Bloqueia o app para os ligantes se necessário.</p>
                 </div>
-                <button id="btn-toggle-manutencao" class="btn-mini verde" style="padding: 8px 14px; font-size: 12px;" onclick="alternarModoManutencao()">Ativar Manutenção</button>
+                <button id="btn-toggle-manutencao" class="btn-mini verde" style="padding: 6px 12px; font-size: 11px;" onclick="alternarModoManutencao()">Ativar</button>
             </div>
-        </div>
 
-        <!-- MURAL DE AVISOS DA DIRETORIA -->
-        <div class="quadro-avisos" style="margin: 0 15px 15px 15px;">
-            <div class="avisos-header">
-                <span>🛡️ MURAL INTERNO DA DIRETORIA</span>
-                <span id="contador-slide-dir">1/1</span>
+            <!-- PAINEL DE DESEMPENHO NA LIGA -->
+            <div class="card-estatistica-master">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f3f5; padding-bottom: 8px; margin-bottom: 12px;">
+                    <span style="font-size: 13px; font-weight: bold; color: #0056b3;">📊 Desempenho Geral na Liga</span>
+                    <span style="font-size: 16px;">📈</span>
+                </div>
+
+                <!-- Filtro de Período -->
+                <div class="filtro-periodo-container">
+                    <button class="btn-filtro-periodo ativo" onclick="mudarPeriodoDesempenho('mensal', this)">Mensal</button>
+                    <button class="btn-filtro-periodo" onclick="mudarPeriodoDesempenho('semestral', this)">Semestral</button>
+                    <button class="btn-filtro-periodo" onclick="mudarPeriodoDesempenho('anual', this)">Anual</button>
+                    <button class="btn-filtro-periodo" onclick="mudarPeriodoDesempenho('geral', this)">Geral</button>
+                </div>
+
+                <!-- Estatísticas Resumidas do Período -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; text-align: center;">
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <span style="display: block; font-size: 18px; font-weight: bold; color: #0056b3;" id="stat-total-ativ-periodo">0</span>
+                        <span style="font-size: 10px; color: #666; font-weight: bold;">Atividades</span>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <span style="display: block; font-size: 18px; font-weight: bold; color: #2b8a3e;" id="stat-taxa-presenca">0%</span>
+                        <span style="font-size: 10px; color: #666; font-weight: bold;">Presença Média</span>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                        <span style="display: block; font-size: 18px; font-weight: bold; color: #7950f2;" id="stat-ch-total">0h</span>
+                        <span style="font-size: 10px; color: #666; font-weight: bold;">CH Distribuída</span>
+                    </div>
+                </div>
+
+                <!-- RANKS DE DESTAQUE -->
+                <div style="margin-top: 15px;">
+                    <p style="font-size: 11px; font-weight: bold; color: #888; text-transform: uppercase; margin-bottom: 8px;">🌟 Ranks de Engajamento</p>
+                    <div id="container-ranks-desempenho">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+
+                <!-- ALERTA INTELIGENTE PARA PRESIDÊNCIA E SECRETARIA -->
+                <div class="alerta-secretaria-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 12px; font-weight: bold; color: #c92a2a;">⚠️ Alerta de Baixo Engajamento (Contato Necessário)</span>
+                        <span style="font-size: 14px;">🚨</span>
+                    </div>
+                    <p style="font-size: 11px; color: #555; margin: 0 0 8px 0;">Ligantes com frequência abaixo de 50% no período selecionado que exigem atenção da Presidência e Secretaria:</p>
+                    <div id="lista-ligantes-alerta-critico" style="display: flex; flex-direction: column; gap: 6px;">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
             </div>
-            <div id="container-avisos-fixos"></div>
-            <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justify-content: center;"></div>
-        </div>
 
-        <!-- Navegação por Abas -->
-        <nav class="admin-abas-complexa" id="menu-abas-admin" style="margin: 0 15px 15px 15px; display: grid; gap: 6px;"></nav>
+            <!-- MURAL DE AVISOS DA DIRETORIA (FIXO NA TELA PRINCIPAL) -->
+            <div class="quadro-avisos" style="margin: 0 15px; border-radius: 12px;">
+                <div class="avisos-header">
+                    <span>🛡️ MURAL INTERNO DA DIRETORIA</span>
+                    <span id="contador-slide-dir">1/1</span>
+                </div>
+                <div id="container-avisos-fixos"></div>
+                <div class="slides-container" id="container-slides-dir" style="min-height: 100px; display: flex; flex-direction: column; justify-content: center;"></div>
+            </div>
+
+        </div>
 
         <!-- ABA: RECADOS INTERNOS -->
         <div id="secao-recados-internos" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
@@ -344,7 +514,7 @@
             </div>
         </div>
 
-        <!-- NOVA ABA: GESTÃO DE OUVIDORIA & SUGESTÕES -->
+        <!-- ABA: GESTÃO DE OUVIDORIA & SUGESTÕES -->
         <div id="secao-ouvidoria-admin" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao" style="background: #f8f0fc; border: 1px solid #d0bfff;">
                 <h3 style="color: #7950f2; margin-top: 0;">💡 Ouvidoria & Sugestões Anônimas</h3>
@@ -434,15 +604,16 @@
         let usuarioSessao = null;
         let contadorBlocosLote = 0;
         let estadoManutencaoGlobal = false;
+        let periodoDesempenhoAtual = 'mensal';
 
         const permissoesCargos = {
-            "presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "vice-presidente": ["recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "secretaria": ["recados-internos", "lista-membros", "frequencia", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "tesoureira": ["recados-internos", "financeiro", "avisos"],
-            "diretora de extensão": ["recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de pesquisa": ["recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de marketing": ["recados-internos", "avisos"]
+            "presidente": ["dashboard-principal", "recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "vice-presidente": ["dashboard-principal", "recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "secretaria": ["dashboard-principal", "recados-internos", "lista-membros", "frequencia", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "tesoureira": ["dashboard-principal", "recados-internos", "financeiro", "avisos"],
+            "diretora de extensão": ["dashboard-principal", "recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de pesquisa": ["dashboard-principal", "recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de marketing": ["dashboard-principal", "recados-internos", "avisos"]
         };
 
         function mascaraTelefone(input) {
@@ -521,23 +692,23 @@
             menuNav.innerHTML = "";
 
             const labelsAbas = {
+                "dashboard-principal": "📈 Início / Ranks",
                 "recados-internos": "📢 Recados",
-                "cadastro-membros": "➕ Ligantes",
-                "lista-membros": "👥 Ligantes",
-                "cadastro-atividades": "➕ Ativ.",
-                "lista-atividades": "📅 Gerenciar",
+                "cadastro-membros": "➕ Cadastrar Ligante",
+                "lista-membros": "👥 Lista Ligantes",
+                "cadastro-atividades": "➕ Nova Atividade",
+                "lista-atividades": "📅 Gerenciar Ativ.",
                 "frequencia": "📋 Frequência",
                 "financeiro": "💰 Financeiro",
-                "avisos": "⚠️ Avisos",
+                "avisos": "⚠️ Avisos Globais",
                 "migracao-papel": "📥 Migrar Lote",
                 "ouvidoria-admin": "💡 Ouvidoria"
             };
 
-            abasPermitidas.forEach((aba) => {
-                menuNav.innerHTML += `<button class="aba-btn" onclick="mudarAba('${aba}', event)">${labelsAbas[aba] || aba}</button>`;
+            abasPermitidas.forEach((aba, index) => {
+                let classeAtiva = index === 0 ? "btn-func-menu ativo" : "btn-func-menu";
+                menuNav.innerHTML += `<button class="${classeAtiva}" onclick="mudarAba('${aba}', this)">${labelsAbas[aba] || aba}</button>`;
             });
-
-            menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
         }
 
         function iniciarOuvintesTempoRealAdmin() {
@@ -553,6 +724,7 @@
                 membrosCache = [];
                 snapshot.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
                 renderizarListaMembrosAdmin();
+                renderizarPainelDesempenhoMaster();
             });
 
             db.collection("atividades").onSnapshot((snapshot) => {
@@ -562,6 +734,7 @@
                 
                 renderizarAtividadesEdicao();
                 renderizarFrequenciaAdmin();
+                renderizarPainelDesempenhoMaster();
             });
 
             db.collection("avisos_diretoria").onSnapshot(() => {
@@ -592,14 +765,14 @@
             if (!textoStatus || !btnToggle) return;
 
             if (estadoManutencaoGlobal) {
-                textoStatus.innerText = "Status: Ativado (Em Manutenção)";
+                textoStatus.innerText = "🛠️ Manutenção: Ativada";
                 textoStatus.style.color = "#c92a2a";
-                btnToggle.innerText = "Desativar Manutenção";
+                btnToggle.innerText = "Desativar";
                 btnToggle.className = "btn-mini vermelho";
             } else {
-                textoStatus.innerText = "Status: Desativado (Normal)";
+                textoStatus.innerText = "🛠️ Manutenção: Desativada";
                 textoStatus.style.color = "#2b8a3e";
-                btnToggle.innerText = "Ativar Manutenção";
+                btnToggle.innerText = "Ativar";
                 btnToggle.className = "btn-mini verde";
             }
         }
@@ -620,6 +793,145 @@
             } catch (e) {
                 console.error(e);
                 alert("Erro ao alterar o modo de manutenção.");
+            }
+        }
+
+        function mudarPeriodoDesempenho(periodo, btnElem) {
+            periodoDesempenhoAtual = periodo;
+            document.querySelectorAll('.btn-filtro-periodo').forEach(b => b.classList.remove('ativo'));
+            btnElem.classList.add('ativo');
+            renderizarPainelDesempenhoMaster();
+        }
+
+        function renderizarPainelDesempenhoMaster() {
+            let containerRanks = document.getElementById("container-ranks-desempenho");
+            let containerAlerta = document.getElementById("lista-ligantes-alerta-critico");
+            let statTotalAtiv = document.getElementById("stat-total-ativ-periodo");
+            let statTaxaPresenca = document.getElementById("stat-taxa-presenca");
+            let statChTotal = document.getElementById("stat-ch-total");
+
+            if (!containerRanks) return;
+
+            let hoje = new Date();
+            let anoAtual = hoje.getFullYear();
+            let mesAtual = hoje.getMonth() + 1;
+
+            let ativFiltradas = atividadesCache.filter(a => {
+                if (!a.data || a.cancelada) return false;
+                let [aAno, aMes] = a.data.split('-').map(Number);
+
+                if (periodoDesempenhoAtual === 'mensal') {
+                    return aAno === anoAtual && aMes === mesAtual;
+                } else if (periodoDesempenhoAtual === 'semestral') {
+                    let semestreAtual = mesAtual <= 6 ? 1 : 2;
+                    let aSemestre = aMes <= 6 ? 1 : 2;
+                    return aAno === anoAtual && aSemestre === semestreAtual;
+                } else if (periodoDesempenhoAtual === 'anual') {
+                    return aAno === anoAtual;
+                } else {
+                    return true; // Geral
+                }
+            });
+
+            statTotalAtiv.innerText = ativFiltradas.length;
+
+            let membrosAtivos = membrosCache.filter(m => !m.desligado);
+            let estatisticasLigantes = [];
+            let totalPresencasGeral = 0;
+            let totalPossivelGeral = 0;
+            let chDistribuidaGeral = 0;
+
+            membrosAtivos.forEach(m => {
+                let presencas = 0;
+                let faltas = 0;
+                let justificativas = 0;
+                let totalAtivLigante = 0;
+
+                ativFiltradas.forEach(a => {
+                    let cargoMembroLower = (m.cargo || "ligante").toLowerCase().trim();
+                    let membroEhDiretoria = cargoMembroLower !== "ligante" && cargoMembroLower !== "membro";
+
+                    if (a.publico === 'diretoria' && !membroEhDiretoria) return;
+                    if (m.ingressoLiga && a.data < m.ingressoLiga) return;
+
+                    totalAtivLigante++;
+                    let reg = (a.frequencias || {})[m.id];
+                    if (reg) {
+                        if (reg.status === 'presente') {
+                            presencas++;
+                            chDistribuidaGeral += Number(a.ch || 0);
+                        }
+                        if (reg.status === 'negado' || reg.status === 'justificativa_negada') faltas++;
+                        if (reg.status === 'justificado') justificativas++;
+                    }
+                });
+
+                let taxa = totalAtivLigante > 0 ? Math.round((presencas / totalAtivLigante) * 100) : 100;
+                totalPresencasGeral += presencas;
+                totalPossivelGeral += totalAtivLigante;
+
+                estatisticasLigantes.push({
+                    id: m.id,
+                    nome: m.nome,
+                    cargo: m.cargo || 'Ligante',
+                    fotoUrl: (m.fotoStatus === 'aprovada' && m.fotoUrl) ? m.fotoUrl : null,
+                    presencas,
+                    faltas,
+                    justificativas,
+                    totalAtiv: totalAtivLigante,
+                    taxa
+                });
+            });
+
+            let taxaMediaGlobal = totalPossivelGeral > 0 ? Math.round((totalPresencasGeral / totalPossivelGeral) * 100) : 0;
+            statTaxaPresenca.innerText = `${taxaMediaGlobal}%`;
+            statChTotal.innerText = `${chDistribuidaGeral}h`;
+
+            // Ordenações para Ranks
+            let rankPresencas = [...estatisticasLigantes].sort((a, b) => b.presencas - a.presencas);
+            let rankFaltas = [...estatisticasLigantes].sort((a, b) => b.faltas - a.faltas);
+
+            let topPresenca = rankPresencas[0];
+            let topFalta = rankFaltas[0];
+
+            let htmlRanks = `
+                <div class="rank-item-completo">
+                    <div class="rank-avatar" style="background: #2b8a3e;">🏆</div>
+                    <div style="flex: 1;">
+                        <p style="margin: 0; font-size: 12px; font-weight: bold; color: #2b8a3e;">Destaque em Presenças</p>
+                        <p style="margin: 2px 0 0 0; font-size: 13px; font-weight: bold; color: #333;">${topPresenca ? topPresenca.nome : 'N/D'} <span style="font-size: 11px; font-weight: normal; color: #666;">(${topPresenca ? topPresenca.presencas : 0} presenças)</span></p>
+                    </div>
+                </div>
+                <div class="rank-item-completo">
+                    <div class="rank-avatar" style="background: #e03131;">⚠️</div>
+                    <div style="flex: 1;">
+                        <p style="margin: 0; font-size: 12px; font-weight: bold; color: #e03131;">Maior Número de Faltas</p>
+                        <p style="margin: 2px 0 0 0; font-size: 13px; font-weight: bold; color: #333;">${topFalta && topFalta.faltas > 0 ? topFalta.nome : 'Nenhum faltoso'} <span style="font-size: 11px; font-weight: normal; color: #666;">(${topFalta ? topFalta.faltas : 0} faltas)</span></p>
+                    </div>
+                </div>
+            `;
+            containerRanks.innerHTML = htmlRanks;
+
+            // Filtro de Alerta Crítico (< 50% de frequência)
+            let ligantesCriticos = estatisticasLigantes.filter(x => x.totalAtiv >= 2 && x.taxa < 50);
+            ligantesCriticos.sort((a, b) => a.taxa - b.taxa);
+
+            if (ligantesCriticos.length === 0) {
+                containerAlerta.innerHTML = `<p style="font-size: 11px; color: #2b8a3e; font-weight: bold; margin: 0;">✅ Nenhum ligante em situação crítica no período selecionado!</p>`;
+            } else {
+                let htmlAlerta = "";
+                ligantesCriticos.forEach(lc => {
+                    htmlAlerta += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px; border-radius: 6px; border: 1px solid #ffc9c9;">
+                            <div>
+                                <strong style="font-size: 12px; color: #333;">${lc.nome}</strong> <span style="font-size: 10px; color: #e03131; font-weight: bold;">(${lc.taxa}% de presença)</span>
+                                <p style="margin: 2px 0 0 0; font-size: 10px; color: #666;">Presenças: ${lc.presencas} | Faltas: ${lc.faltas}</p>
+                            </div>
+                            <button class="btn-mini vermelho" style="font-size: 10px; padding: 4px 8px;" onclick="dispararNotificacaoIndividual('${lc.id}', 'Aviso da Presidência 🚨', 'Notamos sua baixa frequência recente nas atividades da liga. Entre em contato com a secretaria.')">📢 Alertar</button>
+                        </div>
+                    `;
+                });
+                containerAlerta.innerHTML = htmlAlerta;
             }
         }
 
@@ -733,7 +1045,7 @@
                 containerFoto.innerHTML = `<img src="${usuarioSessao.fotoUrl}" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
                 let inicial = usuarioSessao.nome ? usuarioSessao.nome.charAt(0).toUpperCase() : "D";
-                containerFoto.innerHTML = `<div style="width:100%; height:100%; background:#0056b3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:24px;">${inicial}</div>`;
+                containerFoto.innerHTML = `<div style="width:100%; height:100%; background:#0056b3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:22px;">${inicial}</div>`;
             }
 
             let tempoStr = "Tempo na diretoria: Recém-chegado";
@@ -752,12 +1064,12 @@
             document.getElementById('admin-perfil-tempo').innerText = tempoStr;
         }
 
-        function mudarAba(nome, evento) {
+        function mudarAba(nome, elementoBtn) {
             document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
-            document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativo'));
+            document.querySelectorAll('.btn-func-menu').forEach(b => b.classList.remove('ativo'));
             let secaoAlvo = document.getElementById(`secao-${nome}`);
             if (secaoAlvo) secaoAlvo.style.display = 'block';
-            if (evento && evento.target) evento.target.classList.add('ativo');
+            if (elementoBtn) elementoBtn.classList.add('ativo');
             
             if (nome === 'migracao-papel') {
                 inicializarMigracaoLote();
@@ -916,7 +1228,7 @@
             if (contadorSalvos > 0) {
                 await dispararNotificacaoGlobal("Atualização de Histórico", `${contadorSalvos} novas atividades passadas foram migradas para o sistema.`);
                 alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos os ligantes instantaneamente.`);
-                mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
+                mudarAba('frequencia', document.querySelectorAll('.btn-func-menu')[6]);
             } else {
                 alert("Nenhuma atividade válida foi preenchida. Verifique os títulos, datas e chamadas.");
             }
@@ -1370,7 +1682,7 @@
             }
 
             cancelarEdicaoMembro();
-            mudarAba('lista-membros', { target: document.querySelectorAll('.aba-btn')[1] });
+            mudarAba('lista-membros', document.querySelectorAll('.btn-func-menu')[3]);
         }
 
         function prepararEdicaoMembro(id) {
@@ -1394,7 +1706,7 @@
             document.getElementById('titulo-form-membro').innerText = "Editar Ligante";
             document.getElementById('btn-salvar-membro').innerText = "Salvar Alterações";
             document.getElementById('btn-cancelar-membro').style.display = "block";
-            mudarAba('cadastro-membros', { target: document.querySelectorAll('.aba-btn')[0] });
+            mudarAba('cadastro-membros', document.querySelectorAll('.btn-func-menu')[2]);
         }
 
         function cancelarEdicaoMembro() {
@@ -1642,7 +1954,7 @@
             btnCadastrar.setAttribute("onclick", `salvarEdicaoAtividade('${id}')`);
 
             document.getElementById('titulo-form-atividade').innerText = "Editar Atividade";
-            mudarAba('cadastro-atividades', { target: document.querySelectorAll('.aba-btn')[2] });
+            mudarAba('cadastro-atividades', document.querySelectorAll('.btn-func-menu')[4]);
         }
 
         async function salvarEdicaoAtividade(id) {
