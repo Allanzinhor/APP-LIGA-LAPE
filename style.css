@@ -1,5 +1,5 @@
 /* =========================================
-   CONFIGURAÇÕES GERAIS (Tijolos básicos)
+   CONFIGURAÇÕES GERAIS E RESPONSIVIDADE MOBILE
    ========================================= */
 * {
     box-sizing: border-box;
@@ -8,17 +8,44 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* =========================================
-   TELA DE LOGIN
-   ========================================= */
+:root {
+    color-scheme: light;
+}
+
 body {
-    background-color: #e9ecef;
+    background-color: #f4f7f6 !important;
+    color: #000000 !important;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
 }
 
+body.fundo-app {
+    align-items: flex-start;
+}
+
+/* Caixa principal que simula o app no PC e expande perfeitamente no celular */
+.celular-container {
+    width: 100%;
+    max-width: 414px;
+    background-color: #f4f7f6;
+    min-height: 100vh;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    position: relative;
+    padding-bottom: 40px;
+    box-sizing: border-box;
+}
+
+/* Proteção universal contra texto quebrando o layout do celular */
+p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* =========================================
+   TELA DE LOGIN
+   ========================================= */
 #tela-login {
     background-color: #ffffff;
     padding: 30px;
@@ -47,12 +74,15 @@ label {
     color: #555;
 }
 
-input {
+input, select, textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 15px;
+    box-sizing: border-box;
+    background-color: #ffffff !important;
+    color: #000000 !important;
 }
 
 button {
@@ -65,6 +95,7 @@ button {
     font-size: 15px;
     font-weight: bold;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 button:hover {
@@ -72,23 +103,8 @@ button:hover {
 }
 
 /* =========================================
-   TELA PRINCIPAL (APP) - DESIGN MOBILE FIRST
+   CABEÇALHO E ELEMENTOS DO APP
    ========================================= */
-body.fundo-app {
-    align-items: flex-start; /* Alinha o app no topo no PC */
-}
-
-/* Esta é a caixa que limita a largura no PC para parecer celular */
-.celular-container {
-    width: 100%;
-    max-width: 414px; /* Tamanho comum de tela de celular */
-    background-color: #f4f7f6;
-    min-height: 100vh;
-    box-shadow: 0 0 20px rgba(0,0,0,0.15);
-    position: relative;
-    padding-bottom: 40px;
-}
-
 .cabecalho {
     background-color: #0056b3;
     color: white;
@@ -210,6 +226,7 @@ body.fundo-app {
     display: flex;
     gap: 8px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 .badge-dias {
@@ -253,11 +270,13 @@ body.fundo-app {
     display: flex;
     gap: 8px;
     margin-top: 15px;
+    flex-wrap: wrap;
 }
 
 .btn-confirmar, .btn-justificar {
     font-size: 13px;
     padding: 10px;
+    flex: 1;
 }
 
 .btn-confirmar {
@@ -273,7 +292,7 @@ body.fundo-app {
 
 .btn-justificar:hover { background-color: #e9ecef; }
 
-/* Modal */
+/* Modais */
 .modal {
     display: none;
     position: fixed;
@@ -295,6 +314,7 @@ body.fundo-app {
     width: 90%;
     max-width: 320px;
     text-align: left;
+    box-sizing: border-box;
 }
 
 .modal-conteudo h3 {
@@ -316,6 +336,8 @@ textarea {
     resize: vertical;
     margin-bottom: 15px;
     outline: none;
+    background: #fff;
+    color: #333;
 }
 
 textarea:focus { border-color: #0056b3; }
@@ -332,13 +354,14 @@ textarea:focus { border-color: #0056b3; }
 .btn-cancelar:hover { background-color: #e03131; }
 
 /* =========================================
-   DASHBOARD DE ESTATÍSTICAS (CH e Resumo)
+   DASHBOARD DE ESTATÍSTICAS
    ========================================= */
 .dashboard-estatisticas {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
     margin: 0 15px 15px 15px;
+    box-sizing: border-box;
 }
 
 .card-stat {
@@ -363,7 +386,6 @@ textarea:focus { border-color: #0056b3; }
     font-weight: bold;
 }
 
-/* Destalhe especial para a Carga Horária */
 .destaque-ch {
     background: linear-gradient(135deg, #0056b3, #004494);
 }
@@ -373,7 +395,6 @@ textarea:focus { border-color: #0056b3; }
     color: white;
 }
 
-/* Estados interativos dos botões de presença */
 .btn-confirmado {
     background-color: #2b8a3e;
     color: white;
@@ -393,26 +414,30 @@ textarea:focus { border-color: #0056b3; }
 }
 
 /* =========================================
-   QUADRO DE AVISOS (CARROSSEL DE SLIDES)
+   QUADRO DE AVISOS E HISTÓRICO GERAL
    ========================================= */
 .quadro-avisos {
-    background: linear-gradient(135deg, #fff3cd, #ffeeba);
-    border-left: 4px solid #ffc107;
-    margin: 15px;
-    padding: 12px 15px;
+    background: #fffdf4;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin: 15px;
+    overflow: hidden;
+    position: relative;
+    border-left: 5px solid #ffc107;
+    box-sizing: border-box;
 }
 
 .avisos-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
-    color: #856404;
-    margin-bottom: 8px;
-    text-transform: uppercase;
+    color: #b7791f;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #fef3c7;
+    padding-bottom: 5px;
 }
 
 #contador-slide {
@@ -429,17 +454,17 @@ textarea:focus { border-color: #0056b3; }
 }
 
 .slide {
-    display: none; /* Esconde todos por padrão */
+    display: none;
     animation: fadeIn 0.5s ease-in-out;
 }
 
 .slide.ativo {
-    display: block; /* Mostra apenas o slide ativo */
+    display: block;
 }
 
 .slide h4 {
     font-size: 14px;
-    color: #533f03;
+    color: #744210;
     margin-bottom: 3px;
 }
 
@@ -449,15 +474,11 @@ textarea:focus { border-color: #0056b3; }
     line-height: 1.4;
 }
 
-/* Animação suave de entrada para os slides */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* =========================================
-   ESTILOS DO HISTÓRICO GERAL ACUMULADO
-   ========================================= */
 .secao-historico-geral {
     margin: 15px 15px 0 15px;
 }
@@ -471,7 +492,7 @@ textarea:focus { border-color: #0056b3; }
 }
 
 /* =========================================
-   ESTILOS DO PAINEL FINANCEIRO (MENSALIDADE)
+   FINANCEIRO E PERFIL
    ========================================= */
 .card-financeiro {
     background-color: white;
@@ -483,8 +504,10 @@ textarea:focus { border-color: #0056b3; }
 .fin-info {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .fin-label {
@@ -509,6 +532,11 @@ textarea:focus { border-color: #0056b3; }
     font-weight: bold;
 }
 
+.badge-fin.pago { background-color: #d4edda; color: #155724; }
+.badge-fin.analise { background-color: #fff3cd; color: #856404; }
+.badge-fin.pendente { background-color: #f8d7da; color: #721c24; }
+.badge-fin.abonado { background-color: #e2e3e5; color: #383d41; }
+
 .btn-pagar {
     width: 100%;
     background-color: #0056b3;
@@ -518,7 +546,6 @@ textarea:focus { border-color: #0056b3; }
     margin-top: 0;
 }
 
-/* Modal Pix */
 .qrcode-box {
     width: 150px;
     height: 150px;
@@ -564,9 +591,6 @@ textarea:focus { border-color: #0056b3; }
     text-align: center;
 }
 
-/* =========================================
-   ESTILOS DO AVATAR E MODAL DE PERFIL
-   ========================================= */
 .avatar-perfil {
     width: 38px;
     height: 38px;
@@ -588,7 +612,6 @@ textarea:focus { border-color: #0056b3; }
     object-fit: cover;
 }
 
-/* Modal de Perfil Estilizado */
 .modal-perfil-overlay {
     display: none;
     position: fixed;
@@ -613,6 +636,7 @@ textarea:focus { border-color: #0056b3; }
     padding: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     text-align: left;
+    box-sizing: border-box;
 }
 
 .perfil-topo {
@@ -638,11 +662,10 @@ textarea:focus { border-color: #0056b3; }
     object-fit: cover;
 }
 
-/* Botãozinho de trocar foto */
 .botao-trocar-foto {
     position: absolute;
     bottom: 0;
-    right: 0;
+    right: 35%;
     background-color: #0056b3;
     color: white;
     width: 26px;
@@ -669,6 +692,7 @@ textarea:focus { border-color: #0056b3; }
     padding: 3px 10px;
     border-radius: 12px;
     font-weight: bold;
+    display: inline-block;
 }
 
 .perfil-detalhes {
@@ -735,6 +759,7 @@ textarea:focus { border-color: #0056b3; }
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     gap: 6px;
+    flex-wrap: wrap;
 }
 
 .aba-btn {
@@ -860,6 +885,8 @@ textarea:focus { border-color: #0056b3; }
     align-items: center;
     font-size: 12px;
     margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .caixa-justificativa-admin {
@@ -874,6 +901,7 @@ textarea:focus { border-color: #0056b3; }
 .botoes-presenca, .botoes-justica {
     display: flex;
     gap: 6px;
+    flex-wrap: wrap;
 }
 
 .btn-mini {
@@ -897,6 +925,8 @@ textarea:focus { border-color: #0056b3; }
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .subtexto-admin {
@@ -918,6 +948,8 @@ textarea:focus { border-color: #0056b3; }
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .banner-diretoria span {
@@ -950,11 +982,9 @@ textarea:focus { border-color: #0056b3; }
 /* =========================================
    PAINEL DE DIRETORIA COMPLEXO (UPGRADE)
    ========================================= */
-
-/* Menu de Abas com Rolagem Suave para telas pequenas */
 .admin-abas-complexa {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 colunas por linha */
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     background-color: white;
     padding: 10px;
@@ -986,7 +1016,6 @@ textarea:focus { border-color: #0056b3; }
     border-color: #0056b3;
 }
 
-/* Grids Inteligentes para Formulários */
 .grid-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1008,12 +1037,13 @@ textarea:focus { border-color: #0056b3; }
     border-radius: 6px;
 }
 
-/* Detalhes do Ligante */
 .cabecalho-lista {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .badge-total {
@@ -1038,14 +1068,12 @@ textarea:focus { border-color: #0056b3; }
     margin-bottom: 3px;
 }
 
-/* Destaque para Cargos de Diretoria */
 .tag-status.destaque-admin {
     background-color: #cce5ff;
     color: #004085;
     border: 1px solid #b8daff;
 }
 
-/* Accordion (Menu expansível) para Chamadas */
 .accordion-chamada {
     margin-top: 12px;
     background-color: #f8f9fa;
@@ -1067,7 +1095,6 @@ textarea:focus { border-color: #0056b3; }
     padding: 10px;
 }
 
-/* Painel Financeiro Mês a Mês */
 .filtro-financeiro select {
     width: 100%;
     padding: 12px;
@@ -1084,10 +1111,12 @@ textarea:focus { border-color: #0056b3; }
     display: flex;
     gap: 10px;
     margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 .res-box {
     flex: 1;
+    min-width: 120px;
     padding: 10px;
     text-align: center;
     border-radius: 8px;
@@ -1098,7 +1127,6 @@ textarea:focus { border-color: #0056b3; }
 .res-box.pago { background-color: #d4edda; color: #155724; }
 .res-box.pendente { background-color: #f8d7da; color: #721c24; }
 
-/* Botões Textuais Limpos */
 .botoes-acao-card {
     text-align: right;
     margin-top: 8px;
@@ -1114,129 +1142,6 @@ textarea:focus { border-color: #0056b3; }
     cursor: pointer;
 }
 .btn-acao.txt-vermelho { color: #dc3545; }
-
-/* Correção universal de quebra de texto (nunca mais vaza da caixa) */
-p, h3, h4, span, div, .desc-atividade, .card-atividade, .card-admin-item, .slide {
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-/* =========================================
-   QUADRO DE AVISOS (COM DESTAQUE AMARELO)
-   ========================================= */
-.quadro-avisos {
-    background: #fffdf4; /* Fundo amarelo clarinho de destaque */
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-    overflow: hidden;
-    position: relative;
-    border-left: 5px solid #ffc107; /* Barra lateral amarela de atenção */
-}
-
-.avisos-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    font-weight: bold;
-    color: #b7791f; /* Tom de amarelo escuro/laranja elegante para o cabeçalho */
-    margin-bottom: 10px;
-    border-bottom: 1px solid #fef3c7;
-    padding-bottom: 5px;
-}
-
-.slides-container {
-    display: flex;
-    width: 100%;
-    position: relative;
-    min-height: 70px;
-}
-
-.slide {
-    min-width: 100%;
-    box-sizing: border-box;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.6s ease-in-out;
-}
-
-.slide.ativo {
-    display: block;
-    opacity: 1;
-    animation: deslizarLateral 0.5s ease-in-out;
-}
-
-@keyframes deslizarLateral {
-    from {
-        transform: translateX(30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.slide h4 {
-    margin: 0 0 5px 0;
-    font-size: 14px;
-    color: #744210; /* Título do aviso com cor destacada original */
-}
-
-.slide p {
-    margin: 0;
-    font-size: 12px;
-    color: #555;
-    line-height: 1.4;
-}
-
-/* =========================================
-   ESTILOS DO MÓDULO FINANCEIRO (ADMIN E APP)
-   ========================================= */
-.tabela-financeiro {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.tabela-financeiro th, .tabela-financeiro td {
-    padding: 10px;
-    font-size: 12px;
-    text-align: left;
-    border-bottom: 1px solid #f1f3f5;
-}
-
-.tabela-financeiro th {
-    background-color: #f8f9fa;
-    color: #495057;
-}
-
-.badge-fin {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: bold;
-}
-.badge-fin.pago { background-color: #d4edda; color: #155724; }
-.badge-fin.analise { background-color: #fff3cd; color: #856404; }
-.badge-fin.pendente { background-color: #f8d7da; color: #721c24; }
-.badge-fin.abonado { background-color: #e2e3e5; color: #383d41; }
-
-:root {
-    color-scheme: light;
-}
-
-/* Força que o fundo do corpo não altere se o usuário mudar o tema do sistema */
-body {
-    background-color: #f4f7f6 !important;
-    color: #000000 !important;
-}
 
 /* =========================================
    CORREÇÃO DEFINITIVA DA TABELA FINANCEIRA
@@ -1256,10 +1161,9 @@ body {
     font-size: 11px;
     text-align: left;
     border-bottom: 1px solid #f1f3f5;
-    vertical-align: top; /* Alinha o conteúdo no topo de cada linha */
+    vertical-align: top;
 }
 
-/* Redimensionamento equilibrado das 3 colunas */
 .tabela-financeiro th:nth-child(1), .tabela-financeiro td:nth-child(1) {
     width: 38%;
 }
@@ -1274,7 +1178,6 @@ body {
     text-align: left;
 }
 
-/* Badge de status sem quebrar letras */
 .badge-fin {
     display: inline-block;
     padding: 3px 6px;
@@ -1283,8 +1186,11 @@ body {
     font-weight: bold;
     white-space: nowrap;
 }
+.badge-fin.pago { background-color: #d4edda; color: #155724; }
+.badge-fin.analise { background-color: #fff3cd; color: #856404; }
+.badge-fin.pendente { background-color: #f8d7da; color: #721c24; }
+.badge-fin.abonado { background-color: #e2e3e5; color: #383d41; }
 
-/* Organiza os botões de ação em uma grade organizada de 2 colunas */
 .tabela-financeiro td:nth-child(3) {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1300,7 +1206,6 @@ body {
     white-space: nowrap;
 }
 
-/* Faz o botão de "Notificar" ocupar a largura inteira embaixo dos outros */
 .tabela-financeiro td:nth-child(3) .btn-mini:nth-child(4) {
     grid-column: span 2;
 }
