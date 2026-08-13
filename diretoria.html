@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel da Diretoria - LAPE</title>
+    <title>Painel Executivo da Diretoria - LAPE</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="brasao.png" type="image/png">
     <link rel="apple-touch-icon" href="brasao.png">
     <link rel="stylesheet" href="style.css">
 
     <meta name="color-scheme" content="light">
+
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -23,127 +27,443 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
     </script>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #e0e7ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray-light: #f8fafc;
+            --border: #e2e8f0;
+            --radius: 14px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.fundo-app {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px 10px;
+            min-height: 100vh;
+        }
+
+        .celular-container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* HEADER SUPREMO */
+        header.cabecalho {
+            background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+            color: white;
+            padding: 24px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+        header.cabecalho h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-perfil {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-perfil:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* PERFIL DO DIRETOR */
+        .admin-card-acao {
+            background: #ffffff;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin: 20px;
+            transition: var(--transition);
+        }
+
+        /* MENU DE NAVEGAÇÃO MODERNO (ESTILO APP GESTÃO) */
+        .menu-painel-executivo {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .menu-card-item {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .menu-card-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -3px rgba(79, 70, 229, 0.15);
+            border-color: var(--primary-light);
+        }
+
+        .menu-card-item:hover::before, .menu-card-item.ativo::before {
+            opacity: 1;
+        }
+
+        .menu-card-item.ativo {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.2);
+        }
+
+        .menu-card-item i {
+            font-size: 24px;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 12px;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .menu-card-item:hover i, .menu-card-item.ativo i {
+            background: var(--primary);
+            color: white;
+        }
+
+        .menu-card-item span {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* BOTÃO DE VOLTAR AO MENU */
+        .barra-voltar-menu {
+            padding: 0 20px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .btn-voltar-menu {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            color: var(--dark);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-voltar-menu:hover {
+            background: #e2e8f0;
+            color: var(--primary);
+        }
+
+        /* ESTILOS DE BOTÕES E FORMULÁRIOS */
+        .btn-salvar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-salvar:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .btn-mini {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-mini.verde { background: #d1fae5; color: #065f46; }
+        .btn-mini.vermelho { background: #fee2e2; color: #991b1b; }
+        .btn-mini.cinza { background: #f1f5f9; color: #475569; border: 1px solid var(--border); }
+
+        .btn-mini:hover { filter: brightness(0.95); transform: translateY(-1px); }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: var(--dark);
+            box-sizing: border-box;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        /* MODAIS REFINADOS */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .modal-conteudo {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalEntrada 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalEntrada {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* ESTADO INICIAL VAZIO (NENHUMA ABA ABERTA) */
+        #estado-vazio-painel {
+            text-align: center;
+            padding: 50px 20px;
+            color: #64748b;
+        }
+
+        #estado-vazio-painel i {
+            font-size: 48px;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 24px;
+            border-radius: 50%;
+            margin-bottom: 16px;
+        }
+
+        #estado-vazio-painel h3 {
+            margin: 0 0 8px 0;
+            color: var(--dark);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        #estado-vazio-painel p {
+            margin: 0;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body class="fundo-app">
 
-    <div class="celular-container" style="max-width: 680px;">
+    <div class="celular-container">
         
         <header class="cabecalho">
-            <h2 id="titulo-painel-topo">Gestão da Liga (Admin)</h2>
-            <button class="btn-perfil" onclick="window.location.href='index.html'">Portal do Ligante</button>
+            <h2 id="titulo-painel-topo"><i class="fa-solid fa-chart-pie"></i> Gestão Executiva da LAPE</h2>
+            <button class="btn-perfil" onclick="window.location.href='index.html'"><i class="fa-solid fa-arrow-right-from-bracket"></i> Portal do Ligante</button>
         </header>
 
         <!-- PERFIL DO DIRETOR LOGADO NO TOPO -->
-        <div class="admin-card-acao" style="margin: 15px; background: #ffffff; border-left: 5px solid #0056b3; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: calc(100% - 30px);">
-            <div id="admin-perfil-foto-container" style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #0056b3;"></div>
+        <div class="admin-card-acao" style="margin: 15px; background: #ffffff; border-left: 5px solid var(--primary); display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-sizing: border-box; width: calc(100% - 30px);">
+            <div id="admin-perfil-foto-container" style="width: 65px; height: 65px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid var(--primary);"></div>
             <div style="flex: 1; min-width: 200px;">
-                <h3 id="admin-perfil-nome" style="margin: 0; color: #0056b3; font-size: 18px;">Nome do Diretor</h3>
-                <p id="admin-perfil-cargo" style="margin: 2px 0; font-weight: bold; color: #2b8a3e; font-size: 13px; text-transform: uppercase;">Cargo</p>
-                <p id="admin-perfil-tempo" style="margin: 0; font-size: 12px; color: #555;">Tempo na diretoria: Calculando...</p>
+                <h3 id="admin-perfil-nome" style="margin: 0; color: var(--dark); font-size: 17px; font-weight: 800;">Nome do Diretor</h3>
+                <p id="admin-perfil-cargo" style="margin: 2px 0; font-weight: 700; color: var(--success); font-size: 12px; text-transform: uppercase;">Cargo</p>
+                <p id="admin-perfil-tempo" style="margin: 0; font-size: 11px; color: #64748b;">Tempo na diretoria: Calculando...</p>
             </div>
         </div>
 
         <!-- CARD DE CONTROLE DE MANUTENÇÃO -->
-        <div class="admin-card-acao" style="background: #fff3bf; border: 1px solid #ffe066; margin: 0 15px 15px 15px;">
-            <h3 style="color: #b7791f; margin-top: 0; font-size: 15px;">🛠️ Modo de Manutenção do App</h3>
-            <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Ative este botão para exibir o aviso de paralisação e manutenção para os ligantes, sem alterar os dados do sistema.</p>
+        <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a; margin: 0 15px 15px 15px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                <i class="fa-solid fa-screwdriver-wrench" style="color: #d97706; font-size: 16px;"></i>
+                <h3 style="color: #b45309; margin: 0; font-size: 14px; font-weight: 800;">Modo de Manutenção do App</h3>
+            </div>
+            <p style="font-size: 12px; color: #78350f; margin-bottom: 10px;">Ative para exibir aviso de paralisação e manutenção aos ligantes sem perder dados.</p>
             
-            <div style="display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef;">
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 10px 14px; border-radius: 10px; border: 1px solid #fef3c7;">
                 <div>
-                    <strong id="status-manutencao-texto" style="font-size: 13px; color: #333;">Status: Desativado</strong>
-                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">O app está funcionando normalmente.</p>
+                    <strong id="status-manutencao-texto" style="font-size: 12px; color: var(--dark);">Status: Desativado</strong>
+                    <p style="margin: 2px 0 0 0; font-size: 10px; color: #64748b;">O app está funcionando normalmente.</p>
                 </div>
-                <button id="btn-toggle-manutencao" class="btn-mini verde" style="padding: 8px 14px; font-size: 12px;" onclick="alternarModoManutencao()">Ativar Manutenção</button>
+                <button id="btn-toggle-manutencao" class="btn-mini verde" onclick="alternarModoManutencao()">Ativar Manutenção</button>
             </div>
         </div>
 
-        <!-- Navegação por Abas -->
-        <nav class="admin-abas-complexa" id="menu-abas-admin" style="margin: 0 15px 15px 15px; display: grid; gap: 6px;"></nav>
+        <!-- BARRA DE VOLTAR AO MENU (OCULTA NO INÍCIO) -->
+        <div class="barra-voltar-menu" id="barra-voltar-container">
+            <button class="btn-voltar-menu" onclick="voltarAoMenuPrincipal()"><i class="fa-solid fa-arrow-left"></i> Voltar ao Menu Principal</button>
+        </div>
+
+        <!-- ================= MENU PRINCIPAL DE NAVEGAÇÃO ================= -->
+        <div class="menu-painel-executivo" id="menu-painel-executivo">
+            <!-- Preenchido dinamicamente pelas permissões -->
+        </div>
+
+        <!-- ================= ESTADO INICIAL VAZIO (NENHUMA ABA ABERTA) ================= -->
+        <div id="estado-vazio-painel">
+            <i class="fa-solid fa-layer-group"></i>
+            <h3>Bem-vindo ao Centro de Gestão</h3>
+            <p>Selecione uma das opções no menu acima para gerenciar os dados da liga.</p>
+        </div>
 
         <!-- ================= ABA PRINCIPAL: DASHBOARD SUPREMO & INTELIGÊNCIA DE GESTÃO ================= -->
-        <div id="secao-dashboard-principal" class="admin-secao" style="display: block; padding: 0 15px 30px 15px;">
-            <div class="admin-card-acao" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 1px solid #dee2e6; border-left: 5px solid #7950f2;">
+        <div id="secao-dashboard-principal" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
+            <div class="admin-card-acao" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1px solid var(--border); border-left: 5px solid var(--primary);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h3 style="margin: 0; color: #7950f2; font-size: 16px;">Desempenho Geral da LAPE</h3>
-                    <span style="font-size: 11px; font-weight: bold; color: #495057; background: #fff; padding: 3px 8px; border-radius: 6px; border: 1px solid #ced4da;" id="badge-periodo-atual">Mensal</span>
+                    <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-crown"></i> Centro de Inteligência Executiva</h3>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--dark); background: var(--primary-light); padding: 3px 10px; border-radius: 20px;" id="badge-periodo-atual">Mensal</span>
                 </div>
-                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Painel analítico para tomada de decisão da Presidência e Secretaria.</p>
+                <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">Dashboard analítico supremo para tomada de decisão da Presidência e Secretaria.</p>
                 
                 <!-- Seletor de Período Estilo Pílula -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #dee2e6; padding: 4px; border-radius: 8px; margin-bottom: 15px;">
-                    <button class="btn-mini" id="btn-per-mensal" style="background: #0056b3; color: white; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('mensal')">Mensal</button>
-                    <button class="btn-mini" id="btn-per-semestral" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('semestral')">Semestral</button>
-                    <button class="btn-mini" id="btn-per-anual" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('anual')">Anual</button>
-                    <button class="btn-mini" id="btn-per-geral" style="background: white; color: #333; border: none; font-size: 11px; padding: 6px; font-weight: bold;" onclick="mudarPeriodoDesempenho('geral')">Geral</button>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 15px;">
+                    <button class="btn-mini" id="btn-per-mensal" style="background: var(--primary); color: white; border: none; font-size: 11px; padding: 8px; font-weight: 700; border-radius: 8px;" onclick="mudarPeriodoDesempenho('mensal')">Mensal</button>
+                    <button class="btn-mini" id="btn-per-semestral" style="background: transparent; color: var(--dark); border: none; font-size: 11px; padding: 8px; font-weight: 700; border-radius: 8px;" onclick="mudarPeriodoDesempenho('semestral')">Semestral</button>
+                    <button class="btn-mini" id="btn-per-anual" style="background: transparent; color: var(--dark); border: none; font-size: 11px; padding: 8px; font-weight: 700; border-radius: 8px;" onclick="mudarPeriodoDesempenho('anual')">Anual</button>
+                    <button class="btn-mini" id="btn-per-geral" style="background: transparent; color: var(--dark); border: none; font-size: 11px; padding: 8px; font-weight: 700; border-radius: 8px;" onclick="mudarPeriodoDesempenho('geral')">Geral</button>
                 </div>
 
-                <!-- 1. MACRO INDICADORES DE GESTÃO (10 Indicadores Completos) -->
+                <!-- 1. MACRO INDICADORES DE GESTÃO (9 Indicadores) -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; text-align: center;">
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #0056b3;" id="ind-taxa-retencao">100%</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">Taxa Retenção</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: var(--primary);" id="ind-taxa-retencao">100%</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Taxa Retenção</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #2b8a3e;" id="ind-taxa-presenca">0%</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">Presença Média</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: var(--success);" id="ind-taxa-presenca">0%</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Presença Média</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #e03131;" id="ind-media-faltas">0</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">Média Faltas</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: var(--danger);" id="ind-media-faltas">0</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Média Faltas</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #f59f00;" id="ind-just-pendentes">0</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">Just. Pendentes</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: var(--warning);" id="ind-just-pendentes">0</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Just. Pendentes</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #7950f2;" id="ind-ch-media">0h</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">CH Média / Ligante</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: #8b5cf6;" id="ind-ch-media">0h</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">CH Média / Ligante</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #1c7ed6;" id="ind-engajamento-geral">0%</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">Índice Engajamento</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: #0ea5e9;" id="ind-engajamento-geral">0%</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Índice Engajamento</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #0056b3;" id="ind-total-ativ">0</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">Atividades Período</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: var(--primary);" id="ind-total-ativ">0</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Atividades Período</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #2b8a3e;" id="ind-perc-ativos">0%</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">Ligantes Ativos</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: var(--success);" id="ind-perc-ativos">0%</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Ligantes Ativos</span>
                     </div>
-                    <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #ced4da;">
-                        <span style="display: block; font-size: 15px; font-weight: bold; color: #7950f2;" id="ind-ch-total">0h</span>
-                        <span style="font-size: 9px; color: #666; font-weight: bold;">CH Total Emitida</span>
+                    <div style="background: white; padding: 12px 8px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: #8b5cf6;" id="ind-ch-total">0h</span>
+                        <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">CH Total Emitida</span>
                     </div>
                 </div>
 
                 <!-- 2. INTELIGÊNCIA DA LIGA (Recomendações Automáticas) -->
-                <div style="background: #e7f5ff; border: 1px solid #74c0fc; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                        <span style="font-size: 15px;">🤖</span>
-                        <strong style="font-size: 12px; color: #1864ab;">Inteligência Automática & Recomendações da Presidência</strong>
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                        <i class="fa-solid fa-robot" style="color: var(--primary); font-size: 15px;"></i>
+                        <strong style="font-size: 12px; color: #1e40af;">Inteligência Automática & Recomendações da Presidência</strong>
                     </div>
-                    <div id="container-insights-ia" style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #333;">
-                        <p style="margin: 0; color: #666; font-style: italic;">Processando inteligência de dados da liga...</p>
+                    <div id="container-insights-ia" style="display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: #334155;">
+                        <p style="margin: 0; color: #64748b; font-style: italic;">Processando inteligência de dados da liga...</p>
                     </div>
                 </div>
 
                 <!-- 3. SISTEMA DE ALERTAS AUTOMÁTICOS CLASSIFICADOS -->
-                <div style="background: #fff5f5; border: 1px solid #ffc9c9; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <strong style="font-size: 12px; color: #c92a2a;">🚨 Alertas Automáticos de Risco & Desempenho</strong>
-                        <button class="btn-mini vermelho" style="font-size: 10px; padding: 3px 6px;" onclick="notificarTodosCriticos()">📢 Notificar Alertas</button>
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 14px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="font-size: 12px; color: #991b1b; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-triangle-exclamation"></i> Alertas Automáticos de Risco & Desempenho</strong>
+                        <button class="btn-mini vermelho" style="font-size: 10px; padding: 4px 8px;" onclick="notificarTodosCriticos()"><i class="fa-solid fa-bullhorn"></i> Notificar Alertas</button>
                     </div>
                     <div id="container-alertas-automaticos" style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                        <p style="font-size: 11px; color: #666; text-align: center; margin: 5px 0;">Nenhum alerta crítico ativo no momento.</p>
+                        <p style="font-size: 11px; color: #64748b; text-align: center; margin: 5px 0;">Nenhum alerta crítico ativo no momento.</p>
                     </div>
                 </div>
 
-                <!-- 4. RANKINGS COMPLETOS (8 Categorias + Ranking Geral com Pontuação) -->
-                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px; margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <strong style="font-size: 13px; color: #7950f2;">🏆 Hall da Fama & Rankings Especializados</strong>
-                        <select id="seletor-categoria-ranking" onchange="renderizarRankingsComplexos()" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; font-weight: bold;">
+                <!-- 4. RANKINGS COMPLETOS -->
+                <div style="background: white; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                        <strong style="font-size: 13px; color: #8b5cf6; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-trophy"></i> Hall da Fama & Rankings Especializados</strong>
+                        <select id="seletor-categoria-ranking" onchange="renderizarRankingsComplexos()" style="padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 11px; font-weight: 700; width: auto;">
                             <option value="geral">⭐ Ranking Geral (Pontuação Suprema)</option>
                             <option value="presenca">🏆 Top Presença</option>
                             <option value="engajamento">🔥 Top Engajamento</option>
@@ -155,23 +475,23 @@
                             <option value="sequencia">🎯 Maior Sequência</option>
                         </select>
                     </div>
-                    <div id="container-lista-ranking-selecionado" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+                    <div id="container-lista-ranking-selecionado" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
                         <!-- Preenchido dinamicamente -->
                     </div>
                 </div>
 
-                <!-- 5. MAPA DE ENGAJAMENTO DA LIGA (Tabela Inteligente & Filtros) -->
-                <div style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px;">
-                    <strong style="font-size: 13px; color: #0056b3; display: block; margin-bottom: 8px;">🗺️ Mapa de Engajamento da Liga</strong>
+                <!-- 5. MAPA DE ENGAJAMENTO DA LIGA -->
+                <div style="background: white; border: 1px solid var(--border); border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <strong style="font-size: 13px; color: var(--primary); display: block; margin-bottom: 10px;"><i class="fa-solid fa-map-location-dot"></i> Mapa de Engajamento da Liga</strong>
                     
                     <!-- Filtros do Mapa -->
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px;">
-                        <select id="filtro-mapa-cargo" onchange="renderizarMapaEngajamento()" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px;">
+                        <select id="filtro-mapa-cargo" onchange="renderizarMapaEngajamento()" style="padding: 6px; font-size: 11px; border-radius: 8px; border: 1px solid var(--border);">
                             <option value="todos">Todos os Cargos</option>
                             <option value="ligante">Apenas Ligantes</option>
                             <option value="diretoria">Apenas Diretoria</option>
                         </select>
-                        <select id="filtro-mapa-situacao" onchange="renderizarMapaEngajamento()" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                        <select id="filtro-mapa-situacao" onchange="renderizarMapaEngajamento()" style="padding: 6px; font-size: 11px; border-radius: 8px; border: 1px solid var(--border);">
                             <option value="todos">Todas as Situações</option>
                             <option value="excelente">🟢 Excelente (>= 80%)</option>
                             <option value="atencao">🟡 Atenção (50% - 79%)</option>
@@ -189,27 +509,27 @@
             <!-- MURAL DE AVISOS DA DIRETORIA -->
             <div class="quadro-avisos" style="margin-top: 15px;">
                 <div class="avisos-header">
-                    <span>🛡️ MURAL INTERNO DA DIRETORIA</span>
+                    <span><i class="fa-solid fa-shield-halved"></i> MURAL INTERNO DA DIRETORIA</span>
                     <span id="contador-slide-dir">1/1</span>
                 </div>
                 <div id="container-avisos-fixos"></div>
-                <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justifyContent: center;"></div>
+                <div class="slides-container" id="container-slides-dir" style="min-height: 110px; display: flex; flex-direction: column; justify-content: center;"></div>
             </div>
         </div>
 
         <!-- ABA: RECADOS INTERNOS -->
         <div id="secao-recados-internos" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
-            <div class="admin-card-acao" id="painel-criacao-aviso-dir" style="background: #fff8e1; border: 1px solid #ffe066;">
-                <h3 id="titulo-form-aviso-dir" style="margin: 0 0 8px 0; color: #b7791f; font-size: 15px;">✍️ Publicar Recado para a Diretoria</h3>
+            <div class="admin-card-acao" id="painel-criacao-aviso-dir" style="background: #fffbeb; border: 1px solid #fde68a;">
+                <h3 id="titulo-form-aviso-dir" style="margin: 0 0 12px 0; color: #b45309; font-size: 15px; font-weight: 800;"><i class="fa-solid fa-pen-nib"></i> Publicar Recado para a Diretoria</h3>
                 
                 <input type="hidden" id="av-dir-id-editando">
-                <input type="text" id="av-dir-titulo" placeholder="Título do Recado" style="margin-bottom: 6px; width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-                <textarea id="av-dir-texto" rows="2" placeholder="Escreva a mensagem..." style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 8px;"></textarea>
+                <input type="text" id="av-dir-titulo" placeholder="Título do Recado" style="margin-bottom: 8px;">
+                <textarea id="av-dir-texto" rows="3" placeholder="Escreva a mensagem..." style="margin-bottom: 10px;"></textarea>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
                     <div>
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Origem:</label>
-                        <select id="av-dir-origem" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Origem:</label>
+                        <select id="av-dir-origem">
                             <option value="Presidência">Presidência</option>
                             <option value="Diretoria de Pesquisa">Diretoria de Pesquisa</option>
                             <option value="Diretoria de Extensão">Diretoria de Extensão</option>
@@ -219,8 +539,8 @@
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Público-Alvo:</label>
-                        <select id="av-dir-alvo" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Público-Alvo:</label>
+                        <select id="av-dir-alvo">
                             <option value="todos">Todos da Diretoria</option>
                             <option value="Presidente">Apenas Presidente</option>
                             <option value="Vice-Presidente">Apenas Vice-Presidente</option>
@@ -233,10 +553,10 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
                     <div>
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Duração:</label>
-                        <select id="av-dir-duracao" onchange="alternarCampoPersonalizado(this.value)" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Duração:</label>
+                        <select id="av-dir-duracao" onchange="alternarCampoPersonalizado(this.value)">
                             <option value="permanente">Permanente</option>
                             <option value="1">1 Dia</option>
                             <option value="3">3 Dias</option>
@@ -245,41 +565,41 @@
                         </select>
                     </div>
                     <div id="div-data-personalizada" style="display: none;">
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Expira em:</label>
-                        <input type="datetime-local" id="av-dir-expira-personalizada" style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; box-sizing: border-box;">
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Expira em:</label>
+                        <input type="datetime-local" id="av-dir-expira-personalizada">
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
-                    <input type="checkbox" id="av-dir-fixo" style="width: 16px; height: 16px;">
-                    <label for="av-dir-fixo" style="font-size: 12px; font-weight: bold; color: #b7791f; cursor: pointer;">Fixar recado (Fica estático no topo)</label>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <input type="checkbox" id="av-dir-fixo" style="width: 18px; height: 18px;">
+                    <label for="av-dir-fixo" style="font-size: 12px; font-weight: 700; color: #b45309; cursor: pointer;">Fixar recado (Fica estático no topo)</label>
                 </div>
 
-                <button class="btn-salvar" id="btn-salvar-aviso-dir" style="padding: 8px; font-size: 13px;" onclick="salvarAvisoDiretoria()">Publicar Recado</button>
-                <button class="btn-mini cinza" id="btn-cancelar-aviso-dir" style="display:none; width:100%; margin-top:5px; padding:8px;" onclick="cancelarEdicaoAvisoDiretoria()">Cancelar Edição</button>
+                <button class="btn-salvar" id="btn-salvar-aviso-dir" onclick="salvarAvisoDiretoria()">Publicar Recado</button>
+                <button class="btn-mini cinza" id="btn-cancelar-aviso-dir" style="display:none; width:100%; margin-top:8px; padding:10px;" onclick="cancelarEdicaoAvisoDiretoria()">Cancelar Edição</button>
             </div>
         </div>
 
         <!-- ABA: CADASTRAR / EDITAR MEMBROS -->
         <div id="secao-cadastro-membros" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao">
-                <h3 id="titulo-form-membro">Cadastrar Novo Ligante</h3>
+                <h3 id="titulo-form-membro" style="margin-top:0; font-size: 16px; font-weight: 800; color: var(--primary);">Cadastrar Novo Ligante</h3>
                 <input type="hidden" id="m-id-editando">
-                <div class="grid-form">
-                    <input type="text" id="m-nome" placeholder="Nome Completo *" class="col-full" required>
+                <div class="grid-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="text" id="m-nome" placeholder="Nome Completo *" class="col-full" style="grid-column: span 2;" required>
                     
                     <div>
-                        <label style="font-size:11px; margin-bottom:2px;">Data de Nascimento</label>
+                        <label style="font-size:11px; font-weight:700; margin-bottom:2px; display:block;">Data de Nascimento</label>
                         <input type="date" id="m-nascimento">
                     </div>
                     <div>
-                        <label style="font-size:11px; margin-bottom:2px;">Telefone</label>
+                        <label style="font-size:11px; font-weight:700; margin-bottom:2px; display:block;">Telefone</label>
                         <input type="text" id="m-tel" placeholder="(99) 99999-9999" oninput="mascaraTelefone(this)" maxlength="15">
                     </div>
 
-                    <input type="email" id="m-email" placeholder="E-mail *" class="col-full" required>
+                    <input type="email" id="m-email" placeholder="E-mail *" class="col-full" style="grid-column: span 2;" required>
                     <input type="text" id="m-curso" placeholder="Curso (Ex: Enfermagem)">
-                    <input type="text" id="m-instituicao" value="Centro Universitario Facimp Wyden" readonly style="background:#e9ecef; color:#495057;">
+                    <input type="text" id="m-instituicao" value="Centro Universitario Facimp Wyden" readonly style="background:#f1f5f9; color:#64748b;">
                     
                     <input type="text" id="m-matricula" placeholder="Matrícula">
                     <select id="m-turno">
@@ -294,14 +614,14 @@
                         <option value="2">2º Semestre</option>
                     </select>
 
-                    <input type="text" id="m-previsao-formatura" placeholder="Previsão de Formatura" readonly class="col-full" style="background:#e9ecef; font-weight:bold; color:#0056b3;">
+                    <input type="text" id="m-previsao-formatura" placeholder="Previsão de Formatura" readonly class="col-full" style="grid-column: span 2; background:#f1f5f9; font-weight:800; color:var(--primary);">
 
-                    <div class="col-full">
-                        <label style="font-size:11px; margin-bottom:2px;">Data de Ingresso na Liga</label>
+                    <div class="col-full" style="grid-column: span 2;">
+                        <label style="font-size:11px; font-weight:700; margin-bottom:2px; display:block;">Data de Ingresso na Liga</label>
                         <input type="date" id="m-ingresso-liga">
                     </div>
 
-                    <select id="m-cargo" class="col-full">
+                    <select id="m-cargo" class="col-full" style="grid-column: span 2;">
                         <option value="Ligante">Ligante</option>
                         <option value="Presidente">Presidente</option>
                         <option value="Vice-Presidente">Vice-Presidente</option>
@@ -313,57 +633,57 @@
                         <option value="Marketing">Marketing</option>
                     </select>
                 </div>
-                <button class="btn-salvar" id="btn-salvar-membro" onclick="salvarMembro()">Salvar e Gerar Código</button>
-                <button class="btn-mini cinza" id="btn-cancelar-membro" style="display:none; width:100%; margin-top:5px; padding:10px;" onclick="cancelarEdicaoMembro()">Cancelar Edição</button>
+                <button class="btn-salvar" id="btn-salvar-membro" style="margin-top: 15px;" onclick="salvarMembro()">Salvar e Gerar Código</button>
+                <button class="btn-mini cinza" id="btn-cancelar-membro" style="display:none; width:100%; margin-top:8px; padding:10px;" onclick="cancelarEdicaoMembro()">Cancelar Edição</button>
             </div>
         </div>
 
         <!-- ABA: LISTA DE MEMBROS -->
         <div id="secao-lista-membros" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
-            <div class="cabecalho-lista">
-                <h3>Ligantes Cadastrados</h3>
-                <span class="badge-total" id="total-membros">0 ativos</span>
+            <div class="cabecalho-lista" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--dark);">Ligantes Cadastrados</h3>
+                <span class="badge-total" id="total-membros" style="background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800;">0 ativos</span>
             </div>
             
-            <h4 style="margin: 15px 0 5px 0; color: #0056b3; font-size:14px;">👔 Diretoria</h4>
+            <h4 style="margin: 15px 0 8px 0; color: var(--primary); font-size:13px; font-weight:800;"><i class="fa-solid fa-user-tie"></i> Diretoria</h4>
             <div id="lista-diretoria"></div>
 
-            <h4 style="margin: 20px 0 5px 0; color: #2b8a3e; font-size:14px;">🎓 Ligantes Ativos</h4>
+            <h4 style="margin: 20px 0 8px 0; color: var(--success); font-size:13px; font-weight:800;"><i class="fa-solid fa-graduation-cap"></i> Ligantes Ativos</h4>
             <div id="lista-ligantes"></div>
 
-            <h4 style="margin: 20px 0 5px 0; color: #e03131; font-size:14px;">⛔ Ligantes Desligados</h4>
+            <h4 style="margin: 20px 0 8px 0; color: var(--danger); font-size:13px; font-weight:800;"><i class="fa-solid fa-user-slash"></i> Ligantes Desligados</h4>
             <div id="lista-desligados"></div>
         </div>
 
         <!-- ABA: CADASTRAR ATIVIDADES -->
         <div id="secao-cadastro-atividades" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao">
-                <h3 id="titulo-form-atividade">Nova Atividade</h3>
-                <div class="grid-form">
-                    <input type="text" id="at-titulo" placeholder="Título *" class="col-full">
+                <h3 id="titulo-form-atividade" style="margin-top:0; font-size: 16px; font-weight: 800; color: var(--primary);">Nova Atividade</h3>
+                <div class="grid-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="text" id="at-titulo" placeholder="Título *" class="col-full" style="grid-column: span 2;">
                     <input type="date" id="at-data">
                     <input type="time" id="at-hora">
                     <input type="text" id="at-local" placeholder="Local">
                     <input type="number" id="at-ch" placeholder="Carga Horária (h)">
                     
-                    <div class="col-full" style="margin-top: 5px;">
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 3px;">Visibilidade:</label>
-                        <select id="at-publico" class="col-full" style="padding: 10px; border-radius: 6px; border: 1px solid #ccc;">
+                    <div class="col-full" style="grid-column: span 2; margin-top: 4px;">
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Visibilidade:</label>
+                        <select id="at-publico" class="col-full">
                             <option value="todos">Para Todos (Ligantes e Diretoria)</option>
                             <option value="diretoria">Apenas Diretoria</option>
                         </select>
                     </div>
 
-                    <textarea id="at-desc" rows="3" placeholder="Descrição..." class="col-full" style="margin-top: 5px;"></textarea>
+                    <textarea id="at-desc" rows="3" placeholder="Descrição..." class="col-full" style="grid-column: span 2; margin-top: 4px;"></textarea>
                 </div>
-                <button class="btn-salvar" id="btn-salvar-atividade" onclick="cadastrarAtividade()">Criar Atividade na Nuvem</button>
+                <button class="btn-salvar" style="margin-top: 15px;" onclick="cadastrarAtividade()">Criar Atividade na Nuvem</button>
             </div>
         </div>
 
         <!-- ABA: LISTA DE ATIVIDADES -->
         <div id="secao-lista-atividades" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
-                <h3>Filtrar Atividades por Mês/Ano</h3>
+                <h3 style="margin-top:0; font-size: 14px; font-weight: 800; color: var(--primary);">Filtrar Atividades por Mês/Ano</h3>
                 <select id="filtro-mes-atividades" onchange="renderizarAtividadesEdicao()">
                     <option value="2025-08">Agosto / 2025</option>
                     <option value="2025-09">Setembro / 2025</option>
@@ -384,14 +704,14 @@
                     <option value="2026-12">Dezembro / 2026</option>
                 </select>
             </div>
-            <h3>Atividades Cadastradas</h3>
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 10px;">Atividades Cadastradas</h3>
             <div id="lista-admin-atividades-edicao"></div>
         </div>
 
         <!-- ABA: FREQUÊNCIA -->
         <div id="secao-frequencia" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
-                <h3>Controle de Frequência por Mês/Ano</h3>
+                <h3 style="margin-top:0; font-size: 14px; font-weight: 800; color: var(--primary);">Controle de Frequência por Mês/Ano</h3>
                 <select id="filtro-mes-frequencia" onchange="renderizarFrequenciaAdmin()">
                     <option value="2025-08">Agosto / 2025</option>
                     <option value="2025-09">Setembro / 2025</option>
@@ -412,14 +732,14 @@
                     <option value="2026-12">Dezembro / 2026</option>
                 </select>
             </div>
-            <h3>Clique na atividade para gerenciar a chamada:</h3>
+            <h3 style="font-size: 14px; font-weight: 700; color: #64748b; margin-bottom: 10px;">Clique na atividade para gerenciar a chamada:</h3>
             <div id="lista-admin-frequencia"></div>
         </div>
 
         <!-- ABA: FINANCEIRO -->
         <div id="secao-financeiro" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 15px;">
-                <h3>Gestão de Mensalidades por Mês</h3>
+                <h3 style="margin-top:0; font-size: 14px; font-weight: 800; color: var(--primary);">Gestão de Mensalidades por Mês</h3>
                 <select id="filtro-mes-financeiro" onchange="renderizarFinanceiroAdmin()">
                     <option value="2025-08">Agosto / 2025</option>
                     <option value="2025-09">Setembro / 2025</option>
@@ -446,41 +766,41 @@
         <!-- ABA: AVISOS GLOBAIS -->
         <div id="secao-avisos" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
             <div class="admin-card-acao">
-                <h3 id="titulo-form-aviso">Publicar Novo Aviso (Geral)</h3>
+                <h3 id="titulo-form-aviso" style="margin-top:0; font-size: 16px; font-weight: 800; color: var(--primary);">Publicar Novo Aviso (Geral)</h3>
                 <input type="hidden" id="av-id-editando">
-                <input type="text" id="av-titulo" placeholder="Título">
-                <textarea id="av-texto" rows="3" placeholder="Mensagem..."></textarea>
+                <input type="text" id="av-titulo" placeholder="Título" style="margin-bottom: 8px;">
+                <textarea id="av-texto" rows="3" placeholder="Mensagem..." style="margin-bottom: 12px;"></textarea>
                 <button class="btn-salvar" id="btn-salvar-aviso" onclick="salvarAviso()">Publicar na Nuvem</button>
-                <button class="btn-mini cinza" id="btn-cancelar-aviso" style="display:none; width:100%; margin-top:5px; padding:10px;" onclick="cancelarEdicaoAviso()">Cancelar Edição</button>
+                <button class="btn-mini cinza" id="btn-cancelar-aviso" style="display:none; width:100%; margin-top:8px; padding:10px;" onclick="cancelarEdicaoAviso()">Cancelar Edição</button>
             </div>
-            <h3>Avisos Globais Publicados</h3>
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--dark); margin-bottom: 10px;">Avisos Globais Publicados</h3>
             <div id="lista-admin-avisos"></div>
         </div>
 
         <!-- ABA: MIGRAR PAPEL EM LOTE -->
         <div id="secao-migracao-papel" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
-            <div class="admin-card-acao" style="background: #fff8e1; border: 2px dashed #f59f00;">
-                <h3 style="color: #e67700; margin-top: 0;">📥 Migração de Atividades em Lote (Papel)</h3>
-                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Adicione quantas atividades precisar clicando em <strong>"+ Adicionar Outra Atividade"</strong>. Preencha a data para filtrar os ligantes ativos na época e marque rapidamente em ordem alfabética. Quando terminar, clique em <strong>Salvar Tudo</strong>.</p>
+            <div class="admin-card-acao" style="background: #fffbeb; border: 2px dashed #f59e0b;">
+                <h3 style="color: #b45309; margin-top: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-file-arrow-down"></i> Migração de Atividades em Lote (Papel)</h3>
+                <p style="font-size: 12px; color: #78350f; margin-bottom: 12px;">Adicione quantas atividades precisar clicando em <strong>"+ Adicionar Outra Atividade"</strong>. Preencha a data para filtrar os ligantes ativos na época e marque rapidamente em ordem alfabética.</p>
                 
                 <div id="container-lote-atividades"></div>
 
-                <button type="button" class="btn-mini cinza" style="width: 100%; padding: 10px; font-size: 13px; margin-top: 10px; background: #e9ecef; border: 1px solid #ced4da; color: #333; font-weight: bold;" onclick="adicionarBlocoAtividadeLote()">➕ Adicionar Outra Atividade na Lista</button>
+                <button type="button" class="btn-mini cinza" style="width: 100%; padding: 12px; font-size: 12px; margin-top: 10px; background: #ffffff; border: 1px solid var(--border); font-weight: 800;" onclick="adicionarBlocoAtividadeLote()"><i class="fa-solid fa-plus"></i> Adicionar Outra Atividade na Lista</button>
 
-                <button class="btn-salvar" style="margin-top: 15px; background: #2b8a3e; padding: 12px; font-size: 14px;" onclick="salvarMigracaoEmLote()">🚀 Salvar Todas as Atividades de uma Vez</button>
+                <button class="btn-salvar" style="margin-top: 15px; background: var(--success);" onclick="salvarMigracaoEmLote()"><i class="fa-solid fa-rocket"></i> Salvar Todas as Atividades de uma Vez</button>
             </div>
         </div>
 
         <!-- ABA: GESTÃO DE OUVIDORIA & SUGESTÕES -->
         <div id="secao-ouvidoria-admin" class="admin-secao" style="display: none; padding: 0 15px 30px 15px;">
-            <div class="admin-card-acao" style="background: #f8f0fc; border: 1px solid #d0bfff;">
-                <h3 style="color: #7950f2; margin-top: 0;">💡 Ouvidoria & Sugestões Anônimas</h3>
-                <p style="font-size: 12px; color: #555; margin-bottom: 12px;">Gerencie as manifestações enviadas pelos ligantes. A identidade deles é oculta para preservar o sigilo e a confiabilidade.</p>
+            <div class="admin-card-acao" style="background: #faf5ff; border: 1px solid #e9d5ff;">
+                <h3 style="color: #7c3aed; margin-top: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-lightbulb"></i> Ouvidoria & Sugestões Anônimas</h3>
+                <p style="font-size: 12px; color: #6b21a8; margin-bottom: 12px;">Gerencie as manifestações enviadas pelos ligantes com total sigilo e confiabilidade.</p>
                 
-                <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 140px;">
-                        <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 2px;">Filtrar por Status:</label>
-                        <select id="filtro-ouvidoria-status" onchange="renderizarOuvidoriaAdmin()" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;">
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Filtrar por Status:</label>
+                        <select id="filtro-ouvidoria-status" onchange="renderizarOuvidoriaAdmin()">
                             <option value="todos">Todos os Status</option>
                             <option value="Em análise pela diretoria" selected>Em análise</option>
                             <option value="Implementado">Implementado</option>
@@ -492,7 +812,7 @@
                 </div>
             </div>
 
-            <div id="lista-admin-ouvidoria"></div>
+            <div id="lista-admin-ouvidoria" style="margin-top: 15px;"></div>
         </div>
 
     </div>
@@ -500,11 +820,11 @@
     <!-- MODAL DE PERFIL DE DESEMPENHO DO LIGANTE -->
     <div id="modal-perfil-ligante" class="modal" style="display:none;">
         <div class="modal-conteudo" style="text-align: left; max-width: 450px; max-height: 85vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
-                <h3 style="color: #0056b3; margin: 0; font-size: 17px;" id="modal-ligante-nome">Perfil do Ligante</h3>
-                <button class="btn-mini cinza" onclick="fecharModalPerfilLigante()">✕ Fechar</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                <h3 style="color: var(--primary); margin: 0; font-size: 16px; font-weight: 800;" id="modal-ligante-nome">Perfil do Ligante</h3>
+                <button class="btn-mini cinza" onclick="fecharModalPerfilLigante()"><i class="fa-solid fa-xmark"></i> Fechar</button>
             </div>
-            <div id="conteudo-perfil-ligante-detalhado" style="font-size: 12px; color: #444; display: flex; flex-direction: column; gap: 8px;">
+            <div id="conteudo-perfil-ligante-detalhado" style="font-size: 12px; color: var(--dark); display: flex; flex-direction: column; gap: 10px;">
                 <!-- Preenchido dinamicamente -->
             </div>
         </div>
@@ -512,13 +832,13 @@
 
     <!-- MODAL DE RESPONDER OUVIDORIA -->
     <div id="modal-responder-ouvidoria" class="modal" style="display:none;">
-        <div class="modal-conteudo" style="text-align: left; max-width: 400px;">
-            <h3 style="color: #7950f2; margin-top: 0; font-size: 18px;">💬 Responder / Atualizar Solicitação</h3>
+        <div class="modal-conteudo" style="text-align: left; max-width: 420px;">
+            <h3 style="color: #7c3aed; margin-top: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-comment-dots"></i> Responder / Atualizar Solicitação</h3>
             <input type="hidden" id="ouvidoria-id-respondendo">
             
-            <div class="grupo-input" style="margin-bottom: 10px;">
-                <label style="font-size: 12px; font-weight: bold; display: block; margin-bottom: 4px;">Alterar Status:</label>
-                <select id="ouvidoria-novo-status" style="width: 100%; padding: 10px; border-radius: 8px; font-size: 13px;">
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">Alterar Status:</label>
+                <select id="ouvidoria-novo-status" style="width: 100%;">
                     <option value="Em análise pela diretoria">⏳ Em análise pela diretoria</option>
                     <option value="Implementado">🚀 Implementado na Liga</option>
                     <option value="Concluído">✅ Concluído</option>
@@ -527,14 +847,14 @@
                 </select>
             </div>
 
-            <div class="grupo-input" style="margin-bottom: 15px;">
-                <label style="font-size: 12px; font-weight: bold; display: block; margin-bottom: 4px;">Resposta Oficial da Diretoria:</label>
-                <textarea id="ouvidoria-resposta-texto" rows="4" placeholder="Escreva uma resposta para o ligante acompanhar..." style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">Resposta Oficial da Diretoria:</label>
+                <textarea id="ouvidoria-resposta-texto" rows="4" placeholder="Escreva uma resposta para o ligante acompanhar..."></textarea>
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button class="btn-salvar" style="flex: 1; padding: 10px; background-color: #7950f2;" onclick="salvarRespostaOuvidoriaAdmin()">Salvar Resposta</button>
-                <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalResponderOuvidoria()">Cancelar</button>
+                <button class="btn-salvar" style="flex: 1; background-color: #7c3aed;" onclick="salvarRespostaOuvidoriaAdmin()">Salvar Resposta</button>
+                <button class="btn-mini cinza" style="flex: 1; padding: 12px;" onclick="fecharModalResponderOuvidoria()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -542,15 +862,15 @@
     <!-- MODAL DESLIGAMENTO -->
     <div id="modal-desligamento" class="modal" style="display:none;">
         <div class="modal-conteudo">
-            <h3>Desligar Ligante</h3>
+            <h3 style="margin-top:0; font-size: 16px; font-weight: 800; color: var(--danger);">Desligar Ligante</h3>
             <input type="hidden" id="desligar-membro-id">
-            <label style="font-size:12px; font-weight:bold; margin-top:10px; display:block;">Data do Desligamento:</label>
-            <input type="date" id="desligar-data" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:6px;">
-            <label style="font-size:12px; font-weight:bold; display:block;">Motivo:</label>
+            <label style="font-size:12px; font-weight:700; margin-top:10px; display:block; margin-bottom:4px;">Data do Desligamento:</label>
+            <input type="date" id="desligar-data" style="width:100%; margin-bottom:10px;">
+            <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;">Motivo:</label>
             <textarea id="desligar-motivo" rows="3" placeholder="Explique o motivo do desligamento..."></textarea>
-            <div class="botoes-modal" style="display:flex; gap:8px; margin-top:10px;">
-                <button class="btn-salvar" onclick="confirmarDesligamento()">Confirmar Desligamento</button>
-                <button class="btn-cancelar" onclick="fecharModalDesligamento()">Cancelar</button>
+            <div style="display:flex; gap:8px; margin-top:15px;">
+                <button class="btn-salvar" style="background: var(--danger);" onclick="confirmarDesligamento()">Confirmar Desligamento</button>
+                <button class="btn-mini cinza" style="flex: 1; padding: 12px;" onclick="fecharModalDesligamento()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -558,9 +878,9 @@
     <!-- MODAL PARA VER JUSTIFICATIVA -->
     <div id="modal-ver-justificativa" class="modal" style="display:none;">
         <div class="modal-conteudo" style="text-align: left; max-width: 380px;">
-            <h3 style="color: #0056b3; margin-top: 0; font-size: 18px;">Justificativa do Ligante</h3>
-            <p id="texto-justificativa-visualizacao" style="font-size: 13px; color: #333; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ced4da; margin: 12px 0; word-break: break-word;"></p>
-            <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalVerJustificativa()">Fechar</button>
+            <h3 style="color: var(--primary); margin-top: 0; font-size: 16px; font-weight: 800;">Justificativa do Ligante</h3>
+            <p id="texto-justificativa-visualizacao" style="font-size: 13px; color: var(--dark); background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin: 12px 0; word-break: break-word;"></p>
+            <button class="btn-mini cinza" style="width: 100%; padding: 10px; font-weight: 800;" onclick="fecharModalVerJustificativa()">Fechar</button>
         </div>
     </div>
 
@@ -659,28 +979,73 @@
             iniciarOuvintesTempoRealAdmin();
 
             let abasPermitidas = permissoesCargos[cargoLower];
-            let menuNav = document.getElementById("menu-abas-admin");
+            let menuNav = document.getElementById("menu-painel-executivo");
             menuNav.innerHTML = "";
 
-            const labelsAbas = {
-                "dashboard-principal": "👑 Gestão",
-                "recados-internos": "📢 Recados",
-                "cadastro-membros": "➕ Ligantes",
-                "lista-membros": "👥 Ligantes",
-                "cadastro-atividades": "➕ Ativ.",
-                "lista-atividades": "📅 Gerenciar",
-                "frequencia": "📋 Frequência",
-                "financeiro": "💰 Financeiro",
-                "avisos": "⚠️ Avisos",
-                "migracao-papel": "📥 Migrar Lote",
-                "ouvidoria-admin": "💡 Ouvidoria"
+            const configAbas = {
+                "dashboard-principal": { nome: "Gestão Executiva", icone: "fa-chart-pie" },
+                "recados-internos": { nome: "Recados Internos", icone: "fa-bullhorn" },
+                "cadastro-membros": { nome: "Cadastrar Ligante", icone: "fa-user-plus" },
+                "lista-membros": { nome: "Lista de Ligantes", icone: "fa-users" },
+                "cadastro-atividades": { nome: "Nova Atividade", icone: "fa-calendar-plus" },
+                "lista-atividades": { nome: "Gerenciar Atividades", icone: "fa-calendar-days" },
+                "frequencia": { nome: "Frequência & Chamada", icone: "fa-clipboard-user" },
+                "financeiro": { nome: "Gestão Financeira", icone: "fa-wallet" },
+                "avisos": { nome: "Avisos Globais", icone: "fa-bell" },
+                "migracao-papel": { nome: "Migrar Lote (Papel)", icone: "fa-file-arrow-down" },
+                "ouvidoria-admin": { nome: "Ouvidoria & Sugestões", icone: "fa-lightbulb" }
             };
 
             abasPermitidas.forEach((aba) => {
-                menuNav.innerHTML += `<button class="aba-btn" onclick="mudarAba('${aba}', event)">${labelsAbas[aba] || aba}</button>`;
+                let info = configAbas[aba] || { nome: aba, icone: "fa-folder" };
+                menuNav.innerHTML += `
+                    <div class="menu-card-item" id="menu-card-${aba}" onclick="abrirAbaExecutiva('${aba}')">
+                        <i class="fa-solid ${info.icone}"></i>
+                        <span>${info.nome}</span>
+                    </div>
+                `;
             });
+        }
 
-            menuNav.style.gridTemplateColumns = `repeat(${Math.min(abasPermitidas.length, 3)}, 1fr)`;
+        function abrirAbaExecutiva(nome) {
+            // Ocultar todas as seções e remover classe ativo do menu
+            document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.menu-card-item').forEach(c => c.classList.remove('ativo'));
+
+            // Ocultar estado vazio e exibir botão de voltar ao menu
+            let estadoVazio = document.getElementById('estado-vazio-painel');
+            if (estadoVazio) estadoVazio.style.display = 'none';
+
+            let barraVoltar = document.getElementById('barra-voltar-container');
+            if (barraVoltar) barraVoltar.style.display = 'block';
+
+            let secaoAlvo = document.getElementById(`secao-${nome}`);
+            let cardMenuAlvo = document.getElementById(`menu-card-${nome}`);
+
+            if (secaoAlvo) secaoAlvo.style.display = 'block';
+            if (cardMenuAlvo) cardMenuAlvo.classList.add('ativo');
+
+            // Ocultar o menu principal quando estiver dentro de uma aba para foco total
+            document.getElementById('menu-painel-executivo').style.display = 'none';
+
+            if (nome === 'migracao-papel') {
+                inicializarMigracaoLote();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function voltarAoMenuPrincipal() {
+            document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.menu-card-item').forEach(c => c.classList.remove('ativo'));
+
+            let estadoVazio = document.getElementById('estado-vazio-painel');
+            if (estadoVazio) estadoVazio.style.display = 'block';
+
+            let barraVoltar = document.getElementById('barra-voltar-container');
+            if (barraVoltar) barraVoltar.style.display = 'none';
+
+            document.getElementById('menu-painel-executivo').style.display = 'grid';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function iniciarOuvintesTempoRealAdmin() {
@@ -737,11 +1102,11 @@
                 let btn = document.getElementById(`btn-per-${p}`);
                 if (btn) {
                     if (p === periodo) {
-                        btn.style.background = '#0056b3';
+                        btn.style.background = 'var(--primary)';
                         btn.style.color = 'white';
                     } else {
-                        btn.style.background = 'white';
-                        btn.style.color = '#333';
+                        btn.style.background = 'transparent';
+                        btn.style.color = 'var(--dark)';
                     }
                 }
             });
@@ -795,7 +1160,6 @@
                 let sequenciaAtual = 0;
                 let maiorSequencia = 0;
 
-                // Ordenar atividades cronologicamente para calcular sequência
                 let ativCronologicas = [...ativFiltradas].sort((a,b) => new Date(a.data) - new Date(b.data));
 
                 ativCronologicas.forEach(a => {
@@ -832,7 +1196,6 @@
                 justPendentesGeral += justP;
                 chTotalEmitida += chInd;
 
-                // Pontuação Suprema do Ranking Geral (Presença + CH + Engajamento)
                 let pontuacaogeral = (pres * 10) + (chInd * 5) + (maiorSequencia * 15) - (falt * 5);
 
                 estatisticasLigantesCache.push({
@@ -860,7 +1223,6 @@
             let chMediaLigante = totalAtivosCount > 0 ? (chTotalEmitida / totalAtivosCount).toFixed(1) : 0;
             let indiceEngajamento = Math.round((taxaMediaPresenca + taxaRetencao) / 2);
 
-            // Preencher os 10 indicadores no topo
             document.getElementById('ind-taxa-retencao').innerText = `${taxaRetencao}%`;
             document.getElementById('ind-taxa-presenca').innerText = `${taxaMediaPresenca}%`;
             document.getElementById('ind-media-faltas').innerText = mediaFaltas;
@@ -871,13 +1233,8 @@
             document.getElementById('ind-perc-ativos').innerText = `${percAtivos}%`;
             document.getElementById('ind-ch-total').innerText = `${chTotalEmitida}h`;
 
-            // Gerar Insights Automáticos de IA
             gerarInsightsIA(taxaMediaPresenca, taxaRetencao, justPendentesGeral, chTotalEmitida, ativFiltradas);
-
-            // Gerar Alertas Automáticos Classificados
             gerarAlertasAutomaticos();
-
-            // Renderizar Rankings Complexos e Mapa
             renderizarRankingsComplexos();
             renderizarMapaEngajamento();
         }
@@ -932,12 +1289,12 @@
             });
 
             if (alertas.length === 0) {
-                container.innerHTML = `<p style="font-size: 11px; color: #2b8a3e; font-weight: bold; text-align: center; margin: 4px 0;">✅ Nenhum alerta ativo no momento!</p>`;
+                container.innerHTML = `<p style="font-size: 11px; color: var(--success); font-weight: 700; text-align: center; margin: 4px 0;">✅ Nenhum alerta ativo no momento!</p>`;
             } else {
                 container.innerHTML = alertas.map(a => `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 6px 8px; border-radius: 4px; border: 1px solid #ffc9c9;">
-                        <span style="font-size: 11px; color: #333;">${a.texto}</span>
-                        <button class="btn-mini vermelho" style="font-size: 9px; padding: 3px 6px;" onclick="abrirPerfilLigante('${a.id}')">Ver Perfil</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px 12px; border-radius: 8px; border: 1px solid #fecaca;">
+                        <span style="font-size: 11px; color: var(--dark);">${a.texto}</span>
+                        <button class="btn-mini vermelho" style="font-size: 9px; padding: 4px 8px;" onclick="abrirPerfilLigante('${a.id}')">Ver Perfil</button>
                     </div>
                 `).join('');
             }
@@ -950,26 +1307,17 @@
 
             let lista = [...estatisticasLigantesCache];
 
-            if (categoria === 'geral') {
-                lista.sort((a,b) => b.pontuacaogeral - a.pontuacaogeral);
-            } else if (categoria === 'presenca') {
-                lista.sort((a,b) => b.presencas - a.presencas);
-            } else if (categoria === 'engajamento' || categoria === 'evolucao') {
-                lista.sort((a,b) => b.taxa - a.taxa);
-            } else if (categoria === 'ch') {
-                lista.sort((a,b) => b.ch - a.ch);
-            } else if (categoria === 'ativo') {
-                lista.sort((a,b) => b.totalAtiv - a.totalAtiv);
-            } else if (categoria === 'faltas') {
-                lista.sort((a,b) => b.faltas - a.faltas);
-            } else if (categoria === 'justificativas') {
-                lista.sort((a,b) => b.justAbonadas - a.justAbonadas);
-            } else if (categoria === 'sequencia') {
-                lista.sort((a,b) => b.maiorSequencia - a.maiorSequencia);
-            }
+            if (categoria === 'geral') lista.sort((a,b) => b.pontuacaogeral - a.pontuacaogeral);
+            else if (categoria === 'presenca') lista.sort((a,b) => b.presencas - a.presencas);
+            else if (categoria === 'engajamento' || categoria === 'evolucao') lista.sort((a,b) => b.taxa - a.taxa);
+            else if (categoria === 'ch') lista.sort((a,b) => b.ch - a.ch);
+            else if (categoria === 'ativo') lista.sort((a,b) => b.totalAtiv - a.totalAtiv);
+            else if (categoria === 'faltas') lista.sort((a,b) => b.faltas - a.faltas);
+            else if (categoria === 'justificativas') lista.sort((a,b) => b.justAbonadas - a.justAbonadas);
+            else if (categoria === 'sequencia') lista.sort((a,b) => b.maiorSequencia - a.maiorSequencia);
 
             if (lista.length === 0) {
-                container.innerHTML = `<p style="font-size: 11px; color: #666; text-align: center; margin: 10px 0;">Sem dados suficientes para exibir o ranking.</p>`;
+                container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; margin: 10px 0;">Sem dados suficientes para exibir o ranking.</p>`;
                 return;
             }
 
@@ -988,14 +1336,14 @@
                 else if (categoria === 'sequencia') valorDestaque = `${m.maiorSequencia} seguidas`;
 
                 html += `
-                    <div onclick="abrirPerfilLigante('${m.id}')" style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 6px 10px; border-radius: 6px; border: 1px solid #e9ecef; cursor: pointer; transition: background 0.2s;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-weight: bold; font-size: 13px; min-width: 24px; text-align: center;">${badgeMedalha}</span>
+                    <div onclick="abrirPerfilLigante('${m.id}')" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: var(--transition);">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: 800; font-size: 13px; min-width: 24px; text-align: center;">${badgeMedalha}</span>
                             <div>
-                                <strong style="font-size: 12px; color: #333;">${m.nome}</strong> <span style="font-size: 10px; color: #666;">(${m.cargo})</span>
+                                <strong style="font-size: 12px; color: var(--dark);">${m.nome}</strong> <span style="font-size: 10px; color: #64748b;">(${m.cargo})</span>
                             </div>
                         </div>
-                        <span style="font-size: 11px; font-weight: bold; color: #0056b3;">${valorDestaque}</span>
+                        <span style="font-size: 11px; font-weight: 800; color: var(--primary);">${valorDestaque}</span>
                     </div>
                 `;
             });
@@ -1023,25 +1371,25 @@
             });
 
             if (filtrados.length === 0) {
-                container.innerHTML = `<p style="font-size: 11px; color: #666; text-align: center; margin: 10px 0;">Nenhum ligante encontrado com estes filtros.</p>`;
+                container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; margin: 10px 0;">Nenhum ligante encontrado com estes filtros.</p>`;
                 return;
             }
 
             let html = "";
             filtrados.forEach(m => {
-                let badgeSituacao = m.taxa >= 80 ? `<span style="background: #ebfbee; color: #2b8a3e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold;">🟢 Excelente</span>` :
-                                    (m.taxa >= 50 ? `<span style="background: #fff9db; color: #f59f00; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold;">🟡 Atenção</span>` :
-                                                    `<span style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold;">🔴 Crítico</span>`);
+                let badgeSituacao = m.taxa >= 80 ? `<span style="background: #d1fae5; color: #065f46; padding: 3px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;">🟢 Excelente</span>` :
+                                    (m.taxa >= 50 ? `<span style="background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;">🟡 Atenção</span>` :
+                                                    `<span style="background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;">🔴 Crítico</span>`);
 
                 html += `
-                    <div onclick="abrirPerfilLigante('${m.id}')" style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px solid #ced4da; cursor: pointer;">
+                    <div onclick="abrirPerfilLigante('${m.id}')" style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; transition: var(--transition);">
                         <div>
-                            <strong style="font-size: 12px; color: #333;">${m.nome}</strong> <span style="font-size: 10px; color: #666;">(${m.cargo})</span>
-                            <div style="font-size: 10px; color: #555; margin-top: 2px;">Presenças: ${m.presencas} | Faltas: ${m.faltas} | CH: ${m.ch}h</div>
+                            <strong style="font-size: 12px; color: var(--dark);">${m.nome}</strong> <span style="font-size: 10px; color: #64748b;">(${m.cargo})</span>
+                            <div style="font-size: 10px; color: #64748b; margin-top: 2px;">Presenças: ${m.presencas} | Faltas: ${m.faltas} | CH: ${m.ch}h</div>
                         </div>
-                        <div style="text-align: right; display: flex; flex-direction: column; gap: 2px; align-items: flex-end;">
+                        <div style="text-align: right; display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
                             ${badgeSituacao}
-                            <span style="font-size: 10px; font-weight: bold; color: #0056b3;">${m.taxa}% freq.</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">${m.taxa}% freq.</span>
                         </div>
                     </div>
                 `;
@@ -1056,29 +1404,28 @@
 
             document.getElementById('modal-ligante-nome').innerText = `Perfil de Desempenho: ${m.nome}`;
 
-            // Calcular Conquistas / Gamificação (Medalhas)
             let medalhasHtml = "";
-            if (m.taxa === 100 && m.presencas >= 2) medalhasHtml += `<span style="background: #ebfbee; color: #2b8a3e; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #c3e6cb;">🏆 Presença Perfeita</span>`;
-            if (m.maiorSequencia >= 3) medalhasHtml += `<span style="background: #fff3bf; color: #b7791f; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #ffe066;">🔥 Sequência de ${m.maiorSequencia}</span>`;
-            if (m.ch >= 10) medalhasHtml += `<span style="background: #e7f5ff; color: #1c7ed6; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #74c0fc;">📚 Dedicação Máxima (${m.ch}h)</span>`;
-            if (m.pontuacaogeral >= 50) medalhasHtml += `<span style="background: #f3f0ff; color: #7950f2; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; border: 1px solid #d0bfff;">⭐ Ligante Destaque</span>`;
-            if (medalhasHtml === "") medalhasHtml = `<span style="color: #666; font-style: italic;">Nenhuma medalha conquistada no período ainda.</span>`;
+            if (m.taxa === 100 && m.presencas >= 2) medalhasHtml += `<span style="background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800;">🏆 Presença Perfeita</span>`;
+            if (m.maiorSequencia >= 3) medalhasHtml += `<span style="background: #fef3c7; color: #b45309; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800;">🔥 Sequência de ${m.maiorSequencia}</span>`;
+            if (m.ch >= 10) medalhasHtml += `<span style="background: #eff6ff; color: #1e40af; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800;">📚 Dedicação Máxima (${m.ch}h)</span>`;
+            if (m.pontuacaogeral >= 50) medalhasHtml += `<span style="background: #faf5ff; color: #7c3aed; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800;">⭐ Ligante Destaque</span>`;
+            if (medalhasHtml === "") medalhasHtml = `<span style="color: #64748b; font-style: italic;">Nenhuma medalha conquistada no período ainda.</span>`;
 
             let conteudo = `
-                <div style="display: flex; gap: 12px; align-items: center; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #0056b3; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; overflow: hidden; flex-shrink: 0;">
+                <div style="display: flex; gap: 12px; align-items: center; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; overflow: hidden; flex-shrink: 0;">
                         ${m.fotoUrl ? `<img src="${m.fotoUrl}" style="width:100%; height:100%; object-fit:cover;">` : m.nome.charAt(0)}
                     </div>
                     <div>
-                        <strong style="font-size: 14px; color: #333;">${m.nome}</strong>
-                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Cargo: <strong>${m.cargo}</strong> | Curso: ${m.curso}</p>
-                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">E-mail: ${m.email} | Tel: ${m.tel}</p>
+                        <strong style="font-size: 14px; color: var(--dark);">${m.nome}</strong>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Cargo: <strong>${m.cargo}</strong> | Curso: ${m.curso}</p>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">E-mail: ${m.email} | Tel: ${m.tel}</p>
                     </div>
                 </div>
 
-                <div style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #dee2e6;">
-                    <strong style="color: #0056b3; font-size: 12px; display: block; margin-bottom: 6px;">📊 Métricas e Desempenho</strong>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 11px;">
+                <div style="background: #fff; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                    <strong style="color: var(--primary); font-size: 12px; display: block; margin-bottom: 8px;">📊 Métricas e Desempenho</strong>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px;">
                         <div>• Pontuação Geral: <strong>${m.pontuacaogeral} pts</strong></div>
                         <div>• Frequência: <strong>${m.taxa}%</strong></div>
                         <div>• Presenças: <strong>${m.presencas}</strong></div>
@@ -1090,16 +1437,16 @@
                     </div>
                 </div>
 
-                <div style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #dee2e6;">
-                    <strong style="color: #7950f2; font-size: 12px; display: block; margin-bottom: 6px;">🏅 Conquistas & Medalhas</strong>
+                <div style="background: #fff; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                    <strong style="color: #7c3aed; font-size: 12px; display: block; margin-bottom: 8px;">🏅 Conquistas & Medalhas</strong>
                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                         ${medalhasHtml}
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 6px; margin-top: 6px;">
-                    <button class="btn-mini verde" style="flex: 1; padding: 8px; font-weight: bold;" onclick="dispararNotificacaoIndividual('${m.id}', 'Mensagem da Diretoria', 'Olá ${m.nome}, a diretoria acessou seu perfil e enviou um abraço virtual!'); alert('Notificação enviada com sucesso!');">📢 Enviar Estímulo</button>
-                    <button class="btn-mini cinza" style="flex: 1; padding: 8px; font-weight: bold;" onclick="fecharModalPerfilLigante()">Fechar</button>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <button class="btn-mini verde" style="flex: 1; padding: 10px; font-weight: 800;" onclick="dispararNotificacaoIndividual('${m.id}', 'Mensagem da Diretoria', 'Olá ${m.nome}, a diretoria acessou seu perfil e enviou um abraço virtual!'); alert('Notificação enviada com sucesso!');"><i class="fa-solid fa-bullhorn"></i> Enviar Estímulo</button>
+                    <button class="btn-mini cinza" style="flex: 1; padding: 10px; font-weight: 800;" onclick="fecharModalPerfilLigante()">Fechar</button>
                 </div>
             `;
 
@@ -1132,12 +1479,12 @@
 
             if (estadoManutencaoGlobal) {
                 textoStatus.innerText = "Status: Ativado (Em Manutenção)";
-                textoStatus.style.color = "#c92a2a";
+                textoStatus.style.color = "var(--danger)";
                 btnToggle.innerText = "Desativar Manutenção";
                 btnToggle.className = "btn-mini vermelho";
             } else {
                 textoStatus.innerText = "Status: Desativado (Normal)";
-                textoStatus.style.color = "#2b8a3e";
+                textoStatus.style.color = "var(--success)";
                 btnToggle.innerText = "Ativar Manutenção";
                 btnToggle.className = "btn-mini verde";
             }
@@ -1173,7 +1520,7 @@
             });
 
             if (listaFiltrada.length === 0) {
-                container.innerHTML = `<div class="card-admin-item"><p class="cinza" style="text-align:center;">Nenhuma solicitação encontrada com este filtro.</p></div>`;
+                container.innerHTML = `<div class="card-admin-item" style="background:#fff; padding:16px; border-radius:12px; border:1px solid var(--border);"><p style="text-align:center; color:#64748b; margin:0; font-size:12px;">Nenhuma solicitação encontrada com este filtro.</p></div>`;
                 return;
             }
 
@@ -1181,24 +1528,24 @@
             listaFiltrada.forEach(item => {
                 let badgeStyle = getBadgeStatusStyleAdmin(item.status);
                 let respostaHtml = item.respostaDiretoria ? `
-                    <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 8px; border-radius: 4px; margin-top: 8px;">
-                        <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta Enviada pela Diretoria:</p>
-                        <p style="margin: 2px 0 0 0; font-size: 12px; color: #333;">${item.respostaDiretoria}</p>
+                    <div style="background: #eff6ff; border-left: 3px solid var(--primary); padding: 10px; border-radius: 8px; margin-top: 10px;">
+                        <p style="margin: 0; font-size: 11px; font-weight: 800; color: #1e40af;">💬 Resposta Enviada pela Diretoria:</p>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--dark);">${item.respostaDiretoria}</p>
                     </div>
-                ` : `<p style="margin: 8px 0 0 0; font-size: 11px; color: #e03131; font-style: italic;">⚠️ Nenhuma resposta enviada ainda.</p>`;
+                ` : `<p style="margin: 10px 0 0 0; font-size: 11px; color: var(--danger); font-weight: 700; font-style: italic;">⚠️ Nenhuma resposta enviada ainda.</p>`;
 
                 html += `
-                    <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 14px; border-radius: 8px; border: 1px solid #dee2e6; border-left: 4px solid #7950f2;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-size: 11px; font-weight: bold; color: #7950f2; background: #f3f0ff; padding: 2px 6px; border-radius: 4px;">[${item.tipo}]</span>
-                            <span style="font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
+                    <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 16px; border-radius: 12px; border: 1px solid var(--border); border-left: 5px solid #7c3aed; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 11px; font-weight: 800; color: #7c3aed; background: #faf5ff; padding: 3px 8px; border-radius: 6px;">[${item.tipo}]</span>
+                            <span style="font-size: 10px; padding: 3px 10px; border-radius: 6px; font-weight: 800; ${badgeStyle}">${item.status}</span>
                         </div>
-                        <h4 style="margin: 0 0 4px 0; color: #333; font-size: 15px;">${item.titulo}</h4>
-                        <p style="font-size: 12px; color: #555; line-height: 1.4; margin: 0; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #f1f3f5;">${item.texto}</p>
+                        <h4 style="margin: 0 0 6px 0; color: var(--dark); font-size: 15px; font-weight: 800;">${item.titulo}</h4>
+                        <p style="font-size: 12px; color: #475569; line-height: 1.5; margin: 0; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">${item.texto}</p>
                         ${respostaHtml}
                         <div style="margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="btn-mini" style="background: #7950f2; color: white;" onclick="abrirModalResponderOuvidoria('${item.id}')">💬 Responder / Alterar Status</button>
-                            <button class="btn-mini vermelho" onclick="excluirSolicitacaoOuvidoria('${item.id}')">🗑️ Excluir</button>
+                            <button class="btn-mini" style="background: #7c3aed; color: white;" onclick="abrirModalResponderOuvidoria('${item.id}')"><i class="fa-solid fa-comment-dots"></i> Responder / Alterar Status</button>
+                            <button class="btn-mini vermelho" onclick="excluirSolicitacaoOuvidoria('${item.id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
                         </div>
                     </div>
                 `;
@@ -1208,15 +1555,10 @@
         }
 
         function getBadgeStatusStyleAdmin(status) {
-            if (status === 'Implementado' || status === 'Concluído') {
-                return 'background: #ebfbee; color: #2b8a3e;';
-            } else if (status === 'Negado') {
-                return 'background: #ffe3e3; color: #c92a2a;';
-            } else if (status === 'Precisa de mais detalhes') {
-                return 'background: #fff3bf; color: #f59f00;';
-            } else {
-                return 'background: #e7f5ff; color: #1c7ed6;';
-            }
+            if (status === 'Implementado' || status === 'Concluído') return 'background: #d1fae5; color: #065f46;';
+            else if (status === 'Negado') return 'background: #fee2e2; color: #991b1b;';
+            else if (status === 'Precisa de mais detalhes') return 'background: #fef3c7; color: #b45309;';
+            else return 'background: #eff6ff; color: #1e40af;';
         }
 
         function abrirModalResponderOuvidoria(id) {
@@ -1272,7 +1614,7 @@
                 containerFoto.innerHTML = `<img src="${usuarioSessao.fotoUrl}" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
                 let inicial = usuarioSessao.nome ? usuarioSessao.nome.charAt(0).toUpperCase() : "D";
-                containerFoto.innerHTML = `<div style="width:100%; height:100%; background:#0056b3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:24px;">${inicial}</div>`;
+                containerFoto.innerHTML = `<div style="width:100%; height:100%; background:var(--primary); color:white; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:22px;">${inicial}</div>`;
             }
 
             let tempoStr = "Tempo na diretoria: Recém-chegado";
@@ -1291,18 +1633,6 @@
             document.getElementById('admin-perfil-tempo').innerText = tempoStr;
         }
 
-        function mudarAba(nome, evento) {
-            document.querySelectorAll('.admin-secao').forEach(s => s.style.display = 'none');
-            document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativo'));
-            let secaoAlvo = document.getElementById(`secao-${nome}`);
-            if (secaoAlvo) secaoAlvo.style.display = 'block';
-            if (evento && evento.target) evento.target.classList.add('ativo');
-            
-            if (nome === 'migracao-papel') {
-                inicializarMigracaoLote();
-            }
-        }
-
         function inicializarMigracaoLote() {
             let container = document.getElementById('container-lote-atividades');
             if (!container) return;
@@ -1317,25 +1647,25 @@
             let container = document.getElementById('container-lote-atividades');
 
             let htmlBloco = `
-                <div class="bloco-ativ-lote" id="bloco-ativ-${idBloco}" style="background: white; border: 1px solid #ced4da; border-radius: 8px; padding: 12px; margin-bottom: 15px; position: relative;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 6px;">
-                        <strong style="color: #0056b3; font-size: 13px;">📋 Atividade #${idBloco}</strong>
-                        ${idBloco > 1 ? `<button type="button" class="btn-mini vermelho" style="padding: 2px 6px; font-size: 10px;" onclick="removerBlocoAtividadeLote(${idBloco})">🗑️ Remover</button>` : ''}
+                <div class="bloco-ativ-lote" id="bloco-ativ-${idBloco}" style="background: white; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                        <strong style="color: var(--primary); font-size: 13px; font-weight: 800;">📋 Atividade #${idBloco}</strong>
+                        ${idBloco > 1 ? `<button type="button" class="btn-mini vermelho" style="padding: 3px 8px; font-size: 10px;" onclick="removerBlocoAtividadeLote(${idBloco})"><i class="fa-solid fa-trash"></i> Remover</button>` : ''}
                     </div>
 
-                    <div class="grid-form" style="margin-bottom: 8px;">
-                        <input type="text" id="bloco-${idBloco}-titulo" placeholder="Título da Atividade *" class="col-full" style="padding: 8px; font-size: 12px;">
-                        <input type="date" id="bloco-${idBloco}-data" onchange="atualizarMembrosBlocoLote(${idBloco})" style="padding: 6px; font-size: 11px;">
-                        <input type="number" id="bloco-${idBloco}-ch" placeholder="CH (h)" style="padding: 6px; font-size: 11px;">
+                    <div class="grid-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                        <input type="text" id="bloco-${idBloco}-titulo" placeholder="Título da Atividade *" class="col-full" style="grid-column: span 2; padding: 8px; font-size: 12px;">
+                        <input type="date" id="bloco-${idBloco}-data" onchange="atualizarMembrosBlocoLote(${idBloco})" style="padding: 8px; font-size: 11px;">
+                        <input type="number" id="bloco-${idBloco}-ch" placeholder="CH (h)" style="padding: 8px; font-size: 11px;">
                     </div>
 
-                    <details open style="margin-top: 8px; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #e9ecef;">
-                        <summary style="font-size: 12px; font-weight: bold; color: #0056b3; cursor: pointer; margin-bottom: 8px;">👥 Chamada de Ligantes Ativos na Época</summary>
+                    <details open style="margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid var(--border);">
+                        <summary style="font-size: 12px; font-weight: 800; color: var(--primary); cursor: pointer; margin-bottom: 8px;">👥 Chamada de Ligantes Ativos na Época</summary>
                         <div style="margin-bottom: 8px; display: flex; gap: 6px;">
-                            <button type="button" class="btn-mini verde" style="font-size: 10px; padding: 4px 8px;" onclick="marcarTodosBlocoLote(${idBloco}, 'presente')">✓ Marcar Todos como Presente</button>
+                            <button type="button" class="btn-mini verde" style="font-size: 10px; padding: 6px 10px; font-weight: 800;" onclick="marcarTodosBlocoLote(${idBloco}, 'presente')">✓ Marcar Todos como Presente</button>
                         </div>
                         <div id="container-membros-bloco-${idBloco}" style="display: flex; flex-direction: column; gap: 6px;">
-                            <p style="font-size: 11px; color: #666; font-style: italic;">Selecione uma data acima para carregar os ligantes da época.</p>
+                            <p style="font-size: 11px; color: #64748b; font-style: italic;">Selecione uma data acima para carregar os ligantes da época.</p>
                         </div>
                     </details>
                 </div>
@@ -1350,7 +1680,7 @@
             if (!containerMembros) return;
 
             if (!dataAtividade) {
-                containerMembros.innerHTML = `<p style="font-size: 11px; color: #666; font-style: italic;">Selecione uma data acima para carregar os ligantes da época.</p>`;
+                containerMembros.innerHTML = `<p style="font-size: 11px; color: #64748b; font-style: italic;">Selecione uma data acima para carregar os ligantes da época.</p>`;
                 return;
             }
 
@@ -1363,16 +1693,16 @@
             membrosFiltrados.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
 
             if (membrosFiltrados.length === 0) {
-                containerMembros.innerHTML = `<p style="font-size: 11px; color: #e03131; font-weight: bold;">Nenhum ligante cadastrado com data de ingresso anterior ou igual a ${dataAtividade}.</p>`;
+                containerMembros.innerHTML = `<p style="font-size: 11px; color: var(--danger); font-weight: 800;">Nenhum ligante cadastrado com data de ingresso anterior ou igual a ${dataAtividade}.</p>`;
                 return;
             }
 
             let opcoesMembrosHtml = "";
             membrosFiltrados.forEach(m => {
                 opcoesMembrosHtml += `
-                    <div class="item-membro-lote" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: white; border-radius: 6px; border: 1px solid #dee2e6;">
-                        <span style="font-size: 11px;"><strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span></span>
-                        <select id="bloco-${idBloco}-status-${m.id}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px;">
+                    <div class="item-membro-lote" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: white; border-radius: 8px; border: 1px solid var(--border);">
+                        <span style="font-size: 11px;"><strong>${m.nome}</strong> <span style="color:#64748b;">(${m.cargo || 'Ligante'})</span></span>
+                        <select id="bloco-${idBloco}-status-${m.id}" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); font-size: 11px; width: auto;">
                             <option value="presente" selected>Presente (+CH)</option>
                             <option value="negado">Falta</option>
                             <option value="justificativa_negada">Justificativa Negada</option>
@@ -1454,8 +1784,8 @@
 
             if (contadorSalvos > 0) {
                 await dispararNotificacaoGlobal("Atualização de Histórico", `${contadorSalvos} novas atividades passadas foram migradas para o sistema.`);
-                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos los ligantes instantaneamente.`);
-                mudarAba('frequencia', { target: document.querySelectorAll('.aba-btn')[4] });
+                alert(`Sucesso! ${contadorSalvos} atividade(s) foram salvas e computadas no histórico de todos os ligantes instantaneamente.`);
+                abrirAbaExecutiva('frequencia');
             } else {
                 alert("Nenhuma atividade válida foi preenchida. Verifique os títulos, datas e chamadas.");
             }
@@ -1529,18 +1859,18 @@
                 let fotoCardHtml = "";
                 let fotoFinal = (m.fotoStatus === 'aprovada' && m.fotoUrl) ? m.fotoUrl : null;
                 if (fotoFinal) {
-                    fotoCardHtml = `<img src="${fotoFinal}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid #ccc;">`;
+                    fotoCardHtml = `<img src="${fotoFinal}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid var(--border);">`;
                 } else {
                     let inicial = m.nome ? m.nome.charAt(0).toUpperCase() : "L";
-                    fotoCardHtml = `<div style="width:36px; height:36px; border-radius:50%; background:#0056b3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:14px;">${inicial}</div>`;
+                    fotoCardHtml = `<div style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:14px;">${inicial}</div>`;
                 }
 
                 let moderacaoFotoHtml = "";
                 if (m.fotoStatus === 'analise' && m.fotoTempUrl) {
                     moderacaoFotoHtml = `
-                        <div style="background:#fff3cd; padding:8px; border-radius:6px; margin:8px 0; border-left:3px solid #ffc107;">
-                            <p style="font-size:11px; margin-bottom:4px; font-weight:bold;">📸 Foto Enviada para Análise:</p>
-                            <img src="${m.fotoTempUrl}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; margin-bottom:6px; display:block;">
+                        <div style="background:#fef3c7; padding:10px; border-radius:8px; margin:10px 0; border-left:4px solid var(--warning);">
+                            <p style="font-size:11px; margin-bottom:6px; font-weight:800; color:#b45309;">📸 Foto Enviada para Análise:</p>
+                            <img src="${m.fotoTempUrl}" style="width:80px; height:80px; object-fit:cover; border-radius:8px; margin-bottom:8px; display:block;">
                             <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-mini verde" onclick="aprovarFoto('${m.id}')">Permitir Foto</button>
                                 <button class="btn-mini vermelho" onclick="negarFoto('${m.id}')">Negar Foto</button>
@@ -1554,46 +1884,46 @@
                     if (m.desligado) {
                         botoesAdminCard = `
                             <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-mini verde" onclick="reativarMembro('${m.id}')">🟢 Reativar Ligante</button>
-                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
+                                <button class="btn-mini verde" onclick="reativarMembro('${m.id}')"><i class="fa-solid fa-rotate-left"></i> Reativar Ligante</button>
+                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')"><i class="fa-solid fa-trash"></i> Excluir Definitivo</button>
                             </div>
                         `;
                     } else {
                         botoesAdminCard = `
                             <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')">Editar</button>
-                                <button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')">Desligar</button>
-                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')">Excluir Definitivo</button>
+                                <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+                                <button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')"><i class="fa-solid fa-user-xmark"></i> Desligar</button>
+                                <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')"><i class="fa-solid fa-trash"></i> Excluir Definitivo</button>
                             </div>
                         `;
                     }
                 }
 
                 let htmlCard = `
-                    <div class="card-admin-item card-aluno-recolhido" id="card-aluno-${m.id}">
-                        <div class="aluno-resumo" onclick="toggleExpandirAluno('${m.id}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="card-admin-item" style="background:#fff; padding:14px; border-radius:12px; border:1px solid var(--border); margin-bottom:10px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+                        <div onclick="toggleExpandirAluno('${m.id}')" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
                                 ${fotoCardHtml}
                                 <div>
-                                    <strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span><br>
-                                    <small>Código: <code>${m.codigo}</code> | Senha: ${m.senhaPadrao}</small>
+                                    <strong style="font-size:13px; color:var(--dark);">${m.nome}</strong> <span style="font-size:11px; color:#64748b;">(${m.cargo || 'Ligante'})</span><br>
+                                    <small style="font-size:10px; color:#64748b;">Código: <code>${m.codigo}</code> | Senha: ${m.senhaPadrao}</small>
                                 </div>
                             </div>
-                            <span style="font-size:12px; color:#0056b3; font-weight:bold;" id="seta-aluno-${m.id}">▼ Ver Detalhes</span>
+                            <span style="font-size:12px; color:var(--primary); font-weight:800;" id="seta-aluno-${m.id}">▼ Ver Detalhes</span>
                         </div>
-                        <div class="aluno-detalhes-completo" id="detalhes-aluno-${m.id}" style="display:none; margin-top:12px; border-top:1px solid #eee; padding-top:10px;">
+                        <div id="detalhes-aluno-${m.id}" style="display:none; margin-top:12px; border-top:1px solid var(--border); padding-top:12px; font-size:12px; color:#475569;">
                             ${moderacaoFotoHtml}
-                            <p><strong>Nascimento:</strong> ${m.nascimento || '-'}</p>
-                            <p><strong>E-mail:</strong> ${m.email} | <strong>Tel:</strong> ${m.tel || '-'}</p>
-                            <p><strong>Curso:</strong> ${m.curso || 'Enfermagem'} (${m.turno || '-'}) | <strong>Matrícula:</strong> ${m.matricula || '-'}</p>
-                            <p><strong>Instituição:</strong> ${m.instituicao || 'Centro Universitario Facimp Wyden'}</p>
-                            <p><strong>Previsão Formatura:</strong> ${m.previsaoFormatura || '-'}</p>
-                            <p><strong>Tempo na Liga:</strong> ${tempoLigaStr}</p>
-                            <hr style="margin:8px 0; border:0; border-top:1px solid #f1f3f5;">
-                            <p style="color:#0056b3;"><strong>📊 Estatísticas na Liga:</strong></p>
-                            <p>• Presenças: ${totalPresencas} | Faltas: ${totalFaltas} | Just. Negadas: ${totalJustificativasNegadas} | Abonadas: ${totalJustificativas}</p>
-                            <p>• Carga Horária Acumulada: <strong>${chAcumulada}h</strong></p>
-                            ${m.desligado ? `<p style="color:#e03131; margin-top:6px;"><strong>Desligado em:</strong> ${m.dataDesligamento || '-'} | <strong>Motivo:</strong> ${m.motivoDesligamento || '-'}</p>` : ''}
+                            <p style="margin:4px 0;"><strong>Nascimento:</strong> ${m.nascimento || '-'}</p>
+                            <p style="margin:4px 0;"><strong>E-mail:</strong> ${m.email} | <strong>Tel:</strong> ${m.tel || '-'}</p>
+                            <p style="margin:4px 0;"><strong>Curso:</strong> ${m.curso || 'Enfermagem'} (${m.turno || '-'}) | <strong>Matrícula:</strong> ${m.matricula || '-'}</p>
+                            <p style="margin:4px 0;"><strong>Instituição:</strong> ${m.instituicao || 'Centro Universitario Facimp Wyden'}</p>
+                            <p style="margin:4px 0;"><strong>Previsão Formatura:</strong> ${m.previsaoFormatura || '-'}</p>
+                            <p style="margin:4px 0;"><strong>Tempo na Liga:</strong> ${tempoLigaStr}</p>
+                            <hr style="margin:10px 0; border:0; border-top:1px solid var(--border);">
+                            <p style="color:var(--primary); font-weight:800; margin:4px 0;">📊 Estatísticas na Liga:</p>
+                            <p style="margin:4px 0;">• Presenças: ${totalPresencas} | Faltas: ${totalFaltas} | Just. Negadas: ${totalJustificativasNegadas} | Abonadas: ${totalJustificativas}</p>
+                            <p style="margin:4px 0;">• Carga Horária Acumulada: <strong>${chAcumulada}h</strong></p>
+                            ${m.desligado ? `<p style="color:var(--danger); margin-top:6px; font-weight:700;"><strong>Desligado em:</strong> ${m.dataDesligamento || '-'} | <strong>Motivo:</strong> ${m.motivoDesligamento || '-'}</p>` : ''}
                             ${botoesAdminCard}
                         </div>
                     </div>
@@ -1673,7 +2003,7 @@
             document.getElementById('av-dir-duracao').value = 'permanente';
             document.getElementById('div-data-personalizada').style.display = 'none';
 
-            document.getElementById('titulo-form-aviso-dir').innerText = "✏️ Editar Recado da Diretoria";
+            document.getElementById('titulo-form-aviso-dir').innerHTML = `<i class="fa-solid fa-pen"></i> Editar Recado da Diretoria`;
             document.getElementById('btn-salvar-aviso-dir').innerText = "Salvar Alterações";
             document.getElementById('btn-cancelar-aviso-dir').style.display = "block";
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1689,7 +2019,7 @@
             document.getElementById('av-dir-duracao').value = "permanente";
             document.getElementById('div-data-personalizada').style.display = "none";
 
-            document.getElementById('titulo-form-aviso-dir').innerText = "✍️ Publicar Recado para a Diretoria";
+            document.getElementById('titulo-form-aviso-dir').innerHTML = `<i class="fa-solid fa-pen-nib"></i> Publicar Recado para a Diretoria`;
             document.getElementById('btn-salvar-aviso-dir').innerText = "Publicar Recado";
             document.getElementById('btn-cancelar-aviso-dir').style.display = "none";
         }
@@ -1758,23 +2088,23 @@
                         <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
                     </div>
                 ` : "";
-                let tagOrigem = `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">De: ${a.origem || 'Presidência'}</span>`;
-                let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 4px;">Para: ${a.alvo}</span>` : "";
+                let tagOrigem = `<span style="background: var(--success); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px; font-weight:800;">De: ${a.origem || 'Presidência'}</span>`;
+                let tagAlvo = a.alvo !== "todos" ? `<span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 4px; font-weight:800;">Para: ${a.alvo}</span>` : "";
                 let tempoStr = calcularTempoRestante(a.expiraEm);
                 
                 containerFixos.innerHTML += `
-                    <div style="background: #fff; border-left: 4px solid #f59f00; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #ffe066;">
+                    <div style="background: #fff; border-left: 4px solid var(--warning); padding: 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border);">
                         ${botoesAcao}
-                        <h4 style="color: #b7791f; margin: 0; font-size: 13px;">📌 [FIXO] ${a.titulo} ${tagOrigem} ${tagAlvo}</h4>
-                        <p class="cinza" style="margin: 4px 0 2px 0; font-size: 11px;">${a.texto}</p>
-                        <small style="color: #e67700; font-size: 9px; font-weight: bold;">⏳ ${tempoStr}</small>
+                        <h4 style="color: #b45309; margin: 0; font-size: 13px; font-weight:800;">📌 [FIXO] ${a.titulo} ${tagOrigem} ${tagAlvo}</h4>
+                        <p style="margin: 6px 0 4px 0; font-size: 11px; color: #475569;">${a.texto}</p>
+                        <small style="color: #d97706; font-size: 9px; font-weight: 800;">⏳ ${tempoStr}</small>
                     </div>
                 `;
             });
 
             if (rotativos.length === 0) {
                 if (fixos.length === 0) {
-                    containerSlides.innerHTML = "<p style='font-size:11px; padding:5px; text-align:center; color:#666;'>Nenhum recado interno no momento.</p>";
+                    containerSlides.innerHTML = "<p style='font-size:11px; padding:10px; text-align:center; color:#64748b;'>Nenhum recado interno no momento.</p>";
                     if (contador) contador.innerText = "0/0";
                 } else {
                     if (contador) contador.innerText = "0/0";
@@ -1792,16 +2122,16 @@
                         <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
                     </div>
                 ` : "";
-                let tagOrigem = `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px;">De: ${a.origem || 'Presidência'}</span>`;
-                let tagAlvo = a.alvo !== "todos" ? `<span style="background: #0056b3; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 4px;">Para: ${a.alvo}</span>` : "";
+                let tagOrigem = `<span style="background: var(--success); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 6px; font-weight:800;">De: ${a.origem || 'Presidência'}</span>`;
+                let tagAlvo = a.alvo !== "todos" ? `<span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; margin-left: 4px; font-weight:800;">Para: ${a.alvo}</span>` : "";
                 let tempoStr = calcularTempoRestante(a.expiraEm);
 
                 containerSlides.innerHTML += `
                     <div class="slide ${classeAtiva}">
                         ${botoesAcaoSlide}
-                        <h4 style="font-size: 13px; margin: 0 0 4px 0;">${a.titulo} ${tagOrigem} ${tagAlvo}</h4>
-                        <p style="font-size: 11px; margin: 0 0 4px 0;">${a.texto}</p>
-                        <small style="color: #888; font-size: 9px; font-weight: bold;">⏳ ${tempoStr}</small>
+                        <h4 style="font-size: 13px; margin: 0 0 4px 0; font-weight:800;">${a.titulo} ${tagOrigem} ${tagAlvo}</h4>
+                        <p style="font-size: 11px; margin: 0 0 4px 0; color: #475569;">${a.texto}</p>
+                        <small style="color: #64748b; font-size: 9px; font-weight: 800;">⏳ ${tempoStr}</small>
                     </div>
                 `;
             });
@@ -1909,7 +2239,7 @@
             }
 
             cancelarEdicaoMembro();
-            mudarAba('lista-membros', { target: document.querySelectorAll('.aba-btn')[1] });
+            abrirAbaExecutiva('lista-membros');
         }
 
         function prepararEdicaoMembro(id) {
@@ -1933,7 +2263,7 @@
             document.getElementById('titulo-form-membro').innerText = "Editar Ligante";
             document.getElementById('btn-salvar-membro').innerText = "Salvar Alterações";
             document.getElementById('btn-cancelar-membro').style.display = "block";
-            mudarAba('cadastro-membros', { target: document.querySelectorAll('.aba-btn')[0] });
+            abrirAbaExecutiva('cadastro-membros');
         }
 
         function cancelarEdicaoMembro() {
@@ -2032,17 +2362,17 @@
             let mesFiltro = mesFiltroSelect.value;
             let filtradas = atividadesCache.filter(a => a.data && a.data.startsWith(mesFiltro));
             if(filtradas.length === 0) { 
-                div.innerHTML = "<p class='cinza'>Nenhuma atividade cadastrada para este mês/ano.</p>"; 
+                div.innerHTML = "<p style='color:#64748b; font-size:12px;'>Nenhuma atividade cadastrada para este mês/ano.</p>"; 
                 return; 
             }
 
             filtradas.forEach(a => {
                 let statusExtra = "";
-                if (a.cancelada) statusExtra = `<span style="color: #e03131; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">⚠️ Atividade Cancelada</span>`;
-                if (a.concluida) statusExtra = `<span style="color: #2b8a3e; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">✅ Atividade Concluída</span>`;
-                if (a.prazoFechadoManual === false) statusExtra += `<span style="color: #2b8a3e; font-weight: bold; font-size: 11px; display: block; margin-top: 2px;">🔓 Prazo Extra Aberto</span>`;
+                if (a.cancelada) statusExtra = `<span style="color: var(--danger); font-weight: 800; font-size: 11px; display: block; margin-top: 2px;">⚠️ Atividade Cancelada</span>`;
+                if (a.concluida) statusExtra = `<span style="color: var(--success); font-weight: 800; font-size: 11px; display: block; margin-top: 2px;">✅ Atividade Concluída</span>`;
+                if (a.prazoFechadoManual === false) statusExtra += `<span style="color: var(--success); font-weight: 800; font-size: 11px; display: block; margin-top: 2px;">🔓 Prazo Extra Aberto</span>`;
 
-                let tagPublico = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : `<span style="background: #2b8a3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Para Todos</span>`;
+                let tagPublico = a.publico === 'diretoria' ? `<span style="background: #0ea5e9; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 5px;">Apenas Diretoria</span>` : `<span style="background: var(--success); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 5px;">Para Todos</span>`;
                 
                 let textoBotaoCancelar = a.cancelada ? "Ativar" : "Cancelar";
                 let corBotaoCancelar = a.cancelada ? "verde" : "cinza";
@@ -2061,33 +2391,33 @@
                     
                     if (!prazoExtraEstaAberto) {
                         blocoPrazoExtraHtml = `
-                            <div style="margin-top: 10px; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
-                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px;">Gerenciar Prazo Extra:</label>
+                            <div style="margin-top: 10px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid var(--border);">
+                                <label style="font-size: 11px; font-weight: 800; display: block; margin-bottom: 4px;">Gerenciar Prazo Extra:</label>
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                                    <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 6px; border: 1px solid var(--border); width: auto;">
                                         <option value="24">24 Horas</option>
                                         <option value="5">5 Horas</option>
                                         <option value="manual">Até fechar manualmente</option>
                                         <option value="personalizado">Personalizado (Data/Hora)</option>
                                     </select>
-                                    <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 6px; border: 1px solid var(--border); width: auto;">
                                     <button class="btn-mini verde" onclick="abrirPrazoExtraAdmin('${a.id}')">🔓 Abrir Prazo Extra</button>
                                 </div>
                             </div>
                         `;
                     } else {
                         blocoPrazoExtraHtml = `
-                            <div style="margin-top: 10px; background: #ebfbee; padding: 8px; border-radius: 6px; border: 1px solid #c3e6cb;">
-                                <label style="font-size: 11px; font-weight: bold; display: block; margin-bottom: 4px; color: #155724;">🔓 Prazo Extra em Andamento:</label>
+                            <div style="margin-top: 10px; background: #d1fae5; padding: 8px; border-radius: 8px; border: 1px solid #a7f3d0;">
+                                <label style="font-size: 11px; font-weight: 800; display: block; margin-bottom: 4px; color: #065f46;">🔓 Prazo Extra em Andamento:</label>
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                                    <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <select id="tempo-extra-${a.id}" style="padding: 5px; font-size: 11px; border-radius: 6px; border: 1px solid var(--border); width: auto;">
                                         <option value="24">24 Horas</option>
                                         <option value="5">5 Horas</option>
                                         <option value="manual">Até fechar manualmente</option>
                                         <option value="personalizado">Personalizado (Data/Hora)</option>
                                     </select>
-                                    <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 4px; border: 1px solid #ccc;">
-                                    <button class="btn-mini cinza" onclick="abrirPrazoExtraAdmin('${a.id}')">✏️ Editar Prazo Extra</button>
+                                    <input type="datetime-local" id="data-extra-${a.id}" style="display:none; padding: 4px; font-size: 11px; border-radius: 6px; border: 1px solid var(--border); width: auto;">
+                                    <button class="btn-mini cinza" onclick="abrirPrazoExtraAdmin('${a.id}')">✏️ Editar Prazo</button>
                                     <button class="btn-mini vermelho" onclick="fecharPrazoExtraAdmin('${a.id}')">🔒 Fechar Prazo</button>
                                 </div>
                             </div>
@@ -2096,22 +2426,22 @@
                 }
 
                 div.innerHTML += `
-                    <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <div class="card-admin-item" style="margin-bottom: 12px; background: #fff; padding: 14px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
                         <div>
-                            <h4 style="margin: 0; color: #0056b3;">${a.titulo} ${tagPublico}</h4>
-                            <p class="cinza" style="margin: 4px 0; font-size: 12px;">${a.data} às ${a.hora} | Local: ${a.local || 'N/D'} | CH: ${a.ch}h</p>
-                            <p style="font-size: 11px; color: #555; margin: 4px 0;">${a.desc || 'Sem descrição'}</p>
+                            <h4 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;">${a.titulo} ${tagPublico}</h4>
+                            <p style="margin: 4px 0; font-size: 12px; color: #64748b;">${a.data} às ${a.hora} | Local: ${a.local || 'N/D'} | CH: ${a.ch}h</p>
+                            <p style="font-size: 11px; color: #475569; margin: 4px 0;">${a.desc || 'Sem descrição'}</p>
                             ${statusExtra}
                         </div>
 
                         ${blocoPrazoExtraHtml}
 
-                        <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="btn-mini cinza" onclick="prepararEdicaoAtividade('${a.id}')">✏️ Editar</button>
+                        <div style="margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="btn-mini cinza" onclick="prepararEdicaoAtividade('${a.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
                             <button class="btn-mini ${corBotaoConcluir}" onclick="alternarConcluirAtividade('${a.id}', ${!a.concluida})">✅ ${textoBotaoConcluir}</button>
                             <button class="btn-mini ${corBotaoCancelar}" onclick="alternarCancelarAtividade('${a.id}', ${!a.cancelada})">🚫 ${textoBotaoCancelar}</button>
-                            <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('Aviso de Atividade', 'Lembrete sobre a atividade: ${tituloSeguro}')">📢 Notificar</button>
-                            <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')">🗑️ Excluir</button>
+                            <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('Aviso de Atividade', 'Lembrete sobre a atividade: ${tituloSeguro}')"><i class="fa-solid fa-bullhorn"></i> Notificar</button>
+                            <button class="btn-mini vermelho" onclick="removerAtividade('${a.id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
                         </div>
                     </div>
                 `;
@@ -2134,16 +2464,11 @@
             let expiraEm = null;
             let agora = new Date();
 
-            if (selectTempo === '24') {
-                expiraEm = new Date(agora.getTime() + 24 * 60 * 60 * 1000);
-            } else if (selectTempo === '5') {
-                expiraEm = new Date(agora.getTime() + 5 * 60 * 60 * 1000);
-            } else if (selectTempo === 'personalizado') {
+            if (selectTempo === '24') expiraEm = new Date(agora.getTime() + 24 * 60 * 60 * 1000);
+            else if (selectTempo === '5') expiraEm = new Date(agora.getTime() + 5 * 60 * 60 * 1000);
+            else if (selectTempo === 'personalizado') {
                 let valInput = document.getElementById(`data-extra-${id}`).value;
-                if (!valInput) {
-                    alert("Selecione a data e hora de expiração personalizada.");
-                    return;
-                }
+                if (!valInput) { alert("Selecione a data e hora de expiração personalizada."); return; }
                 expiraEm = new Date(valInput);
             }
 
@@ -2176,12 +2501,12 @@
             document.getElementById('at-desc').value = ativ.desc || '';
             document.getElementById('at-publico').value = ativ.publico || 'todos';
 
-            let btnCadastrar = document.getElementById('btn-salvar-atividade');
+            let btnCadastrar = document.querySelector('#secao-cadastro-atividades .btn-salvar');
             btnCadastrar.innerText = "Salvar Alterações da Atividade";
             btnCadastrar.setAttribute("onclick", `salvarEdicaoAtividade('${id}')`);
 
             document.getElementById('titulo-form-atividade').innerText = "Editar Atividade";
-            mudarAba('cadastro-atividades', { target: document.querySelectorAll('.aba-btn')[2] });
+            abrirAbaExecutiva('cadastro-atividades');
         }
 
         async function salvarEdicaoAtividade(id) {
@@ -2203,7 +2528,7 @@
             await dispararNotificacaoGlobal("Atividade Atualizada", `A atividade ${titulo} sofreu alterações.`);
             alert("Atividade atualizada com sucesso!");
 
-            let btnCadastrar = document.getElementById('btn-salvar-atividade');
+            let btnCadastrar = document.querySelector('#secao-cadastro-atividades .btn-salvar');
             btnCadastrar.innerText = "Criar Atividade na Nuvem";
             btnCadastrar.setAttribute("onclick", "cadastrarAtividade()");
             document.getElementById('titulo-form-atividade').innerText = "Nova Atividade";
@@ -2234,9 +2559,7 @@
 
             let idsAbertos = [];
             document.querySelectorAll('[id^="conteudo-freq-"]').forEach(el => {
-                if (el.style.display === "block") {
-                    idsAbertos.push(el.id.replace('conteudo-freq-', ''));
-                }
+                if (el.style.display === "block") idsAbertos.push(el.id.replace('conteudo-freq-', ''));
             });
 
             div.innerHTML = "";
@@ -2244,7 +2567,7 @@
             let mesFiltro = mesFiltroSelect.value;
             let ativFiltradas = atividadesCache.filter(a => a.data && a.data.startsWith(mesFiltro));
             if(ativFiltradas.length === 0) {
-                div.innerHTML = "<p class='cinza'>Nenhuma atividade disponível para este mês/ano.</p>";
+                div.innerHTML = "<p style='color:#64748b; font-size:12px;'>Nenhuma atividade disponível para este mês/ano.</p>";
                 return;
             }
 
@@ -2254,11 +2577,7 @@
                 let frequenciasMap = a.frequencias || {};
                 let htmlMembros = "";
 
-                let totalConfirmados = 0;
-                let totalPresentes = 0;
-                let totalJustificativas = 0;
-                let totalFaltas = 0;
-                let totalJustNegadas = 0;
+                let totalConfirmados = 0, totalPresentes = 0, totalJustificativas = 0, totalFaltas = 0, totalJustNegadas = 0;
 
                 membrosAtivos.forEach(m => {
                     let cargoMembroLower = (m.cargo || "ligante").toLowerCase().trim();
@@ -2275,23 +2594,22 @@
                     if (reg.status === 'negado') totalFaltas++;
                     if (reg.status === 'justificativa_negada') totalJustNegadas++;
 
-                    let badgeStatus = `<span class="tag-status pendente">Pendente</span>`;
-                    
-                    if(reg.status === 'presente') badgeStatus = `<span class="tag-status presente">✓ Presente (Com CH)</span>`;
-                    if(reg.status === 'justificado') badgeStatus = `<span class="tag-status justificado">✓ Justificado Aceito (Abonado)</span>`;
-                    if(reg.status === 'negado') badgeStatus = `<span class="tag-status falta">✕ Falta</span>`;
-                    if(reg.status === 'justificativa_negada') badgeStatus = `<span class="tag-status falta" style="background:#ffe3e3; color:#c92a2a;">✕ Justificativa Negada</span>`;
+                    let badgeStatus = `<span style="background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">Pendente</span>`;
+                    if(reg.status === 'presente') badgeStatus = `<span style="background: #d1fae5; color: #065f46; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">✓ Presente</span>`;
+                    if(reg.status === 'justificado') badgeStatus = `<span style="background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">✓ Abonado</span>`;
+                    if(reg.status === 'negado') badgeStatus = `<span style="background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">✕ Falta</span>`;
+                    if(reg.status === 'justificativa_negada') badgeStatus = `<span style="background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">✕ Just. Negada</span>`;
 
-                    let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:#1e88e5; display:block;">(Ligante confirmou interesse no app)</span>` : "";
+                    let indicacaoAluno = reg.confirmadoAluno ? `<span style="font-size:10px; color:var(--primary); display:block; font-weight:600;">(Ligante confirmou interesse no app)</span>` : "";
                     let tituloAtivSeguro = (a.titulo || "").replace(/'/g, "\\'");
 
                     let blocoBotoesAcoes = "";
                     if (reg.status === 'aguardando_analise') {
                         let textoJustGuardado = (reg.texto || 'Sem texto informado.').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                         blocoBotoesAcoes = `
-                            <div class="caixa-justificativa-admin" style="margin:5px 0; background:#fff8e1; padding:6px; border-radius:4px;">
-                                <p style="font-size:11px;"><strong>Justificativa do Ligante:</strong> "${reg.texto}"</p>
-                                <div class="botoes-justica" style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
+                            <div style="margin:6px 0; background:#fef3c7; padding:8px; border-radius:8px; border:1px solid #fde68a;">
+                                <p style="font-size:11px; margin:0 0 6px 0; color:#78350f;"><strong>Justificativa:</strong> "${reg.texto}"</p>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                     <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificado', '${textoJustGuardado}', '${tituloAtivSeguro}')">Aceitar</button>
                                     <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'justificativa_negada', '${textoJustGuardado}', '${tituloAtivSeguro}')">Negar</button>
                                     <button class="btn-mini cinza" onclick="abrirModalVerJustificativa('${textoJustGuardado}')">👁️ Ver</button>
@@ -2301,22 +2619,20 @@
                     } else if (reg.status === 'justificado' || reg.status === 'justificativa_negada') {
                         let textoJustGuardado = (reg.texto || 'Sem texto informado.').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                         blocoBotoesAcoes = `
-                            <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                            <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
                                 <button class="btn-mini cinza" onclick="abrirModalVerJustificativa('${textoJustGuardado}')">👁️ Ver Justificativa</button>
                                 <button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Resetar</button>
-                                <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Atualização de Frequência', 'Sua frequência na atividade ${tituloAtivSeguro} foi revisada.')">📢 Notificar</button>
                             </div>
                         `;
                     } else if (reg.status !== 'pendente') {
                         blocoBotoesAcoes = `
-                            <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+                            <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-mini cinza" onclick="mudarStatusAdmin('${a.id}', '${m.id}', 'pendente')">Resetar</button>
-                                <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Atualização de Frequência', 'Sua frequência na atividade ${tituloAtivSeguro} foi revisada.')">📢 Notificar</button>
                             </div>
                         `;
                     } else {
                         blocoBotoesAcoes = `
-                            <div class="botoes-presenca" style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+                            <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-mini verde" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'presente', '', '${tituloAtivSeguro}')">Dar Presença (+CH)</button>
                                 <button class="btn-mini vermelho" onclick="mudarStatusAdminComNotif('${a.id}', '${m.id}', 'negado', '', '${tituloAtivSeguro}')">Marcar Falta</button>
                                 <button class="btn-mini cinza" onclick="abrirJustificativaManual('${a.id}', '${m.id}', '${tituloAtivSeguro}')">📝 Justificar</button>
@@ -2325,10 +2641,10 @@
                     }
 
                     htmlMembros += `
-                        <div class="item-chamada" style="margin-bottom:8px; background:#f8f9fa; padding:8px; border-radius:6px; border:1px solid #e9ecef;">
-                            <div class="chamada-info" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="margin-bottom:8px; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid var(--border);">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <div>
-                                    <strong>${m.nome}</strong> <span class="cinza">(${m.cargo || 'Ligante'})</span>
+                                    <strong style="font-size:12px; color:var(--dark);">${m.nome}</strong> <span style="font-size:10px; color:#64748b;">(${m.cargo || 'Ligante'})</span>
                                     ${indicacaoAluno}
                                 </div>
                                 ${badgeStatus}
@@ -2339,36 +2655,34 @@
                 });
 
                 let estaAberto = idsAbertos.includes(a.id);
-                let estiloCardAtiv = "background: #fff; border: 1px solid #dee2e6; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
-                let badgesEstatisticasHeader = "";
-                let tagPublicoFreq = a.publico === 'diretoria' ? `<span style="background: #1c7ed6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 5px;">Apenas Diretoria</span>` : "";
+                let estiloCardAtiv = "background: #fff; border: 1px solid var(--border); margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02);";
+                let tagPublicoFreq = a.publico === 'diretoria' ? `<span style="background: #0ea5e9; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 5px;">Apenas Diretoria</span>` : "";
 
                 if (a.concluida) {
-                    estiloCardAtiv = "background: #f4fbf7; border: 2px solid #2b8a3e; margin-bottom: 12px; border-radius: 8px; overflow: hidden;";
+                    estiloCardAtiv = "background: #f0fdf4; border: 2px solid var(--success); margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02);";
                 }
 
-                badgesEstatisticasHeader = `
+                let badgesEstatisticasHeader = `
                     <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
-                        <span style="background: #e7f5ff; color: #1c7ed6; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">👥 ${totalConfirmados} confirmados</span>
-                        <span style="background: #ebfbee; color: #2b8a3e; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✓ ${totalPresentes} presentes</span>
-                        <span style="background: #fff9db; color: #f59f00; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">📝 ${totalJustificativas} abonadas</span>
-                        <span style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✕ ${totalFaltas} faltas</span>
-                        <span style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">✕ ${totalJustNegadas} just. negadas</span>
+                        <span style="background: #eff6ff; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;">👥 ${totalConfirmados} confirmados</span>
+                        <span style="background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;">✓ ${totalPresentes} presentes</span>
+                        <span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;">📝 ${totalJustificativas} abonadas</span>
+                        <span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;">✕ ${totalFaltas} faltas</span>
                     </div>
                 `;
 
                 div.innerHTML += `
-                    <div class="card-frequencia-colapsavel" style="${estiloCardAtiv}">
-                        <div onclick="toggleExpandirFrequencia('${a.id}')" style="padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${a.concluida ? '#e6fcf5' : '#f8f9fa'};">
+                    <div style="${estiloCardAtiv}">
+                        <div onclick="toggleExpandirFrequencia('${a.id}')" style="padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${a.concluida ? '#dcfce7' : '#f8fafc'};">
                             <div>
-                                <h4 style="margin: 0; color: #0056b3; font-size: 15px;">${a.titulo} ${tagPublicoFreq} ${a.concluida ? '<span style="background: #2b8a3e; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; margin-left: 6px;">✅ Concluída</span>' : ''}</h4>
-                                <p class="cinza" style="margin: 2px 0 0 0; font-size: 12px;">📅 ${a.data} às ${a.hora} | ⏳ CH: ${a.ch}h</p>
+                                <h4 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;">${a.titulo} ${tagPublicoFreq} ${a.concluida ? '<span style="background: var(--success); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 800; margin-left: 6px;">✅ Concluída</span>' : ''}</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">📅 ${a.data} às ${a.hora} | ⏳ CH: ${a.ch}h</p>
                                 ${badgesEstatisticasHeader}
                             </div>
-                            <span style="font-size: 12px; color: #0056b3; font-weight: bold;" id="seta-freq-${a.id}">${estaAberto ? '▲ Ocultar Chamada' : '▼ Gerenciar Chamada'}</span>
+                            <span style="font-size: 12px; color: var(--primary); font-weight: 800;" id="seta-freq-${a.id}">${estaAberto ? '▲ Ocultar' : '▼ Gerenciar'}</span>
                         </div>
-                        <div id="conteudo-freq-${a.id}" style="display: ${estaAberto ? 'block' : 'none'}; padding: 12px; border-top: 1px solid #dee2e6;">
-                            <div class="bloco-chamada-membros">
+                        <div id="conteudo-freq-${a.id}" style="display: ${estaAberto ? 'block' : 'none'}; padding: 14px; border-top: 1px solid var(--border);">
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
                                 ${htmlMembros}
                             </div>
                         </div>
@@ -2391,10 +2705,10 @@
             let seta = document.getElementById(`seta-freq-${id}`);
             if (conteudo.style.display === "none") {
                 conteudo.style.display = "block";
-                seta.innerText = "▲ Ocultar Chamada";
+                seta.innerText = "▲ Ocultar";
             } else {
                 conteudo.style.display = "none";
-                seta.innerText = "▼ Gerenciar Chamada";
+                seta.innerText = "▼ Gerenciar";
             }
         }
 
@@ -2440,51 +2754,53 @@
             let cobravel = anoMesNum >= 202508;
 
             if(!cobravel) {
-                div.innerHTML = `<div class="card-admin-item"><p class="cinza">Mensalidades só começaram a ser cobradas a partir de Agosto de 2025.</p></div>`;
+                div.innerHTML = `<div class="card-admin-item" style="background:#fff; padding:16px; border-radius:12px; border:1px solid var(--border);"><p style="color:#64748b; font-size:12px; margin:0;">Mensalidades só começaram a ser cobradas a partir de Agosto de 2025.</p></div>`;
                 return;
             }
 
             let membrosAtivos = membrosCache.filter(m => !m.desligado);
             let htmlTabela = `
-                <div class="card-admin-item">
-                    <h4>Controle Financeiro - ${mesFiltro}</h4>
-                    <table class="tabela-financeiro">
-                        <thead>
-                            <tr>
-                                <th>Ligante</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <div class="card-admin-item" style="background:#fff; padding:16px; border-radius:12px; border:1px solid var(--border); box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+                    <h4 style="margin:0 0 12px 0; color:var(--primary); font-size:15px; font-weight:800;">Controle Financeiro - ${mesFiltro}</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width:100%; border-collapse: collapse; font-size:12px;">
+                            <thead>
+                                <tr style="background:#f8fafc; border-bottom:2px solid var(--border); text-align:left;">
+                                    <th style="padding:8px; font-weight:800; color:var(--dark);">Ligante</th>
+                                    <th style="padding:8px; font-weight:800; color:var(--dark);">Status</th>
+                                    <th style="padding:8px; font-weight:800; color:var(--dark);">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
             `;
 
             membrosAtivos.forEach(m => {
                 let finMap = m.financeiro || {};
                 let status = finMap[mesFiltro] || 'pendente';
 
-                let badge = `<span class="badge-fin pendente">Pendente</span>`;
-                if(status === 'pago') badge = `<span class="badge-fin pago">Pago ✓</span>`;
-                if(status === 'analise') badge = `<span class="badge-fin analise">Aguardando</span>`;
-                if(status === 'abonado') badge = `<span class="badge-fin abonado">Abonado</span>`;
+                let badge = `<span style="background:#f1f5f9; color:#475569; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:800;">Pendente</span>`;
+                if(status === 'pago') badge = `<span style="background:#d1fae5; color:#065f46; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:800;">Pago ✓</span>`;
+                if(status === 'analise') badge = `<span style="background:#fef3c7; color:#b45309; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:800;">Aguardando</span>`;
+                if(status === 'abonado') badge = `<span style="background:#eff6ff; color:#1e40af; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:800;">Abonado</span>`;
 
                 let botoesFin = `
-                    <button class="btn-mini verde" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pago')">Recebido</button>
-                    <button class="btn-mini cinza" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'abonado')">Abonar</button>
-                    <button class="btn-mini vermelho" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pendente')">Reset</button>
-                    <button class="btn-mini cinza" onclick="dispararNotificacaoIndividual('${m.id}', 'Situação Financeira', 'Sua mensalidade de ${mesFiltro} foi atualizada.')">📢 Notificar</button>
+                    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                        <button class="btn-mini verde" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pago')">Recebido</button>
+                        <button class="btn-mini cinza" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'abonado')">Abonar</button>
+                        <button class="btn-mini vermelho" onclick="alterarFinanceiroAdmin('${m.id}', '${mesFiltro}', 'pendente')">Reset</button>
+                    </div>
                 `;
 
                 htmlTabela += `
-                    <tr>
-                        <td><strong>${m.nome}</strong><br><small class="cinza">Cód: ${m.codigo}</small></td>
-                        <td>${badge}</td>
-                        <td>${botoesFin}</td>
+                    <tr style="border-bottom:1px solid var(--border);">
+                        <td style="padding:10px 8px;"><strong>${m.nome}</strong><br><small style="color:#64748b;">Cód: ${m.codigo}</small></td>
+                        <td style="padding:10px 8px;">${badge}</td>
+                        <td style="padding:10px 8px;">${botoesFin}</td>
                     </tr>
                 `;
             });
 
-            htmlTabela += `</tbody></table></div>`;
+            htmlTabela += `</tbody></table></div></div>`;
             div.innerHTML = htmlTabela;
         }
 
@@ -2525,7 +2841,7 @@
             avisosCache = [];
 
             if(snap.empty) {
-                div.innerHTML = "<p class='cinza'>Nenhum aviso publicado.</p>";
+                div.innerHTML = "<p style='color:#64748b; font-size:12px;'>Nenhum aviso publicado.</p>";
                 return;
             }
 
@@ -2536,13 +2852,13 @@
                 let textoSeguro = (a.texto || "").replace(/'/g, "\\'").replace(/\n/g, " ");
 
                 div.innerHTML += `
-                    <div class="card-admin-item flex-row" style="align-items: flex-start; justify-content: space-between;">
+                    <div class="card-admin-item" style="background:#fff; padding:14px; border-radius:12px; border:1px solid var(--border); margin-bottom:10px; display:flex; justify-content:space-between; align-items:flex-start; box-shadow:0 2px 4px rgba(0,0,0,0.02);">
                         <div>
-                            <h4>${a.titulo}</h4>
-                            <p class="cinza">${a.texto}</p>
+                            <h4 style="margin:0 0 4px 0; color:var(--primary); font-size:14px; font-weight:800;">${a.titulo}</h4>
+                            <p style="margin:0; font-size:12px; color:#475569;">${a.texto}</p>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 110px;">
-                            <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('${tituloSeguro}', '${textoSeguro}')">📢 Push</button>
+                        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 100px;">
+                            <button class="btn-mini verde" onclick="dispararNotificacaoGlobal('${tituloSeguro}', '${textoSeguro}')"><i class="fa-solid fa-bullhorn"></i> Push</button>
                             <button class="btn-mini cinza" onclick="prepararEdicaoAviso('${a.id}')">Editar</button>
                             <button class="btn-mini vermelho" onclick="removerAviso('${a.id}')">Apagar</button>
                         </div>
