@@ -12,32 +12,20 @@
     <meta name="color-scheme" content="light">
 
     <style>
-        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #000; box-sizing: border-box; }
+        body { background-color: #f4f7f6; margin: 0; padding: 0; display: block; min-height: 100vh; color: #000; box-sizing: border-box; }
         input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; box-sizing: border-box; }
         
-        /* CORREÇÃO DO CONTAINER PRINCIPAL PARA O CELULAR (FLEXIBILIDADE E RESPONSIVIDADE TOTAL) */
         .celular-container {
             width: 100%;
-            max-width: 480px;
             min-height: 100vh;
             background: #f8f9fa;
             box-sizing: border-box;
             padding: 12px;
-            margin: 0 auto;
+            margin: 0;
             overflow-x: hidden;
         }
 
-        @media (min-width: 481px) {
-            .celular-container {
-                min-height: 90vh;
-                border-radius: 24px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-                margin: 20px auto;
-                border: 8px solid #343a40;
-            }
-        }
-
-        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: 15px; }
+        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: 40px auto; }
         #tela-login h2 { color: #0056b3; font-size: 26px; margin: 10px 0 2px 0; }
         #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
         .grupo-input { margin-bottom: 15px; text-align: left; width: 100%; box-sizing: border-box; }
@@ -65,7 +53,6 @@
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* Estilo do Baralho de Cartas Empilhadas */
         .secao-pilha-concluidas {
             background: #ffffff;
             border-radius: 14px;
@@ -130,7 +117,6 @@
             font-weight: 600;
         }
 
-        /* Aba de Aniversariantes Complexa, Completa e Estilizada */
         .card-aniversariantes-completo {
             background: #ffffff;
             border-radius: 12px;
@@ -226,7 +212,6 @@
             background: #e9ecef;
         }
 
-        /* CARD DE OUVIDORIA / SUGESTÕES REESTILIZADO (PADRÃO ANIVERSÁRIO) */
         .card-ouvidoria-completo {
             background: #ffffff;
             border-radius: 12px;
@@ -268,13 +253,11 @@
             opacity: 0.9;
         }
 
-        /* CORREÇÃO DE QUEBRAS EM ELEMENTOS DE TEXTO E FLEXBOX NO MOBILE */
         * {
             box-sizing: border-box;
             word-wrap: break-word;
         }
         
-        /* Garantir que modais fiquem perfeitos no celular */
         .modal {
             display: none;
             position: fixed;
