@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LAPE - Portal do Ligante</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="brasao.png" type="image/png">
@@ -12,16 +12,39 @@
     <meta name="color-scheme" content="light">
 
     <style>
-        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #000; }
-        input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
-        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; }
+        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #000; box-sizing: border-box; }
+        input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; box-sizing: border-box; }
+        
+        /* CORREÇÃO DO CONTAINER PRINCIPAL PARA O CELULAR (FLEXIBILIDADE E RESPONSIVIDADE TOTAL) */
+        .celular-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: #f8f9fa;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        @media (min-width: 481px) {
+            .celular-container {
+                min-height: 90vh;
+                border-radius: 24px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                margin: 20px auto;
+                border: 8px solid #343a40;
+            }
+        }
+
+        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: 15px; }
         #tela-login h2 { color: #0056b3; font-size: 26px; margin: 10px 0 2px 0; }
         #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
-        .grupo-input { margin-bottom: 15px; text-align: left; }
+        .grupo-input { margin-bottom: 15px; text-align: left; width: 100%; box-sizing: border-box; }
         .grupo-input label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold; color: #555; }
         .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
-        .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; }
+        .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; box-sizing: border-box; }
+        .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; box-sizing: border-box; }
         
         .spinner-login {
             width: 45px;
@@ -149,6 +172,8 @@
             border: 1px solid #e9ecef;
             margin-bottom: 6px;
             transition: background 0.2s;
+            box-sizing: border-box;
+            width: 100%;
         }
         .aniversario-item-complexo:hover {
             background: #f1f3f5;
@@ -195,6 +220,7 @@
             cursor: pointer;
             margin-top: 8px;
             text-align: center;
+            box-sizing: border-box;
         }
         .btn-ver-todos-aniv:hover {
             background: #e9ecef;
@@ -217,6 +243,8 @@
             padding: 10px;
             margin-top: 8px;
             transition: background 0.2s;
+            box-sizing: border-box;
+            width: 100%;
         }
         .ouvidoria-item-card:hover {
             background: #f1f3f5;
@@ -234,9 +262,66 @@
             justify-content: center;
             gap: 6px;
             transition: opacity 0.2s;
+            box-sizing: border-box;
         }
         .btn-acao-ouvidoria:hover {
             opacity: 0.9;
+        }
+
+        /* CORREÇÃO DE QUEBRAS EM ELEMENTOS DE TEXTO E FLEXBOX NO MOBILE */
+        * {
+            box-sizing: border-box;
+            word-wrap: break-word;
+        }
+        
+        /* Garantir que modais fiquem perfeitos no celular */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .modal-conteudo {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-perfil-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .modal-perfil-conteudo {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 380px;
+            box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
         }
     </style>
 
@@ -295,14 +380,14 @@
     <!-- TELA PRINCIPAL DO APP -->
     <div class="celular-container" id="conteudo-principal-app" style="display: none;">
         <header class="cabecalho">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
-                <div>
-                    <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
-                    <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; overflow: hidden;">
+                <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white; flex-shrink: 0;">
+                <div style="min-width: 0; overflow: hidden;">
+                    <h2 id="titulo-boas-vindas" style="margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Minha Liga</h2>
+                    <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">Ligante</span>
                 </div>
             </div>
-            <div style="display: flex; align-items: center;">
+            <div style="display: flex; align-items: center; flex-shrink: 0;">
                 <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;"></div>
             </div>
         </header>
@@ -393,7 +478,7 @@
                     <span style="font-size: 18px;">🛡️</span>
                 </div>
 
-                <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+                <div style="display: flex; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
                     <button class="btn-acao-ouvidoria" style="background-color: #7950f2; color: white;" onclick="abrirModalNovaSugestao()">✏️ Nova Solicitação</button>
                     <button class="btn-acao-ouvidoria" style="background-color: #f1f3f5; color: #495057; border: 1px solid #ced4da;" onclick="abrirModalHistoricoSugestoes()">📋 Minhas Solicitações</button>
                 </div>
@@ -431,7 +516,7 @@
                 <textarea id="sugestao-texto" rows="4" placeholder="Descreva detalhadamente sua sugestão, problema ou feedback..." style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
             </div>
 
-            <div style="display: flex; gap: 8px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <button class="btn-salvar" style="flex: 1; padding: 10px; background-color: #7950f2;" onclick="enviarSugestaoAnonima()">Enviar Anonimamente</button>
                 <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalNovaSugestao()">Cancelar</button>
             </div>
@@ -462,14 +547,14 @@
             <div class="qrcode-box" style="padding: 5px; background: #fff;">
                 <img src="qrcode.png" alt="QR Code Pix" style="width: 150px; height: 150px; object-fit: contain; display: block; margin: 0 auto;">
             </div>
-            <div class="copia-cola" style="margin-top: 10px;">
-                <input type="text" id="chave-pix-input" value="lapewyden@gmail.com" readonly>
+            <div class="copia-cola" style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+                <input type="text" id="chave-pix-input" value="lapewyden@gmail.com" readonly style="flex: 1; min-width: 180px;">
                 <button class="btn-copiar" onclick="copiarPix()">Copiar</button>
             </div>
             <p id="aviso-copiado" class="texto-sucesso" style="display:none;">Chave copiada!</p>
-            <div class="botoes-modal" style="margin-top: 15px; display:flex; gap:8px;">
-                <button class="btn-salvar" onclick="notificarPagamento()">Já realizei o pagamento</button>
-                <button class="btn-cancelar" onclick="fecharModalPix()">Sair</button>
+            <div class="botoes-modal" style="margin-top: 15px; display:flex; gap:8px; flex-wrap: wrap;">
+                <button class="btn-salvar" style="flex: 1;" onclick="notificarPagamento()">Já realizei o pagamento</button>
+                <button class="btn-cancelar" style="flex: 1;" onclick="fecharModalPix()">Sair</button>
             </div>
         </div>
     </div>
@@ -495,7 +580,7 @@
             <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Explique o motivo da sua ausência para avaliação da diretoria:</p>
             <input type="hidden" id="justificativa-ativ-id">
             <textarea id="texto-justificativa-input" rows="4" placeholder="Digite sua justificativa detalhadamente..." style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
-            <div style="display: flex; gap: 8px; margin-top: 15px;">
+            <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
                 <button class="btn-salvar" style="flex: 1; padding: 10px;" onclick="enviarJustificativaCustomizada()">Enviar Justificativa</button>
                 <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalJustificativa()">Cancelar</button>
             </div>
@@ -741,10 +826,10 @@
                     html += `
                         <div class="aniversario-item-complexo" style="border-color: #ff6b6b; background: #fff5f5;">
                             ${avatarHtml}
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">${aniv.nome}</p>
-                                    <span style="font-size: 11px; background: #ff6b6b; color: white; padding: 1px 6px; border-radius: 4px; font-weight: bold;">Hoje! 🥳</span>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${aniv.nome}</p>
+                                    <span style="font-size: 11px; background: #ff6b6b; color: white; padding: 1px 6px; border-radius: 4px; font-weight: bold; flex-shrink: 0;">Hoje! 🥳</span>
                                 </div>
                                 <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completando <strong>${aniv.idade} anos</strong></p>
                                 <div class="aniv-detalhes-grid">
@@ -763,7 +848,7 @@
                         <div class="aniv-subtitulo">Aniversariante de Hoje</div>
                         <div class="aniversario-item-complexo">
                             <div class="aniversario-avatar" style="background: #e9ecef; color: #6c757d;">📅</div>
-                            <div style="flex: 1;">
+                            <div style="flex: 1; min-width: 0;">
                                 <p style="margin: 0; font-size: 12px; font-weight: bold; color: #555;">Nenhum aniversariante hoje</p>
                                 <p style="margin: 2px 0 0 0; font-size: 11px; color: #777;">Aproveite para conferir o próximo colega da liga abaixo!</p>
                             </div>
@@ -783,10 +868,10 @@
                         <div class="aniv-subtitulo">⏭️ Próximo Aniversariante</div>
                         <div class="aniversario-item-complexo">
                             ${avatarProximoHtml}
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${proximoAniversariante.nome}</p>
-                                    <span style="font-size: 10px; background: #e7f5ff; color: #0056b3; padding: 1px 6px; border-radius: 4px; font-weight: bold;">${textoDias}</span>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${proximoAniversariante.nome}</p>
+                                    <span style="font-size: 10px; background: #e7f5ff; color: #0056b3; padding: 1px 6px; border-radius: 4px; font-weight: bold; flex-shrink: 0;">${textoDias}</span>
                                 </div>
                                 <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completará ${proximoAniversariante.idade} anos</p>
                                 <div class="aniv-detalhes-grid">
@@ -843,10 +928,10 @@
                     htmlModal += `
                         <div class="aniversario-item-complexo">
                             ${avatarHtml}
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${aniv.nome}</p>
-                                    <span style="font-size: 11px; font-weight: bold; color: #d63384;">${aniv.dataFormatada}</span>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${aniv.nome}</p>
+                                    <span style="font-size: 11px; font-weight: bold; color: #d63384; flex-shrink: 0;">${aniv.dataFormatada}</span>
                                 </div>
                                 <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Vai completar ${aniv.idade} anos</p>
                                 <div class="aniv-detalhes-grid">
@@ -870,7 +955,6 @@
         function iniciarOuvintesTempoReal() {
             let momentoAberturaApp = new Date();
 
-            // OUVINTE DE ESTADO DE MANUTENÇÃO GLOBAL DO SISTEMA (Presidente bypassa a manutenção)
             db.collection("configuracoes").doc("sistema").onSnapshot((doc) => {
                 let overlay = document.getElementById("overlay-manutencao");
                 if (!overlay) return;
@@ -904,7 +988,6 @@
                 }
             });
 
-            // OUVINTE DE SUGESTÕES ANÔNIMAS DO USUÁRIO LOGADO
             db.collection("sugestoes_ouvidoria").where("autorId", "==", usuarioLogado.id).onSnapshot((snapshot) => {
                 minhasSugestoesCache = [];
                 snapshot.forEach(doc => {
@@ -1024,7 +1107,6 @@
             });
         }
 
-        // FUNÇÕES DA OUVIDORIA E SUGESTÕES
         function abrirModalNovaSugestao() {
             document.getElementById("sugestao-titulo").value = "";
             document.getElementById("sugestao-texto").value = "";
@@ -1088,7 +1170,7 @@
 
             container.innerHTML = `
                 <div class="ouvidoria-item-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 4px; flex-wrap: wrap;">
                         <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${ultima.tipo}]</span>
                         <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${ultima.status}</span>
                     </div>
@@ -1119,7 +1201,7 @@
 
                 html += `
                     <div class="ouvidoria-item-card" style="margin-top: 0; margin-bottom: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 4px; flex-wrap: wrap;">
                             <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${item.tipo}]</span>
                             <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
                         </div>
