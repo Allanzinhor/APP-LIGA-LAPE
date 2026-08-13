@@ -300,6 +300,40 @@
             font-size: 12px;
             line-height: 1.4;
         }
+
+        /* SLIDER DE AVISOS INTERNOS GLOBAL */
+        .quadro-avisos-global {
+            margin: 0 14px 14px 14px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            box-shadow: var(--shadow);
+        }
+        .avisos-header-global {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #b45309;
+        }
+        .slides-container-global {
+            position: relative;
+            overflow: hidden;
+        }
+        .slide-global {
+            display: none;
+        }
+        .slide-global.ativo {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body class="fundo-app">
@@ -321,20 +355,14 @@
             </div>
         </div>
 
-        <!-- MODO DE MANUTENÇÃO -->
-        <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a; margin: 0 14px 14px 14px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                <i class="fa-solid fa-screwdriver-wrench" style="color: #d97706; font-size: 14px;"></i>
-                <h3 style="color: #b45309; margin: 0; font-size: 13px; font-weight: 800;">Modo de Manutenção</h3>
+        <!-- MURAL DE AVISOS INTERNOS FIXO (GLOBAL) -->
+        <div class="quadro-avisos-global" id="mural-avisos-global-container">
+            <div class="avisos-header-global">
+                <span><i class="fa-solid fa-bullhorn"></i> MURAL DA DIRETORIA</span>
+                <span id="contador-slide-global">1/1</span>
             </div>
-            <p style="font-size: 11px; color: #78350f; margin-bottom: 8px; line-height: 1.3;">Exibe aviso de paralisação aos ligantes sem perder dados.</p>
-            
-            <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #fef3c7; gap: 8px;">
-                <div style="min-width: 0;">
-                    <strong id="status-manutencao-texto" style="font-size: 11px; color: var(--dark); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Status: Desativado</strong>
-                </div>
-                <button id="btn-toggle-manutencao" class="btn-mini verde" onclick="alternarModoManutencao()">Ativar</button>
-            </div>
+            <div id="container-avisos-fixos-global"></div>
+            <div class="slides-container-global" id="container-slides-global" style="min-height: 45px; display: flex; flex-direction: column; justify-content: center;"></div>
         </div>
 
         <!-- BARRA DE VOLTAR AO MENU -->
@@ -474,19 +502,9 @@
                 </div>
 
             </div>
-
-            <!-- MURAL DE AVISOS -->
-            <div class="quadro-avisos" style="margin-top: 14px;">
-                <div class="avisos-header">
-                    <span><i class="fa-solid fa-shield-halved"></i> MURAL DA DIRETORIA</span>
-                    <span id="contador-slide-dir">1/1</span>
-                </div>
-                <div id="container-avisos-fixos"></div>
-                <div class="slides-container" id="container-slides-dir" style="min-height: 100px; display: flex; flex-direction: column; justify-content: center;"></div>
-            </div>
         </div>
 
-        <!-- ABA: RECADOS INTERNOS -->
+        <!-- ABA: RECADOS INTERNOS (EXCLUSIVO PRESIDENTE) -->
         <div id="secao-recados-internos" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a;">
                 <h3 id="titulo-form-aviso-dir" style="margin: 0 0 10px 0; color: #b45309; font-size: 15px; font-weight: 800;"><i class="fa-solid fa-pen-nib"></i> Publicar Recado Interno</h3>
@@ -546,6 +564,27 @@
 
                 <button class="btn-salvar" id="btn-salvar-aviso-dir" onclick="salvarAvisoDiretoria()">Publicar Recado</button>
                 <button class="btn-mini cinza" id="btn-cancelar-aviso-dir" style="display:none; width:100%; margin-top:8px; padding:10px;" onclick="cancelarEdicaoAvisoDiretoria()">Cancelar Edição</button>
+            </div>
+            
+            <h3 style="font-size: 14px; font-weight: 800; color: var(--dark); margin: 16px 0 8px 0;">Recados Publicados</h3>
+            <div id="lista-admin-recados-internos"></div>
+        </div>
+
+        <!-- ABA: MODO DE MANUTENÇÃO (EXCLUSIVO PRESIDENTE) -->
+        <div id="secao-manutencao" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
+            <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <i class="fa-solid fa-screwdriver-wrench" style="color: #d97706; font-size: 16px;"></i>
+                    <h3 style="color: #b45309; margin: 0; font-size: 15px; font-weight: 800;">Modo de Manutenção</h3>
+                </div>
+                <p style="font-size: 11px; color: #78350f; margin-bottom: 12px; line-height: 1.4;">Exibe aviso de paralisação aos ligantes sem perder dados do sistema.</p>
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 12px 16px; border-radius: 10px; border: 1px solid #fef3c7; gap: 8px;">
+                    <div>
+                        <strong id="status-manutencao-texto-aba" style="font-size: 12px; color: var(--dark); display: block;">Status: Desativado</strong>
+                    </div>
+                    <button id="btn-toggle-manutencao-aba" class="btn-mini verde" onclick="alternarModoManutencao()">Ativar Manutenção</button>
+                </div>
             </div>
         </div>
 
@@ -863,7 +902,7 @@
         let avisosCache = [];
         let avisosDiretoriaCache = [];
         let ouvidoriaCache = [];
-        let indiceSlideDirAtual = 0;
+        let indiceSlideGlobalAtual = 0;
         let usuarioSessao = null;
         let contadorBlocosLote = 0;
         let estadoManutencaoGlobal = false;
@@ -871,13 +910,13 @@
         let estatisticasLigantesCache = [];
 
         const permissoesCargos = {
-            "presidente": ["dashboard-principal", "recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "vice-presidente": ["dashboard-principal", "recados-internos", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "secretaria": ["dashboard-principal", "recados-internos", "lista-membros", "frequencia", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "tesoureira": ["dashboard-principal", "recados-internos", "financeiro", "avisos"],
-            "diretora de extensão": ["dashboard-principal", "recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de pesquisa": ["dashboard-principal", "recados-internos", "cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de marketing": ["dashboard-principal", "recados-internos", "avisos"]
+            "presidente": ["dashboard-principal", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "vice-presidente": ["dashboard-principal", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "secretaria": ["dashboard-principal", "lista-membros", "frequencia", "avisos", "ouvidoria-admin"],
+            "tesoureira": ["financeiro", "avisos"],
+            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretora de marketing": ["avisos"]
         };
 
         function mascaraTelefone(input) {
@@ -958,6 +997,7 @@
             const configAbas = {
                 "dashboard-principal": { nome: "Gestão Executiva", icone: "fa-chart-pie" },
                 "recados-internos": { nome: "Recados Internos", icone: "fa-bullhorn" },
+                "manutencao": { nome: "Manutenção", icone: "fa-screwdriver-wrench" },
                 "cadastro-membros": { nome: "Cadastrar Ligante", icone: "fa-user-plus" },
                 "lista-membros": { nome: "Lista de Ligantes", icone: "fa-users" },
                 "cadastro-atividades": { nome: "Nova Atividade", icone: "fa-calendar-plus" },
@@ -1045,7 +1085,8 @@
             });
 
             db.collection("avisos_diretoria").onSnapshot(() => {
-                carregarAvisosDiretoria();
+                carregarAvisosDiretoriaGlobal();
+                carregarListaRecadosInternosAdmin();
             });
 
             db.collection("avisos").onSnapshot(() => {
@@ -1193,20 +1234,23 @@
             let chMediaLigante = totalAtivosCount > 0 ? (chTotalEmitida / totalAtivosCount).toFixed(1) : 0;
             let indiceEngajamento = Math.round((taxaMediaPresenca + taxaRetencao) / 2);
 
-            document.getElementById('ind-taxa-retencao').innerText = `${taxaRetencao}%`;
-            document.getElementById('ind-taxa-presenca').innerText = `${taxaMediaPresenca}%`;
-            document.getElementById('ind-media-faltas').innerText = mediaFaltas;
-            document.getElementById('ind-just-pendentes').innerText = justPendentesGeral;
-            document.getElementById('ind-ch-media').innerText = `${chMediaLigante}h`;
-            document.getElementById('ind-engajamento-geral').innerText = `${indiceEngajamento}%`;
-            document.getElementById('ind-total-ativ').innerText = totalAtiv;
-            document.getElementById('ind-perc-ativos').innerText = `${percAtivos}%`;
-            document.getElementById('ind-ch-total').innerText = `${chTotalEmitida}h`;
+            let elIndTaxaPresenca = document.getElementById('ind-taxa-presenca');
+            if (elIndTaxaPresenca) {
+                document.getElementById('ind-taxa-retencao').innerText = `${taxaRetencao}%`;
+                elIndTaxaPresenca.innerText = `${taxaMediaPresenca}%`;
+                document.getElementById('ind-media-faltas').innerText = mediaFaltas;
+                document.getElementById('ind-just-pendentes').innerText = justPendentesGeral;
+                document.getElementById('ind-ch-media').innerText = `${chMediaLigante}h`;
+                document.getElementById('ind-engajamento-geral').innerText = `${indiceEngajamento}%`;
+                document.getElementById('ind-total-ativ').innerText = totalAtiv;
+                document.getElementById('ind-perc-ativos').innerText = `${percAtivos}%`;
+                document.getElementById('ind-ch-total').innerText = `${chTotalEmitida}h`;
 
-            gerarInsightsIA(taxaMediaPresenca, taxaRetencao, justPendentesGeral, chTotalEmitida, ativFiltradas);
-            gerarAlertasAutomaticos();
-            renderizarRankingsComplexos();
-            renderizarMapaEngajamento();
+                gerarInsightsIA(taxaMediaPresenca, taxaRetencao, justPendentesGeral, chTotalEmitida, ativFiltradas);
+                gerarAlertasAutomaticos();
+                renderizarRankingsComplexos();
+                renderizarMapaEngajamento();
+            }
         }
 
         function gerarInsightsIA(taxaPresenca, taxaRetencao, justPendentes, chTotal, ativs) {
@@ -1429,19 +1473,19 @@
         }
 
         function atualizarVisualBotaoManutencao() {
-            let textoStatus = document.getElementById("status-manutencao-texto");
-            let btnToggle = document.getElementById("btn-toggle-manutencao");
+            let textoStatus = document.getElementById("status-manutencao-texto-aba");
+            let btnToggle = document.getElementById("btn-toggle-manutencao-aba");
             if (!textoStatus || !btnToggle) return;
 
             if (estadoManutencaoGlobal) {
-                textoStatus.innerText = "Status: Ativado (Manutenção)";
+                textoStatus.innerText = "Status: Ativado (Modo Manutenção Ativo)";
                 textoStatus.style.color = "var(--danger)";
-                btnToggle.innerText = "Desativar";
+                btnToggle.innerText = "Desativar Manutenção";
                 btnToggle.className = "btn-mini vermelho";
             } else {
-                textoStatus.innerText = "Status: Desativado (Normal)";
+                textoStatus.innerText = "Status: Desativado (Sistema Normal)";
                 textoStatus.style.color = "var(--success)";
-                btnToggle.innerText = "Ativar";
+                btnToggle.innerText = "Ativar Manutenção";
                 btnToggle.className = "btn-mini verde";
             }
         }
@@ -1973,27 +2017,10 @@
             document.getElementById('btn-cancelar-aviso-dir').style.display = "none";
         }
 
-        function calcularTempoRestante(timestampExpira) {
-            if (!timestampExpira) return "Permanente";
-            let agora = new Date();
-            let exp = timestampExpira.toDate();
-            let diffMs = exp - agora;
-            if (diffMs <= 0) return "Expirando...";
-
-            let diffSeg = Math.floor(diffMs / 1000);
-            let diffMin = Math.floor(diffSeg / 60);
-            let diffHoras = Math.floor(diffMin / 60);
-            let diffDias = Math.floor(diffHoras / 24);
-
-            if (diffDias > 0) return `Expira em ${diffDias}d`;
-            else if (diffHoras > 0) return `Expira em ${diffHoras}h`;
-            else return `Expira em instantes`;
-        }
-
-        async function carregarAvisosDiretoria() {
-            let containerFixos = document.getElementById("container-avisos-fixos");
-            let containerSlides = document.getElementById("container-slides-dir");
-            let contador = document.getElementById("contador-slide-dir");
+        async function carregarAvisosDiretoriaGlobal() {
+            let containerFixos = document.getElementById("container-avisos-fixos-global");
+            let containerSlides = document.getElementById("container-slides-global");
+            let contador = document.getElementById("contador-slide-global");
             if (!containerSlides) return;
 
             containerFixos.innerHTML = "";
@@ -2021,24 +2048,24 @@
             fixos.forEach(a => {
                 let botoesAcao = ehPresidente ? `
                     <div style="float: right; display: flex; gap: 4px;">
-                        <button class="btn-mini cinza" onclick="prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
+                        <button class="btn-mini cinza" onclick="abrirAbaExecutiva('recados-internos'); prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
                         <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
                     </div>
                 ` : "";
                 let tagOrigem = `<span style="background: var(--success); color: white; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight:800;">${a.origem || 'Presidência'}</span>`;
                 
                 containerFixos.innerHTML += `
-                    <div style="background: #fff; border-left: 4px solid var(--warning); padding: 10px; border-radius: 8px; margin-bottom: 6px; border: 1px solid var(--border);">
+                    <div style="background: #fff; border-left: 4px solid var(--warning); padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; border: 1px solid var(--border);">
                         ${botoesAcao}
-                        <h4 style="color: #b45309; margin: 0; font-size: 12px; font-weight:800;">📌 ${a.titulo} ${tagOrigem}</h4>
-                        <p style="margin: 4px 0 2px 0; font-size: 10px; color: #475569;">${a.texto}</p>
+                        <h4 style="color: #b45309; margin: 0; font-size: 11px; font-weight:800;">📌 ${a.titulo} ${tagOrigem}</h4>
+                        <p style="margin: 3px 0 0 0; font-size: 10px; color: #475569;">${a.texto}</p>
                     </div>
                 `;
             });
 
             if (rotativos.length === 0) {
                 if (fixos.length === 0) {
-                    containerSlides.innerHTML = "<p style='font-size:11px; padding:10px; text-align:center; color:#64748b;'>Nenhum recado.</p>";
+                    containerSlides.innerHTML = "<p style='font-size:10px; padding:4px; text-align:center; color:#64748b; margin:0;'>Nenhum recado ativo.</p>";
                     if (contador) contador.innerText = "0/0";
                 } else {
                     if (contador) contador.innerText = "0/0";
@@ -2046,35 +2073,63 @@
                 return;
             }
 
-            if (indiceSlideDirAtual >= rotativos.length) indiceSlideDirAtual = 0;
+            if (indiceSlideGlobalAtual >= rotativos.length) indiceSlideGlobalAtual = 0;
 
             rotativos.forEach((a, index) => {
-                let classeAtiva = (index === indiceSlideDirAtual) ? "ativo" : "";
+                let classeAtiva = (index === indiceSlideGlobalAtual) ? "ativo" : "";
                 let botoesAcaoSlide = ehPresidente ? `
                     <div style="float: right; display: flex; gap: 4px; margin-top: -2px;">
-                        <button class="btn-mini cinza" onclick="prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
+                        <button class="btn-mini cinza" onclick="abrirAbaExecutiva('recados-internos'); prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
                         <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
                     </div>
                 ` : "";
                 let tagOrigem = `<span style="background: var(--success); color: white; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight:800;">${a.origem || 'Presidência'}</span>`;
 
                 containerSlides.innerHTML += `
-                    <div class="slide ${classeAtiva}">
+                    <div class="slide-global ${classeAtiva}">
                         ${botoesAcaoSlide}
-                        <h4 style="font-size: 12px; margin: 0 0 4px 0; font-weight:800;">${a.titulo} ${tagOrigem}</h4>
-                        <p style="font-size: 10px; margin: 0 0 2px 0; color: #475569;">${a.texto}</p>
+                        <h4 style="font-size: 11px; margin: 0 0 2px 0; font-weight:800; color:#b45309;">${a.titulo} ${tagOrigem}</h4>
+                        <p style="font-size: 10px; margin: 0; color: #475569;">${a.texto}</p>
                     </div>
                 `;
             });
 
-            if (contador) contador.innerText = `${indiceSlideDirAtual + 1}/${rotativos.length}`;
+            if (contador) contador.innerText = `${indiceSlideGlobalAtual + 1}/${rotativos.length}`;
+        }
+
+        async function carregarListaRecadosInternosAdmin() {
+            let container = document.getElementById("lista-admin-recados-internos");
+            if (!container) return;
+            container.innerHTML = "";
+
+            if (avisosDiretoriaCache.length === 0) {
+                container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; margin: 6px 0;">Nenhum recado cadastrado.</p>`;
+                return;
+            }
+
+            let html = "";
+            avisosDiretoriaCache.forEach(a => {
+                html += `
+                    <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                        <div style="min-width: 0; flex: 1;">
+                            <strong style="font-size: 11px; color: #b45309; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.titulo}</strong>
+                            <p style="font-size: 10px; color: #475569; margin: 2px 0 0 0;">${a.texto}</p>
+                        </div>
+                        <div style="display: flex; gap: 4px; flex-shrink: 0;">
+                            <button class="btn-mini cinza" onclick="prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
+                            <button class="btn-mini vermelho" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         setInterval(() => {
             let rotativos = avisosDiretoriaCache.filter(a => !a.fixo);
             if (rotativos.length > 1) {
-                indiceSlideDirAtual = (indiceSlideDirAtual + 1) % rotativos.length;
-                carregarAvisosDiretoria();
+                indiceSlideGlobalAtual = (indiceSlideGlobalAtual + 1) % rotativos.length;
+                carregarAvisosDiretoriaGlobal();
             }
         }, 6000);
 
