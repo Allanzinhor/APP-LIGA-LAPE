@@ -2545,15 +2545,21 @@
                     if (a.publico === 'diretoria' && !membroEhDiretoria) return;
                     if (m.ingressoLiga && a.data < m.ingressoLiga) return;
 
-                    let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '' };
+                    let reg = frequenciasMap[m.id] || { status: 'pendente', texto: '', confirmadoAluno: false };
 
                     if (reg.confirmadoAluno === true) totalConfirmados++;
                     if (reg.status === 'presente') totalPresentes++;
                     if (reg.status === 'justificado') totalJust++;
                     if (reg.status === 'negado') totalFaltas++;
 
+                    // Ajustado para mostrar o indicativo de que confirmou no app sem alterar o status de presença definitiva
                     let badgeStatus = `<span style="background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">Pendente</span>`;
-                    if(reg.status === 'presente') badgeStatus = `<span style="background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✓ Pres.</span>`;
+                    
+                    if (reg.confirmadoAluno === true && reg.status === 'pendente') {
+                        badgeStatus = `<span style="background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">📱 Confirmou no App</span>`;
+                    }
+                    
+                    if(reg.status === 'presente') badgeStatus = `<span style="background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✓ Pres. Oficial</span>`;
                     if(reg.status === 'justificado') badgeStatus = `<span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✓ Abon.</span>`;
                     if(reg.status === 'negado') badgeStatus = `<span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✕ Falta</span>`;
                     if(reg.status === 'justificativa_negada') badgeStatus = `<span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✕ Negada</span>`;
@@ -2611,7 +2617,7 @@
                         <div onclick="toggleExpandirFrequencia('${a.id}')" style="padding: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${a.concluida ? '#dcfce7' : '#f8fafc'}; gap: 6px;">
                             <div style="min-width: 0; flex: 1;">
                                 <h4 style="margin: 0; color: var(--primary); font-size: 13px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.titulo} ${a.concluida ? '✅' : ''}</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 10px; color: #64748b;">📅 ${a.data} | Pres: ${totalPresentes} | Faltas: ${totalFaltas}</p>
+                                <p style="margin: 2px 0 0 0; font-size: 10px; color: #64748b;">📅 ${a.data} | Confirmados App: ${totalConfirmados} | Pres: ${totalPresentes} | Faltas: ${totalFaltas}</p>
                             </div>
                             <span style="font-size: 11px; color: var(--primary); font-weight: 800; flex-shrink: 0;" id="seta-freq-${a.id}">${estaAberto ? '▲' : '▼'}</span>
                         </div>
