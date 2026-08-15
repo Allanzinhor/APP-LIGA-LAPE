@@ -220,6 +220,7 @@
         .btn-mini.vermelho { background: #fee2e2; color: #991b1b; }
         .btn-mini.cinza { background: #f1f5f9; color: #475569; border: 1px solid var(--border); }
 
+        /* CORREÇÃO DO CSS DOS CHECKBOXES */
         input, select, textarea {
             width: 100%;
             padding: 12px;
@@ -231,7 +232,20 @@
             color: var(--dark);
             box-sizing: border-box;
             outline: none;
+        }
+
+        input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], select, textarea {
             appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="checkbox"] {
+            appearance: auto;
+            -webkit-appearance: auto;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
         }
 
         input:focus, select:focus, textarea:focus {
@@ -550,7 +564,7 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                    <input type="checkbox" id="av-dir-fixo" style="width: 18px; height: 18px;">
+                    <input type="checkbox" id="av-dir-fixo">
                     <label for="av-dir-fixo" style="font-size: 11px; font-weight: 700; color: #b45309; cursor: pointer;">Fixar no topo</label>
                 </div>
 
@@ -823,7 +837,7 @@
 
     </div>
 
-    <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE FORMULÁRIO EXTERNO (LIMPO - SOMENTE CAMPOS CUSTOMIZADOS) -->
+    <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE FORMULÁRIO EXTERNO -->
     <div id="modal-criar-form-externo" class="modal" style="display:none;">
         <div class="modal-conteudo">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
@@ -839,6 +853,10 @@
                     <input type="text" id="novo-form-titulo" placeholder="Ex: Processo Seletivo LAPE 2026.2">
                 </div>
                 <div>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Subtítulo do Formulário</label>
+                    <input type="text" id="novo-form-subtitulo" placeholder="Ex: Inscrições para novos ligantes de enfermagem">
+                </div>
+                <div>
                     <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Descrição / Instruções</label>
                     <textarea id="novo-form-desc" rows="3" placeholder="Orientações sobre taxa de inscrição, prazos, etc..."></textarea>
                 </div>
@@ -847,14 +865,28 @@
                     <input type="datetime-local" id="novo-form-data-limite">
                 </div>
 
-                <!-- SEÇÃO ÚNICA: Construtor de Campos Dinâmicos (Você no controle) -->
+                <!-- SEÇÃO: Contatos de Suporte -->
+                <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 12px; padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div>
+                            <span style="font-size: 12px; font-weight: 800; color: #0369a1; display: block;"><i class="fa-brands fa-whatsapp"></i> Contatos de Suporte</span>
+                            <span style="font-size: 10px; color: #0284c7;">Serão exibidos como botões para o candidato clicar.</span>
+                        </div>
+                        <button type="button" class="btn-mini" style="background: #0369a1; color: white; flex-shrink: 0;" onclick="adicionarContatoFormularioUI()"><i class="fa-solid fa-plus"></i> Novo Contato</button>
+                    </div>
+                    <div id="container-contatos-form" style="display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Contatos injetados via JS -->
+                    </div>
+                </div>
+
+                <!-- SEÇÃO: Construtor de Campos Dinâmicos -->
                 <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 12px; padding: 14px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <div>
                             <span style="font-size: 12px; font-weight: 800; color: #7c3aed; display: block;"><i class="fa-solid fa-wand-magic-sparkles"></i> Construtor de Campos</span>
-                            <span style="font-size: 10px; color: #9333ea;">Crie todas as perguntas necessárias para este formulário.</span>
+                            <span style="font-size: 10px; color: #9333ea;">Crie as perguntas do seu formulário.</span>
                         </div>
-                        <button type="button" class="btn-mini" style="background: #7c3aed; color: white; flex-shrink: 0;" onclick="adicionarCampoPersonalizadoUI()"><i class="fa-solid fa-plus"></i> Novo Campo</button>
+                        <button type="button" class="btn-mini" style="background: #7c3aed; color: white; flex-shrink: 0;" onclick="adicionarCampoPersonalizadoUI()"><i class="fa-solid fa-plus"></i> Nova Pergunta</button>
                     </div>
                     
                     <div id="container-campos-customizados" style="display: flex; flex-direction: column; gap: 12px;">
@@ -979,6 +1011,11 @@
             v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
             v = v.replace(/(\d)(\d{4})$/, "$1-$2");
             input.value = v;
+        }
+
+        // Função adicionada para fechar as respostas
+        function fecharModalRespostasSeletivo() {
+            document.getElementById("modal-respostas-seletivo").style.display = "none";
         }
 
         function calcularFormatura() {
@@ -1315,12 +1352,18 @@
         function abrirModalFormularioExterno(id = null, dados = null) {
             document.getElementById("form-id-editando").value = id || "";
             document.getElementById("container-campos-customizados").innerHTML = "";
+            document.getElementById("container-contatos-form").innerHTML = "";
 
             if (dados) {
                 document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Formulário`;
                 document.getElementById("novo-form-titulo").value = dados.titulo || "";
+                document.getElementById("novo-form-subtitulo").value = dados.subtitulo || "";
                 document.getElementById("novo-form-desc").value = dados.descricao || "";
                 document.getElementById("novo-form-data-limite").value = dados.dataLimite || "";
+
+                if (dados.contatos && Array.isArray(dados.contatos)) {
+                    dados.contatos.forEach(ct => adicionarContatoFormularioUI(ct));
+                }
 
                 if (dados.camposPersonalizados && Array.isArray(dados.camposPersonalizados)) {
                     dados.camposPersonalizados.forEach(campo => adicionarCampoPersonalizadoUI(campo));
@@ -1328,6 +1371,7 @@
             } else {
                 document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo`;
                 document.getElementById("novo-form-titulo").value = "";
+                document.getElementById("novo-form-subtitulo").value = "";
                 document.getElementById("novo-form-desc").value = "";
                 document.getElementById("novo-form-data-limite").value = "";
             }
@@ -1336,6 +1380,22 @@
 
         function fecharModalFormularioExterno() {
             document.getElementById("modal-criar-form-externo").style.display = "none";
+        }
+
+        // Função de contatos inserida
+        function adicionarContatoFormularioUI(dados = null) {
+            let idUnico = 'ct_' + Math.random().toString(36).substr(2, 9);
+            let nome = dados ? dados.nome : '';
+            let telefone = dados ? dados.telefone : '';
+            
+            let html = `
+                <div id="${idUnico}" style="display: flex; gap: 8px; align-items: center; background: white; padding: 8px; border-radius: 8px; border: 1px solid #bae6fd;">
+                    <input type="text" class="contato-nome" placeholder="Setor (Ex: Financeiro)" value="${nome}" style="flex: 1; padding: 8px; font-size: 11px;">
+                    <input type="text" class="contato-telefone" placeholder="(DD) 99999-9999 ou Email" value="${telefone}" style="flex: 1; padding: 8px; font-size: 11px;">
+                    <button type="button" class="btn-mini vermelho" onclick="document.getElementById('${idUnico}').remove()"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            document.getElementById("container-contatos-form").insertAdjacentHTML('beforeend', html);
         }
 
         function adicionarCampoPersonalizadoUI(dados = null) {
@@ -1350,7 +1410,7 @@
             let html = `
                 <div id="${idUnico}" style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 11px; color: #7c3aed; font-weight: 800;">Novo Campo</span>
+                        <span style="font-size: 11px; color: #7c3aed; font-weight: 800;">Nova Pergunta</span>
                         <button type="button" class="btn-mini vermelho" style="padding: 4px 8px; font-size: 10px;" onclick="document.getElementById('${idUnico}').remove()"><i class="fa-solid fa-trash"></i> Remover</button>
                     </div>
                     
@@ -1370,7 +1430,7 @@
                     </div>
 
                     <label style="font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; color: var(--dark); cursor: pointer;">
-                        <input type="checkbox" class="campo-obrigatorio" ${obrigatorio ? 'checked' : ''} style="width: 16px; height: 16px;"> Marcar como Resposta Obrigatória
+                        <input type="checkbox" class="campo-obrigatorio" ${obrigatorio ? 'checked' : ''}> Marcar como Resposta Obrigatória
                     </label>
                 </div>
             `;
@@ -1382,9 +1442,15 @@
             if (wrapper) wrapper.style.display = (tipo === 'selecao') ? 'block' : 'none';
         }
 
+        // Função URL Amigável
+        function gerarSlugLegivel(texto) {
+            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+        }
+
         async function salvarFormularioExternoNuvem() {
-            let id = document.getElementById("form-id-editando").value;
+            let idEditando = document.getElementById("form-id-editando").value;
             let titulo = document.getElementById("novo-form-titulo").value.trim();
+            let subtitulo = document.getElementById("novo-form-subtitulo").value.trim();
             let descricao = document.getElementById("novo-form-desc").value.trim();
             let dataLimite = document.getElementById("novo-form-data-limite").value;
 
@@ -1393,11 +1459,20 @@
                 return;
             }
 
+            let contatos = [];
+            document.querySelectorAll('#container-contatos-form > div').forEach(bloco => {
+                let nomeContato = bloco.querySelector('.contato-nome').value.trim();
+                let telContato = bloco.querySelector('.contato-telefone').value.trim();
+                if (nomeContato && telContato) {
+                    contatos.push({ nome: nomeContato, telefone: telContato });
+                }
+            });
+
             let camposPersonalizados = [];
             document.querySelectorAll('#container-campos-customizados > div').forEach(bloco => {
                 let rotulo = bloco.querySelector('.campo-rotulo').value.trim();
                 let tipo = bloco.querySelector('.campo-tipo').value;
-                let obrigatorio = bloco.querySelector('.campo-obrigatorio').checked;
+                let obrigatorio = bloco.querySelector('.campo-obrigatorio').checked; 
                 let opcoesElem = bloco.querySelector('.campo-opcoes');
                 let opcoes = opcoesElem ? opcoesElem.value.trim() : '';
 
@@ -1407,29 +1482,50 @@
             });
 
             if (camposPersonalizados.length === 0) {
-                alert("Por favor, adicione pelo menos um campo ao formulário.");
+                alert("Por favor, adicione pelo menos um campo (pergunta) ao formulário.");
                 return;
             }
 
             try {
                 let pacote = {
-                    titulo, descricao, dataLimite, camposPersonalizados
+                    titulo, subtitulo, descricao, dataLimite, camposPersonalizados, contatos
                 };
 
-                if (id) {
-                    await db.collection("formularios_externos").doc(id).update(pacote);
+                if (idEditando) {
+                    await db.collection("formularios_externos").doc(idEditando).update(pacote);
                     alert("Formulário atualizado com sucesso!");
                 } else {
                     pacote.ativo = true;
                     pacote.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection("formularios_externos").add(pacote);
-                    alert("Formulário e link criados com sucesso!");
+                    
+                    // Salva usando o Slug
+                    let novoIdBase = gerarSlugLegivel(titulo);
+                    let docTest = await db.collection("formularios_externos").doc(novoIdBase).get();
+                    if (docTest.exists) {
+                        novoIdBase = novoIdBase + "-" + Math.floor(Math.random() * 100);
+                    }
+
+                    await db.collection("formularios_externos").doc(novoIdBase).set(pacote);
+                    alert("Formulário criado! O link gerado será baseado no título.");
                 }
                 fecharModalFormularioExterno();
                 carregarFormulariosExternosAdmin();
             } catch (e) {
                 console.error(e);
                 alert("Erro ao salvar formulário.");
+            }
+        }
+
+        async function excluirFormularioExterno(formId) {
+            if (confirm("ATENÇÃO: Deseja apagar este formulário e perder todas as configurações?")) {
+                try {
+                    await db.collection("formularios_externos").doc(formId).delete();
+                    alert("Formulário apagado com sucesso.");
+                    carregarFormulariosExternosAdmin();
+                } catch(e) {
+                    console.error(e);
+                    alert("Erro ao excluir o formulário.");
+                }
             }
         }
 
@@ -1456,7 +1552,6 @@
                         estaAtivo = false;
                     }
 
-                    // Link curto baseado no ID
                     let linkCurto = `${window.location.origin}/inscricao.html?id=${formId}`;
 
                     html += `
@@ -1474,6 +1569,7 @@
                                 <button class="btn-mini cinza" style="padding: 6px; font-size: 10px;" onclick="abrirModalFormularioExterno('${formId}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️ Editar</button>
                                 <button class="btn-mini cinza" style="padding: 6px; font-size: 10px;" onclick="copiarLinkInscricao('${linkCurto}')">🔗 Copiar Link</button>
                                 <button class="btn-mini ${estaAtivo ? 'vermelho' : 'verde'}" style="padding: 6px; font-size: 10px;" onclick="alternarStatusFormulario('${formId}', ${!estaAtivo})">${estaAtivo ? 'Fechar' : 'Abrir'}</button>
+                                <button class="btn-mini vermelho" style="padding: 6px; font-size: 10px; margin-top: 4px;" onclick="excluirFormularioExterno('${formId}')"><i class="fa-solid fa-trash"></i> Excluir Form.</button>
                             </div>
                         </div>
                     `;
@@ -1522,7 +1618,6 @@
                     let dataEnvio = r.enviadoEm ? r.enviadoEm.toDate().toLocaleString('pt-BR') : "Data desconhecida";
                     let cardId = `inscrito-${doc.id}`;
 
-                    // Inteligência para puxar o nome/email/telefone dos campos customizados
                     let nomeExibicao = r.nome;
                     if (!nomeExibicao && r.respostasExtras) {
                         let chaveNome = Object.keys(r.respostasExtras).find(k => k.toLowerCase().includes('nome'));
@@ -2337,7 +2432,6 @@
             cancelarEdicaoAvisoDiretoria();
         }
 
-        // Função de alteração de campo personalizada incluída (Estava faltando!)
         function alternarCampoPersonalizado(valor) {
             let div = document.getElementById('div-data-personalizada');
             if (div) {
