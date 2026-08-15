@@ -12,7 +12,7 @@
     <meta name="color-scheme" content="light">
 
     <style>
-        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #000; }
+        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
         #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; }
         #tela-login h2 { color: #0056b3; font-size: 26px; margin: 10px 0 2px 0; }
@@ -238,6 +238,117 @@
         .btn-acao-ouvidoria:hover {
             opacity: 0.9;
         }
+
+        /* ESTILOS EXCLUSIVOS PARA O NOVO MODAL DE PERFIL ULTRA-COMPLETO */
+        .modal-perfil-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .modal-perfil-conteudo {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-height: 92vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            animation: surgirModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes surgirModal {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .perfil-cabecalho-topo {
+            text-align: center;
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .perfil-avatar-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 12px auto;
+        }
+        .perfil-avatar-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #0056b3;
+            box-shadow: 0 4px 12px rgba(0,86,179,0.2);
+        }
+        .botao-trocar-foto-flutuante {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #0056b3;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .botao-trocar-foto-flutuante:hover {
+            transform: scale(1.1);
+        }
+        .perfil-grid-infos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .perfil-card-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 10px 12px;
+            box-sizing: border-box;
+        }
+        .perfil-card-info.full-width {
+            grid-column: span 2;
+        }
+        .perfil-card-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .perfil-card-valor {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212529;
+            word-break: break-word;
+        }
+        .secao-alterar-senha-box {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 14px;
+            padding: 14px;
+            margin-top: 14px;
+            margin-bottom: 14px;
+        }
     </style>
 
     <!-- Firebase SDKs -->
@@ -381,7 +492,7 @@
             <div id="lista-atividades"></div>
         </section>
 
-        <!-- NOVA ABA: OUVIDORIA & SUGESTÕES ANÔNIMAS (REESTILIZADA) -->
+        <!-- ABA: OUVIDORIA & SUGESTÕES ANÔNIMAS -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">💡 Ouvidoria & Sugestões Anônimas</p>
             <div class="card-ouvidoria-completo" id="bloco-ouvidoria">
@@ -398,9 +509,7 @@
                     <button class="btn-acao-ouvidoria" style="background-color: #f1f3f5; color: #495057; border: 1px solid #ced4da;" onclick="abrirModalHistoricoSugestoes()">📋 Minhas Solicitações</button>
                 </div>
 
-                <div id="resumo-ultimas-sugestoes">
-                    <!-- Preenchido dinamicamente via JS -->
-                </div>
+                <div id="resumo-ultimas-sugestoes"></div>
             </div>
         </section>
     </div>
@@ -444,9 +553,7 @@
             <h3 style="color: #7950f2; margin-top: 0; font-size: 18px;">📋 Minhas Solicitações Anônimas</h3>
             <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Acompanhe o andamento e a resposta da diretoria em tempo real:</p>
             
-            <div id="lista-historico-sugestoes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
-                <!-- Preenchido via JS -->
-            </div>
+            <div id="lista-historico-sugestoes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
 
             <div style="margin-top: 15px;">
                 <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalHistoricoSugestoes()">Fechar</button>
@@ -479,9 +586,7 @@
         <div class="modal-conteudo" style="text-align: left; max-width: 420px; max-height: 85vh; display: flex; flex-direction: column;">
             <h3 style="color: #0056b3; margin-top: 0; font-size: 18px;">🎂 Aniversariantes deste Mês</h3>
             <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Todos os membros que completam ano no decorrer deste mês:</p>
-            <div id="lista-modal-aniversariantes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
-                <!-- Preenchido via JS -->
-            </div>
+            <div id="lista-modal-aniversariantes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
             <div style="margin-top: 15px;">
                 <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalTodosAniversariantes()">Fechar</button>
             </div>
@@ -502,39 +607,84 @@
         </div>
     </div>
 
-    <!-- MODAL DE PERFIL COMPLETO -->
+    <!-- MODAL DE PERFIL ULTRA-COMPLETO E REFINADO -->
     <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
         <div class="modal-perfil-conteudo">
-            <div class="perfil-topo">
-                <div class="avatar-grande" id="perfil-avatar-container" style="position: relative;"></div>
-                <div class="botao-trocar-foto" onclick="document.getElementById('input-arquivo-foto').click()" title="Escolher foto da galeria">📷</div>
+            <div class="perfil-cabecalho-topo">
+                <div class="perfil-avatar-wrapper" id="perfil-avatar-container"></div>
+                <div class="botao-trocar-foto-flutuante" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
                 <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
                 
-                <h3 id="perfil-nome" style="margin-top: 8px;">Nome</h3>
-                <span class="perfil-codigo" id="perfil-codigo">20261000</span>
-                <p class="perfil-cargo" id="perfil-cargo">Ligante</p>
-                <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: bold;"></div>
+                <h3 id="perfil-nome" style="margin: 0 0 2px 0; font-size: 18px; font-weight: 800; color: #1e293b;">Nome Completo</h3>
+                <span id="perfil-codigo" style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-weight: 800;">20261000</span>
+                <p id="perfil-cargo" style="margin: 6px 0 0 0; font-size: 12px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Cargo</p>
+                <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
             </div>
 
-            <div class="perfil-detalhes" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;">
-                <div class="info-grupo"><span class="info-label">E-mail</span><span class="info-valor" id="perfil-email">-</span></div>
-                <div class="info-grupo"><span class="info-label">Telefone</span><span class="info-valor" id="perfil-tel">-</span></div>
-                <div class="info-grupo"><span class="info-label">Data de Nascimento</span><span class="info-valor" id="perfil-nascimento">-</span></div>
-                <div class="info-linha-dupla">
-                    <div class="info-grupo"><span class="info-label">Curso</span><span class="info-valor" id="perfil-curso">-</span></div>
-                    <div class="info-grupo"><span class="info-label">Período / Turno</span><span class="info-valor" id="perfil-periodo">-</span></div>
+            <!-- Grid de Informações Detalhadas -->
+            <div class="perfil-grid-infos">
+                <div class="perfil-card-info">
+                    <span class="perfil-card-label">E-mail</span>
+                    <span class="perfil-card-valor" id="perfil-email" style="font-size: 11px;">-</span>
                 </div>
-                <div class="info-grupo"><span class="info-label">Instituição</span><span class="info-valor" id="perfil-instituicao">-</span></div>
-                <div class="info-grupo"><span class="info-label">Matrícula</span><span class="info-valor" id="perfil-matricula">-</span></div>
-                <div class="info-grupo"><span class="info-label">Previsão de Formatura</span><span class="info-valor" id="perfil-formatura">-</span></div>
-                <div class="info-grupo"><span class="info-label">Data de Ingresso na Liga</span><span class="info-valor" id="perfil-ingresso">-</span></div>
+                <div class="perfil-card-info">
+                    <span class="perfil-card-label">Telefone</span>
+                    <span class="perfil-card-valor" id="perfil-tel">-</span>
+                </div>
+                <div class="perfil-card-info">
+                    <span class="perfil-card-label">Nascimento</span>
+                    <span class="perfil-card-valor" id="perfil-nascimento">-</span>
+                </div>
+                <div class="perfil-card-info">
+                    <span class="perfil-card-label">Ingresso na Liga</span>
+                    <span class="perfil-card-valor" id="perfil-ingresso">-</span>
+                </div>
+                <div class="perfil-card-info full-width">
+                    <span class="perfil-card-label">Curso & Turno</span>
+                    <span class="perfil-card-valor" id="perfil-curso">-</span>
+                </div>
+                <div class="perfil-card-info">
+                    <span class="perfil-card-label">Matrícula</span>
+                    <span class="perfil-card-valor" id="perfil-matricula">-</span>
+                </div>
+                <div class="perfil-card-info">
+                    <span class="perfil-card-label">Formatura Prevista</span>
+                    <span class="perfil-card-valor" id="perfil-formatura">-</span>
+                </div>
+                <div class="perfil-card-info full-width">
+                    <span class="perfil-card-label">Instituição</span>
+                    <span class="perfil-card-valor" id="perfil-instituicao">-</span>
+                </div>
             </div>
 
-            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+            <!-- SEÇÃO DE ALTERAR SENHA -->
+            <div class="secao-alterar-senha-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleSecaoSenha()">
+                    <span style="font-size: 12px; font-weight: 800; color: #0056b3;">🔒 Alterar Senha de Acesso</span>
+                    <span id="seta-senha-toggle" style="font-size: 11px; font-weight: bold; color: #0056b3;">▼</span>
+                </div>
+                <div id="container-form-senha" style="display: none; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                    <div>
+                        <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Senha Atual</label>
+                        <input type="password" id="input-senha-atual" placeholder="Digite sua senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Nova Senha</label>
+                        <input type="password" id="input-senha-nova" placeholder="Mínimo de caracteres" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Confirmar Nova Senha</label>
+                        <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                    </div>
+                    <button class="btn-salvar" style="padding: 8px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha</button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
                 <div id="btn-container-painel-admin"></div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1;" onclick="fazerLogout()">Sair</button>
-                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1;" onclick="fecharPerfilModal()">Fechar</button>
+                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair</button>
+                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharPerfilModal()">Fechar</button>
                 </div>
             </div>
         </div>
@@ -870,7 +1020,6 @@
         function iniciarOuvintesTempoReal() {
             let momentoAberturaApp = new Date();
 
-            // OUVINTE DE ESTADO DE MANUTENÇÃO GLOBAL DO SISTEMA (Presidente bypassa a manutenção)
             db.collection("configuracoes").doc("sistema").onSnapshot((doc) => {
                 let overlay = document.getElementById("overlay-manutencao");
                 if (!overlay) return;
@@ -904,7 +1053,6 @@
                 }
             });
 
-            // OUVINTE DE SUGESTÕES ANÔNIMAS DO USUÁRIO LOGADO
             db.collection("sugestoes_ouvidoria").where("autorId", "==", usuarioLogado.id).onSnapshot((snapshot) => {
                 minhasSugestoesCache = [];
                 snapshot.forEach(doc => {
@@ -1024,7 +1172,6 @@
             });
         }
 
-        // FUNÇÕES DA OUVIDORIA E SUGESTÕES
         function abrirModalNovaSugestao() {
             document.getElementById("sugestao-titulo").value = "";
             document.getElementById("sugestao-texto").value = "";
@@ -1299,12 +1446,18 @@
             document.getElementById("perfil-email").innerText = usuarioLogado.email || "-";
             document.getElementById("perfil-tel").innerText = usuarioLogado.tel || "-";
             document.getElementById("perfil-nascimento").innerText = usuarioLogado.nascimento ? new Date(usuarioLogado.nascimento + "T00:00:00").toLocaleDateString('pt-BR') : "-";
-            document.getElementById("perfil-curso").innerText = usuarioLogado.curso || "-";
-            document.getElementById("perfil-periodo").innerText = `${usuarioLogado.periodo || '1º'} / ${usuarioLogado.turno || '-'}`;
+            document.getElementById("perfil-curso").innerText = `${usuarioLogado.curso || 'Enfermagem'} (${usuarioLogado.turno || '-'})`;
             document.getElementById("perfil-instituicao").innerText = usuarioLogado.instituicao || "Centro Universitario Facimp Wyden";
             document.getElementById("perfil-matricula").innerText = usuarioLogado.matricula || "-";
             document.getElementById("perfil-formatura").innerText = usuarioLogado.previsaoFormatura || "-";
             document.getElementById("perfil-ingresso").innerText = usuarioLogado.ingressoLiga ? new Date(usuarioLogado.ingressoLiga + "T00:00:00").toLocaleDateString('pt-BR') : "-";
+
+            // Limpa campos de senha ao abrir
+            document.getElementById("input-senha-atual").value = "";
+            document.getElementById("input-senha-nova").value = "";
+            document.getElementById("input-senha-confirmar").value = "";
+            document.getElementById("container-form-senha").style.display = "none";
+            document.getElementById("seta-senha-toggle").innerText = "▼";
 
             let statusMsg = document.getElementById("status-foto-msg");
             if (usuarioLogado.fotoStatus === 'analise') {
@@ -1319,17 +1472,17 @@
 
             let avatarModal = document.getElementById("perfil-avatar-container");
             if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
-                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
+                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" class="perfil-avatar-img">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
-                avatarModal.innerHTML = `<div style="width:100%; height:100%; background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:28px;">${inicial}</div>`;
+                avatarModal.innerHTML = `<div class="perfil-avatar-img" style="background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px;">${inicial}</div>`;
             }
 
             let cargoLower = (usuarioLogado.cargo || "").toLowerCase().trim();
             let containerAdminBtn = document.getElementById("btn-container-painel-admin");
             
             if (cargoLower !== "ligante" && cargoLower !== "membro" && cargoLower !== "marketing") {
-                containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
+                containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3; width: 100%; padding: 12px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
             } else {
                 containerAdminBtn.innerHTML = "";
             }
@@ -1338,6 +1491,57 @@
         }
 
         function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
+
+        function toggleSecaoSenha() {
+            let container = document.getElementById("container-form-senha");
+            let seta = document.getElementById("seta-senha-toggle");
+            if (container.style.display === "none") {
+                container.style.display = "flex";
+                seta.innerText = "▲";
+            } else {
+                container.style.display = "none";
+                seta.innerText = "▼";
+            }
+        }
+
+        async function salvarNovaSenha() {
+            let senhaAtualInput = document.getElementById("input-senha-atual").value.trim();
+            let novaSenhaInput = document.getElementById("input-senha-nova").value.trim();
+            let confirmarSenhaInput = document.getElementById("input-senha-confirmar").value.trim();
+
+            if (!senhaAtualInput || !novaSenhaInput || !confirmarSenhaInput) {
+                alert("Preencha todos os campos de alteração de senha.");
+                return;
+            }
+
+            if (senhaAtualInput !== usuarioLogado.senhaPadrao) {
+                alert("A senha atual informada está incorreta.");
+                return;
+            }
+
+            if (novaSenhaInput.length < 4) {
+                alert("A nova senha deve ter pelo menos 4 caracteres.");
+                return;
+            }
+
+            if (novaSenhaInput !== confirmarSenhaInput) {
+                alert("A nova senha e a confirmação não coincidem.");
+                return;
+            }
+
+            try {
+                await db.collection("membros").doc(usuarioLogado.id).update({
+                    senhaPadrao: novaSenhaInput
+                });
+                usuarioLogado.senhaPadrao = novaSenhaInput;
+                localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                alert("Senha alterada com sucesso!");
+                toggleSecaoSenha();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao atualizar a senha no banco de dados.");
+            }
+        }
 
         function anexarFotoGaleria(event) {
             let file = event.target.files[0];
