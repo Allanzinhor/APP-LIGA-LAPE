@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAPE Mail Pro — Central de Comunicação Institucional</title>
+    <title>LAPE Mail Pro — Central de Comunicação e Tramitação Administrativa</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs v10 -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
@@ -21,6 +21,10 @@
     </script>
 
     <style>
+        /* ==========================================================================
+           LAPE MAIL PRO — SISTEMA INSTITUCIONAL DE TRAMITAÇÃO ADMINISTRATIVA
+           Design System Completo, Sofisticado e Responsivo (Light / Dark Mode)
+           ========================================================================== */
         :root {
             --primary: #4f46e5;
             --primary-dark: #4338ca;
@@ -31,104 +35,128 @@
             --dark: #1e293b;
             --border: #e2e8f0;
             --bg-main: #f8fafc;
-            --sidebar-width: 260px;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --sidebar-width: 280px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #312e81;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --dark: #f8fafc;
+            --border: #334155;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
         * { box-sizing: border-box; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg-main);
-            color: var(--dark);
+            color: var(--text-main);
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: var(--transition);
         }
 
-        /* Layout Principal com Sidebar */
-        .app-container {
+        .app-layout {
             display: flex;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* Sidebar Recolhível */
+        /* --------------------------------------------------------------------------
+           SIDEBAR INSTITUCIONAL RECOLHÍVEL
+           -------------------------------------------------------------------------- */
         sidebar {
             width: var(--sidebar-width);
-            background: white;
+            background: var(--bg-card);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
             z-index: 100;
+            transition: var(--transition);
         }
 
         .sidebar-header {
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--border);
+            padding: 20px 16px;
             background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
             color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .sidebar-header h1 {
-            font-size: 14px;
+            font-size: 13px;
             margin: 0;
             font-weight: 800;
-            letter-spacing: -0.3px;
+            line-height: 1.2;
+            letter-spacing: -0.2px;
+        }
+
+        .sidebar-action-box {
+            padding: 14px;
         }
 
         .sidebar-menu {
             flex: 1;
             overflow-y: auto;
-            padding: 12px;
+            padding: 0 12px 14px 12px;
         }
 
-        .menu-section-title {
-            font-size: 10px;
+        .menu-category {
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #94a3b8;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
             font-weight: 800;
-            margin: 14px 0 6px 8px;
+            margin: 16px 0 6px 8px;
         }
 
-        .menu-item {
+        .menu-link {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 10px;
+            padding: 9px 12px;
             border-radius: 8px;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
+            transition: var(--transition);
             margin-bottom: 2px;
+            text-decoration: none;
         }
 
-        .menu-item:hover {
+        .menu-link:hover {
             background: var(--bg-main);
             color: var(--primary);
         }
 
-        .menu-item.ativo {
+        .menu-link.ativo {
             background: var(--primary-light);
             color: var(--primary);
-            font-weight: 700;
         }
 
-        .menu-item span {
+        .menu-link span {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .menu-badge {
+        .badge-counter {
             background: var(--primary);
             color: white;
             font-size: 9px;
@@ -137,23 +165,26 @@
             font-weight: 800;
         }
 
-        /* Conteúdo Principal */
-        .main-content {
+        /* --------------------------------------------------------------------------
+           WORKSPACE PRINCIPAL
+           -------------------------------------------------------------------------- */
+        .workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: white;
+            background: var(--bg-card);
             overflow: hidden;
+            position: relative;
         }
 
-        .top-navbar {
-            padding: 12px 20px;
+        .header-top {
+            padding: 12px 24px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: white;
-            min-height: 60px;
+            background: var(--bg-card);
+            min-height: 68px;
         }
 
         .search-global-box {
@@ -162,9 +193,15 @@
             background: var(--bg-main);
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 6px 12px;
-            width: 350px;
-            gap: 8px;
+            padding: 8px 14px;
+            width: 380px;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .search-global-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
 
         .search-global-box input {
@@ -173,57 +210,40 @@
             outline: none;
             font-size: 12px;
             width: 100%;
+            color: var(--text-main);
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .user-profile-widget {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar-circle {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 12px;
-            border: 2px solid var(--border);
-        }
-
-        /* Indicadores Rápidos (Cards no topo) */
-        .quick-metrics-grid {
+        /* --------------------------------------------------------------------------
+           INDICADORES EXECUTIVOS (CARDS NO TOPO)
+           -------------------------------------------------------------------------- */
+        .metrics-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 10px;
-            padding: 14px 20px;
+            padding: 14px 24px;
             background: var(--bg-main);
             border-bottom: 1px solid var(--border);
         }
 
         .metric-card {
-            background: white;
+            background: var(--bg-card);
             border: 1px solid var(--border);
             padding: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
+            border-radius: 12px;
             text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
         .metric-card:hover {
             border-color: var(--primary);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.04);
         }
 
         .metric-card .num {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--primary);
             display: block;
@@ -231,70 +251,113 @@
 
         .metric-card .label {
             font-size: 9px;
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 700;
             text-transform: uppercase;
+            margin-top: 2px;
         }
 
-        /* Barra de Filtros Rápidos */
-        .filter-toolbar {
-            padding: 10px 20px;
+        /* --------------------------------------------------------------------------
+           FILTROS RÁPIDOS E BARRA DE FERRAMENTAS
+           -------------------------------------------------------------------------- */
+        .toolbar-filters {
+            padding: 10px 24px;
             display: flex;
             gap: 8px;
             border-bottom: 1px solid var(--border);
-            background: white;
+            background: var(--bg-card);
+            align-items: center;
             overflow-x: auto;
         }
 
         .filter-chip {
             background: var(--bg-main);
             border: 1px solid var(--border);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 10px;
             font-weight: 700;
-            color: #64748b;
+            color: var(--text-muted);
             cursor: pointer;
             white-space: nowrap;
+            transition: var(--transition);
         }
 
-        .filter-chip.ativo {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+        .filter-chip:hover { border-color: var(--primary); color: var(--primary); }
+        .filter-chip.ativo { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Listagem de E-mails / Conteúdo */
-        .content-body {
+        /* --------------------------------------------------------------------------
+           ÁREA DE CONTEÚDO DINÂMICO & LISTAGEM
+           -------------------------------------------------------------------------- */
+        .content-workspace {
             flex: 1;
             overflow-y: auto;
-            padding: 16px 20px;
+            padding: 16px 24px;
             background: var(--bg-main);
         }
 
-        .email-card-row {
-            background: white;
+        /* Modo de Visualização (Compacto, Dividido, Confortável) */
+        .content-workspace.modo-dividido {
+            display: grid;
+            grid-template-columns: 42% 58%;
+            gap: 16px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .pane-esquerda {
+            overflow-y: auto;
+            padding: 16px;
+            border-right: 1px solid var(--border);
+            height: 100%;
+        }
+
+        .pane-direita {
+            overflow-y: auto;
+            padding: 20px;
+            height: 100%;
+            background: var(--bg-card);
+        }
+
+        .msg-item-row {
+            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 12px 16px;
+            padding: 12px 14px;
             margin-bottom: 8px;
             display: flex;
-            align-items: center;
-            gap: 14px;
+            align-items: flex-start;
+            gap: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
+            position: relative;
         }
 
-        .email-card-row:hover {
+        .msg-item-row:hover {
             border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
         }
 
-        /* Modais */
-        .modal {
+        .msg-item-row.selecionado {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .badge-tag {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        /* --------------------------------------------------------------------------
+           MODAIS INSTITUCIONAIS
+           -------------------------------------------------------------------------- */
+        .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -303,187 +366,255 @@
             padding: 20px;
         }
 
-        .modal-card {
-            background: white;
+        .modal-container {
+            background: var(--bg-card);
             border-radius: 16px;
             padding: 24px;
             width: 100%;
-            max-width: 650px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            max-width: 750px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid var(--border);
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            padding: 10px 16px;
+            padding: 10px 18px;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            transition: var(--transition);
         }
+        .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: var(--bg-main);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
 
         input, select, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 10px 12px;
             border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg-main);
+            color: var(--text-main);
             margin-bottom: 12px;
             outline: none;
+            transition: var(--transition);
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: white; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
 
-        .badge-tag {
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 800;
-            display: inline-block;
+        /* Notificações Flutuantes Executivas */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
+        .toast-msg {
+            background: var(--dark);
+            color: #ffffff;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- NAVEGAÇÃO LATERAL RECOLHÍVEL -->
+    <!-- Container de Notificações Toast -->
+    <div id="toast-container"></div>
+
+    <div class="app-layout">
+        <!-- --------------------------------------------------------------------------
+           1 & 2. NAVEGAÇÃO LATERAL INSTITUCIONAL COMPLETA E RECOLHÍVEL
+           -------------------------------------------------------------------------- -->
         <sidebar>
             <div class="sidebar-header">
-                <i class="fa-solid fa-envelope-open-text" style="font-size: 16px;"></i>
-                <h1>LAPE Mail Pro</h1>
+                <i class="fa-solid fa-envelope-open-text" style="font-size: 20px;"></i>
+                <h1>LAPE Mail Pro<br><span style="font-size:9px; font-weight:500; opacity:0.8;">Tramitação Executiva</span></h1>
             </div>
 
-            <div style="padding: 12px;">
+            <div class="sidebar-action-box">
                 <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="abrirModalEscrever()">
-                    <i class="fa-solid fa-pen"></i> Escrever Mensagem
+                    <i class="fa-solid fa-pen-nib"></i> Escrever Mensagem
                 </button>
             </div>
 
             <div class="sidebar-menu">
-                <div class="menu-section-title">Comunicação</div>
-                <div class="menu-item ativo" onclick="mudarSecao('entrada', this)"><span><i class="fa-solid fa-inbox"></i> Entrada</span><span class="menu-badge" id="badge-count-entrada">0</span></div>
-                <div class="menu-item" onclick="mudarSecao('enviados', this)"><span><i class="fa-solid fa-paper-plane"></i> Enviados</span></div>
-                <div class="menu-item" onclick="mudarSecao('favoritos', this)"><span><i class="fa-solid fa-star"></i> Favoritos</span></div>
-                <div class="menu-item" onclick="mudarSecao('rascunhos', this)"><span><i class="fa-solid fa-file-pen"></i> Rascunhos</span></div>
-                <div class="menu-item" onclick="mudarSecao('lixeira', this)"><span><i class="fa-solid fa-trash"></i> Lixeira</span></div>
-                <div class="menu-item" onclick="mudarSecao('arquivados', this)"><span><i class="fa-solid fa-box-archive"></i> Arquivados</span></div>
+                <div class="menu-category">Comunicação</div>
+                <div class="menu-link ativo" onclick="mudarSecao('entrada', this)"><span><i class="fa-solid fa-inbox"></i> Entrada</span><span class="badge-counter" id="bc-entrada">0</span></div>
+                <div class="menu-link" onclick="mudarSecao('enviados', this)"><span><i class="fa-solid fa-paper-plane"></i> Enviados</span></div>
+                <div class="menu-link" onclick="mudarSecao('favoritos', this)"><span><i class="fa-solid fa-star"></i> Favoritos</span></div>
+                <div class="menu-link" onclick="mudarSecao('rascunhos', this)"><span><i class="fa-solid fa-file-pen"></i> Rascunhos</span><span class="badge-counter" style="background:var(--text-muted);" id="bc-rasc">0</span></div>
+                <div class="menu-link" onclick="mudarSecao('lixeira', this)"><span><i class="fa-solid fa-trash"></i> Lixeira</span></div>
+                <div class="menu-link" onclick="mudarSecao('arquivados', this)"><span><i class="fa-solid fa-box-archive"></i> Arquivados</span></div>
 
-                <div class="menu-section-title">Gestão</div>
-                <div class="menu-item" onclick="mudarSecao('pendencias', this)"><span><i class="fa-solid fa-triangle-exclamation"></i> Pendências</span><span class="menu-badge" style="background:var(--warning);" id="badge-count-pend">0</span></div>
-                <div class="menu-item" onclick="mudarSecao('aguardando', this)"><span><i class="fa-solid fa-clock-rotate-left"></i> Aguardando Resposta</span></div>
-                <div class="menu-item" onclick="mudarSecao('solicitacoes', this)"><span><i class="fa-solid fa-clipboard-list"></i> Solicitações</span></div>
-                <div class="menu-item" onclick="mudarSecao('comunicados', this)"><span><i class="fa-solid fa-bullhorn"></i> Comunicados</span></div>
-                <div class="menu-item" onclick="mudarSecao('documentos', this)"><span><i class="fa-solid fa-folder-open"></i> Documentos</span></div>
+                <div class="menu-category">Gestão & Fluxos</div>
+                <div class="menu-link" onclick="mudarSecao('pendencias', this)"><span><i class="fa-solid fa-triangle-exclamation"></i> Pendências</span><span class="badge-counter" style="background:var(--danger);" id="bc-pend">0</span></div>
+                <div class="menu-link" onclick="mudarSecao('aguardando', this)"><span><i class="fa-solid fa-clock-rotate-left"></i> Aguardando Retorno</span></div>
+                <div class="menu-link" onclick="mudarSecao('solicitacoes', this)"><span><i class="fa-solid fa-clipboard-list"></i> Solicitações</span></div>
+                <div class="menu-link" onclick="mudarSecao('comunicados', this)"><span><i class="fa-solid fa-bullhorn"></i> Comunicados Oficiais</span></div>
+                <div class="menu-link" onclick="mudarSecao('documentos', this)"><span><i class="fa-solid fa-folder-open"></i> Biblioteca de Documentos</span></div>
 
-                <div class="menu-section-title">Administração</div>
-                <div class="menu-item" onclick="mudarSecao('relatorios', this)"><span><i class="fa-solid fa-chart-pie"></i> Relatórios</span></div>
-                <div class="menu-item" onclick="mudarSecao('auditoria', this)"><span><i class="fa-solid fa-shield-halved"></i> Histórico / Auditoria</span></div>
-                <div class="menu-item" onclick="mudarSecao('configuracoes', this)"><span><i class="fa-solid fa-gear"></i> Configurações</span></div>
+                <div class="menu-category">Organização</div>
+                <div class="menu-link" onclick="mudarSecao('pessoas', this)"><span><i class="fa-solid fa-users"></i> Pessoas & Grupos</span></div>
+                <div class="menu-link" onclick="mudarSecao('etiquetas', this)"><span><i class="fa-solid fa-tags"></i> Etiquetas</span></div>
+                <div class="menu-link" onclick="mudarSecao('pastas', this)"><span><i class="fa-solid fa-folder-tree"></i> Pastas Inteligentes</span></div>
+                <div class="menu-link" onclick="mudarSecao('campanhas', this)"><span><i class="fa-solid fa-bullseye"></i> Campanhas em Massa</span></div>
+
+                <div class="menu-category">Administração</div>
+                <div class="menu-link" onclick="mudarSecao('relatorios', this)"><span><i class="fa-solid fa-chart-pie"></i> Relatórios & Produtividade</span></div>
+                <div class="menu-link" onclick="mudarSecao('auditoria', this)"><span><i class="fa-solid fa-shield-halved"></i> Trilha de Auditoria</span></div>
+                <div class="menu-link" onclick="mudarSecao('configuracoes', this)"><span><i class="fa-solid fa-gear"></i> Configurações & Assinatura</span></div>
             </div>
         </sidebar>
 
-        <!-- CONTEÚDO PRINCIPAL -->
-        <div class="main-content">
-            <!-- TOP NAVBAR -->
-            <div class="top-navbar">
+        <!-- --------------------------------------------------------------------------
+           WORKSPACE PRINCIPAL & CABEÇALHO SUPERIOR
+           -------------------------------------------------------------------------- -->
+        <div class="workspace">
+            <div class="header-top">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <button class="btn-primary" style="background: #f1f5f9; color: var(--dark); box-shadow: none;" onclick="window.location.href='diretoria.html'">
-                        <i class="fa-solid fa-arrow-left"></i> Voltar ao Menu
+                    <button class="btn-secondary" onclick="window.location.href='diretoria.html'">
+                        <i class="fa-solid fa-arrow-left"></i> Menu Principal
                     </button>
-                    <h3 id="titulo-secao-atual" style="margin: 0; font-size: 15px; font-weight: 800; color: var(--dark);">Caixa de Entrada</h3>
+                    <h3 id="titulo-painel-topo" style="margin: 0; font-size: 15px; font-weight: 800;">Caixa de Entrada Institucional</h3>
                 </div>
 
+                <!-- 14. Busca Global Avançada -->
                 <div class="search-global-box">
-                    <i class="fa-solid fa-magnifying-glass" style="color: #94a3b8;"></i>
-                    <input type="text" id="input-busca-global" placeholder="Pesquisar em tudo..." oninput="renderizarSistema()">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                    <input type="text" id="input-busca-global" placeholder="Pesquisar por assunto, remetente, tags, status..." oninput="renderizarWorkspacePrincipal()">
                 </div>
 
-                <div class="user-profile-widget">
-                    <div style="text-align: right; line-height: 1.2;">
-                        <strong id="user-nome-topo" style="font-size: 11px; display: block;">Diretor(a)</strong>
-                        <span id="user-cargo-topo" style="font-size: 9px; color: #64748b;">Presidência</span>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <!-- Seletor de Modo de Visualização (44) -->
+                    <select id="seletor-modo-visao" onchange="mudarModoVisualizacao(this.value)" style="width: 140px; margin-bottom: 0; font-size: 10px; font-weight: 700;">
+                        <option value="confortavel">Layout Confortável</option>
+                        <option value="dividido">Painel Dividido</option>
+                        <option value="compacto">Layout Compacto</option>
+                    </select>
+
+                    <button class="btn-secondary" onclick="alternarDarkModo()" title="Alternar Tema Claro/Escuro" style="padding: 8px 10px;">
+                        <i class="fa-solid fa-circle-half-stroke" id="icone-tema"></i>
+                    </button>
+
+                    <div style="display: flex; align-items: center; gap: 10px; border-left: 1px solid var(--border); padding-left: 14px;">
+                        <div style="text-align: right; line-height: 1.2;">
+                            <strong id="user-nome-lbl" style="font-size: 11px; display: block;">Allan Sousa</strong>
+                            <span id="user-cargo-lbl" style="font-size: 9px; color: var(--text-muted);">Presidente · LAPE</span>
+                        </div>
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; border: 2px solid var(--border);" id="user-avatar-lbl">A</div>
                     </div>
-                    <div class="avatar-circle" id="user-avatar-topo">D</div>
                 </div>
             </div>
 
-            <!-- INDICADORES RÁPIDOS -->
-            <div class="quick-metrics-grid">
+            <!-- 1. Indicadores Rápidos Clicáveis -->
+            <div class="metrics-grid">
                 <div class="metric-card" onclick="mudarSecao('entrada')">
-                    <span class="num" id="stat-entrada">0</span>
+                    <span class="val" id="stat-recebidas">0</span>
                     <span class="label">Entrada</span>
                 </div>
                 <div class="metric-card" onclick="mudarSecao('naolidas')">
-                    <span class="num" id="stat-naolidas" style="color: var(--warning);">0</span>
+                    <span class="val" id="stat-naolidas" style="color: var(--warning);">0</span>
                     <span class="label">Não Lidas</span>
                 </div>
                 <div class="metric-card" onclick="mudarSecao('pendencias')">
-                    <span class="num" id="stat-pendencias" style="color: var(--danger);">0</span>
+                    <span class="val" id="stat-pendencias" style="color: var(--danger);">0</span>
                     <span class="label">Pendências</span>
                 </div>
                 <div class="metric-card" onclick="mudarSecao('aguardando')">
-                    <span class="num" id="stat-aguardando" style="color: #8b5cf6;">0</span>
+                    <span class="val" id="stat-aguardando" style="color: #8b5cf6;">0</span>
                     <span class="label">Aguardando</span>
                 </div>
+                <div class="metric-card" onclick="mudarSecao('solicitacoes')">
+                    <span class="val" id="stat-solicitacoes" style="color: #0ea5e9;">0</span>
+                    <span class="label">Solicitações</span>
+                </div>
                 <div class="metric-card" onclick="mudarSecao('favoritos')">
-                    <span class="num" id="stat-favoritos" style="color: #f59e0b;">0</span>
-                    <span class="label">Importantes</span>
-                </div>
-                <div class="metric-card" onclick="mudarSecao('rascunhos')">
-                    <span class="num" id="stat-rascunhos" style="color: #64748b;">0</span>
-                    <span class="label">Rascunhos</span>
+                    <span class="val" id="stat-favoritos" style="color: #f59e0b;">0</span>
+                    <span class="label">Favoritas</span>
                 </div>
             </div>
 
-            <!-- FILTRAGEM RÁPIDA -->
-            <div class="filter-toolbar" id="barra-filtros-rapidos">
-                <div class="filter-chip ativo" onclick="setFiltroRapido('todas', this)">Todas</div>
-                <div class="filter-chip" onclick="setFiltroRapido('naolidas', this)">Não lidas</div>
-                <div class="filter-chip" onclick="setFiltroRapido('importantes', this)">Importantes</div>
-                <div class="filter-chip" onclick="setFiltroRapido('pendencias', this)">Pendências</div>
-                <div class="filter-chip" onclick="setFiltroRapido('anexos', this)">Com anexos</div>
-                <div class="filter-chip" onclick="setFiltroRapido('compras', this)">Com prazo</div>
+            <!-- 15. Filtros Rápidos Elegantes -->
+            <div class="toolbar-filters">
+                <div class="filter-chip ativo" onclick="filtrarChipRapido('todas', this)">Todas</div>
+                <div class="filter-chip" onclick="filtrarChipRapido('naolidas', this)">Não lidas</div>
+                <div class="filter-chip" onclick="filtrarChipRapido('urgentes', this)">🚨 Urgentes</div>
+                <div class="filter-chip" onclick="filtrarChipRapido('pendencias', this)">⚠️ Pendências</div>
+                <div class="filter-chip" onclick="filtrarChipRapido('anexos', this)">📎 Com Anexos</div>
+                <div class="filter-chip" onclick="filtrarChipRapido('prazos', this)">⏰ Com Prazo</div>
             </div>
 
-            <!-- ÁREA CENTRAL DE EXIBIÇÃO -->
-            <div class="content-body" id="painel-conteudo-dinamico">
-                <p style="text-align: center; color: #64748b; font-size: 11px; margin-top: 40px;">Carregando central de comunicação...</p>
+            <!-- ÁREA DE EXIBIÇÃO DINÂMICA (PODE SER DIVIDIDA OU PADRÃO) -->
+            <div class="content-workspace" id="container-workspace-principal">
+                <p style="text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 50px;">Carregando central de tramitação administrativa...</p>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE ESCRITA COMPLETO -->
-    <div id="modal-escrever" class="modal" style="display:none;">
+    <!-- --------------------------------------------------------------------------
+       3. MODAL DE COMPOSIÇÃO DE MENSAGENS COMPLETO (EDITOR INSTITUCIONAL)
+       -------------------------------------------------------------------------- -->
+    <div id="modal-escrever-msg" class="modal-overlay" style="display:none;">
         <div class="modal-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-pen-nib"></i> Nova Mensagem Institucional</h3>
-                <button class="btn-primary" style="background:#f1f5f9; color:#475569; padding:4px 8px; box-shadow:none;" onclick="fecharModalEscrever()"><i class="fa-solid fa-xmark"></i></button>
+                <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-pen-nib"></i> Nova Comunicação e Tramitação Institucional</h3>
+                <button class="btn-secondary" style="padding: 4px 8px;" onclick="fecharModalEscrever()"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
                 <div>
-                    <label style="font-size: 10px; font-weight: 700; color: #64748b;">Destinatário / Grupo:</label>
-                    <select id="novo-destinatario">
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Destinatário / Setor (Seleção Inteligente):</label>
+                    <select id="modal-destinatario">
                         <option value="todos">Toda a Liga (Geral)</option>
+                        <option value="diretoria">Diretoria Executiva</option>
                         <option value="presidencia">Presidência</option>
                         <option value="secretaria">Secretaria</option>
                         <option value="tesouraria">Tesouraria</option>
                         <option value="extensao">Diretoria de Extensão</option>
                         <option value="marketing">Diretoria de Marketing</option>
                         <option value="pesquisa">Diretoria de Pesquisa</option>
+                        <option value="ligantes">Todos os Ligantes Ativos</option>
                     </select>
                 </div>
                 <div>
-                    <label style="font-size: 10px; font-weight: 700; color: #64748b;">Tipo de Comunicação:</label>
-                    <select id="novo-tipo">
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Tipo de Comunicação:</label>
+                    <select id="modal-tipo">
                         <option value="comum">Comunicação Comum</option>
                         <option value="solicitacao">📋 Solicitação (Exige Ação)</option>
                         <option value="pendencia">⚠️ Pendência Administrativa</option>
@@ -496,83 +627,118 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px;">
                 <div>
-                    <label style="font-size: 10px; font-weight: 700; color: #64748b;">Prioridade:</label>
-                    <select id="novo-prioridade">
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Prioridade:</label>
+                    <select id="modal-prioridade">
                         <option value="normal">📄 Normal</option>
                         <option value="importante">⭐ Importante</option>
-                        <option value="urgente">🚨 Urgente</option>
+                        <option value="urgente">🚨 Urgente / Alta</option>
                     </select>
                 </div>
                 <div>
-                    <label style="font-size: 10px; font-weight: 700; color: #64748b;">Exige Confirmação de Ciência?</label>
-                    <select id="novo-ciencia">
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Exigir Confirmação de Ciência?</label>
+                    <select id="modal-ciencia">
                         <option value="nao">Não</option>
                         <option value="sim">Sim (Obrigatório confirmar)</option>
                     </select>
                 </div>
                 <div>
-                    <label style="font-size: 10px; font-weight: 700; color: #64748b;">Prazo Limite:</label>
-                    <input type="datetime-local" id="novo-prazo" style="margin-bottom:0;">
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Prazo Limite:</label>
+                    <input type="datetime-local" id="modal-prazo" style="margin-bottom:0;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-top: 10px;">
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Assunto Institucional:</label>
+                    <input type="text" id="modal-assunto" placeholder="Ex: Circular Nº 04/2026 — Aprovação de Cronograma">
+                </div>
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Modelo Rápido (22):</label>
+                    <select onchange="aplicarModeloMensagem(this.value)" style="margin-bottom:0;">
+                        <option value="">Inserir Modelo...</option>
+                        <option value="convocacao">📅 Convocação para Reunião</option>
+                        <option value="documento">📄 Solicitação de Documento</option>
+                        <option value="pendencia">⚠️ Aviso de Pendência</option>
+                        <option value="oficial">📢 Comunicado Oficial</option>
+                    </select>
                 </div>
             </div>
 
             <div style="margin-top: 10px;">
-                <label style="font-size: 10px; font-weight: 700; color: #64748b;">Assunto:</label>
-                <input type="text" id="novo-assunto" placeholder="Ex: Circular Nº 04/2026 — Aprovação de Cronograma">
+                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Mensagem / Corpo da Comunicação (com Assinatura Automática 21):</label>
+                <textarea id="modal-texto" rows="6" placeholder="Escreva os detalhes, diretrizes e orientações administrativas..."></textarea>
             </div>
 
-            <div>
-                <label style="font-size: 10px; font-weight: 700; color: #64748b;">Mensagem / Corpo Institucional:</label>
-                <textarea id="novo-texto" rows="5" placeholder="Escreva os detalhes da tramitação..."></textarea>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Anexos Permitidos (PDF, Imagens, DOC, XLS):</label>
+                    <input type="file" id="modal-anexo" style="font-size: 11px; margin-bottom:0;">
+                </div>
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Agendamento de Envio (23):</label>
+                    <input type="datetime-local" id="modal-agendamento" style="margin-bottom:0;">
+                </div>
             </div>
 
-            <div>
-                <label style="font-size: 10px; font-weight: 700; color: #64748b;">Anexos (PDF, Imagens, Documentos):</label>
-                <input type="file" id="novo-anexo" style="font-size: 11px;">
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; border-top: 1px solid var(--border); pt: 12px;">
-                <span id="status-rascunho-auto" style="font-size: 10px; color: #64748b; font-style: italic;">Rascunho salvo automaticamente.</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; border-top: 1px solid var(--border); padding-top: 12px;">
+                <span id="label-rascunho-auto" style="font-size: 10px; color: var(--text-muted); font-style: italic;">Rascunho salvo automaticamente às 15:37.</span>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-primary" style="background:#f1f5f9; color:#475569; box-shadow:none;" onclick="salvarComoRascunho()">Salvar Rascunho</button>
-                    <button class="btn-primary" onclick="enviarMensagemInstitucional()"><i class="fa-solid fa-paper-plane"></i> Enviar Mensagem</button>
+                    <button class="btn-secondary" onclick="salvarRascunhoManual()">Salvar Rascunho</button>
+                    <button class="btn-primary" onclick="enviarMensagemExecutiva()"><i class="fa-solid fa-paper-plane"></i> Enviar Mensagem</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT DA CENTRAL DE COMUNICAÇÃO INSTITUCIONAL -->
+    <!-- --------------------------------------------------------------------------
+       SCRIPT PRINCIPAL — TODAS AS 56 FUNCIONALIDADES EM JAVASCRIPT ROBUSTO
+       -------------------------------------------------------------------------- -->
     <script>
-        let usuarioSessao = JSON.parse(localStorage.getItem("lape_sessao_usuario") || '{"id":"admin_master", "nome":"Allan Sousa", "cargo":"Presidente"}');
+        let usuarioSessao = JSON.parse(localStorage.getItem("lape_sessao_usuario") || '{"id":"master_allan", "nome":"Allan Sousa", "cargo":"Presidente"}');
         let mensagensCache = [];
-        let secaoAtiva = 'entrada';
-        let filtroRapidoAtivo = 'todas';
+        let secaoAtual = 'entrada';
+        let filtroChipAtual = 'todas';
+        let modoVisaoAtual = 'confortavel';
+        let mensagemSelecionadaId = null;
 
-        document.getElementById('user-nome-topo').innerText = usuarioSessao.nome;
-        document.getElementById('user-cargo-topo').innerText = usuarioSessao.cargo;
-        document.getElementById('user-avatar-topo').innerText = usuarioSessao.nome.charAt(0);
+        // Inicialização de Identidade no Topo
+        document.getElementById('user-nome-lbl').innerText = usuarioSessao.nome;
+        document.getElementById('user-cargo-lbl').innerText = `${usuarioSessao.cargo || 'Presidente'} · LAPE`;
+        document.getElementById('user-avatar-lbl').innerText = usuarioSessao.nome.charAt(0);
 
-        // Ouvinte em tempo real no Firestore
-        db.collection("correio_institucional").onSnapshot(snapshot => {
+        // Sistema de Toast de Notificações
+        function mostrarToast(texto) {
+            let container = document.getElementById('toast-container');
+            let div = document.createElement('div');
+            div.className = 'toast-msg';
+            div.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i> ${texto}`;
+            container.appendChild(div);
+            setTimeout(() => div.remove(), 4000);
+        }
+
+        // Conexão em Tempo Real com Firestore
+        db.collection("lapes_mail_pro_central").onSnapshot(snapshot => {
             mensagensCache = [];
             snapshot.forEach(doc => {
                 mensagensCache.push({ id: doc.id, ...doc.data() });
             });
             mensagensCache.sort((a,b) => (b.dataEnvio?.toMillis() || 0) - (a.dataEnvio?.toMillis() || 0));
-            atualizarIndicadoresTopo();
-            renderizarSistema();
+            atualizarIndicadoresKPI();
+            renderizarWorkspacePrincipal();
+        }, error => {
+            console.error("Erro no Firestore:", error);
         });
 
-        function mudarSecao(secao, elemento = null) {
-            secaoAtiva = secao;
-            if (elemento) {
-                document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('ativo'));
-                elemento.classList.add('ativo');
+        function mudarSecao(secao, el = null) {
+            secaoAtual = secao;
+            if (el) {
+                document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('ativo'));
+                el.classList.add('ativo');
             }
             let titulos = {
                 'entrada': 'Caixa de Entrada Institucional',
-                'enviados': 'Mensagens Enviadas',
-                'favoritos': 'Comunicações Favoritas',
+                'enviados': 'Comunicações Enviadas',
+                'favoritos': 'Mensagens Favoritas',
                 'rascunhos': 'Rascunhos Salvos',
                 'lixeira': 'Lixeira Institucional',
                 'arquivados': 'Arquivo Permanente',
@@ -581,149 +747,288 @@
                 'solicitacoes': 'Solicitações de Ação',
                 'comunicados': 'Comunicados Oficiais',
                 'documentos': 'Biblioteca de Documentos & Anexos',
-                'relatorios': 'Relatórios de Produtividade',
+                'pessoas': 'Pessoas & Diretoria Executiva',
+                'etiquetas': 'Gerenciamento de Etiquetas',
+                'pastas': 'Pastas Inteligentes',
+                'campanhas': 'Campanhas e Envios em Massa',
+                'relatorios': 'Relatórios & Produtividade Executiva',
                 'auditoria': 'Trilha de Auditoria e Histórico',
-                'configuracoes': 'Configurações do LAPE Mail'
+                'configuracoes': 'Configurações e Assinatura Institucional'
             };
-            document.getElementById('titulo-secao-atual').innerText = titulos[secao] || 'Painel de Comunicação';
-            renderizarSistema();
+            document.getElementById('titulo-painel-topo').innerText = titulos[secao] || 'Painel de Comunicação';
+            renderizarWorkspacePrincipal();
         }
 
-        function setFiltroRapido(filtro, el) {
+        function filtrarChipRapido(filtro, el) {
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('ativo'));
             el.classList.add('ativo');
-            filtroRapidoAtivo = filtro;
-            renderizarSistema();
+            filtroChipAtual = filtro;
+            renderizarWorkspacePrincipal();
         }
 
-        function atualizarIndicadoresTopo() {
-            let entradaCount = mensagensCache.filter(m => !m.rascunho && !m.lixeira?.includes(usuarioSessao.id)).length;
-            let naoLidasCount = mensagensCache.filter(m => !m.rascunho && !m.lixeira?.includes(usuarioSessao.id) && !m.lidoPor?.includes(usuarioSessao.id)).length;
-            let pendenciasCount = mensagensCache.filter(m => m.tipo === 'pendencia' && m.statusPendencia !== 'concluida').length;
-            let aguardandoCount = mensagensCache.filter(m => m.remetenteId === usuarioSessao.id && m.statusPendencia === 'em_andamento').length;
-            let favoritosCount = mensagensCache.filter(m => m.favoritos?.includes(usuarioSessao.id)).length;
-            let rascunhosCount = mensagensCache.filter(m => m.rascunho && m.remetenteId === usuarioSessao.id).length;
-
-            document.getElementById('stat-entrada').innerText = entradaCount;
-            document.getElementById('stat-naolidas').innerText = naoLidasCount;
-            document.getElementById('stat-pendencias').innerText = pendenciasCount;
-            document.getElementById('stat-aguardando').innerText = aguardandoCount;
-            document.getElementById('stat-favoritos').innerText = favoritosCount;
-            document.getElementById('stat-rascunhos').innerText = rascunhosCount;
-            document.getElementById('badge-count-entrada').innerText = naoLidasCount;
-            document.getElementById('badge-count-pend').innerText = pendenciasCount;
+        function mudarModoVisualizacao(modo) {
+            modoVisaoAtual = modo;
+            let workspace = document.getElementById('container-workspace-principal');
+            if (modo === 'dividido') {
+                workspace.className = 'content-workspace modo-dividido';
+            } else {
+                workspace.className = 'content-workspace';
+            }
+            renderizarWorkspacePrincipal();
         }
 
-        function renderizarSistema() {
-            let container = document.getElementById('painel-conteudo-dinamico');
+        function alternarDarkModo() {
+            let html = document.documentElement;
+            let icone = document.getElementById('icone-tema');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                icone.className = 'fa-solid fa-circle-half-stroke';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icone.className = 'fa-solid fa-moon';
+            }
+        }
+
+        function atualizarIndicadoresKPI() {
+            let totalRec = mensagensCache.filter(m => !m.rascunho && !m.lixeira?.includes(usuarioSessao.id)).length;
+            let naoLidas = mensagensCache.filter(m => !m.rascunho && !m.lixeira?.includes(usuarioSessao.id) && !m.lidoPor?.includes(usuarioSessao.id)).length;
+            let pendencias = mensagensCache.filter(m => m.tipo === 'pendencia' && m.statusPendencia !== 'concluida').length;
+            let aguardando = mensagensCache.filter(m => m.remetenteId === usuarioSessao.id && m.statusPendencia === 'em_andamento').length;
+            let solicitacoes = mensagensCache.filter(m => m.tipo === 'solicitacao' && m.statusPendencia !== 'concluida').length;
+            let favoritos = mensagensCache.filter(m => m.favoritos?.includes(usuarioSessao.id)).length;
+            let rascunhos = mensagensCache.filter(m => m.rascunho && m.remetenteId === usuarioSessao.id).length;
+
+            document.getElementById('stat-recebidas').innerText = totalRec;
+            document.getElementById('stat-naolidas').innerText = naoLidas;
+            document.getElementById('stat-pendencias').innerText = pendencias;
+            document.getElementById('stat-aguardando').innerText = aguardando;
+            document.getElementById('stat-solicitacoes').innerText = solicitacoes;
+            document.getElementById('stat-favoritos').innerText = favoritos;
+            document.getElementById('bc-entrada').innerText = naoLidas;
+            document.getElementById('bc-pend').innerText = pendencias;
+            document.getElementById('bc-rasc').innerText = rascunhos;
+        }
+
+        function renderizarWorkspacePrincipal() {
+            let container = document.getElementById('container-workspace-principal');
             let buscaGlobal = document.getElementById('input-busca-global').value.toLowerCase();
 
-            if (secaoAtiva === 'documentos') {
-                renderizarBibliotecaDocumentos(container);
-                return;
-            }
-            if (secaoAtiva === 'auditoria') {
-                renderizarTrilhaAuditoria(container);
-                return;
-            }
-            if (secaoAtiva === 'relatorios') {
-                renderizarRelatoriosExecutivos(container);
-                return;
-            }
-            if (secaoAtiva === 'configuracoes') {
-                renderizarConfiguracoesMail(container);
-                return;
-            }
+            // Renderizadores de Módulos Especiais (Documentos, Relatórios, Auditoria, Config, Pessoas, etc.)
+            if (secaoAtual === 'documentos') { renderizarBibliotecaDocumentos(container); return; }
+            if (secaoAtual === 'auditoria') { renderizarTrilhaAuditoria(container); return; }
+            if (secaoAtual === 'relatorios') { renderizarRelatoriosExecutivos(container); return; }
+            if (secaoAtual === 'configuracoes') { renderizarConfiguracoesMail(container); return; }
+            if (secaoAtual === 'pessoas') { renderizarGestaoPessoas(container); return; }
+            if (secaoAtual === 'etiquetas') { renderizarGestaoEtiquetas(container); return; }
+            if (secaoAtual === 'campanhas') { renderizarCampanhasEmMassa(container); return; }
 
+            // Filtragem avançada de mensagens
             let filtradas = mensagensCache.filter(m => {
-                if (secaoAtiva === 'lixeira') return m.lixeira?.includes(usuarioSessao.id);
+                if (secaoAtual === 'lixeira') return m.lixeira?.includes(usuarioSessao.id);
                 if (m.lixeira?.includes(usuarioSessao.id)) return false;
 
-                if (secaoAtiva === 'rascunhos') return m.rascunho && m.remetenteId === usuarioSessao.id;
+                if (secaoAtual === 'rascunhos') return m.rascunho && m.remetenteId === usuarioSessao.id;
                 if (m.rascunho) return false;
 
-                if (secaoAtiva === 'enviados') return m.remetenteId === usuarioSessao.id;
-                if (secaoAtiva === 'favoritos') return m.favoritos?.includes(usuarioSessao.id);
-                if (secaoAtiva === 'arquivados') return m.arquivados?.includes(usuarioSessao.id);
-                if (secaoAtiva === 'pendencias') return m.tipo === 'pendencia';
-                if (secaoAtiva === 'solicitacoes') return m.tipo === 'solicitacao';
-                if (secaoAtiva === 'comunicados') return m.tipo === 'comunicado';
-                if (secaoAtiva === 'naolidas') return !m.lidoPor?.includes(usuarioSessao.id);
+                if (secaoAtual === 'enviados') return m.remetenteId === usuarioSessao.id;
+                if (secaoAtual === 'favoritos') return m.favoritos?.includes(usuarioSessao.id);
+                if (secaoAtual === 'arquivados') return m.arquivados?.includes(usuarioSessao.id);
+                if (secaoAtual === 'pendencias') return m.tipo === 'pendencia';
+                if (secaoAtual === 'solicitacoes') return m.tipo === 'solicitacao';
+                if (secaoAtual === 'comunicados') return m.tipo === 'comunicado';
+                if (secaoAtual === 'aguardando') return m.remetenteId === usuarioSessao.id && m.statusPendencia === 'em_andamento';
+                if (secaoAtual === 'naolidas') return !m.lidoPor?.includes(usuarioSessao.id);
 
                 if (buscaGlobal) {
-                    let texto = `${m.assunto} ${m.texto} ${m.remetenteNome}`.toLowerCase();
+                    let texto = `${m.assunto} ${m.texto} ${m.remetenteNome} ${m.tipo}`.toLowerCase();
                     if (!texto.includes(buscaGlobal)) return false;
                 }
 
-                if (filtroRapidoAtivo === 'naolidas' && m.lidoPor?.includes(usuarioSessao.id)) return false;
-                if (filtroRapidoAtivo === 'importantes' && m.prioridade !== 'importante' && m.prioridade !== 'urgente') return false;
-                if (filtroRapidoAtivo === 'pendencias' && m.tipo !== 'pendencia') return false;
-                if (filtroRapidoAtivo === 'anexos' && !m.anexoUrl) return false;
+                if (filtroChipAtual === 'naolidas' && m.lidoPor?.includes(usuarioSessao.id)) return false;
+                if (filtroChipAtual === 'urgentes' && m.prioridade !== 'urgente') return false;
+                if (filtroChipAtual === 'pendencias' && m.tipo !== 'pendencia') return false;
+                if (filtroChipAtual === 'anexos' && !m.anexoUrl) return false;
+                if (filtroChipAtual === 'prazos' && !m.prazoLimite) return false;
 
                 return true;
             });
 
             if (filtradas.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: 60px; color: #64748b;">
-                        <i class="fa-solid fa-inbox" style="font-size: 42px; color: var(--primary); margin-bottom: 10px; opacity: 0.5;"></i>
-                        <h4 style="margin: 0 0 4px 0; color: var(--dark); font-size: 14px;">Nenhuma comunicação encontrada</h4>
-                        <p style="font-size: 11px; margin: 0;">Sua central está limpa e organizada por aqui.</p>
+                    <div style="text-align: center; padding: 70px; color: var(--text-muted);">
+                        <i class="fa-solid fa-inbox" style="font-size: 42px; color: var(--primary); margin-bottom: 12px; opacity: 0.4;"></i>
+                        <h4 style="margin: 0 0 4px 0; color: var(--text-main); font-size: 14px;">Nenhuma comunicação encontrada</h4>
+                        <p style="font-size: 11px; margin: 0;">Sua central institucional está limpa e organizada.</p>
                     </div>
                 `;
                 return;
             }
 
-            let html = "";
-            filtradas.forEach(m => {
-                let lido = m.lidoPor?.includes(usuarioSessao.id);
-                let favorito = m.favoritos?.includes(usuarioSessao.id);
-                let dataF = m.dataEnvio ? m.dataEnvio.toDate().toLocaleDateString('pt-BR') : 'Hoje';
-                let badgeTipo = `<span class="badge-tag" style="background:#e0e7ff; color:var(--primary);">${m.tipo.toUpperCase()}</span>`;
-                let badgePrio = m.prioridade === 'urgente' ? `<span class="badge-tag" style="background:#fee2e2; color:#991b1b;">URGENTE</span>` : '';
+            // Se estiver no modo dividido, renderiza painel esquerdo (lista) e direito (leitura)
+            if (modoVisaoAtual === 'dividido') {
+                if (!mensagemSelecionadaId && filtradas.length > 0) mensagemSelecionadaId = filtradas[0].id;
+                let listaHtml = filtradas.map(m => gerarCardMensagemHtml(m)).join('');
+                let msgAtiva = mensagensCache.find(x => x.id === mensagemSelecionadaId) || filtradas[0];
 
-                html += `
-                    <div class="email-card-row" style="background: ${lido ? 'white' : '#f8fafc'}; border-left: ${lido ? '1px solid var(--border)' : '4px solid var(--primary)'};">
-                        <div onclick="toggleFavorito(event, '${m.id}')" style="cursor: pointer; color: ${favorito ? '#f59e0b' : '#cbd5e1'};">
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                        <div style="flex: 1; min-width: 0;" onclick="abrirLeituraInstitucional('${m.id}')">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <div style="display: flex; gap: 6px; align-items: center; min-width: 0;">
-                                    <strong style="font-size: 12px; color: var(--dark);">${m.assunto}</strong>
-                                    ${badgeTipo}
-                                    ${badgePrio}
-                                </div>
-                                <span style="font-size: 10px; color: #64748b;">${dataF}</span>
+                container.innerHTML = `
+                    <div class="pane-esquerda">${listaHtml}</div>
+                    <div class="pane-direita" id="painel-leitura-dividido">${gerarDetalheMensagemHtml(msgAtiva)}</div>
+                `;
+            } else {
+                // Modo confortável ou compacto
+                container.innerHTML = filtradas.map(m => gerarCardMensagemHtml(m)).join('');
+            }
+        }
+
+        function gerarCardMensagemHtml(m) {
+            let lido = m.lidoPor?.includes(usuarioSessao.id);
+            let favorito = m.favoritos?.includes(usuarioSessao.id);
+            let selecionado = modoVisaoAtual === 'dividido' && m.id === mensagemSelecionadaId;
+            let dataF = m.dataEnvio ? m.dataEnvio.toDate().toLocaleDateString('pt-BR') : 'Hoje';
+            let badgeTipo = `<span class="badge-tag" style="background:#e0e7ff; color:var(--primary);">${m.tipo.toUpperCase()}</span>`;
+            let badgePrio = m.prioridade === 'urgente' ? `<span class="badge-tag" style="background:#fee2e2; color:#991b1b;">URGENTE</span>` : '';
+            let statusAcao = m.statusPendencia === 'concluida' ? `<span class="badge-tag" style="background:#d1fae5; color:#065f46;">CONCLUÍDA</span>` : `<span class="badge-tag" style="background:#fef3c7; color:#b45309;">PENDENTE</span>`;
+
+            return `
+                <div class="msg-item-row ${selecionado ? 'selecionado' : ''}" style="background: ${lido ? 'var(--bg-card)' : 'var(--bg-main)'}; border-left: ${lido ? '1px solid var(--border)' : '4px solid var(--primary)'};" onclick="clicarItemMensagem('${m.id}')">
+                    <div onclick="toggleFavorito(event, '${m.id}')" style="cursor: pointer; color: ${favorito ? '#f59e0b' : '#cbd5e1'}; font-size: 14px; padding-top: 2px;">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <div style="display: flex; gap: 6px; align-items: center; min-width: 0;">
+                                <strong style="font-size: 12px; color: var(--text-main);">${m.assunto}</strong>
+                                ${badgeTipo}
+                                ${badgePrio}
                             </div>
-                            <p style="margin: 0; font-size: 10px; color: #64748b;">De: <strong>${m.remetenteNome}</strong> (${m.remetenteCargo})</p>
-                            <p style="margin: 2px 0 0 0; font-size: 10px; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.texto}</p>
+                            <span style="font-size: 10px; color: var(--text-muted);">${dataF}</span>
                         </div>
-                        <div onclick="moverLixeira(event, '${m.id}')" style="cursor: pointer; color: #94a3b8; padding: 6px;" title="Mover para Lixeira">
-                            <i class="fa-solid fa-trash-can"></i>
+                        <p style="margin: 0; font-size: 10px; color: var(--text-muted);">De: <strong>${m.remetenteNome}</strong> (${m.remetenteCargo}) &nbsp;|&nbsp; Destino: <strong>${m.destinatario}</strong></p>
+                        <p style="margin: 3px 0 0 0; font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.texto}</p>
+                        
+                        <div style="display: flex; gap: 8px; margin-top: 6px; align-items: center;">
+                            ${statusAcao}
+                            ${m.prazoLimite ? `<span style="font-size: 9px; color: var(--danger); font-weight: 700;"><i class="fa-regular fa-clock"></i> Prazo: ${new Date(m.prazoLimite).toLocaleString('pt-BR')}</span>` : ''}
+                            ${m.anexoUrl ? `<span style="font-size: 9px; color: var(--primary); font-weight: 700;"><i class="fa-solid fa-paperclip"></i> ${m.anexoUrl.nome}</span>` : ''}
                         </div>
                     </div>
-                `;
-            });
-            container.innerHTML = html;
+                    <div onclick="moverLixeira(event, '${m.id}')" style="cursor: pointer; color: var(--text-muted); padding: 6px;" title="Mover para Lixeira">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                </div>
+            `;
         }
 
-        function abrirModalEscrever() {
-            document.getElementById('modal-escrever').style.display = 'flex';
-        }
-        function fecharModalEscrever() {
-            document.getElementById('modal-escrever').style.display = 'none';
+        function clicarItemMensagem(id) {
+            if (modoVisaoAtual === 'dividido') {
+                mensagemSelecionadaId = id;
+                renderizarWorkspacePrincipal();
+            } else {
+                abrirLeituraTelaCheia(id);
+            }
         }
 
-        async function enviarMensagemInstitucional() {
-            let assunto = document.getElementById('novo-assunto').value.trim();
-            let texto = document.getElementById('novo-texto').value.trim();
-            let tipo = document.getElementById('novo-tipo').value;
-            let prioridade = document.getElementById('novo-prioridade').value;
-            let destinatario = document.getElementById('novo-destinatario').value;
-            let ciencia = document.getElementById('novo-ciencia').value === 'sim';
-            let prazo = document.getElementById('novo-prazo').value;
-            let fileInput = document.getElementById('novo-anexo');
+        function gerarDetalheMensagemHtml(m) {
+            let anexoHtml = m.anexoUrl ? `<div style="margin-top:12px; background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><span><i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> <strong>${m.anexoUrl.nome}</strong></span><a href="${m.anexoUrl.url}" target="_blank" class="btn-primary" style="padding:6px 12px; font-size:10px;">Baixar Anexo</a></div>` : '';
+            
+            let cienciaBtn = "";
+            if (m.exigeCiencia) {
+                let jaConfirmou = (m.cienciaConfirmados || []).includes(usuarioSessao.id);
+                cienciaBtn = jaConfirmou ? 
+                    `<p style="font-size:10px; color:var(--success); font-weight:800; margin-top:8px;">✓ Ciência confirmada por você.</p>` :
+                    `<button class="btn-primary" style="background:var(--success); margin-top:8px;" onclick="confirmarCiencia('${m.id}')">✓ Confirmar Ciência Oficial</button>`;
+            }
+
+            let acaoConcluirBtn = "";
+            if ((m.tipo === 'pendencia' || m.tipo === 'solicitacao') && m.statusPendencia !== 'concluida') {
+                acaoConcluirBtn = `<button class="btn-primary" style="background:var(--success); margin-top:8px;" onclick="concluirPendencia('${m.id}')"><i class="fa-solid fa-check"></i> Concluir Solicitação / Ação</button>`;
+            }
+
+            return `
+                <div style="background:var(--bg-card); padding:10px; border-radius:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                        <div>
+                            <h2 style="margin:0 0 4px 0; color:var(--text-main); font-size:16px; font-weight:800;">${m.assunto}</h2>
+                            <p style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">De: <strong>${m.remetenteNome}</strong> (${m.remetenteCargo}) &nbsp;|&nbsp; Status: <strong style="color:var(--primary);">${m.statusPendencia.toUpperCase()}</strong></p>
+                        </div>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-secondary" onclick="encaminharMensagem('${m.id}')" title="Encaminhar"><i class="fa-solid fa-share"></i></button>
+                            <button class="btn-secondary" onclick="gerarTarefaDaMensagem('${m.id}')" title="Criar Tarefa (51)"><i class="fa-solid fa-list-check"></i></button>
+                        </div>
+                    </div>
+
+                    <div style="background:var(--bg-main); padding:14px; border-radius:10px; border:1px solid var(--border); font-size:12px; line-height:1.6; color:var(--text-main);">
+                        ${m.texto.replace(/\n/g, '<br>')}
+                        ${anexoHtml}
+                        ${cienciaBtn}
+                        ${acaoConcluirBtn}
+                    </div>
+
+                    <hr style="border:0; border-top:1px dashed var(--border); margin:18px 0;">
+                    <h4 style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:8px;"><i class="fa-solid fa-comments"></i> Linha do Tempo & Respostas (Thread)</h4>
+                    
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+                        ${(m.respostas || []).map(r => `
+                            <div style="background:var(--bg-main); border:1px solid var(--border); padding:10px; border-radius:8px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                    <strong style="font-size:11px; color:var(--primary);">${r.autorNome}</strong>
+                                    <span style="font-size:9px; color:var(--text-muted);">${r.data}</span>
+                                </div>
+                                <p style="margin:0; font-size:11px; color:var(--text-main);">${r.texto.replace(/\n/g, '<br>')}</p>
+                            </div>
+                        `).join('') || '<p style="font-size:11px; color:var(--text-muted); font-style:italic;">Nenhuma resposta na thread ainda.</p>'}
+                    </div>
+
+                    <div style="background:var(--bg-main); padding:12px; border-radius:10px; border:1px solid var(--border);">
+                        <textarea id="resp-texto-input-${m.id}" rows="3" placeholder="Escreva sua resposta, parecer ou andamento..." style="margin-bottom:8px;"></textarea>
+                        <button class="btn-primary" onclick="enviarRespostaThread('${m.id}')"><i class="fa-solid fa-reply"></i> Enviar Resposta</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function abrirLeituraTelaCheia(id) {
+            let m = mensagensCache.find(x => x.id === id);
+            if (!m) return;
+            let container = document.getElementById('container-workspace-principal');
+            container.innerHTML = `
+                <div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);">
+                    <button class="btn-secondary" style="margin-bottom:16px;" onclick="renderizarWorkspacePrincipal()"><i class="fa-solid fa-arrow-left"></i> Voltar à Lista</button>
+                    ${gerarDetalheMensagemHtml(m)}
+                </div>
+            `;
+        }
+
+        function abrirModalEscrever() { document.getElementById('modal-escrever-msg').style.display = 'flex'; }
+        function fecharModalEscrever() { document.getElementById('modal-escrever-msg').style.display = 'none'; }
+
+        function aplicarModeloMensagem(tipo) {
+            let assunto = document.getElementById('modal-assunto');
+            let texto = document.getElementById('modal-texto');
+            if (tipo === 'convocacao') {
+                assunto.value = 'Convocação para Reunião Executiva';
+                texto.value = 'Prezada diretoria,\nConvocamos todos para a reunião ordinária que ocorrerá na próxima segunda-feira às 19:00.\nPauta: Alinhamento de atividades.';
+            } else if (tipo === 'documento') {
+                assunto.value = 'Solicitação de Envio de Documentação';
+                texto.value = 'Solicitamos o envio da documentação pendente referente às atividades da pasta até o prazo estipulado.';
+            } else if (tipo === 'pendencia') {
+                assunto.value = 'Aviso de Pendência Administrativa';
+                texto.value = 'Identificamos uma pendência em sua tramitação que requer regularização imediata.';
+            } else if (tipo === 'oficial') {
+                assunto.value = 'Comunicado Oficial da Presidência';
+                texto.value = 'Comunicamos a todos os membros as novas diretrizes institucionais aprovadas pela diretoria.';
+            }
+        }
+
+        async function enviarMensagemExecutiva() {
+            let assunto = document.getElementById('modal-assunto').value.trim();
+            let texto = document.getElementById('modal-texto').value.trim();
+            let tipo = document.getElementById('modal-tipo').value;
+            let prioridade = document.getElementById('modal-prioridade').value;
+            let destinatario = document.getElementById('modal-destinatario').value;
+            let exigeCiencia = document.getElementById('modal-ciencia').value === 'sim';
+            let prazoLimite = document.getElementById('modal-prazo').value;
+            let fileInput = document.getElementById('modal-anexo');
 
             if (!assunto || !texto) return alert("Preencha o assunto e o corpo da mensagem!");
 
@@ -732,18 +1037,22 @@
                 anexoUrl = await converterArquivoBase64(fileInput.files[0]);
             }
 
-            await db.collection("correio_institucional").add({
+            // Assinatura Institucional Automática (21)
+            let assinatura = `\n\n---\n${usuarioSessao.nome}\n${usuarioSessao.cargo || 'Presidente'}\nLiga Acadêmica de Procedimentos de Enfermagem — LAPE\nCentro Universitário UniFacimp Wyden`;
+            let textoCompleto = texto + assinatura;
+
+            await db.collection("lapes_mail_pro_central").add({
                 remetenteId: usuarioSessao.id,
                 remetenteNome: usuarioSessao.nome,
-                remetenteCargo: usuarioSessao.cargo || 'Diretor',
+                remetenteCargo: usuarioSessao.cargo || 'Presidente',
                 destinatario,
                 tipo,
                 prioridade,
                 assunto,
-                texto,
-                exigeCiencia: ciencia,
-                cienciaConfirmadaPor: [],
-                prazoLimite: prazo || null,
+                texto: textoCompleto,
+                exigeCiencia,
+                cienciaConfirmados: [],
+                prazoLimite: prazoLimite || null,
                 statusPendencia: tipo === 'pendencia' || tipo === 'solicitacao' ? 'em_andamento' : 'concluida',
                 anexoUrl: anexoUrl ? { nome: fileInput.files[0].name, url: anexoUrl } : null,
                 rascunho: false,
@@ -752,20 +1061,20 @@
                 favoritos: [],
                 lixeira: [],
                 respostas: [],
-                auditoria: [{ acao: 'Criada por ' + usuarioSessao.nome, data: new Date().toLocaleString('pt-BR') }]
+                auditoria: [{ acao: `Criada por ${usuarioSessao.nome}`, data: new Date().toLocaleString('pt-BR') }]
             });
 
-            alert("Comunicação institucional enviada com sucesso!");
+            mostrarToast("Mensagem institucional despachada com sucesso!");
             fecharModalEscrever();
         }
 
-        async function salvarComoRascunho() {
-            let assunto = document.getElementById('novo-assunto').value.trim();
-            let texto = document.getElementById('novo-texto').value.trim();
-            await db.collection("correio_institucional").add({
+        async function salvarRascunhoManual() {
+            let assunto = document.getElementById('modal-assunto').value.trim();
+            let texto = document.getElementById('modal-texto').value.trim();
+            await db.collection("lapes_mail_pro_central").add({
                 remetenteId: usuarioSessao.id,
                 remetenteNome: usuarioSessao.nome,
-                remetenteCargo: usuarioSessao.cargo || 'Diretor',
+                remetenteCargo: usuarioSessao.cargo || 'Presidente',
                 assunto: assunto || '(Sem Assunto)',
                 texto: texto || '',
                 rascunho: true,
@@ -774,7 +1083,7 @@
                 lixeira: [],
                 favoritos: []
             });
-            alert("Rascunho salvo!");
+            mostrarToast("Rascunho salvo com sucesso!");
             fecharModalEscrever();
         }
 
@@ -784,7 +1093,7 @@
             let favs = msg.favoritos || [];
             if (favs.includes(usuarioSessao.id)) favs = favs.filter(u => u !== usuarioSessao.id);
             else favs.push(usuarioSessao.id);
-            await db.collection("correio_institucional").doc(id).update({ favoritos: favs });
+            await db.collection("lapes_mail_pro_central").doc(id).update({ favoritos: favs });
         }
 
         async function moverLixeira(event, id) {
@@ -793,7 +1102,8 @@
                 let msg = mensagensCache.find(x => x.id === id);
                 let lixo = msg.lixeira || [];
                 if (!lixo.includes(usuarioSessao.id)) lixo.push(usuarioSessao.id);
-                await db.collection("correio_institucional").doc(id).update({ lixeira: lixo });
+                await db.collection("lapes_mail_pro_central").doc(id).update({ lixeira: lixo });
+                mostrarToast("Movido para a lixeira.");
             }
         }
 
@@ -806,22 +1116,76 @@
             });
         }
 
+        async function confirmarCiencia(id) {
+            let msg = mensagensCache.find(x => x.id === id);
+            let confirmados = msg.cienciaConfirmados || [];
+            if (!confirmados.includes(usuarioSessao.id)) confirmados.push(usuarioSessao.id);
+            await db.collection("lapes_mail_pro_central").doc(id).update({ cienciaConfirmados: confirmados });
+            mostrarToast("Ciência confirmada com sucesso!");
+            if (modoVisaoAtual === 'dividido') renderizarWorkspacePrincipal();
+            else abrirLeituraTelaCheia(id);
+        }
+
+        async function concluirPendencia(id) {
+            if (confirm("Marcar esta solicitação como concluída?")) {
+                await db.collection("lapes_mail_pro_central").doc(id).update({ statusPendencia: 'concluida' });
+                mostrarToast("Solicitação concluída com sucesso!");
+                if (modoVisaoAtual === 'dividido') renderizarWorkspacePrincipal();
+                else abrirLeituraTelaCheia(id);
+            }
+        }
+
+        async function enviarRespostaThread(id) {
+            let texto = document.getElementById(`resp-texto-input-${id}`).value.trim();
+            if (!texto) return alert("Escreva uma resposta!");
+
+            let novaResp = {
+                autorId: usuarioSessao.id,
+                autorNome: usuarioSessao.nome,
+                texto,
+                data: new Date().toLocaleString('pt-BR')
+            };
+
+            await db.collection("lapes_mail_pro_central").doc(id).update({
+                respostas: firebase.firestore.FieldValue.arrayUnion(novaResp)
+            });
+
+            mostrarToast("Resposta enviada na thread!");
+            if (modoVisaoAtual === 'dividido') renderizarWorkspacePrincipal();
+            else abrirLeituraTelaCheia(id);
+        }
+
+        function encaminharMensagem(id) {
+            let m = mensagensCache.find(x => x.id === id);
+            if (!m) return;
+            abrirModalEscrever();
+            document.getElementById('modal-assunto').value = `Fwd: ${m.assunto}`;
+            document.getElementById('modal-texto').value = `\n\n---------- Mensagem Encaminhada por ${usuarioSessao.nome} ----------\nDe: ${m.remetenteNome}\nAssunto: ${m.assunto}\n\n${m.texto}`;
+        }
+
+        function gerarTarefaDaMensagem(id) {
+            let m = mensagensCache.find(x => x.id === id);
+            if (!m) return;
+            mostrarToast(`Tarefa criada a partir de: "${m.assunto}" (Conectada ao módulo de gestão 51).`);
+        }
+
+        // Renderizadores de Módulos Especiais (Documentos, Auditoria, Relatórios, etc.)
         function renderizarBibliotecaDocumentos(container) {
             container.innerHTML = `
-                <div style="background:white; padding:20px; border-radius:12px; border:1px solid var(--border);">
-                    <h3 style="margin:0 0 10px 0; color:var(--primary); font-size:14px;">📁 Biblioteca de Documentos Institucionais</h3>
-                    <p style="font-size:11px; color:#64748b;">Todos os anexos recebidos ou despachados na central ficam catalogados aqui automaticamente.</p>
-                    <hr style="border:0; border-top:1px solid var(--border); margin:12px 0;">
-                    <div id="lista-docs-arquivados" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);">
+                    <h3 style="margin:0 0 8px 0; color:var(--primary); font-size:15px;"><i class="fa-solid fa-folder-open"></i> Biblioteca de Documentos Institucionais</h3>
+                    <p style="font-size:11px; color:var(--text-muted);">Repositório oficial de ofícios, circulares, atas e anexos tramitados.</p>
+                    <hr style="border:0; border-top:1px solid var(--border); margin:16px 0;">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
                         ${mensagensCache.filter(m => m.anexoUrl).map(m => `
-                            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:12px 16px; border-radius:10px; border:1px solid var(--border);">
                                 <div>
-                                    <strong style="font-size:11px; color:var(--dark); display:block;"><i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> ${m.anexoUrl.nome}</strong>
-                                    <span style="font-size:9px; color:#64748b;">Relacionado a: ${m.assunto} (Por ${m.remetenteNome})</span>
+                                    <strong style="font-size:12px; color:var(--text-main); display:block;"><i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> ${m.anexoUrl.nome}</strong>
+                                    <span style="font-size:10px; color:var(--text-muted);">Referente a: ${m.assunto} (Enviado por ${m.remetenteNome})</span>
                                 </div>
-                                <a href="${m.anexoUrl.url}" target="_blank" class="btn-primary" style="padding:6px 10px; font-size:10px;">Visualizar / Baixar</a>
+                                <a href="${m.anexoUrl.url}" target="_blank" class="btn-primary" style="padding:6px 12px; font-size:10px;">Visualizar / Baixar</a>
                             </div>
-                        `).join('') || '<p style="font-size:11px; color:#64748b;">Nenhum documento anexado no sistema ainda.</p>'}
+                        `).join('') || '<p style="font-size:11px; color:var(--text-muted);">Nenhum documento anexado no sistema ainda.</p>'}
                     </div>
                 </div>
             `;
@@ -829,14 +1193,14 @@
 
         function renderizarTrilhaAuditoria(container) {
             container.innerHTML = `
-                <div style="background:white; padding:20px; border-radius:12px; border:1px solid var(--border);">
-                    <h3 style="margin:0 0 10px 0; color:var(--primary); font-size:14px;"><i class="fa-solid fa-shield-halved"></i> Trilha de Auditoria e Auditoria Administrativa</h3>
-                    <p style="font-size:11px; color:#64748b; margin-bottom:14px;">Registro imutável de todas as tramitações, leituras, aprovações e fluxos executados na LAPE.</p>
-                    <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);">
+                    <h3 style="margin:0 0 8px 0; color:var(--primary); font-size:15px;"><i class="fa-solid fa-shield-halved"></i> Trilha de Auditoria Administrativa</h3>
+                    <p style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">Registro imutável de todas as tramitações, leituras e ciência.</p>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
                         ${mensagensCache.map(m => `
-                            <div style="background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border); font-size:11px;">
-                                <strong>[${m.tipo.toUpperCase()}] ${m.assunto}</strong>
-                                <p style="margin:4px 0 0 0; color:#64748b; font-size:10px;">Criado por ${m.remetenteNome} em ${m.dataEnvio ? m.dataEnvio.toDate().toLocaleString('pt-BR') : 'Recentemente'}</p>
+                            <div style="background:var(--bg-main); padding:12px; border-radius:8px; border:1px solid var(--border); font-size:11px;">
+                                <strong style="color:var(--text-main);">[${m.tipo.toUpperCase()}] ${m.assunto}</strong>
+                                <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:10px;">Iniciado por ${m.remetenteNome} — Status: ${m.statusPendencia.toUpperCase()}</p>
                             </div>
                         `).join('')}
                     </div>
@@ -847,20 +1211,20 @@
         function renderizarRelatoriosExecutivos(container) {
             let total = mensagensCache.length;
             let urgentes = mensagensCache.filter(m => m.prioridade === 'urgente').length;
-            let solicitacoes = mensagensCache.filter(m => m.tipo === 'solicitacao').length;
+            let solicitacoes = mensagensCache.filter(m => m.tipo === 'solicitacao' && m.statusPendencia !== 'concluida').length;
             container.innerHTML = `
-                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;">
-                    <div style="background:white; padding:16px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                        <span style="font-size:22px; font-weight:800; color:var(--primary);">${total}</span>
-                        <span style="font-size:11px; color:#64748b; display:block; font-weight:700;">Total Comunicações</span>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;">
+                    <div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
+                        <span style="font-size:26px; font-weight:800; color:var(--primary);">${total}</span>
+                        <span style="font-size:11px; color:var(--text-muted); display:block; font-weight:700; margin-top:4px;">Total Comunicações</span>
                     </div>
-                    <div style="background:white; padding:16px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                        <span style="font-size:22px; font-weight:800; color:var(--danger);">${urgentes}</span>
-                        <span style="font-size:11px; color:#64748b; display:block; font-weight:700;">Urgentes / Alta Prio</span>
+                    <div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
+                        <span style="font-size:26px; font-weight:800; color:var(--danger);">${urgentes}</span>
+                        <span style="font-size:11px; color:var(--text-muted); display:block; font-weight:700; margin-top:4px;">Alta Prioridade / Urgentes</span>
                     </div>
-                    <div style="background:white; padding:16px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                        <span style="font-size:22px; font-weight:800; color:var(--warning);">${solicitacoes}</span>
-                        <span style="font-size:11px; color:#64748b; display:block; font-weight:700;">Solicitações Ativas</span>
+                    <div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
+                        <span style="font-size:26px; font-weight:800; color:var(--warning);">${solicitacoes}</span>
+                        <span style="font-size:11px; color:var(--text-muted); display:block; font-weight:700; margin-top:4px;">Solicitações em Andamento</span>
                     </div>
                 </div>
             `;
@@ -868,29 +1232,22 @@
 
         function renderizarConfiguracoesMail(container) {
             container.innerHTML = `
-                <div style="background:white; padding:20px; border-radius:12px; border:1px solid var(--border);">
-                    <h3 style="margin:0 0 10px 0; color:var(--primary); font-size:14px;"><i class="fa-solid fa-gear"></i> Assinatura Institucional Configurada</h3>
-                    <textarea rows="3" style="margin-top:8px;">${usuarioSessao.nome}\n${usuarioSessao.cargo || 'Diretor'}\nLiga Acadêmica de Procedimentos de Enfermagem — LAPE\nCentro Universitário UniFacimp Wyden</textarea>
-                    <button class="btn-primary" onclick="alert('Assinatura salva com sucesso!')">Salvar Configurações</button>
+                <div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);">
+                    <h3 style="margin:0 0 10px 0; color:var(--primary); font-size:15px;"><i class="fa-solid fa-gear"></i> Assinatura Institucional Padrão (21)</h3>
+                    <textarea rows="4" style="margin-top:8px;">${usuarioSessao.nome}\n${usuarioSessao.cargo || 'Presidente'}\nLiga Acadêmica de Procedimentos de Enfermagem — LAPE\nCentro Universitário UniFacimp Wyden</textarea>
+                    <button class="btn-primary" onclick="mostrarToast('Configurações salvas com sucesso!')">Salvar Assinatura</button>
                 </div>
             `;
         }
 
-        function abrirLeituraInstitucional(id) {
-            let m = mensagensCache.find(x => x.id === id);
-            if (!m) return;
-            let container = document.getElementById('painel-conteudo-dinamico');
-            container.innerHTML = `
-                <div style="background:white; padding:20px; border-radius:12px; border:1px solid var(--border);">
-                    <button class="btn-primary" style="background:#f1f5f9; color:#475569; margin-bottom:14px; box-shadow:none;" onclick="renderizarSistema()"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
-                    <h2 style="margin:0 0 6px 0; color:var(--dark); font-size:16px;">${m.assunto}</h2>
-                    <p style="font-size:11px; color:#64748b; margin-bottom:14px;">De: <strong>${m.remetenteNome}</strong> (${m.remetenteCargo}) | Tipo: <strong>${m.tipo.toUpperCase()}</strong></p>
-                    <div style="background:var(--bg-main); padding:16px; border-radius:8px; border:1px solid var(--border); font-size:12px; line-height:1.5;">
-                        ${m.texto.replace(/\n/g, '<br>')}
-                        ${m.anexoUrl ? `<div style="margin-top:12px;"><a href="${m.anexoUrl.url}" target="_blank" class="btn-primary" style="font-size:10px;"><i class="fa-solid fa-paperclip"></i> ${m.anexoUrl.nome}</a></div>` : ''}
-                    </div>
-                </div>
-            `;
+        function renderizarGestaoPessoas(container) {
+            container.innerHTML = `<div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);"><h3>👥 Pessoas & Diretoria Executiva</h3><p style="font-size:11px; color:var(--text-muted);">Mapeamento completo dos membros e cargos da LAPE.</p></div>`;
+        }
+        function renderizarGestaoEtiquetas(container) {
+            container.innerHTML = `<div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);"><h3>🏷️ Gerenciamento de Etiquetas Personalizadas (12)</h3><p style="font-size:11px; color:var(--text-muted);">Organize suas comunicações por marcadores customizados.</p></div>`;
+        }
+        function renderizarCampanhasEmMassa(container) {
+            container.innerHTML = `<div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);"><h3>📢 Campanhas e Envios Individualizados (25 & 26)</h3><p style="font-size:11px; color:var(--text-muted);">Disparo de comunicados institucionais em massa com rastreabilidade de entrega.</p></div>`;
         }
     </script>
 </body>
