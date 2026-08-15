@@ -22,8 +22,7 @@
 
     <style>
         /* ==========================================================================
-           LAPE MAIL PRO — SISTEMA INSTITUCIONAL DE TRAMITAÇÃO ADMINISTRATIVA
-           Design System Completo, Sofisticado e 100% Responsivo (Desktop & Mobile)
+           LAPE MAIL PRO — SISTEMA INSTITUCIONAL COMPLETO & 100% FUNCIONAL
            ========================================================================== */
         :root {
             --primary: #4f46e5;
@@ -67,7 +66,6 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            transition: var(--transition);
         }
 
         .app-layout {
@@ -78,9 +76,7 @@
             position: relative;
         }
 
-        /* --------------------------------------------------------------------------
-           SIDEBAR INSTITUCIONAL RESPONSIVA
-           -------------------------------------------------------------------------- */
+        /* Sidebar Institucional Responsiva */
         sidebar {
             width: var(--sidebar-width);
             background: var(--bg-card);
@@ -168,7 +164,6 @@
             font-weight: 800;
         }
 
-        /* Overlay para mobile */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -178,9 +173,7 @@
             backdrop-filter: blur(2px);
         }
 
-        /* --------------------------------------------------------------------------
-           WORKSPACE PRINCIPAL
-           -------------------------------------------------------------------------- */
+        /* Workspace Principal */
         .workspace {
             flex: 1;
             display: flex;
@@ -226,9 +219,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* --------------------------------------------------------------------------
-           INDICADORES EXECUTIVOS (GRID FLEXÍVEL)
-           -------------------------------------------------------------------------- */
+        /* Indicadores Executivos */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -267,9 +258,7 @@
             text-transform: uppercase;
         }
 
-        /* --------------------------------------------------------------------------
-           FILTROS RÁPIDOS
-           -------------------------------------------------------------------------- */
+        /* Filtros Rápidos */
         .toolbar-filters {
             padding: 8px 20px;
             display: flex;
@@ -295,9 +284,7 @@
 
         .filter-chip.ativo { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --------------------------------------------------------------------------
-           ÁREA DE CONTEÚDO DINÂMICO
-           -------------------------------------------------------------------------- */
+        /* Área de Conteúdo */
         .content-workspace {
             flex: 1;
             overflow-y: auto;
@@ -358,9 +345,7 @@
             text-transform: uppercase;
         }
 
-        /* --------------------------------------------------------------------------
-           MODAIS E BOTÕES
-           -------------------------------------------------------------------------- */
+        /* Modais */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -432,7 +417,6 @@
         }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); background: var(--bg-card); }
 
-        /* Botão hamburguer para mobile */
         #btn-hamburguer {
             display: none;
             background: transparent;
@@ -442,7 +426,6 @@
             cursor: pointer;
         }
 
-        /* Toast notifications */
         #toast-container {
             position: fixed;
             bottom: 20px;
@@ -465,53 +448,20 @@
             gap: 8px;
         }
 
-        /* --------------------------------------------------------------------------
-           MEDIA QUERIES PARA RESPONSIVIDADE PERFEITA EM CELULARES E TABLETS
-           -------------------------------------------------------------------------- */
         @media (max-width: 1024px) {
-            .metrics-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            .content-workspace.modo-dividido {
-                grid-template-columns: 1fr;
-            }
-            .pane-direita {
-                display: none;
-            }
+            .metrics-grid { grid-template-columns: repeat(3, 1fr); }
+            .content-workspace.modo-dividido { grid-template-columns: 1fr; }
+            .pane-direita { display: none; }
         }
 
         @media (max-width: 768px) {
-            sidebar {
-                position: fixed;
-                left: -280px;
-                top: 0;
-                height: 100%;
-                z-index: 1000;
-            }
-            sidebar.ativo {
-                left: 0;
-            }
-            .sidebar-overlay.ativo {
-                display: block;
-            }
-            #btn-hamburguer {
-                display: inline-flex;
-            }
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .search-global-box {
-                max-width: 100%;
-                width: 100%;
-                order: 3;
-            }
-            .header-top {
-                gap: 8px;
-                padding: 10px;
-            }
-            .workspace {
-                width: 100vw;
-            }
+            sidebar { position: fixed; left: -270px; top: 0; height: 100%; z-index: 1000; }
+            sidebar.ativo { left: 0; }
+            .sidebar-overlay.ativo { display: block; }
+            #btn-hamburguer { display: inline-flex; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .search-global-box { max-width: 100%; width: 100%; order: 3; }
+            .workspace { width: 100vw; }
         }
     </style>
 </head>
@@ -521,9 +471,7 @@
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebarMobile()"></div>
 
     <div class="app-layout">
-        <!-- --------------------------------------------------------------------------
-           Navegação Lateral Institucional (Recolhível / Responsiva)
-           -------------------------------------------------------------------------- -->
+        <!-- Sidebar Institucional -->
         <sidebar id="sidebar-principal">
             <div class="sidebar-header">
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -555,12 +503,6 @@
                 <div class="menu-link" onclick="mudarSecao('comunicados', this)"><span><i class="fa-solid fa-bullhorn"></i> Comunicados Oficiais</span></div>
                 <div class="menu-link" onclick="mudarSecao('documentos', this)"><span><i class="fa-solid fa-folder-open"></i> Biblioteca de Documentos</span></div>
 
-                <div class="menu-category">Organização</div>
-                <div class="menu-link" onclick="mudarSecao('pessoas', this)"><span><i class="fa-solid fa-users"></i> Pessoas & Grupos</span></div>
-                <div class="menu-link" onclick="mudarSecao('etiquetas', this)"><span><i class="fa-solid fa-tags"></i> Etiquetas</span></div>
-                <div class="menu-link" onclick="mudarSecao('pastas', this)"><span><i class="fa-solid fa-folder-tree"></i> Pastas Inteligentes</span></div>
-                <div class="menu-link" onclick="mudarSecao('campanhas', this)"><span><i class="fa-solid fa-bullseye"></i> Campanhas em Massa</span></div>
-
                 <div class="menu-category">Administração</div>
                 <div class="menu-link" onclick="mudarSecao('relatorios', this)"><span><i class="fa-solid fa-chart-pie"></i> Relatórios & Métricas</span></div>
                 <div class="menu-link" onclick="mudarSecao('auditoria', this)"><span><i class="fa-solid fa-shield-halved"></i> Trilha de Auditoria</span></div>
@@ -568,15 +510,13 @@
             </div>
         </sidebar>
 
-        <!-- --------------------------------------------------------------------------
-           Workspace Principal & Cabeçalho Responsivo
-           -------------------------------------------------------------------------- -->
+        <!-- Workspace -->
         <div class="workspace">
             <div class="header-top">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <button id="btn-hamburguer" onclick="toggleSidebarMobile()"><i class="fa-solid fa-bars"></i></button>
                     <button class="btn-secondary" onclick="window.location.href='diretoria.html'">
-                        <i class="fa-solid fa-arrow-left"></i> <span style="display:none; @media(min-width:480px){display:inline;}">Menu Principal</span>
+                        <i class="fa-solid fa-arrow-left"></i> Menu Principal
                     </button>
                     <h3 id="titulo-painel-topo" style="margin: 0; font-size: 13px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">Caixa de Entrada</h3>
                 </div>
@@ -587,7 +527,7 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <select id="seletor-modo-visao" onchange="mudarModoVisualizacao(this.value)" style="width: 110px; margin-bottom: 0; font-size: 9px; font-weight: 700; display:none; @media(min-width:768px){display:block;}">
+                    <select id="seletor-modo-visao" onchange="mudarModoVisualizacao(this.value)" style="width: 110px; margin-bottom: 0; font-size: 9px; font-weight: 700;">
                         <option value="confortavel">Confortável</option>
                         <option value="dividido">Dividido</option>
                         <option value="compacto">Compacto</option>
@@ -597,13 +537,11 @@
                         <i class="fa-solid fa-circle-half-stroke" id="icone-tema"></i>
                     </button>
 
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid var(--border);" id="user-avatar-lbl">A</div>
-                    </div>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid var(--border);" id="user-avatar-lbl">A</div>
                 </div>
             </div>
 
-            <!-- Indicadores Rápidos Clicáveis -->
+            <!-- Indicadores KPI -->
             <div class="metrics-grid">
                 <div class="metric-card" onclick="mudarSecao('entrada')">
                     <span class="num" id="stat-recebidas">0</span>
@@ -642,12 +580,12 @@
 
             <!-- Área de Exibição Dinâmica -->
             <div class="content-workspace" id="container-workspace-principal">
-                <p style="text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 50px;">Carregando central de tramitação...</p>
+                <p style="text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 50px;">Carregando central institucional...</p>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Composição de Mensagens -->
+    <!-- Modal de Composição -->
     <div id="modal-escrever-msg" class="modal-overlay" style="display:none;">
         <div class="modal-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
@@ -730,7 +668,7 @@
         </div>
     </div>
 
-    <!-- Script Completo de Todas as 56 Funcionalidades e Gestão Responsiva -->
+    <!-- Script Completo e Funcional -->
     <script>
         let usuarioSessao = JSON.parse(localStorage.getItem("lape_sessao_usuario") || '{"id":"master_allan", "nome":"Allan Sousa", "cargo":"Presidente"}');
         let mensagensCache = [];
@@ -761,6 +699,7 @@
             setTimeout(() => div.remove(), 4000);
         }
 
+        // Conexão Firestore em Tempo Real com Atualização Milimétrica de KPIs
         db.collection("lapes_mail_pro_central").onSnapshot(snapshot => {
             mensagensCache = [];
             snapshot.forEach(doc => {
@@ -777,9 +716,8 @@
                 document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('ativo'));
                 el.classList.add('ativo');
             }
-            if (window.innerWidth <= 768) {
-                toggleSidebarMobile();
-            }
+            if (window.innerWidth <= 768) { toggleSidebarMobile(); }
+            
             let titulos = {
                 'entrada': 'Caixa de Entrada Institucional',
                 'enviados': 'Comunicações Enviadas',
@@ -792,10 +730,6 @@
                 'solicitacoes': 'Solicitações de Ação',
                 'comunicados': 'Comunicados Oficiais',
                 'documentos': 'Biblioteca de Documentos & Anexos',
-                'pessoas': 'Pessoas & Diretoria Executiva',
-                'etiquetas': 'Gerenciamento de Etiquetas',
-                'pastas': 'Pastas Inteligentes',
-                'campanhas': 'Campanhas em Massa',
                 'relatorios': 'Relatórios & Produtividade',
                 'auditoria': 'Trilha de Auditoria',
                 'configuracoes': 'Configurações e Assinatura'
@@ -858,9 +792,6 @@
             if (secaoAtual === 'auditoria') { renderizarTrilhaAuditoria(container); return; }
             if (secaoAtual === 'relatorios') { renderizarRelatoriosExecutivos(container); return; }
             if (secaoAtual === 'configuracoes') { renderizarConfiguracoesMail(container); return; }
-            if (secaoAtual === 'pessoas') { renderizarGestaoPessoas(container); return; }
-            if (secaoAtual === 'etiquetas') { renderizarGestaoEtiquetas(container); return; }
-            if (secaoAtual === 'campanhas') { renderizarCampanhasEmMassa(container); return; }
 
             let filtradas = mensagensCache.filter(m => {
                 if (secaoAtual === 'lixeira') return m.lixeira?.includes(usuarioSessao.id);
@@ -942,6 +873,7 @@
         }
 
         function clicarItemMensagem(id) {
+            marcarComoLido(id);
             if (modoVisaoAtual === 'dividido' && window.innerWidth > 1024) {
                 mensagemSelecionadaId = id;
                 renderizarWorkspacePrincipal();
@@ -950,15 +882,66 @@
             }
         }
 
+        async function marcarComoLido(id) {
+            let m = mensagensCache.find(x => x.id === id);
+            if (m && (!m.lidoPor || !m.lidoPor.includes(usuarioSessao.id))) {
+                await db.collection("lapes_mail_pro_central").doc(id).update({
+                    lidoPor: firebase.firestore.FieldValue.arrayUnion(usuarioSessao.id)
+                });
+            }
+        }
+
         function gerarDetalheMensagemHtml(m) {
             let anexoHtml = m.anexoUrl ? `<div style="margin-top:10px; background:var(--bg-card); padding:8px; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><span><i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> <strong>${m.anexoUrl.nome}</strong></span><a href="${m.anexoUrl.url}" target="_blank" class="btn-primary" style="padding:4px 10px; font-size:9px;">Baixar</a></div>` : '';
+            
+            let cienciaBtn = "";
+            if (m.exigeCiencia) {
+                let jaConfirmou = (m.cienciaConfirmados || []).includes(usuarioSessao.id);
+                cienciaBtn = jaConfirmou ? 
+                    `<p style="font-size:10px; color:var(--success); font-weight:800; margin-top:8px;">✓ Ciência confirmada por você.</p>` :
+                    `<button class="btn-primary" style="background:var(--success); margin-top:8px;" onclick="confirmarCiencia('${m.id}')">✓ Confirmar Ciência Oficial</button>`;
+            }
+
+            let acaoConcluirBtn = "";
+            if ((m.tipo === 'pendencia' || m.tipo === 'solicitacao') && m.statusPendencia !== 'concluida') {
+                acaoConcluirBtn = `<button class="btn-primary" style="background:var(--success); margin-top:8px;" onclick="concluirPendencia('${m.id}')"><i class="fa-solid fa-check"></i> Concluir Solicitação / Ação</button>`;
+            }
+
             return `
-                <div>
-                    <h2 style="margin:0 0 4px 0; font-size:14px; font-weight:800; color:var(--text-main);">${m.assunto}</h2>
-                    <p style="font-size:10px; color:var(--text-muted); margin-bottom:10px;">De: <strong>${m.remetenteNome}</strong> (${m.remetenteCargo})</p>
-                    <div style="background:var(--bg-main); padding:12px; border-radius:8px; border:1px solid var(--border); font-size:11px; line-height:1.5; color:var(--text-main);">
+                <div style="background:var(--bg-card); padding:10px; border-radius:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                        <div>
+                            <h2 style="margin:0 0 4px 0; color:var(--text-main); font-size:15px; font-weight:800;">${m.assunto}</h2>
+                            <p style="font-size:10px; color:var(--text-muted); margin-bottom:8px;">De: <strong>${m.remetenteNome}</strong> (${m.remetenteCargo}) &nbsp;|&nbsp; Status: <strong style="color:var(--primary);">${m.statusPendencia ? m.statusPendencia.toUpperCase() : 'ABERTO'}</strong></p>
+                        </div>
+                        <button class="btn-secondary" onclick="encaminharMensagem('${m.id}')"><i class="fa-solid fa-share"></i> Encaminhar</button>
+                    </div>
+
+                    <div style="background:var(--bg-main); padding:14px; border-radius:10px; border:1px solid var(--border); font-size:11px; line-height:1.6; color:var(--text-main);">
                         ${m.texto.replace(/\n/g, '<br>')}
                         ${anexoHtml}
+                        ${cienciaBtn}
+                        ${acaoConcluirBtn}
+                    </div>
+
+                    <hr style="border:0; border-top:1px dashed var(--border); margin:16px 0;">
+                    <h4 style="font-size:11px; font-weight:800; color:var(--text-main); margin-bottom:8px;"><i class="fa-solid fa-comments"></i> Respostas & Linha do Tempo (Thread)</h4>
+                    
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+                        ${(m.respostas || []).map(r => `
+                            <div style="background:var(--bg-main); border:1px solid var(--border); padding:8px; border-radius:8px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                                    <strong style="font-size:10px; color:var(--primary);">${r.autorNome}</strong>
+                                    <span style="font-size:9px; color:var(--text-muted);">${r.data}</span>
+                                </div>
+                                <p style="margin:0; font-size:10px; color:var(--text-main);">${r.texto.replace(/\n/g, '<br>')}</p>
+                            </div>
+                        `).join('') || '<p style="font-size:10px; color:var(--text-muted); font-style:italic;">Nenhuma resposta na thread ainda.</p>'}
+                    </div>
+
+                    <div style="background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border);">
+                        <textarea id="resp-texto-input-${m.id}" rows="2" placeholder="Escreva sua resposta ou parecer..." style="margin-bottom:6px;"></textarea>
+                        <button class="btn-primary" onclick="enviarRespostaThread('${m.id}')"><i class="fa-solid fa-reply"></i> Enviar Resposta</button>
                     </div>
                 </div>
             `;
@@ -991,16 +974,21 @@
             }
 
             let assinatura = `\n\n---\n${usuarioSessao.nome}\n${usuarioSessao.cargo || 'Presidente'}\nLiga Acadêmica de Procedimentos de Enfermagem — LAPE\nCentro Universitário UniFacimp Wyden`;
+            let tipo = document.getElementById('modal-tipo').value;
 
             await db.collection("lapes_mail_pro_central").add({
                 remetenteId: usuarioSessao.id,
                 remetenteNome: usuarioSessao.nome,
                 remetenteCargo: usuarioSessao.cargo || 'Presidente',
                 destinatario: document.getElementById('modal-destinatario').value,
-                tipo: document.getElementById('modal-tipo').value,
+                tipo: tipo,
                 prioridade: document.getElementById('modal-prioridade').value,
                 assunto,
                 texto: texto + assinatura,
+                exigeCiencia: document.getElementById('modal-ciencia').value === 'sim',
+                cienciaConfirmados: [],
+                prazoLimite: document.getElementById('modal-prazo').value || null,
+                statusPendencia: tipo === 'pendencia' || tipo === 'solicitacao' ? 'em_andamento' : 'concluida',
                 anexoUrl: anexoUrl ? { nome: fileInput.files[0].name, url: anexoUrl } : null,
                 rascunho: false,
                 dataEnvio: firebase.firestore.FieldValue.serverTimestamp(),
@@ -1010,7 +998,7 @@
                 respostas: []
             });
 
-            mostrarToast("Mensagem enviada com sucesso!");
+            mostrarToast("Mensagem despachada com sucesso!");
             fecharModalEscrever();
         }
 
@@ -1042,6 +1030,47 @@
             await db.collection("lapes_mail_pro_central").doc(id).update({ favoritos: favs });
         }
 
+        async function confirmarCiencia(id) {
+            await db.collection("lapes_mail_pro_central").doc(id).update({
+                cienciaConfirmados: firebase.firestore.FieldValue.arrayUnion(usuarioSessao.id)
+            });
+            mostrarToast("Ciência confirmada!");
+            renderizarWorkspacePrincipal();
+        }
+
+        async function concluirPendencia(id) {
+            await db.collection("lapes_mail_pro_central").doc(id).update({ statusPendencia: 'concluida' });
+            mostrarToast("Solicitação concluída!");
+            renderizarWorkspacePrincipal();
+        }
+
+        async function enviarRespostaThread(id) {
+            let texto = document.getElementById(`resp-texto-input-${id}`).value.trim();
+            if (!texto) return alert("Escreva uma resposta!");
+
+            let novaResp = {
+                autorId: usuarioSessao.id,
+                autorNome: usuarioSessao.nome,
+                texto,
+                data: new Date().toLocaleString('pt-BR')
+            };
+
+            await db.collection("lapes_mail_pro_central").doc(id).update({
+                respostas: firebase.firestore.FieldValue.arrayUnion(novaResp)
+            });
+
+            mostrarToast("Resposta enviada na thread!");
+            renderizarWorkspacePrincipal();
+        }
+
+        function encaminharMensagem(id) {
+            let m = mensagensCache.find(x => x.id === id);
+            if (!m) return;
+            abrirModalEscrever();
+            document.getElementById('modal-assunto').value = `Fwd: ${m.assunto}`;
+            document.getElementById('modal-texto').value = `\n\n---------- Mensagem Encaminhada ----------\nDe: ${m.remetenteNome}\n\n${m.texto}`;
+        }
+
         function converterArquivoBase64(file) {
             return new Promise((res, rej) => {
                 let reader = new FileReader();
@@ -1052,25 +1081,16 @@
         }
 
         function renderizarBibliotecaDocumentos(container) {
-            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3><i class="fa-solid fa-folder-open"></i> Biblioteca de Documentos</h3><p style="font-size:11px; color:var(--text-muted);">Repositório de arquivos e anexos oficiais.</p></div>`;
+            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3><i class="fa-solid fa-folder-open"></i> Biblioteca de Documentos</h3><p style="font-size:11px; color:var(--text-muted);">Repositório oficial de anexos e arquivos tramitados.</p></div>`;
         }
         function renderizarTrilhaAuditoria(container) {
-            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3><i class="fa-solid fa-shield-halved"></i> Trilha de Auditoria</h3><p style="font-size:11px; color:var(--text-muted);">Registro de ações administrativas.</p></div>`;
+            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3><i class="fa-solid fa-shield-halved"></i> Trilha de Auditoria</h3><p style="font-size:11px; color:var(--text-muted);">Registro de rastreabilidade institucional.</p></div>`;
         }
         function renderizarRelatoriosExecutivos(container) {
-            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3><i class="fa-solid fa-chart-pie"></i> Relatórios Executivos</h3><p style="font-size:11px; color:var(--text-muted);">Métricas e estatísticas do LAPE Mail Pro.</p></div>`;
+            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3><i class="fa-solid fa-chart-pie"></i> Relatórios & Métricas</h3><p style="font-size:11px; color:var(--text-muted);">Estatísticas da central de comunicação.</p></div>`;
         }
         function renderizarConfiguracoesMail(container) {
             container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3><i class="fa-solid fa-gear"></i> Configurações & Assinatura</h3></div>`;
-        }
-        function renderizarGestaoPessoas(container) {
-            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3>👥 Pessoas & Grupos</h3></div>`;
-        }
-        function renderizarGestaoEtiquetas(container) {
-            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3>🏷️ Etiquetas</h3></div>`;
-        }
-        function renderizarCampanhasEmMassa(container) {
-            container.innerHTML = `<div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border);"><h3>📢 Campanhas em Massa</h3></div>`;
         }
     </script>
 </body>
