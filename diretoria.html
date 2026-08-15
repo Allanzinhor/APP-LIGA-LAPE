@@ -3281,6 +3281,22 @@
         window.onload = () => {
             verificarPermissoesAdmin();
         };
+
+        // Carrega o arquivo externo automaticamente sem mexer no código gigante
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        let resposta = await fetch('email-lape.html');
+        let htmlDoEmail = await resposta.text();
+        
+        // Cria uma div invisível e joga o conteúdo do email lá dentro do painel
+        let divExterna = document.createElement('div');
+        divExterna.innerHTML = htmlDoEmail;
+        document.body.appendChild(divExterna);
+    } catch (e) {
+        console.error("Erro ao carregar o módulo de e-mail:", e);
+    }
+});
+
     </script>
 </body>
 </html>
