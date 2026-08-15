@@ -256,9 +256,9 @@
         .modal-conteudo {
             background: white;
             border-radius: 20px;
-            padding: 20px;
+            padding: 24px;
             width: 100%;
-            max-width: 480px;
+            max-width: 600px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             max-height: 90vh;
             overflow-y: auto;
@@ -485,7 +485,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <div>
                     <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-wpforms"></i> Processo Seletivo & Formulários</h3>
-                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Crie formulários customizados, defina prazos e gerencie submissões</p>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Crie formulários customizados, adicione seus próprios campos e gerencie inscrições</p>
                 </div>
                 <button class="btn-mini verde" style="padding: 8px 12px; font-size: 11px; font-weight: 800;" onclick="abrirModalFormularioExterno()"><i class="fa-solid fa-plus"></i> Novo Formulário</button>
             </div>
@@ -496,7 +496,7 @@
             </div>
         </div>
 
-        <!-- ABA: RECADOS INTERNOS -->
+        <!-- ================= ABA: RECADOS INTERNOS ================= -->
         <div id="secao-recados-internos" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a;">
                 <h3 id="titulo-form-aviso-dir" style="margin: 0 0 10px 0; color: #b45309; font-size: 15px; font-weight: 800;"><i class="fa-solid fa-pen-nib"></i> Publicar Recado Interno</h3>
@@ -562,7 +562,7 @@
             <div id="lista-admin-recados-internos"></div>
         </div>
 
-        <!-- ABA: MODO DE MANUTENÇÃO -->
+        <!-- ================= ABA: MODO DE MANUTENÇÃO ================= -->
         <div id="secao-manutencao" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
@@ -580,7 +580,7 @@
             </div>
         </div>
 
-        <!-- ABA: CADASTRAR MEMBROS -->
+        <!-- ================= ABA: CADASTRAR MEMBROS ================= -->
         <div id="secao-cadastro-membros" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-membro" style="margin-top:0; font-size: 15px; font-weight: 800; color: var(--primary);">Cadastrar Novo Ligante</h3>
@@ -647,7 +647,7 @@
             </div>
         </div>
 
-        <!-- ABA: LISTA DE MEMBROS -->
+        <!-- ================= ABA: LISTA DE MEMBROS ================= -->
         <div id="secao-lista-membros" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="cabecalho-lista" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h3 style="margin: 0; font-size: 15px; font-weight: 800; color: var(--dark);">Ligantes</h3>
@@ -664,7 +664,7 @@
             <div id="lista-desligados"></div>
         </div>
 
-        <!-- ABA: CADASTRAR ATIVIDADES -->
+        <!-- ================= ABA: CADASTRAR ATIVIDADES ================= -->
         <div id="secao-cadastro-atividades" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-atividade" style="margin-top:0; font-size: 15px; font-weight: 800; color: var(--primary);">Nova Atividade</h3>
@@ -688,7 +688,7 @@
             </div>
         </div>
 
-        <!-- ABA: LISTA DE ATIVIDADES -->
+        <!-- ================= ABA: LISTA DE ATIVIDADES ================= -->
         <div id="secao-lista-atividades" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 12px;">
                 <h3 style="margin-top:0; font-size: 13px; font-weight: 800; color: var(--primary);">Filtrar por Mês/Ano</h3>
@@ -716,7 +716,7 @@
             <div id="lista-admin-atividades-edicao"></div>
         </div>
 
-        <!-- ABA: FREQUÊNCIA -->
+        <!-- ================= ABA: FREQUÊNCIA ================= -->
         <div id="secao-frequencia" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 12px;">
                 <h3 style="margin-top:0; font-size: 13px; font-weight: 800; color: var(--primary);">Frequência por Mês/Ano</h3>
@@ -744,7 +744,7 @@
             <div id="lista-admin-frequencia"></div>
         </div>
 
-        <!-- ABA: FINANCEIRO -->
+        <!-- ================= ABA: FINANCEIRO ================= -->
         <div id="secao-financeiro" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao filtro-financeiro" style="margin-bottom: 12px;">
                 <h3 style="margin-top:0; font-size: 13px; font-weight: 800; color: var(--primary);">Mensalidades por Mês</h3>
@@ -771,7 +771,7 @@
             <div id="lista-admin-financeiro"></div>
         </div>
 
-        <!-- ABA: AVISOS GLOBAIS -->
+        <!-- ================= ABA: AVISOS GLOBAIS ================= -->
         <div id="secao-avisos" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao">
                 <h3 id="titulo-form-aviso" style="margin-top:0; font-size: 15px; font-weight: 800; color: var(--primary);">Publicar Novo Aviso</h3>
@@ -785,7 +785,7 @@
             <div id="lista-admin-avisos"></div>
         </div>
 
-        <!-- ABA: MIGRAR PAPEL EM LOTE -->
+        <!-- ================= ABA: MIGRAR PAPEL EM LOTE ================= -->
         <div id="secao-migracao-papel" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #fffbeb; border: 2px dashed #f59e0b;">
                 <h3 style="color: #b45309; margin-top: 0; font-size: 14px; font-weight: 800;"><i class="fa-solid fa-file-arrow-down"></i> Migração em Lote (Papel)</h3>
@@ -799,7 +799,7 @@
             </div>
         </div>
 
-        <!-- ABA: OUVIDORIA -->
+        <!-- ================= ABA: OUVIDORIA ================= -->
         <div id="secao-ouvidoria-admin" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #faf5ff; border: 1px solid #e9d5ff;">
                 <h3 style="color: #7c3aed; margin-top: 0; font-size: 15px; font-weight: 800;"><i class="fa-solid fa-lightbulb"></i> Ouvidoria & Sugestões</h3>
@@ -823,62 +823,79 @@
 
     </div>
 
-    <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE FORMULÁRIO EXTERNO -->
+    <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE FORMULÁRIO EXTERNO (REFATORADO E LIMPO) -->
     <div id="modal-criar-form-externo" class="modal" style="display:none;">
-        <div class="modal-conteudo" style="max-width: 480px; max-height: 90vh; overflow-y: auto;">
-            <h3 id="titulo-modal-form-externo" style="color: var(--primary); margin-top: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo</h3>
-            <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">Personalize as informações, escolha os campos e defina o prazo de encerramento:</p>
+        <div class="modal-conteudo">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+                <h3 id="titulo-modal-form-externo" style="color: var(--primary); margin: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo</h3>
+                <button class="btn-mini cinza" onclick="fecharModalFormularioExterno()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
             
             <input type="hidden" id="form-id-editando">
 
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Título do Formulário *</label>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Título do Formulário *</label>
                     <input type="text" id="novo-form-titulo" placeholder="Ex: Processo Seletivo LAPE 2026.2">
                 </div>
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Descrição / Instruções</label>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Descrição / Instruções</label>
                     <textarea id="novo-form-desc" rows="3" placeholder="Orientações sobre taxa de inscrição, prazos, etc..."></textarea>
                 </div>
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Data e Hora Limite para Encerramento Automático</label>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Data e Hora Limite para Encerramento Automático</label>
                     <input type="datetime-local" id="novo-form-data-limite">
                 </div>
 
-                <!-- Seleção de Campos do Formulário -->
-                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
-                    <span style="font-size: 11px; font-weight: 800; color: var(--dark); display: block; margin-bottom: 8px;">☑️ Campos do Formulário:</span>
-                    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px;">
+                <!-- SEÇÃO 1: Seleção de Campos Prontos (Limpos) -->
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+                    <span style="font-size: 12px; font-weight: 800; color: var(--dark); display: block; margin-bottom: 8px;"><i class="fa-solid fa-check-double"></i> Campos Padrões do Sistema:</span>
+                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: #475569;">
                         <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-nome" checked disabled> Nome Completo (Obrigatório)</label>
                         <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-email" checked disabled> E-mail (Obrigatório)</label>
                         <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-tel" checked disabled> Telefone / WhatsApp (Obrigatório)</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-curso" checked disabled> Curso: Enfermagem (Fixo)[cite: 10]</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-periodo" checked> Período (1º ao 10º)[cite: 10]</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-comprovante" checked> Comprovante de Pagamento da Taxa[cite: 10]</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-motivacao" checked> Pergunta: Por que quer fazer parte da LAPE?[cite: 10]</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-curso" checked disabled> Curso: Enfermagem (Fixo)</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-periodo" checked> Qual o seu período letivo atual? (1º ao 10º)</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-comprovante" checked> Upload de Comprovante de Pagamento (Taxa)</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-motivacao" checked> Pergunta Dissertativa: "Por que quer fazer parte da LAPE?"</label>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 2: Construtor de Campos Dinâmicos -->
+                <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 12px; padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div>
+                            <span style="font-size: 12px; font-weight: 800; color: #7c3aed; display: block;"><i class="fa-solid fa-wand-magic-sparkles"></i> Meus Próprios Campos</span>
+                            <span style="font-size: 10px; color: #9333ea;">Crie perguntas exclusivas para este formulário.</span>
+                        </div>
+                        <button type="button" class="btn-mini" style="background: #7c3aed; color: white; flex-shrink: 0;" onclick="adicionarCampoPersonalizadoUI()"><i class="fa-solid fa-plus"></i> Novo Campo</button>
+                    </div>
+                    
+                    <div id="container-campos-customizados" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Campos injetados via JavaScript -->
                     </div>
                 </div>
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button class="btn-salvar" style="flex: 1; padding: 12px;" onclick="salvarFormularioExternoNuvem()">Salvar Formulário</button>
-                <button class="btn-mini cinza" style="flex: 1; padding: 12px; font-weight: 800;" onclick="fecharModalFormularioExterno()">Cancelar</button>
+                <button class="btn-salvar" style="flex: 1; padding: 14px;" onclick="salvarFormularioExternoNuvem()">Salvar e Gerar Link</button>
+                <button class="btn-mini cinza" style="flex: 1; padding: 14px; font-weight: 800;" onclick="fecharModalFormularioExterno()">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DE RESPOSTAS EM CARDS EXPANSÍVEIS -->
+    <!-- MODAL DE VISUALIZAÇÃO DE RESPOSTAS EM CARDS EXPANSÍVEIS (LIMPO) -->
     <div id="modal-respostas-seletivo" class="modal" style="display:none;">
-        <div class="modal-conteudo" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">
+        <div class="modal-conteudo" style="max-width: 600px; display: flex; flex-direction: column; max-height: 90vh;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
                 <h3 style="color: var(--primary); margin: 0; font-size: 15px; font-weight: 800;" id="titulo-modal-inscritos">📊 Inscrições Recebidas</h3>
-                <span id="contador-inscritos-badge" style="font-size: 11px; background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-weight: 800;">0 inscritos</span>
+                <span id="contador-inscritos-badge" style="font-size: 11px; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-weight: 800;">0 inscritos</span>
             </div>
             
             <div id="lista-inscritos-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
 
-            <div style="margin-top: 14px;">
-                <button class="btn-mini cinza" style="width: 100%; padding: 10px; font-weight: 800;" onclick="fecharModalRespostasSeletivo()">Fechar</button>
+            <div style="margin-top: 16px;">
+                <button class="btn-mini cinza" style="width: 100%; padding: 14px; font-weight: 800;" onclick="fecharModalRespostasSeletivo()">Fechar Respostas</button>
             </div>
         </div>
     </div>
@@ -1308,9 +1325,11 @@
             }
         }
 
-        // ================= FUNÇÕES DO CONSTRUTOR DE FORMULÁRIOS EXTERNOS =================
+        // ================= CONSTRUTOR AVANÇADO DE FORMULÁRIOS =================
         function abrirModalFormularioExterno(id = null, dados = null) {
             document.getElementById("form-id-editando").value = id || "";
+            document.getElementById("container-campos-customizados").innerHTML = "";
+
             if (dados) {
                 document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Formulário`;
                 document.getElementById("novo-form-titulo").value = dados.titulo || "";
@@ -1319,6 +1338,10 @@
                 document.getElementById("campo-periodo").checked = dados.campos?.periodo ?? true;
                 document.getElementById("campo-comprovante").checked = dados.campos?.comprovante ?? true;
                 document.getElementById("campo-motivacao").checked = dados.campos?.motivacao ?? true;
+
+                if (dados.camposPersonalizados && Array.isArray(dados.camposPersonalizados)) {
+                    dados.camposPersonalizados.forEach(campo => adicionarCampoPersonalizadoUI(campo));
+                }
             } else {
                 document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo`;
                 document.getElementById("novo-form-titulo").value = "";
@@ -1333,6 +1356,50 @@
 
         function fecharModalFormularioExterno() {
             document.getElementById("modal-criar-form-externo").style.display = "none";
+        }
+
+        function adicionarCampoPersonalizadoUI(dados = null) {
+            let container = document.getElementById("container-campos-customizados");
+            let idUnico = 'cp_' + Math.random().toString(36).substr(2, 9);
+
+            let rotulo = dados ? dados.rotulo : '';
+            let tipo = dados ? dados.tipo : 'texto_curto';
+            let obrigatorio = dados ? dados.obrigatorio : false;
+            let opcoes = dados ? dados.opcoes : '';
+
+            let html = `
+                <div id="${idUnico}" style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 11px; color: #7c3aed; font-weight: 800;">Novo Campo</span>
+                        <button type="button" class="btn-mini vermelho" style="padding: 4px 8px; font-size: 10px;" onclick="document.getElementById('${idUnico}').remove()"><i class="fa-solid fa-trash"></i> Remover</button>
+                    </div>
+                    
+                    <input type="text" class="campo-rotulo" placeholder="Título / Pergunta (Ex: Link do Instagram)" value="${rotulo}" style="padding: 10px; font-size: 11px;">
+                    
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                        <select class="campo-tipo" onchange="toggleOpcoesConstrutor('${idUnico}', this.value)" style="padding: 10px; font-size: 11px;">
+                            <option value="texto_curto" ${tipo === 'texto_curto' ? 'selected' : ''}>✍️ Resposta Curta (Texto)</option>
+                            <option value="texto_longo" ${tipo === 'texto_longo' ? 'selected' : ''}>📝 Resposta Longa (Parágrafo)</option>
+                            <option value="selecao" ${tipo === 'selecao' ? 'selected' : ''}>🔘 Múltipla Escolha (Dropdown)</option>
+                            <option value="arquivo" ${tipo === 'arquivo' ? 'selected' : ''}>📎 Upload de Arquivo Livre</option>
+                        </select>
+                    </div>
+
+                    <div id="wrapper-opcoes-${idUnico}" style="display: ${tipo === 'selecao' ? 'block' : 'none'};">
+                        <input type="text" class="campo-opcoes" placeholder="Digite as opções separadas por vírgula (Ex: Matutino, Vespertino)" value="${opcoes}" style="padding: 10px; font-size: 11px; background: #faf5ff; border-color: #e9d5ff;">
+                    </div>
+
+                    <label style="font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; color: var(--dark); cursor: pointer;">
+                        <input type="checkbox" class="campo-obrigatorio" ${obrigatorio ? 'checked' : ''} style="width: 16px; height: 16px;"> Marcar como Resposta Obrigatória
+                    </label>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function toggleOpcoesConstrutor(idUnico, tipo) {
+            let wrapper = document.getElementById(`wrapper-opcoes-${idUnico}`);
+            if (wrapper) wrapper.style.display = (tipo === 'selecao') ? 'block' : 'none';
         }
 
         async function salvarFormularioExternoNuvem() {
@@ -1352,22 +1419,32 @@
                 motivacao: document.getElementById("campo-motivacao").checked
             };
 
+            let camposPersonalizados = [];
+            document.querySelectorAll('#container-campos-customizados > div').forEach(bloco => {
+                let rotulo = bloco.querySelector('.campo-rotulo').value.trim();
+                let tipo = bloco.querySelector('.campo-tipo').value;
+                let obrigatorio = bloco.querySelector('.campo-obrigatorio').checked;
+                let opcoesElem = bloco.querySelector('.campo-opcoes');
+                let opcoes = opcoesElem ? opcoesElem.value.trim() : '';
+
+                if (rotulo) {
+                    camposPersonalizados.push({ rotulo, tipo, obrigatorio, opcoes });
+                }
+            });
+
             try {
+                let pacote = {
+                    titulo, descricao, dataLimite, campos: camposConfig, camposPersonalizados
+                };
+
                 if (id) {
-                    await db.collection("formularios_externos").doc(id).update({
-                        titulo, descricao, dataLimite, campos: camposConfig
-                    });
+                    await db.collection("formularios_externos").doc(id).update(pacote);
                     alert("Formulário atualizado com sucesso!");
                 } else {
-                    await db.collection("formularios_externos").add({
-                        titulo,
-                        descricao,
-                        dataLimite,
-                        campos: camposConfig,
-                        ativo: true,
-                        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    alert("Formulário criado com sucesso!");
+                    pacote.ativo = true;
+                    pacote.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection("formularios_externos").add(pacote);
+                    alert("Formulário e link criados com sucesso!");
                 }
                 fecharModalFormularioExterno();
                 carregarFormulariosExternosAdmin();
@@ -1448,7 +1525,7 @@
             document.getElementById("titulo-modal-inscritos").innerText = `📊 Respostas: ${tituloForm}`;
             let container = document.getElementById("lista-inscritos-conteudo");
             let contadorBadge = document.getElementById("contador-inscritos-badge");
-            container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando inscrições...</p>`;
+            container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando respostas detalhadas...</p>`;
             document.getElementById("modal-respostas-seletivo").style.display = 'flex';
 
             try {
@@ -1456,32 +1533,53 @@
                 contadorBadge.innerText = `${snapshot.size} inscrito(s)`;
 
                 if (snapshot.empty) {
-                    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Nenhuma inscrição enviada neste formulário ainda.</p>`;
+                    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Nenhuma inscrição submetida ainda.</p>`;
                     return;
                 }
 
                 let html = "";
                 snapshot.forEach(doc => {
                     let r = doc.data();
-                    let dataEnvio = r.enviadoEm ? r.enviadoEm.toDate().toLocaleString('pt-BR') : "Data não registrada";
+                    let dataEnvio = r.enviadoEm ? r.enviadoEm.toDate().toLocaleString('pt-BR') : "Data desconhecida";
                     let cardId = `inscrito-${doc.id}`;
 
+                    let extrasHtml = "";
+                    if (r.respostasExtras) {
+                        for (let [pergunta, resposta] of Object.entries(r.respostasExtras)) {
+                            let respFinal = resposta;
+                            if(typeof resposta === 'string' && resposta.startsWith('http')) {
+                                respFinal = `<a href="${resposta}" target="_blank" style="color:var(--primary); font-weight:800; text-decoration:none;">📎 Visualizar Arquivo Anexo</a>`;
+                            }
+                            extrasHtml += `<div style="margin-top: 6px; padding: 6px; background: white; border: 1px solid var(--border); border-radius: 6px;"><strong style="color: #64748b; display: block; margin-bottom: 2px;">${pergunta}:</strong> <span style="color: var(--dark);">${respFinal}</span></div>`;
+                        }
+                    }
+
                     html += `
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px;">
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px; transition: all 0.2s;">
                             <div onclick="toggleExpandirInscricao('${cardId}')" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                 <div>
-                                    <strong style="font-size: 12px; color: var(--primary); display: block;">${r.nome}</strong>
-                                    <span style="font-size: 10px; color: #64748b;">📅 ${dataEnvio}</span>
+                                    <strong style="font-size: 13px; color: var(--primary); display: block;">${r.nome}</strong>
+                                    <span style="font-size: 10px; color: #64748b;">📅 Enviado em: ${dataEnvio}</span>
                                 </div>
-                                <span style="font-size: 11px; font-weight: 800; color: var(--primary);" id="seta-${cardId}">▼ Ver Detalhes</span>
+                                <span style="font-size: 11px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 4px 10px; border-radius: 20px;" id="seta-${cardId}">Ver Ficha Completa</span>
                             </div>
-                            <div id="${cardId}" style="display: none; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: #475569;">
-                                <p style="margin: 2px 0;">📧 <strong>E-mail:</strong> ${r.email}</p>
-                                <p style="margin: 2px 0;">📱 <strong>Telefone:</strong> ${r.telefone}</p>
-                                <p style="margin: 2px 0;">🎓 <strong>Curso:</strong> ${r.curso}</p>
-                                ${r.periodo ? `<p style="margin: 2px 0;">📚 <strong>Período:</strong> ${r.periodo}º Período[cite: 10]</p>` : ''}
-                                ${r.motivacao ? `<div style="background: white; border: 1px solid var(--border); padding: 8px; border-radius: 6px; margin-top: 6px;"><p style="margin: 0 0 2px 0; font-weight: 800; color: #64748b;">💡 Motivação[cite: 10]:</p><p style="margin: 0; color: var(--dark);">${r.motivacao}</p></div>` : ''}
-                                ${r.comprovanteUrl ? `<div style="margin-top: 6px;"><a href="${r.comprovanteUrl}" target="_blank" style="font-weight: 800; color: var(--primary); text-decoration: none;">📎 Ver Comprovante Anexado[cite: 10]</a></div>` : ''}
+                            <div id="${cardId}" style="display: none; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; font-size: 11px; color: #475569;">
+                                <div style="display: grid; grid-template-columns: 1fr; gap: 4px; margin-bottom: 8px;">
+                                    <span>📧 <strong>E-mail:</strong> ${r.email}</span>
+                                    <span>📱 <strong>Telefone:</strong> ${r.telefone}</span>
+                                    <span>🎓 <strong>Curso:</strong> ${r.curso}</span>
+                                    ${r.periodo ? `<span>📚 <strong>Período:</strong> ${r.periodo}º</span>` : ''}
+                                </div>
+                                
+                                ${r.motivacao ? `
+                                <div style="background: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; border-left: 3px solid #7c3aed;">
+                                    <p style="margin: 0 0 4px 0; font-weight: 800; color: #7c3aed;">💡 Motivação da Inscrição:</p>
+                                    <p style="margin: 0; color: var(--dark); line-height: 1.4;">"${r.motivacao}"</p>
+                                </div>` : ''}
+                                
+                                ${r.comprovanteUrl ? `<div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; text-align: center;"><a href="${r.comprovanteUrl}" target="_blank" style="font-weight: 800; color: #166534; text-decoration: none; display: block;">🧾 Abrir Comprovante de Pagamento</a></div>` : ''}
+
+                                ${extrasHtml ? `<div style="margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 8px;"><strong style="color: #7c3aed; font-size: 10px; display: block; margin-bottom: 6px;">RESPOSTAS AOS CAMPOS PERSONALIZADOS:</strong>${extrasHtml}</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -1489,7 +1587,7 @@
                 container.innerHTML = html;
             } catch (e) {
                 console.error(e);
-                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar respostas.</p>`;
+                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar respostas. Verifique a conexão e as regras do banco de dados.</p>`;
             }
         }
 
@@ -1498,15 +1596,15 @@
             let seta = document.getElementById(`seta-${cardId}`);
             if (el.style.display === "none") {
                 el.style.display = "block";
-                seta.innerText = "▲ Ocultar";
+                seta.innerText = "Recolher Ficha";
+                seta.style.background = "#e2e8f0";
+                seta.style.color = "#475569";
             } else {
                 el.style.display = "none";
-                seta.innerText = "▼ Ver Detalhes";
+                seta.innerText = "Ver Ficha Completa";
+                seta.style.background = "var(--primary-light)";
+                seta.style.color = "var(--primary)";
             }
-        }
-
-        function fecharModalRespostasSeletivo() {
-            document.getElementById("modal-respostas-seletivo").style.display = "none";
         }
 
         function gerarInsightsIA(taxaPresenca, taxaRetencao, justPendentes, chTotal, ativs) {
