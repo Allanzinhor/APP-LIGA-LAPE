@@ -104,11 +104,48 @@
             letter-spacing: -0.5px;
         }
 
+        .cabecalho-form h3 {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            display: none;
+        }
+
         .cabecalho-form p {
             color: var(--text-muted); 
             font-size: 13px; 
             margin: 0; 
             line-height: 1.5;
+        }
+
+        /* --- BOTÕES DE SUPORTE (NOVO) --- */
+        .area-contatos {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .btn-contato {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+            transition: all 0.2s ease;
+        }
+
+        .btn-contato:hover {
+            background: #bae6fd;
         }
 
         /* --- CRONÔMETRO --- */
@@ -203,6 +240,13 @@
             outline: none;
             transition: all 0.2s ease;
             box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="checkbox"], input[type="radio"] {
+            appearance: auto;
+            -webkit-appearance: auto;
         }
 
         input:focus, select:focus, textarea:focus { 
@@ -317,7 +361,12 @@
         <div class="cabecalho-form">
             <img src="brasao.png" alt="Brasão LAPE">
             <h2 id="pub-titulo-form">Carregando...</h2>
+            <h3 id="pub-subtitulo-form"></h3>
             <p id="pub-desc-form"></p>
+        </div>
+
+        <div class="area-contatos" id="container-contatos">
+            <!-- Botões injetados via JS -->
         </div>
 
         <div class="cronometro-container" id="box-cronometro">
@@ -400,9 +449,52 @@
                     return;
                 }
 
-                // Configurar Textos
+                // Configurar Textos Básicos
                 document.getElementById("pub-titulo-form").innerText = data.titulo;
+                
+                let subEl = document.getElementById("pub-subtitulo-form");
+                if (data.subtitulo) {
+                    subEl.innerText = data.subtitulo;
+                    subEl.style.display = "block";
+                }
+
                 document.getElementById("pub-desc-form").innerText = data.descricao || "Preencha os dados abaixo com atenção.";
+
+                // Configurar Área de Contatos e Suporte (NOVO)
+                let contatosContainer = document.getElementById("container-contatos");
+                if (data.contatos && Array.isArray(data.contatos) && data.contatos.length > 0) {
+                    contatosContainer.style.display = "flex";
+                    let htmlContatos = "";
+                    
+                    data.contatos.forEach(ct => {
+                        let link = "#";
+                        let val = ct.telefone.trim();
+                        let icone = "fa-phone";
+                        
+                        // Checagem simples: é email ou telefone?
+                        if (val.includes("@")) {
+                            link = `mailto:${val}`;
+                            icone = "fa-envelope";
+                        } else {
+                            let numLimpo = val.replace(/\D/g, "");
+                            if (numLimpo.length >= 10) {
+                                link = `https://wa.me/55${numLimpo}`;
+                                icone = "fa-whatsapp fa-brands"; // ajustando pro font-awesome brands
+                            } else {
+                                link = `tel:${numLimpo}`;
+                                icone = "fa-phone fa-solid";
+                            }
+                        }
+
+                        htmlContatos += `
+                            <a href="${link}" target="_blank" class="btn-contato">
+                                <i class="${icone}"></i> 
+                                Suporte: ${ct.nome}
+                            </a>
+                        `;
+                    });
+                    contatosContainer.innerHTML = htmlContatos;
+                }
 
                 // Iniciar Cronômetro se houver data limite
                 if (dataLimiteObj) {
