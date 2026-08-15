@@ -823,7 +823,7 @@
 
     </div>
 
-    <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE FORMULÁRIO EXTERNO (REFATORADO E LIMPO) -->
+    <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE FORMULÁRIO EXTERNO (LIMPO - SOMENTE CAMPOS CUSTOMIZADOS) -->
     <div id="modal-criar-form-externo" class="modal" style="display:none;">
         <div class="modal-conteudo">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
@@ -847,26 +847,12 @@
                     <input type="datetime-local" id="novo-form-data-limite">
                 </div>
 
-                <!-- SEÇÃO 1: Seleção de Campos Prontos (Limpos) -->
-                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
-                    <span style="font-size: 12px; font-weight: 800; color: var(--dark); display: block; margin-bottom: 8px;"><i class="fa-solid fa-check-double"></i> Campos Padrões do Sistema:</span>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: #475569;">
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-nome" checked disabled> Nome Completo (Obrigatório)</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-email" checked disabled> E-mail (Obrigatório)</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-tel" checked disabled> Telefone / WhatsApp (Obrigatório)</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-curso" checked disabled> Curso: Enfermagem (Fixo)</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-periodo" checked> Qual o seu período letivo atual? (1º ao 10º)</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-comprovante" checked> Upload de Comprovante de Pagamento (Taxa)</label>
-                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-motivacao" checked> Pergunta Dissertativa: "Por que quer fazer parte da LAPE?"</label>
-                    </div>
-                </div>
-
-                <!-- SEÇÃO 2: Construtor de Campos Dinâmicos -->
+                <!-- SEÇÃO ÚNICA: Construtor de Campos Dinâmicos (Você no controle) -->
                 <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 12px; padding: 14px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <div>
-                            <span style="font-size: 12px; font-weight: 800; color: #7c3aed; display: block;"><i class="fa-solid fa-wand-magic-sparkles"></i> Meus Próprios Campos</span>
-                            <span style="font-size: 10px; color: #9333ea;">Crie perguntas exclusivas para este formulário.</span>
+                            <span style="font-size: 12px; font-weight: 800; color: #7c3aed; display: block;"><i class="fa-solid fa-wand-magic-sparkles"></i> Construtor de Campos</span>
+                            <span style="font-size: 10px; color: #9333ea;">Crie todas as perguntas necessárias para este formulário.</span>
                         </div>
                         <button type="button" class="btn-mini" style="background: #7c3aed; color: white; flex-shrink: 0;" onclick="adicionarCampoPersonalizadoUI()"><i class="fa-solid fa-plus"></i> Novo Campo</button>
                     </div>
@@ -884,7 +870,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DE RESPOSTAS EM CARDS EXPANSÍVEIS (LIMPO) -->
+    <!-- MODAL DE VISUALIZAÇÃO DE RESPOSTAS EM CARDS EXPANSÍVEIS -->
     <div id="modal-respostas-seletivo" class="modal" style="display:none;">
         <div class="modal-conteudo" style="max-width: 600px; display: flex; flex-direction: column; max-height: 90vh;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
@@ -1335,9 +1321,6 @@
                 document.getElementById("novo-form-titulo").value = dados.titulo || "";
                 document.getElementById("novo-form-desc").value = dados.descricao || "";
                 document.getElementById("novo-form-data-limite").value = dados.dataLimite || "";
-                document.getElementById("campo-periodo").checked = dados.campos?.periodo ?? true;
-                document.getElementById("campo-comprovante").checked = dados.campos?.comprovante ?? true;
-                document.getElementById("campo-motivacao").checked = dados.campos?.motivacao ?? true;
 
                 if (dados.camposPersonalizados && Array.isArray(dados.camposPersonalizados)) {
                     dados.camposPersonalizados.forEach(campo => adicionarCampoPersonalizadoUI(campo));
@@ -1347,9 +1330,6 @@
                 document.getElementById("novo-form-titulo").value = "";
                 document.getElementById("novo-form-desc").value = "";
                 document.getElementById("novo-form-data-limite").value = "";
-                document.getElementById("campo-periodo").checked = true;
-                document.getElementById("campo-comprovante").checked = true;
-                document.getElementById("campo-motivacao").checked = true;
             }
             document.getElementById("modal-criar-form-externo").style.display = "flex";
         }
@@ -1374,7 +1354,7 @@
                         <button type="button" class="btn-mini vermelho" style="padding: 4px 8px; font-size: 10px;" onclick="document.getElementById('${idUnico}').remove()"><i class="fa-solid fa-trash"></i> Remover</button>
                     </div>
                     
-                    <input type="text" class="campo-rotulo" placeholder="Título / Pergunta (Ex: Link do Instagram)" value="${rotulo}" style="padding: 10px; font-size: 11px;">
+                    <input type="text" class="campo-rotulo" placeholder="Título / Pergunta (Ex: Nome Completo, Email, Telefone...)" value="${rotulo}" style="padding: 10px; font-size: 11px;">
                     
                     <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
                         <select class="campo-tipo" onchange="toggleOpcoesConstrutor('${idUnico}', this.value)" style="padding: 10px; font-size: 11px;">
@@ -1413,12 +1393,6 @@
                 return;
             }
 
-            let camposConfig = {
-                periodo: document.getElementById("campo-periodo").checked,
-                comprovante: document.getElementById("campo-comprovante").checked,
-                motivacao: document.getElementById("campo-motivacao").checked
-            };
-
             let camposPersonalizados = [];
             document.querySelectorAll('#container-campos-customizados > div').forEach(bloco => {
                 let rotulo = bloco.querySelector('.campo-rotulo').value.trim();
@@ -1432,9 +1406,14 @@
                 }
             });
 
+            if (camposPersonalizados.length === 0) {
+                alert("Por favor, adicione pelo menos um campo ao formulário.");
+                return;
+            }
+
             try {
                 let pacote = {
-                    titulo, descricao, dataLimite, campos: camposConfig, camposPersonalizados
+                    titulo, descricao, dataLimite, camposPersonalizados
                 };
 
                 if (id) {
@@ -1543,6 +1522,32 @@
                     let dataEnvio = r.enviadoEm ? r.enviadoEm.toDate().toLocaleString('pt-BR') : "Data desconhecida";
                     let cardId = `inscrito-${doc.id}`;
 
+                    // Inteligência para puxar o nome/email/telefone dos campos customizados
+                    let nomeExibicao = r.nome;
+                    if (!nomeExibicao && r.respostasExtras) {
+                        let chaveNome = Object.keys(r.respostasExtras).find(k => k.toLowerCase().includes('nome'));
+                        if (chaveNome) nomeExibicao = r.respostasExtras[chaveNome];
+                    }
+                    nomeExibicao = nomeExibicao || "Candidato(a)";
+
+                    let emailExibicao = r.email;
+                    if (!emailExibicao && r.respostasExtras) {
+                        let chaveEmail = Object.keys(r.respostasExtras).find(k => k.toLowerCase().includes('mail'));
+                        if (chaveEmail) emailExibicao = r.respostasExtras[chaveEmail];
+                    }
+
+                    let telExibicao = r.telefone;
+                    if (!telExibicao && r.respostasExtras) {
+                        let chaveTel = Object.keys(r.respostasExtras).find(k => k.toLowerCase().includes('tel') || k.toLowerCase().includes('whats'));
+                        if (chaveTel) telExibicao = r.respostasExtras[chaveTel];
+                    }
+
+                    let infosBasicasHtml = "";
+                    if (emailExibicao) infosBasicasHtml += `<span>📧 <strong>E-mail:</strong> ${emailExibicao}</span>`;
+                    if (telExibicao) infosBasicasHtml += `<span>📱 <strong>Telefone:</strong> ${telExibicao}</span>`;
+                    if (r.curso) infosBasicasHtml += `<span>🎓 <strong>Curso:</strong> ${r.curso}</span>`;
+                    if (r.periodo) infosBasicasHtml += `<span>📚 <strong>Período:</strong> ${r.periodo}º</span>`;
+
                     let extrasHtml = "";
                     if (r.respostasExtras) {
                         for (let [pergunta, resposta] of Object.entries(r.respostasExtras)) {
@@ -1558,18 +1563,13 @@
                         <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px; transition: all 0.2s;">
                             <div onclick="toggleExpandirInscricao('${cardId}')" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                 <div>
-                                    <strong style="font-size: 13px; color: var(--primary); display: block;">${r.nome}</strong>
+                                    <strong style="font-size: 13px; color: var(--primary); display: block;">${nomeExibicao}</strong>
                                     <span style="font-size: 10px; color: #64748b;">📅 Enviado em: ${dataEnvio}</span>
                                 </div>
                                 <span style="font-size: 11px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 4px 10px; border-radius: 20px;" id="seta-${cardId}">Ver Ficha Completa</span>
                             </div>
                             <div id="${cardId}" style="display: none; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; font-size: 11px; color: #475569;">
-                                <div style="display: grid; grid-template-columns: 1fr; gap: 4px; margin-bottom: 8px;">
-                                    <span>📧 <strong>E-mail:</strong> ${r.email}</span>
-                                    <span>📱 <strong>Telefone:</strong> ${r.telefone}</span>
-                                    <span>🎓 <strong>Curso:</strong> ${r.curso}</span>
-                                    ${r.periodo ? `<span>📚 <strong>Período:</strong> ${r.periodo}º</span>` : ''}
-                                </div>
+                                ${infosBasicasHtml ? `<div style="display: grid; grid-template-columns: 1fr; gap: 4px; margin-bottom: 8px;">${infosBasicasHtml}</div>` : ''}
                                 
                                 ${r.motivacao ? `
                                 <div style="background: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 8px; border-left: 3px solid #7c3aed;">
@@ -1579,7 +1579,7 @@
                                 
                                 ${r.comprovanteUrl ? `<div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; text-align: center;"><a href="${r.comprovanteUrl}" target="_blank" style="font-weight: 800; color: #166534; text-decoration: none; display: block;">🧾 Abrir Comprovante de Pagamento</a></div>` : ''}
 
-                                ${extrasHtml ? `<div style="margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 8px;"><strong style="color: #7c3aed; font-size: 10px; display: block; margin-bottom: 6px;">RESPOSTAS AOS CAMPOS PERSONALIZADOS:</strong>${extrasHtml}</div>` : ''}
+                                ${extrasHtml ? `<div style="margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 8px;"><strong style="color: #7c3aed; font-size: 10px; display: block; margin-bottom: 6px;">TODAS AS RESPOSTAS:</strong>${extrasHtml}</div>` : ''}
                             </div>
                         </div>
                     `;
