@@ -239,12 +239,12 @@
             opacity: 0.9;
         }
 
-        /* ESTILOS EXCLUSIVOS PARA O NOVO MODAL DE PERFIL ULTRA-COMPLETO */
+        /* ESTILOS DO NOVO MODAL DE PERFIL ULTRA-COMPLEXO E SPLENDIDO */
         .modal-perfil-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(5px);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -257,43 +257,46 @@
             border-radius: 24px;
             padding: 24px;
             width: 100%;
-            max-width: 440px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            max-height: 92vh;
+            max-width: 480px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
+            max-height: 94vh;
             overflow-y: auto;
             box-sizing: border-box;
             animation: surgirModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes surgirModal {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            from { opacity: 0; transform: scale(0.95) translateY(12px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
-        .perfil-cabecalho-topo {
+        .perfil-topo-splendido {
             text-align: center;
             position: relative;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #f1f3f5;
+            background: linear-gradient(135deg, #0056b3 0%, #003366 100%);
+            margin: -24px -24px 20px -24px;
+            padding: 28px 20px 22px 20px;
+            border-radius: 24px 24px 0 0;
+            color: white;
+            box-shadow: inset 0 -4px 10px rgba(0,0,0,0.1);
         }
         .perfil-avatar-wrapper {
             position: relative;
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 12px auto;
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 10px auto;
         }
         .perfil-avatar-img {
-            width: 90px;
-            height: 90px;
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #0056b3;
-            box-shadow: 0 4px 12px rgba(0,86,179,0.2);
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
         }
         .botao-trocar-foto-flutuante {
             position: absolute;
             bottom: 0;
             right: 0;
-            background: #0056b3;
+            background: #ff6b6b;
             color: white;
             width: 30px;
             height: 30px;
@@ -310,7 +313,44 @@
         .botao-trocar-foto-flutuante:hover {
             transform: scale(1.1);
         }
-        .perfil-grid-infos {
+        .perfil-abas-navegacao {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            background: #f1f3f5;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .btn-aba-perfil {
+            background: transparent;
+            border: none;
+            padding: 8px 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #495057;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .btn-aba-perfil.ativa {
+            background: #ffffff;
+            color: #0056b3;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .perfil-secao-conteudo {
+            display: none;
+            animation: fadeInTab 0.25s ease;
+        }
+        .perfil-secao-conteudo.ativa {
+            display: block;
+        }
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .perfil-grid-detalhes {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
@@ -323,7 +363,7 @@
             padding: 10px 12px;
             box-sizing: border-box;
         }
-        .perfil-card-info.full-width {
+        .perfil-card-info.full {
             grid-column: span 2;
         }
         .perfil-card-label {
@@ -340,14 +380,6 @@
             font-weight: 600;
             color: #212529;
             word-break: break-word;
-        }
-        .secao-alterar-senha-box {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 14px;
-            padding: 14px;
-            margin-top: 14px;
-            margin-bottom: 14px;
         }
     </style>
 
@@ -607,84 +639,116 @@
         </div>
     </div>
 
-    <!-- MODAL DE PERFIL ULTRA-COMPLETO E REFINADO -->
+    <!-- MODAL DE PERFIL SPLÉNDIDO & COMPLEXO COM ABAS -->
     <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
         <div class="modal-perfil-conteudo">
-            <div class="perfil-cabecalho-topo">
+            
+            <!-- TOPO GRADIENTE SPLÉNDIDO -->
+            <div class="perfil-topo-splendido">
                 <div class="perfil-avatar-wrapper" id="perfil-avatar-container"></div>
                 <div class="botao-trocar-foto-flutuante" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
                 <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
                 
-                <h3 id="perfil-nome" style="margin: 0 0 2px 0; font-size: 18px; font-weight: 800; color: #1e293b;">Nome Completo</h3>
-                <span id="perfil-codigo" style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-weight: 800;">20261000</span>
-                <p id="perfil-cargo" style="margin: 6px 0 0 0; font-size: 12px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.5px;">Cargo</p>
+                <h3 id="perfil-nome" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #ffffff;">Nome Completo</h3>
+                <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 4px;" id="perfil-codigo">20261000</div>
+                <p id="perfil-cargo" style="margin: 0; font-size: 11px; font-weight: 700; color: #69db7c; text-transform: uppercase; letter-spacing: 0.8px;">Cargo</p>
                 <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
             </div>
 
-            <!-- Grid de Informações Detalhadas -->
-            <div class="perfil-grid-infos">
-                <div class="perfil-card-info">
-                    <span class="perfil-card-label">E-mail</span>
-                    <span class="perfil-card-valor" id="perfil-email" style="font-size: 11px;">-</span>
-                </div>
-                <div class="perfil-card-info">
-                    <span class="perfil-card-label">Telefone</span>
-                    <span class="perfil-card-valor" id="perfil-tel">-</span>
-                </div>
-                <div class="perfil-card-info">
-                    <span class="perfil-card-label">Nascimento</span>
-                    <span class="perfil-card-valor" id="perfil-nascimento">-</span>
-                </div>
-                <div class="perfil-card-info">
-                    <span class="perfil-card-label">Ingresso na Liga</span>
-                    <span class="perfil-card-valor" id="perfil-ingresso">-</span>
-                </div>
-                <div class="perfil-card-info full-width">
-                    <span class="perfil-card-label">Curso & Turno</span>
-                    <span class="perfil-card-valor" id="perfil-curso">-</span>
-                </div>
-                <div class="perfil-card-info">
-                    <span class="perfil-card-label">Matrícula</span>
-                    <span class="perfil-card-valor" id="perfil-matricula">-</span>
-                </div>
-                <div class="perfil-card-info">
-                    <span class="perfil-card-label">Formatura Prevista</span>
-                    <span class="perfil-card-valor" id="perfil-formatura">-</span>
-                </div>
-                <div class="perfil-card-info full-width">
-                    <span class="perfil-card-label">Instituição</span>
-                    <span class="perfil-card-valor" id="perfil-instituicao">-</span>
+            <!-- MENU DE ABAS INTERNAS (SPLENDIDO & COMPLEXO) -->
+            <div class="perfil-abas-navegacao">
+                <button class="btn-aba-perfil ativa" id="aba-btn-dados" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
+                <button class="btn-aba-perfil" id="aba-btn-estatisticas" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
+                <button class="btn-aba-perfil" id="aba-btn-seguranca" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
+            </div>
+
+            <!-- SEÇÃO 1: DADOS CADASTRAIS -->
+            <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados">
+                <div class="perfil-grid-detalhes">
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">E-mail</span>
+                        <span class="perfil-card-valor" id="perfil-email" style="font-size: 11px;">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Telefone</span>
+                        <span class="perfil-card-valor" id="perfil-tel">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Nascimento</span>
+                        <span class="perfil-card-valor" id="perfil-nascimento">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Ingresso Liga</span>
+                        <span class="perfil-card-valor" id="perfil-ingresso">-</span>
+                    </div>
+                    <div class="perfil-card-info full">
+                        <span class="perfil-card-label">Curso & Turno</span>
+                        <span class="perfil-card-valor" id="perfil-curso">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Matrícula</span>
+                        <span class="perfil-card-valor" id="perfil-matricula">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Formatura Prevista</span>
+                        <span class="perfil-card-valor" id="perfil-formatura">-</span>
+                    </div>
+                    <div class="perfil-card-info full">
+                        <span class="perfil-card-label">Instituição</span>
+                        <span class="perfil-card-valor" id="perfil-instituicao">-</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- SEÇÃO DE ALTERAR SENHA -->
-            <div class="secao-alterar-senha-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleSecaoSenha()">
-                    <span style="font-size: 12px; font-weight: 800; color: #0056b3;">🔒 Alterar Senha de Acesso</span>
-                    <span id="seta-senha-toggle" style="font-size: 11px; font-weight: bold; color: #0056b3;">▼</span>
-                </div>
-                <div id="container-form-senha" style="display: none; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
-                    <div>
-                        <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Senha Atual</label>
-                        <input type="password" id="input-senha-atual" placeholder="Digite sua senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+            <!-- SEÇÃO 2: ESTATÍSTICAS E RESUMO DO LIGANTE -->
+            <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas">
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #2b8a3e;" id="perfil-stat-presencas">0</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Presenças</span>
+                        </div>
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #c92a2a;" id="perfil-stat-faltas">0</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Faltas</span>
+                        </div>
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #1c7ed6;" id="perfil-stat-ch">0h</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Carga Horária</span>
+                        </div>
                     </div>
-                    <div>
-                        <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Nova Senha</label>
-                        <input type="password" id="input-senha-nova" placeholder="Mínimo de caracteres" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                    </div>
-                    <div>
-                        <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Confirmar Nova Senha</label>
-                        <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                    </div>
-                    <button class="btn-salvar" style="padding: 8px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha</button>
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- SEÇÃO 3: SEGURANÇA E ALTERAR SENHA -->
+            <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca">
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha Segura</span>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Senha Atual</label>
+                            <input type="password" id="input-senha-atual" placeholder="Sua senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Nova Senha</label>
+                            <input type="password" id="input-senha-nova" placeholder="Mínimo de caracteres" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Confirmar Nova Senha</label>
+                            <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <button class="btn-salvar" style="padding: 9px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha no Sistema</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÕES DE RODAPÉ -->
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
                 <div id="btn-container-painel-admin"></div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair</button>
-                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharPerfilModal()">Fechar</button>
+                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair da Conta</button>
+                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharPerfilModal()">Fechar Perfil</button>
                 </div>
             </div>
         </div>
@@ -1438,6 +1502,14 @@
             }
         }
 
+        function mudarAbaPerfil(nomeAba) {
+            document.querySelectorAll('.btn-aba-perfil').forEach(btn => btn.classList.remove('ativa'));
+            document.querySelectorAll('.perfil-secao-conteudo').forEach(sec => sec.classList.remove('ativa'));
+
+            document.getElementById(`aba-btn-${nomeAba}`).classList.add('ativa');
+            document.getElementById(`aba-conteudo-${nomeAba}`).classList.add('ativa');
+        }
+
         function abrirPerfilModal() {
             document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
             document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo || "-";
@@ -1452,20 +1524,36 @@
             document.getElementById("perfil-formatura").innerText = usuarioLogado.previsaoFormatura || "-";
             document.getElementById("perfil-ingresso").innerText = usuarioLogado.ingressoLiga ? new Date(usuarioLogado.ingressoLiga + "T00:00:00").toLocaleDateString('pt-BR') : "-";
 
+            // Calcular estatísticas gerais rapidinho para a aba de estatísticas
+            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+            let ativVisiveis = atividades.filter(a => {
+                if (a.cancelada) return false;
+                if (a.publico === 'diretoria' && !ehDiretoria) return false;
+                if (usuarioLogado.ingressoLiga && a.data < usuarioLogado.ingressoLiga) return false;
+                return true;
+            });
+            let totalPresencas = ativVisiveis.filter(a => a.statusAdmin === 'presente').length;
+            let totalFaltas = ativVisiveis.filter(a => a.statusAdmin === 'negado' || a.statusAdmin === 'justificativa_negada').length;
+            let totalCH = ativVisiveis.filter(a => a.statusAdmin === 'presente').reduce((s, a) => s + a.ch, 0);
+
+            document.getElementById("perfil-stat-presencas").innerText = totalPresencas;
+            document.getElementById("perfil-stat-faltas").innerText = totalFaltas;
+            document.getElementById("perfil-stat-ch").innerText = totalCH + "h";
+
             // Limpa campos de senha ao abrir
             document.getElementById("input-senha-atual").value = "";
             document.getElementById("input-senha-nova").value = "";
             document.getElementById("input-senha-confirmar").value = "";
-            document.getElementById("container-form-senha").style.display = "none";
-            document.getElementById("seta-senha-toggle").innerText = "▼";
+            mudarAbaPerfil('dados');
 
             let statusMsg = document.getElementById("status-foto-msg");
             if (usuarioLogado.fotoStatus === 'analise') {
                 statusMsg.innerText = "⏳ Aguardando análise da diretoria";
-                statusMsg.style.color = "#f59f00";
+                statusMsg.style.color = "#ffd43b";
             } else if (usuarioLogado.fotoStatus === 'negada') {
                 statusMsg.innerText = "❌ Imagem não permitida";
-                statusMsg.style.color = "#fa5252";
+                statusMsg.style.color = "#ffa8a8";
             } else {
                 statusMsg.innerText = "";
             }
@@ -1475,12 +1563,10 @@
                 avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" class="perfil-avatar-img">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
-                avatarModal.innerHTML = `<div class="perfil-avatar-img" style="background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px;">${inicial}</div>`;
+                avatarModal.innerHTML = `<div class="perfil-avatar-img" style="background:#003366; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px;">${inicial}</div>`;
             }
 
-            let cargoLower = (usuarioLogado.cargo || "").toLowerCase().trim();
             let containerAdminBtn = document.getElementById("btn-container-painel-admin");
-            
             if (cargoLower !== "ligante" && cargoLower !== "membro" && cargoLower !== "marketing") {
                 containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3; width: 100%; padding: 12px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
             } else {
@@ -1491,18 +1577,6 @@
         }
 
         function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
-
-        function toggleSecaoSenha() {
-            let container = document.getElementById("container-form-senha");
-            let seta = document.getElementById("seta-senha-toggle");
-            if (container.style.display === "none") {
-                container.style.display = "flex";
-                seta.innerText = "▲";
-            } else {
-                container.style.display = "none";
-                seta.innerText = "▼";
-            }
-        }
 
         async function salvarNovaSenha() {
             let senhaAtualInput = document.getElementById("input-senha-atual").value.trim();
@@ -1536,7 +1610,7 @@
                 usuarioLogado.senhaPadrao = novaSenhaInput;
                 localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                 alert("Senha alterada com sucesso!");
-                toggleSecaoSenha();
+                mudarAbaPerfil('dados');
             } catch (e) {
                 console.error(e);
                 alert("Erro ao atualizar a senha no banco de dados.");
