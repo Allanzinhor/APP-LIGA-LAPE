@@ -996,14 +996,15 @@
         let periodoDesempenhoSelecionado = 'mensal';
         let estatisticasLigantesCache = [];
 
+        // Adicionada a permissão do "correio-interno" para os cargos administrativos
         const permissoesCargos = {
-            "presidente": ["dashboard-principal", "formularios-seletivo", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "secretaria": ["dashboard-principal", "formularios-seletivo", "lista-membros", "frequencia", "avisos", "ouvidoria-admin"],
-            "tesoureira": ["financeiro", "avisos"],
-            "diretoria de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretoria de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretoria de marketing": ["avisos"]
+            "presidente": ["dashboard-principal", "formularios-seletivo", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
+            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
+            "secretaria": ["dashboard-principal", "formularios-seletivo", "lista-membros", "frequencia", "avisos", "ouvidoria-admin", "correio-interno"],
+            "tesoureira": ["financeiro", "avisos", "correio-interno"],
+            "diretoria de extensão": ["cadastro-atividades", "lista-atividades", "avisos", "correio-interno"],
+            "diretoria de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos", "correio-interno"],
+            "diretoria de marketing": ["avisos", "correio-interno"]
         };
 
         function mascaraTelefone(input) {
@@ -1013,7 +1014,6 @@
             input.value = v;
         }
 
-        // Função adicionada para fechar as respostas
         function fecharModalRespostasSeletivo() {
             document.getElementById("modal-respostas-seletivo").style.display = "none";
         }
@@ -1086,6 +1086,7 @@
             let menuNav = document.getElementById("menu-painel-executivo");
             menuNav.innerHTML = "";
 
+            // Adicionado o mapeamento visual do LAPE Mail no menu do painel
             const configAbas = {
                 "dashboard-principal": { nome: "Gestão Executiva", icone: "fa-chart-pie" },
                 "formularios-seletivo": { nome: "Processo Seletivo", icone: "fa-wpforms" },
@@ -1099,7 +1100,8 @@
                 "financeiro": { nome: "Gestão Financeira", icone: "fa-wallet" },
                 "avisos": { nome: "Avisos Globais", icone: "fa-bell" },
                 "migracao-papel": { nome: "Migrar Lote (Papel)", icone: "fa-file-arrow-down" },
-                "ouvidoria-admin": { nome: "Ouvidoria & Sugestões", icone: "fa-lightbulb" }
+                "ouvidoria-admin": { nome: "Ouvidoria & Sugestões", icone: "fa-lightbulb" },
+                "correio-interno": { nome: "LAPE Mail", icone: "fa-envelope-open-text" }
             };
 
             abasPermitidas.forEach((aba) => {
@@ -1135,6 +1137,10 @@
                 inicializarMigracaoLote();
             } else if (nome === 'formularios-seletivo') {
                 carregarFormulariosExternosAdmin();
+            } else if (nome === 'correio-interno') {
+                if (typeof renderizarCorreio === 'function') {
+                    renderizarCorreio('entrada');
+                }
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1348,7 +1354,6 @@
             }
         }
 
-        // ================= CONSTRUTOR AVANÇADO DE FORMULÁRIOS =================
         function abrirModalFormularioExterno(id = null, dados = null) {
             document.getElementById("form-id-editando").value = id || "";
             document.getElementById("container-campos-customizados").innerHTML = "";
@@ -1382,7 +1387,6 @@
             document.getElementById("modal-criar-form-externo").style.display = "none";
         }
 
-        // Função de contatos inserida
         function adicionarContatoFormularioUI(dados = null) {
             let idUnico = 'ct_' + Math.random().toString(36).substr(2, 9);
             let nome = dados ? dados.nome : '';
@@ -1442,7 +1446,6 @@
             if (wrapper) wrapper.style.display = (tipo === 'selecao') ? 'block' : 'none';
         }
 
-        // Função URL Amigável
         function gerarSlugLegivel(texto) {
             return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
         }
@@ -1498,7 +1501,6 @@
                     pacote.ativo = true;
                     pacote.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
                     
-                    // Salva usando o Slug
                     let novoIdBase = gerarSlugLegivel(titulo);
                     let docTest = await db.collection("formularios_externos").doc(novoIdBase).get();
                     if (docTest.exists) {
@@ -3283,20 +3285,18 @@
         };
 
         // Carrega o arquivo externo automaticamente sem mexer no código gigante
-window.addEventListener('DOMContentLoaded', async () => {
-    try {
-        let resposta = await fetch('email-lape.html');
-        let htmlDoEmail = await resposta.text();
-        
-        // Cria uma div invisível e joga o conteúdo do email lá dentro do painel
-        let divExterna = document.createElement('div');
-        divExterna.innerHTML = htmlDoEmail;
-        document.body.appendChild(divExterna);
-    } catch (e) {
-        console.error("Erro ao carregar o módulo de e-mail:", e);
-    }
-});
-
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                let resposta = await fetch('email-lape.html');
+                let htmlDoEmail = await resposta.text();
+                
+                let divExterna = document.createElement('div');
+                divExterna.innerHTML = htmlDoEmail;
+                document.body.appendChild(divExterna);
+            } catch (e) {
+                console.error("Erro ao carregar o módulo de e-mail:", e);
+            }
+        });
     </script>
 </body>
 </html>
