@@ -7,6 +7,7 @@
     <link rel="icon" href="brasao.png" type="image/png">
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -24,188 +25,576 @@
     <style>
         :root {
             --primary: #4f46e5;
-            --primary-dark: #4338ca;
+            --primary-dark: #3730a3;
+            --primary-light: #e0e7ff;
             --success: #10b981;
-            --dark: #1e293b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --text-muted: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --bg-body: #f8fafc;
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.3);
         }
+
         * { box-sizing: border-box; }
+
         body {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--dark);
-            margin: 0; padding: 16px; min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+            margin: 0; 
+            padding: 20px 16px; 
+            min-height: 100vh;
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start;
         }
+
+        @media (min-width: 768px) {
+            body { align-items: center; padding: 40px; }
+        }
+
         .container-publico {
-            width: 100%; max-width: 500px; background: #ffffff;
-            border-radius: 20px; padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border);
+            width: 100%; 
+            max-width: 600px; 
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px; 
+            padding: 32px 24px; 
+            box-shadow: var(--shadow-lg); 
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: fadeIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
         }
-        .grupo-input { margin-bottom: 14px; text-align: left; }
-        .grupo-input label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; }
+
+        .borda-superior {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, var(--primary), #8b5cf6, #ec4899);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cabecalho-form {
+            text-align: center; 
+            margin-bottom: 24px;
+        }
+
+        .cabecalho-form img {
+            width: 80px; 
+            height: 80px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 3px solid white; 
+            box-shadow: var(--shadow-glow);
+            margin-bottom: 12px;
+        }
+
+        .cabecalho-form h2 {
+            color: var(--dark); 
+            font-size: 22px; 
+            font-weight: 800; 
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .cabecalho-form p {
+            color: var(--text-muted); 
+            font-size: 13px; 
+            margin: 0; 
+            line-height: 1.5;
+        }
+
+        /* --- CRONÔMETRO --- */
+        .cronometro-container {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .cronometro-titulo {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .cronometro-grid {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .cronometro-bloco {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-body);
+            padding: 10px;
+            border-radius: 12px;
+            min-width: 65px;
+            border: 1px solid var(--border);
+        }
+
+        .cronometro-numero {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        .cronometro-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* --- CAMPOS DO FORMULÁRIO --- */
+        .grupo-input { 
+            margin-bottom: 20px; 
+            text-align: left; 
+            animation: fadeIn 0.4s ease-out backwards;
+        }
+
+        .grupo-input label { 
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            color: var(--dark); 
+        }
+
+        .obrigatorio-asterisco {
+            color: var(--danger);
+            font-weight: 800;
+        }
+
         input, select, textarea {
-            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px;
-            font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: var(--dark); outline: none;
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 1px solid var(--border); 
+            border-radius: 12px;
+            font-size: 14px; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: rgba(255, 255, 255, 0.9); 
+            color: var(--dark); 
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
         }
-        input:focus, select:focus, textarea:focus { background: #ffffff; border-color: var(--primary); }
+
+        input:focus, select:focus, textarea:focus { 
+            background: #ffffff; 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            background: #fff;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: #c7d2fe;
+        }
+
         .btn-enviar {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; width: 100%; margin-top: 10px;
+            color: white; 
+            border: none; 
+            padding: 16px; 
+            border-radius: 14px; 
+            font-weight: 800; 
+            font-size: 15px; 
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 10px;
+            box-shadow: var(--shadow-glow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-enviar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-enviar:active {
+            transform: translateY(0);
+        }
+
+        .btn-enviar:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- ESTADOS DE TELA --- */
+        .tela-centralizada {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .loader-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <div class="container-publico" id="painel-formulario-publico">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img src="brasao.png" alt="Brasão LAPE" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); margin-bottom: 8px;">
-            <h2 id="pub-titulo-form" style="color: var(--primary); font-size: 20px; font-weight: 800; margin: 0 0 4px 0;">Processo Seletivo LAPE</h2>
-            <p id="pub-desc-form" style="color: #64748b; font-size: 12px; margin: 0; line-height: 1.4;">Preencha os campos abaixo para submeter sua candidatura.</p>
+    <div class="container-publico" id="painel-loading">
+        <div class="tela-centralizada">
+            <div class="loader-spinner"></div>
+            <h3 style="color: var(--primary); font-size: 16px;">Carregando formulário...</h3>
+            <p style="color: var(--text-muted); font-size: 12px;">Conectando à base de dados da LAPE</p>
+        </div>
+    </div>
+
+    <div class="container-publico" id="painel-erro" style="display: none;">
+        <div class="tela-centralizada">
+            <i class="fa-solid fa-link-slash" style="font-size: 48px; color: var(--danger); margin-bottom: 16px;"></i>
+            <h3 style="color: var(--dark); font-size: 18px; margin: 0 0 8px 0;" id="erro-titulo">Link Inválido</h3>
+            <p style="color: var(--text-muted); font-size: 13px;" id="erro-desc">Verifique o link ou entre em contato com a diretoria.</p>
+        </div>
+    </div>
+
+    <div class="container-publico" id="painel-formulario" style="display: none;">
+        <div class="borda-superior"></div>
+        
+        <div class="cabecalho-form">
+            <img src="brasao.png" alt="Brasão LAPE">
+            <h2 id="pub-titulo-form">Carregando...</h2>
+            <p id="pub-desc-form"></p>
         </div>
 
-        <div class="grupo-input">
-            <label>Nome Completo *</label>
-            <input type="text" id="pub-nome" placeholder="Seu nome completo">
+        <div class="cronometro-container" id="box-cronometro">
+            <div class="cronometro-titulo"><i class="fa-solid fa-stopwatch"></i> O formulário encerra em:</div>
+            <div class="cronometro-grid">
+                <div class="cronometro-bloco">
+                    <span class="cronometro-numero" id="cd-dias">00</span>
+                    <span class="cronometro-label">Dias</span>
+                </div>
+                <div class="cronometro-bloco">
+                    <span class="cronometro-numero" id="cd-horas">00</span>
+                    <span class="cronometro-label">Horas</span>
+                </div>
+                <div class="cronometro-bloco">
+                    <span class="cronometro-numero" id="cd-minutos">00</span>
+                    <span class="cronometro-label">Minutos</span>
+                </div>
+                <div class="cronometro-bloco">
+                    <span class="cronometro-numero" id="cd-segundos">00</span>
+                    <span class="cronometro-label">Segundos</span>
+                </div>
+            </div>
         </div>
 
-        <div class="grupo-input">
-            <label>E-mail *</label>
-            <input type="email" id="pub-email" placeholder="seu.email@exemplo.com">
+        <div id="container-campos-dinamicos">
+            <!-- Campos gerados dinamicamente via JS -->
         </div>
 
-        <div class="grupo-input">
-            <label>Número de Telefone (WhatsApp) *</label>
-            <input type="text" id="pub-telefone" placeholder="(99) 99999-9999" oninput="mascaraTelPublico(this)" maxlength="15">
-        </div>
-
-        <div class="grupo-input">
-            <label>Curso (Fixo)</label>
-            <input type="text" id="pub-curso" value="Enfermagem" readonly style="background:#e2e8f0; font-weight:800; color:#475569;">
-        </div>
-
-        <div class="grupo-input" id="bloco-periodo">
-            <label>Período *[cite: 10]</label>
-            <select id="pub-periodo">
-                <option value="1º">1º Período[cite: 10]</option>
-                <option value="2º">2º Período[cite: 10]</option>
-                <option value="3º">3º Período[cite: 10]</option>
-                <option value="4º">4º Período[cite: 10]</option>
-                <option value="5º">5º Período[cite: 10]</option>
-                <option value="6º">6º Período[cite: 10]</option>
-                <option value="7º">7º Período[cite: 10]</option>
-                <option value="8º">8º Período[cite: 10]</option>
-                <option value="9º">9º Período[cite: 10]</option>
-                <option value="10º">10º Período[cite: 10]</option>
-            </select>
-        </div>
-
-        <div class="grupo-input" id="bloco-comprovante">
-            <label>Comprovante de Pagamento da Taxa *[cite: 10]</label>
-            <input type="file" id="pub-comprovante" accept="image/*,application/pdf" style="padding: 8px; background: #fff;">
-        </div>
-
-        <div class="grupo-input" id="bloco-motivacao">
-            <label>Por que quer fazer parte da LAPE? *[cite: 10]</label>
-            <textarea id="pub-motivacao" rows="4" placeholder="Descreva suas expectativas e motivações..."></textarea>
-        </div>
-
-        <button class="btn-enviar" onclick="enviarInscricaoPublica()">Enviar Inscrição</button>
+        <button class="btn-enviar" id="btn-submit" onclick="enviarInscricaoPublica()">
+            <span>Submeter Inscrição</span>
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
     </div>
 
     <!-- TELA DE SUCESSO -->
-    <div class="container-publico" id="painel-sucesso-envio" style="display: none; text-align: center; padding: 40px 24px;">
-        <div style="font-size: 54px; margin-bottom: 10px;">🎉</div>
-        <h2 style="color: var(--success); font-size: 20px; font-weight: 800; margin: 0 0 8px 0;">Inscrição Enviada com Sucesso!</h2>
-        <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0;">Seus dados foram registrados com segurança no sistema da LAPE[cite: 10].</p>
+    <div class="container-publico" id="painel-sucesso-envio" style="display: none;">
+        <div class="borda-superior" style="background: linear-gradient(90deg, #10b981, #34d399, #10b981);"></div>
+        <div class="tela-centralizada">
+            <div style="width: 80px; height: 80px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--success); font-size: 40px; box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 style="color: var(--dark); font-size: 22px; font-weight: 800; margin: 0 0 12px 0;">Inscrição Confirmada! 🎉</h2>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0;">Seus dados foram recebidos e criptografados com sucesso na base da LAPE. Fique atento(a) aos próximos avisos através dos nossos canais oficiais.</p>
+        </div>
     </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const formId = urlParams.get('id');
-        let configCamposAtuais = {};
+        let camposPersonalizadosRenderizados = [];
+        let intervaloCronometro = null;
 
-        function mascaraTelPublico(input) {
+        function mostrarErro(titulo, desc) {
+            document.getElementById("painel-loading").style.display = "none";
+            document.getElementById("painel-formulario").style.display = "none";
+            document.getElementById("painel-erro").style.display = "block";
+            document.getElementById("erro-titulo").innerText = titulo;
+            document.getElementById("erro-desc").innerText = desc;
+        }
+
+        window.onload = async () => {
+            if (!formId) {
+                mostrarErro("Link Inválido", "Nenhum ID de formulário foi especificado na URL.");
+                return;
+            }
+
+            try {
+                let doc = await db.collection("formularios_externos").doc(formId).get();
+                if (!doc.exists) {
+                    mostrarErro("Não Encontrado", "Este formulário não existe ou foi excluído pela diretoria.");
+                    return;
+                }
+
+                let data = doc.data();
+                let agora = new Date();
+                let dataLimiteObj = data.dataLimite ? new Date(data.dataLimite) : null;
+
+                if (!data.ativo || (dataLimiteObj && dataLimiteObj < agora)) {
+                    mostrarErro("Inscrições Encerradas", "O prazo para submissões neste processo seletivo já acabou.");
+                    return;
+                }
+
+                // Configurar Textos
+                document.getElementById("pub-titulo-form").innerText = data.titulo;
+                document.getElementById("pub-desc-form").innerText = data.descricao || "Preencha os dados abaixo com atenção.";
+
+                // Iniciar Cronômetro se houver data limite
+                if (dataLimiteObj) {
+                    iniciarCronometro(dataLimiteObj);
+                }
+
+                // Renderizar Campos Dinâmicos (Criados pelo Admin)
+                renderizarCamposDinamicos(data.camposPersonalizados || []);
+
+                // Exibir formulário
+                document.getElementById("painel-loading").style.display = "none";
+                document.getElementById("painel-formulario").style.display = "block";
+
+            } catch(e) {
+                console.error(e);
+                mostrarErro("Erro de Conexão", "Não foi possível carregar os dados. Verifique sua internet.");
+            }
+        };
+
+        function iniciarCronometro(dataLimite) {
+            const box = document.getElementById("box-cronometro");
+            box.style.display = "block";
+
+            const elDias = document.getElementById("cd-dias");
+            const elHoras = document.getElementById("cd-horas");
+            const elMin = document.getElementById("cd-minutos");
+            const elSeg = document.getElementById("cd-segundos");
+
+            function atualizar() {
+                const agora = new Date().getTime();
+                const limite = dataLimite.getTime();
+                const distancia = limite - agora;
+
+                if (distancia < 0) {
+                    clearInterval(intervaloCronometro);
+                    mostrarErro("Tempo Esgotado", "O formulário foi encerrado automaticamente pelo sistema.");
+                    return;
+                }
+
+                elDias.innerText = String(Math.floor(distancia / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                elHoras.innerText = String(Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                elMin.innerText = String(Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                elSeg.innerText = String(Math.floor((distancia % (1000 * 60)) / 1000)).padStart(2, '0');
+            }
+
+            atualizar();
+            intervaloCronometro = setInterval(atualizar, 1000);
+        }
+
+        function renderizarCamposDinamicos(campos) {
+            camposPersonalizadosRenderizados = campos;
+            let container = document.getElementById("container-campos-dinamicos");
+            let html = "";
+            let delayAnimacao = 0.1;
+
+            if (campos.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--danger); font-size:12px; font-weight:700;">Erro: O administrador não configurou nenhuma pergunta neste formulário.</div>`;
+                document.getElementById("btn-submit").style.display = "none";
+                return;
+            }
+
+            campos.forEach((campo, index) => {
+                let idInput = `campo_dyn_${index}`;
+                let asterisco = campo.obrigatorio ? `<span class="obrigatorio-asterisco">*</span>` : '';
+                let icone = getIconeParaCampo(campo.rotulo, campo.tipo);
+                
+                let inputHtml = "";
+
+                if (campo.tipo === 'texto_curto') {
+                    // Mascara básica se tiver "telefone" ou "whatsapp" no nome
+                    let mascaraAttr = campo.rotulo.toLowerCase().includes('telefone') || campo.rotulo.toLowerCase().includes('whatsapp') ? `oninput="mascaraTelefoneGenerica(this)" maxlength="15"` : ``;
+                    inputHtml = `<input type="text" id="${idInput}" placeholder="Sua resposta" ${mascaraAttr}>`;
+                } 
+                else if (campo.tipo === 'texto_longo') {
+                    inputHtml = `<textarea id="${idInput}" rows="3" placeholder="Digite sua resposta detalhada..."></textarea>`;
+                } 
+                else if (campo.tipo === 'selecao') {
+                    let opcoesArray = campo.opcoes ? campo.opcoes.split(',').map(o => o.trim()) : [];
+                    let optionsHtml = `<option value="" disabled selected>Selecione uma opção...</option>`;
+                    opcoesArray.forEach(op => {
+                        if (op) optionsHtml += `<option value="${op}">${op}</option>`;
+                    });
+                    inputHtml = `<select id="${idInput}">${optionsHtml}</select>`;
+                }
+                else if (campo.tipo === 'arquivo') {
+                    inputHtml = `<input type="file" id="${idInput}" accept="image/*,application/pdf">`;
+                }
+
+                html += `
+                    <div class="grupo-input" style="animation-delay: ${delayAnimacao}s">
+                        <label for="${idInput}">${icone} ${campo.rotulo} ${asterisco}</label>
+                        ${inputHtml}
+                    </div>
+                `;
+                delayAnimacao += 0.05;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getIconeParaCampo(rotulo, tipo) {
+            let r = rotulo.toLowerCase();
+            if (r.includes('nome')) return '<i class="fa-solid fa-user" style="color:var(--primary);"></i>';
+            if (r.includes('mail')) return '<i class="fa-solid fa-envelope" style="color:var(--primary);"></i>';
+            if (r.includes('tel') || r.includes('whats')) return '<i class="fa-solid fa-phone" style="color:var(--primary);"></i>';
+            if (r.includes('curso') || r.includes('período')) return '<i class="fa-solid fa-graduation-cap" style="color:var(--primary);"></i>';
+            
+            if (tipo === 'arquivo') return '<i class="fa-solid fa-paperclip" style="color:var(--primary);"></i>';
+            if (tipo === 'selecao') return '<i class="fa-solid fa-list" style="color:var(--primary);"></i>';
+            return '<i class="fa-solid fa-pen" style="color:var(--primary);"></i>';
+        }
+
+        function mascaraTelefoneGenerica(input) {
             let v = input.value.replace(/\D/g, "");
             v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
             v = v.replace(/(\d)(\d{4})$/, "$1-$2");
             input.value = v;
         }
 
-        window.onload = async () => {
-            if (!formId) {
-                document.body.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:16px; max-width:400px; margin:auto;"><h3 style="color:#ef4444; font-size:16px;">Link Inválido</h3><p style="font-size:12px; color:#64748b;">Nenhum formulário especificado.</p></div>`;
-                return;
-            }
-            try {
-                let doc = await db.collection("formularios_externos").doc(formId).get();
-                if (!doc.exists) {
-                    document.body.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:16px; max-width:400px; margin:auto;"><h3 style="color:#ef4444; font-size:16px;">Formulário Não Encontrado</h3></div>`;
-                    return;
-                }
-                let data = doc.data();
-                let agora = new Date();
-
-                if (!data.ativo || (data.dataLimite && new Date(data.dataLimite) < agora)) {
-                    document.body.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:16px; max-width:400px; margin:auto;"><h3 style="color:#ef4444; font-size:16px;">Formulário Encerrado</h3><p style="font-size:12px; color:#64748b;">O prazo para submissões neste formulário já foi encerrado.</p></div>`;
-                    return;
-                }
-
-                document.getElementById("pub-titulo-form").innerText = data.titulo;
-                if (data.descricao) document.getElementById("pub-desc-form").innerText = data.descricao;
-
-                configCamposAtuais = data.campos || {};
-                if (configCamposAtuais.periodo === false) document.getElementById("bloco-periodo").style.display = 'none';
-                if (configCamposAtuais.comprovante === false) document.getElementById("bloco-comprovante").style.display = 'none';
-                if (configCamposAtuais.motivacao === false) document.getElementById("bloco-motivacao").style.display = 'none';
-
-            } catch(e) {
-                console.error(e);
-            }
-        };
-
-        async function enviarInscricaoPublica() {
-            let nome = document.getElementById("pub-nome").value.trim();
-            let email = document.getElementById("pub-email").value.trim();
-            let telefone = document.getElementById("pub-telefone").value.trim();
-            let curso = "Enfermagem";
-            let periodo = configCamposAtuais.periodo !== false ? document.getElementById("pub-periodo").value : "";
-            let motivacao = configCamposAtuais.motivacao !== false ? document.getElementById("pub-motivacao").value.trim() : "";
-            let fileInput = document.getElementById("pub-comprovante");
-
-            if (!nome || !email || !telefone) {
-                alert("Por favor, preencha os campos obrigatórios básicos.");
-                return;
-            }
-
-            let comprovanteUrl = "";
-            if (configCamposAtuais.comprovante !== false) {
-                if (!fileInput.files || !fileInput.files[0]) {
-                    alert("Por favor, anexe o comprovante de pagamento da taxa[cite: 10].");
-                    return;
-                }
-                let file = fileInput.files[0];
+        // Converte arquivo para Base64 de forma Assíncrona
+        function lerArquivoComoBase64(file) {
+            return new Promise((resolve, reject) => {
                 let reader = new FileReader();
                 reader.readAsDataURL(file);
-                await new Promise((resolve) => {
-                    reader.onload = function(e) {
-                        comprovanteUrl = e.target.result;
-                        resolve();
-                    };
-                });
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function enviarInscricaoPublica() {
+            let btn = document.getElementById("btn-submit");
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Processando...`;
+
+            let respostasColetadas = {};
+            let possuiErroValidacao = false;
+
+            // Iterar sobre a configuração de campos e validar/coletar do DOM
+            for (let i = 0; i < camposPersonalizadosRenderizados.length; i++) {
+                let campo = camposPersonalizadosRenderizados[i];
+                let inputElement = document.getElementById(`campo_dyn_${i}`);
+                let valorFinal = "";
+
+                if (campo.tipo === 'arquivo') {
+                    if (inputElement.files && inputElement.files.length > 0) {
+                        try {
+                            valorFinal = await lerArquivoComoBase64(inputElement.files[0]);
+                        } catch (e) {
+                            alert(`Erro ao ler o arquivo: ${campo.rotulo}`);
+                            possuiErroValidacao = true;
+                            break;
+                        }
+                    } else if (campo.obrigatorio) {
+                        alert(`O anexo é obrigatório: ${campo.rotulo}`);
+                        inputElement.focus();
+                        possuiErroValidacao = true;
+                        break;
+                    }
+                } else {
+                    valorFinal = inputElement.value.trim();
+                    if (campo.obrigatorio && !valorFinal) {
+                        alert(`O campo é obrigatório: ${campo.rotulo}`);
+                        inputElement.focus();
+                        possuiErroValidacao = true;
+                        break;
+                    }
+                }
+
+                respostasColetadas[campo.rotulo] = valorFinal;
+            }
+
+            if (possuiErroValidacao) {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Submeter Inscrição</span><i class="fa-solid fa-paper-plane"></i>`;
+                return;
             }
 
             try {
-                await db.collection("formularios_externos").doc(formId).collection("respostas").add({
-                    nome, email, telefone, curso, periodo, motivacao, comprovanteUrl,
+                let pacoteEnvio = {
+                    respostasExtras: respostasColetadas,
                     enviadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                };
 
-                document.getElementById("painel-formulario-publico").style.display = "none";
+                await db.collection("formularios_externos").doc(formId).collection("respostas").add(pacoteEnvio);
+
+                document.getElementById("painel-formulario").style.display = "none";
                 document.getElementById("painel-sucesso-envio").style.display = "block";
             } catch (e) {
                 console.error(e);
-                alert("Erro ao enviar inscrição. Tente novamente.");
+                alert("Erro ao enviar. Verifique sua conexão e tente novamente.");
+                btn.disabled = false;
+                btn.innerHTML = `<span>Tentar Novamente</span><i class="fa-solid fa-rotate-right"></i>`;
             }
         }
     </script>
