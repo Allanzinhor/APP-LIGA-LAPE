@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Processo Seletivo - LAPE</title>
+    <title>Inscrição - Processo Seletivo LAPE</title>
     <link rel="icon" href="brasao.png" type="image/png">
     
-    <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -27,89 +25,33 @@
         :root {
             --primary: #4f46e5;
             --primary-dark: #4338ca;
-            --primary-light: #e0e7ff;
             --success: #10b981;
             --dark: #1e293b;
             --border: #e2e8f0;
-            --radius: 14px;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
-
         * { box-sizing: border-box; }
-
         body {
             background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--dark);
-            margin: 0;
-            padding: 16px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0; padding: 16px; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
         }
-
         .container-publico {
-            width: 100%;
-            max-width: 500px;
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
+            width: 100%; max-width: 500px; background: #ffffff;
+            border-radius: 20px; padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border);
         }
-
-        .grupo-input {
-            margin-bottom: 14px;
-            text-align: left;
-        }
-
-        .grupo-input label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 11px;
-            font-weight: 800;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
+        .grupo-input { margin-bottom: 14px; text-align: left; }
+        .grupo-input label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; }
         input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 13px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
-            color: var(--dark);
-            outline: none;
-            box-sizing: border-box;
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px;
+            font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: var(--dark); outline: none;
         }
-
-        input:focus, select:focus, textarea:focus {
-            background: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-        }
-
+        input:focus, select:focus, textarea:focus { background: #ffffff; border-color: var(--primary); }
         .btn-enviar {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 14px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-            margin-top: 10px;
-            transition: transform 0.2s ease;
-        }
-
-        .btn-enviar:active {
-            transform: scale(0.98);
+            color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; width: 100%; margin-top: 10px;
         }
     </style>
 </head>
@@ -117,7 +59,7 @@
 
     <div class="container-publico" id="painel-formulario-publico">
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="brasao.png" alt="Brasão LAPE" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <img src="brasao.png" alt="Brasão LAPE" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); margin-bottom: 8px;">
             <h2 id="pub-titulo-form" style="color: var(--primary); font-size: 20px; font-weight: 800; margin: 0 0 4px 0;">Processo Seletivo LAPE</h2>
             <p id="pub-desc-form" style="color: #64748b; font-size: 12px; margin: 0; line-height: 1.4;">Preencha os campos abaixo para submeter sua candidatura.</p>
         </div>
@@ -137,36 +79,35 @@
             <input type="text" id="pub-telefone" placeholder="(99) 99999-9999" oninput="mascaraTelPublico(this)" maxlength="15">
         </div>
 
-        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px;">
-            <div class="grupo-input">
-                <label>Curso *[cite: 10]</label>
-                <input type="text" id="pub-curso" placeholder="Ex: Enfermagem[cite: 10]">
-            </div>
-            <div class="grupo-input">
-                <label>Período *[cite: 10]</label>
-                <select id="pub-periodo">
-                    <option value="1º">1º Período[cite: 10]</option>
-                    <option value="2º">2º Período[cite: 10]</option>
-                    <option value="3º">3º Período[cite: 10]</option>
-                    <option value="4º">4º Período[cite: 10]</option>
-                    <option value="5º">5º Período[cite: 10]</option>
-                    <option value="6º">6º Período[cite: 10]</option>
-                    <option value="7º">7º Período[cite: 10]</option>
-                    <option value="8º">8º Período[cite: 10]</option>
-                    <option value="9º">9º Período[cite: 10]</option>
-                    <option value="10º">10º Período[cite: 10]</option>
-                </select>
-            </div>
+        <div class="grupo-input">
+            <label>Curso (Fixo)</label>
+            <input type="text" id="pub-curso" value="Enfermagem" readonly style="background:#e2e8f0; font-weight:800; color:#475569;">
         </div>
 
-        <div class="grupo-input">
-            <label>Comprovante de Pagamento da Taxa (Imagem ou PDF) *[cite: 10]</label>
+        <div class="grupo-input" id="bloco-periodo">
+            <label>Período *[cite: 10]</label>
+            <select id="pub-periodo">
+                <option value="1º">1º Período[cite: 10]</option>
+                <option value="2º">2º Período[cite: 10]</option>
+                <option value="3º">3º Período[cite: 10]</option>
+                <option value="4º">4º Período[cite: 10]</option>
+                <option value="5º">5º Período[cite: 10]</option>
+                <option value="6º">6º Período[cite: 10]</option>
+                <option value="7º">7º Período[cite: 10]</option>
+                <option value="8º">8º Período[cite: 10]</option>
+                <option value="9º">9º Período[cite: 10]</option>
+                <option value="10º">10º Período[cite: 10]</option>
+            </select>
+        </div>
+
+        <div class="grupo-input" id="bloco-comprovante">
+            <label>Comprovante de Pagamento da Taxa *[cite: 10]</label>
             <input type="file" id="pub-comprovante" accept="image/*,application/pdf" style="padding: 8px; background: #fff;">
         </div>
 
-        <div class="grupo-input">
+        <div class="grupo-input" id="bloco-motivacao">
             <label>Por que quer fazer parte da LAPE? *[cite: 10]</label>
-            <textarea id="pub-motivacao" rows="4" placeholder="Descreva brevemente suas expectativas, objetivos e motivações..."></textarea>
+            <textarea id="pub-motivacao" rows="4" placeholder="Descreva suas expectativas e motivações..."></textarea>
         </div>
 
         <button class="btn-enviar" onclick="enviarInscricaoPublica()">Enviar Inscrição</button>
@@ -176,12 +117,13 @@
     <div class="container-publico" id="painel-sucesso-envio" style="display: none; text-align: center; padding: 40px 24px;">
         <div style="font-size: 54px; margin-bottom: 10px;">🎉</div>
         <h2 style="color: var(--success); font-size: 20px; font-weight: 800; margin: 0 0 8px 0;">Inscrição Enviada com Sucesso!</h2>
-        <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0;">Seus dados e comprovantes foram registrados com segurança no sistema da LAPE. A diretoria entrará em contato em breve[cite: 10].</p>
+        <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0;">Seus dados foram registrados com segurança no sistema da LAPE[cite: 10].</p>
     </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const formId = urlParams.get('id');
+        let configCamposAtuais = {};
 
         function mascaraTelPublico(input) {
             let v = input.value.replace(/\D/g, "");
@@ -197,13 +139,26 @@
             }
             try {
                 let doc = await db.collection("formularios_externos").doc(formId).get();
-                if (!doc.exists || !doc.data().ativo) {
-                    document.body.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:16px; max-width:400px; margin:auto;"><h3 style="color:#ef4444; font-size:16px;">Formulário Indisponível</h3><p style="font-size:12px; color:#64748b;">Este processo seletivo está fechado ou não existe mais.</p></div>`;
+                if (!doc.exists) {
+                    document.body.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:16px; max-width:400px; margin:auto;"><h3 style="color:#ef4444; font-size:16px;">Formulário Não Encontrado</h3></div>`;
                     return;
                 }
                 let data = doc.data();
+                let agora = new Date();
+
+                if (!data.ativo || (data.dataLimite && new Date(data.dataLimite) < agora)) {
+                    document.body.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:16px; max-width:400px; margin:auto;"><h3 style="color:#ef4444; font-size:16px;">Formulário Encerrado</h3><p style="font-size:12px; color:#64748b;">O prazo para submissões neste formulário já foi encerrado.</p></div>`;
+                    return;
+                }
+
                 document.getElementById("pub-titulo-form").innerText = data.titulo;
                 if (data.descricao) document.getElementById("pub-desc-form").innerText = data.descricao;
+
+                configCamposAtuais = data.campos || {};
+                if (configCamposAtuais.periodo === false) document.getElementById("bloco-periodo").style.display = 'none';
+                if (configCamposAtuais.comprovante === false) document.getElementById("bloco-comprovante").style.display = 'none';
+                if (configCamposAtuais.motivacao === false) document.getElementById("bloco-motivacao").style.display = 'none';
+
             } catch(e) {
                 console.error(e);
             }
@@ -213,41 +168,36 @@
             let nome = document.getElementById("pub-nome").value.trim();
             let email = document.getElementById("pub-email").value.trim();
             let telefone = document.getElementById("pub-telefone").value.trim();
-            let curso = document.getElementById("pub-curso").value.trim();
-            let periodo = document.getElementById("pub-periodo").value;
-            let motivacao = document.getElementById("pub-motivacao").value.trim();
+            let curso = "Enfermagem";
+            let periodo = configCamposAtuais.periodo !== false ? document.getElementById("pub-periodo").value : "";
+            let motivacao = configCamposAtuais.motivacao !== false ? document.getElementById("pub-motivacao").value.trim() : "";
             let fileInput = document.getElementById("pub-comprovante");
 
-            if (!nome || !email || !telefone || !curso || !motivacao) {
-                alert("Por favor, preencha todos os campos obrigatórios.");
-                return;
-            }
-
-            if (!fileInput.files || !fileInput.files[0]) {
-                alert("Por favor, anexe o comprovante de pagamento da taxa de inscrição[cite: 10].");
+            if (!nome || !email || !telefone) {
+                alert("Por favor, preencha os campos obrigatórios básicos.");
                 return;
             }
 
             let comprovanteUrl = "";
-            let file = fileInput.files[0];
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            await new Promise((resolve) => {
-                reader.onload = function(e) {
-                    comprovanteUrl = e.target.result; // Converte em Base64 para exibição imediata no painel da diretoria
-                    resolve();
-                };
-            });
+            if (configCamposAtuais.comprovante !== false) {
+                if (!fileInput.files || !fileInput.files[0]) {
+                    alert("Por favor, anexe o comprovante de pagamento da taxa[cite: 10].");
+                    return;
+                }
+                let file = fileInput.files[0];
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                await new Promise((resolve) => {
+                    reader.onload = function(e) {
+                        comprovanteUrl = e.target.result;
+                        resolve();
+                    };
+                });
+            }
 
             try {
                 await db.collection("formularios_externos").doc(formId).collection("respostas").add({
-                    nome,
-                    email,
-                    telefone,
-                    curso,
-                    periodo,
-                    motivacao,
-                    comprovanteUrl,
+                    nome, email, telefone, curso, periodo, motivacao, comprovanteUrl,
                     enviadoEm: firebase.firestore.FieldValue.serverTimestamp()
                 });
 

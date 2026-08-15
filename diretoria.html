@@ -258,7 +258,7 @@
             border-radius: 20px;
             padding: 20px;
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             max-height: 90vh;
             overflow-y: auto;
@@ -485,9 +485,9 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <div>
                     <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-wpforms"></i> Processo Seletivo & Formulários</h3>
-                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Gere links externos personalizados e gerencie submissões em tempo real</p>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Crie formulários customizados, defina prazos e gerencie submissões</p>
                 </div>
-                <button class="btn-mini verde" style="padding: 8px 12px; font-size: 11px; font-weight: 800;" onclick="abrirModalCriarFormularioExterno()"><i class="fa-solid fa-plus"></i> Novo Formulário</button>
+                <button class="btn-mini verde" style="padding: 8px 12px; font-size: 11px; font-weight: 800;" onclick="abrirModalFormularioExterno()"><i class="fa-solid fa-plus"></i> Novo Formulário</button>
             </div>
 
             <!-- Lista de Formulários Gerados -->
@@ -823,46 +823,53 @@
 
     </div>
 
-    <!-- MODAL DE CRIAÇÃO DE FORMULÁRIO EXTERNO -->
+    <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE FORMULÁRIO EXTERNO -->
     <div id="modal-criar-form-externo" class="modal" style="display:none;">
-        <div class="modal-conteudo" style="max-width: 480px;">
-            <h3 style="color: var(--primary); margin-top: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo</h3>
-            <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">Defina as informações e selecione os campos do seu novo formulário de seleção:</p>
+        <div class="modal-conteudo" style="max-width: 480px; max-height: 90vh; overflow-y: auto;">
+            <h3 id="titulo-modal-form-externo" style="color: var(--primary); margin-top: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo</h3>
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">Personalize as informações, escolha os campos e defina o prazo de encerramento:</p>
             
+            <input type="hidden" id="form-id-editando">
+
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Título do Formulário</label>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Título do Formulário *</label>
                     <input type="text" id="novo-form-titulo" placeholder="Ex: Processo Seletivo LAPE 2026.2">
                 </div>
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Descrição / Instruções para o Candidato</label>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Descrição / Instruções</label>
                     <textarea id="novo-form-desc" rows="3" placeholder="Orientações sobre taxa de inscrição, prazos, etc..."></textarea>
                 </div>
+                <div>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Data e Hora Limite para Encerramento Automático</label>
+                    <input type="datetime-local" id="novo-form-data-limite">
+                </div>
 
+                <!-- Seleção de Campos do Formulário -->
                 <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
-                    <span style="font-size: 11px; font-weight: 800; color: var(--dark); display: block; margin-bottom: 8px;">📋 Campos Padrão Incluídos Automaticamente:</span>
-                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Nome Completo</span>
-                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ E-mail</span>
-                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Telefone (WhatsApp)</span>
-                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Curso[cite: 10]</span>
-                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Período (1º ao 10º)[cite: 10]</span>
-                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Comprovante de Pagamento[cite: 10]</span>
-                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Por que quer fazer parte da LAPE?[cite: 10]</span>
+                    <span style="font-size: 11px; font-weight: 800; color: var(--dark); display: block; margin-bottom: 8px;">☑️ Campos do Formulário:</span>
+                    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px;">
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-nome" checked disabled> Nome Completo (Obrigatório)</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-email" checked disabled> E-mail (Obrigatório)</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-tel" checked disabled> Telefone / WhatsApp (Obrigatório)</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-curso" checked disabled> Curso: Enfermagem (Fixo)[cite: 10]</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-periodo" checked> Período (1º ao 10º)[cite: 10]</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-comprovante" checked> Comprovante de Pagamento da Taxa[cite: 10]</label>
+                        <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="campo-motivacao" checked> Pergunta: Por que quer fazer parte da LAPE?[cite: 10]</label>
                     </div>
                 </div>
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button class="btn-salvar" style="flex: 1; padding: 12px;" onclick="salvarNovoFormularioExterno()">Gerar Link Público</button>
-                <button class="btn-mini cinza" style="flex: 1; padding: 12px; font-weight: 800;" onclick="fecharModalCriarFormularioExterno()">Cancelar</button>
+                <button class="btn-salvar" style="flex: 1; padding: 12px;" onclick="salvarFormularioExternoNuvem()">Salvar Formulário</button>
+                <button class="btn-mini cinza" style="flex: 1; padding: 12px; font-weight: 800;" onclick="fecharModalFormularioExterno()">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DE RESPOSTAS / INSCRIÇÕES -->
+    <!-- MODAL DE VISUALIZAÇÃO DE RESPOSTAS EM CARDS EXPANSÍVEIS -->
     <div id="modal-respostas-seletivo" class="modal" style="display:none;">
-        <div class="modal-conteudo" style="max-width: 520px; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-conteudo" style="max-width: 540px; max-height: 90vh; display: flex; flex-direction: column;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">
                 <h3 style="color: var(--primary); margin: 0; font-size: 15px; font-weight: 800;" id="titulo-modal-inscritos">📊 Inscrições Recebidas</h3>
                 <span id="contador-inscritos-badge" style="font-size: 11px; background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-weight: 800;">0 inscritos</span>
@@ -1301,40 +1308,72 @@
             }
         }
 
-        // Funções do Construtor de Formulários Externos / Processo Seletivo
-        function abrirModalCriarFormularioExterno() {
-            document.getElementById("novo-form-titulo").value = "";
-            document.getElementById("novo-form-desc").value = "";
+        // ================= FUNÇÕES DO CONSTRUTOR DE FORMULÁRIOS EXTERNOS =================
+        function abrirModalFormularioExterno(id = null, dados = null) {
+            document.getElementById("form-id-editando").value = id || "";
+            if (dados) {
+                document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Formulário`;
+                document.getElementById("novo-form-titulo").value = dados.titulo || "";
+                document.getElementById("novo-form-desc").value = dados.descricao || "";
+                document.getElementById("novo-form-data-limite").value = dados.dataLimite || "";
+                document.getElementById("campo-periodo").checked = dados.campos?.periodo ?? true;
+                document.getElementById("campo-comprovante").checked = dados.campos?.comprovante ?? true;
+                document.getElementById("campo-motivacao").checked = dados.campos?.motivacao ?? true;
+            } else {
+                document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo`;
+                document.getElementById("novo-form-titulo").value = "";
+                document.getElementById("novo-form-desc").value = "";
+                document.getElementById("novo-form-data-limite").value = "";
+                document.getElementById("campo-periodo").checked = true;
+                document.getElementById("campo-comprovante").checked = true;
+                document.getElementById("campo-motivacao").checked = true;
+            }
             document.getElementById("modal-criar-form-externo").style.display = "flex";
         }
 
-        function fecharModalCriarFormularioExterno() {
+        function fecharModalFormularioExterno() {
             document.getElementById("modal-criar-form-externo").style.display = "none";
         }
 
-        async function salvarNovoFormularioExterno() {
+        async function salvarFormularioExternoNuvem() {
+            let id = document.getElementById("form-id-editando").value;
             let titulo = document.getElementById("novo-form-titulo").value.trim();
             let descricao = document.getElementById("novo-form-desc").value.trim();
+            let dataLimite = document.getElementById("novo-form-data-limite").value;
 
             if (!titulo) {
                 alert("Preencha o título do formulário.");
                 return;
             }
 
-            try {
-                await db.collection("formularios_externos").add({
-                    titulo,
-                    descricao,
-                    ativo: true,
-                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                });
+            let camposConfig = {
+                periodo: document.getElementById("campo-periodo").checked,
+                comprovante: document.getElementById("campo-comprovante").checked,
+                motivacao: document.getElementById("campo-motivacao").checked
+            };
 
-                alert("Formulário criado com sucesso!");
-                fecharModalCriarFormularioExterno();
+            try {
+                if (id) {
+                    await db.collection("formularios_externos").doc(id).update({
+                        titulo, descricao, dataLimite, campos: camposConfig
+                    });
+                    alert("Formulário atualizado com sucesso!");
+                } else {
+                    await db.collection("formularios_externos").add({
+                        titulo,
+                        descricao,
+                        dataLimite,
+                        campos: camposConfig,
+                        ativo: true,
+                        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert("Formulário criado com sucesso!");
+                }
+                fecharModalFormularioExterno();
                 carregarFormulariosExternosAdmin();
             } catch (e) {
                 console.error(e);
-                alert("Erro ao criar formulário.");
+                alert("Erro ao salvar formulário.");
             }
         }
 
@@ -1350,25 +1389,35 @@
                 }
 
                 let html = "";
+                let agora = new Date();
+
                 snapshot.forEach(doc => {
                     let d = doc.data();
                     let formId = doc.id;
-                    let linkPublico = `${window.location.origin}/inscricao.html?id=${formId}`;
+                    
+                    let estaAtivo = d.ativo;
+                    if (d.dataLimite && new Date(d.dataLimite) < agora) {
+                        estaAtivo = false;
+                    }
+
+                    // Link curto baseado no ID
+                    let linkCurto = `${window.location.origin}/inscricao.html?id=${formId}`;
 
                     html += `
                         <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                             <div style="min-width: 0; flex: 1;">
                                 <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
                                     <strong style="font-size: 12px; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.titulo}</strong>
-                                    <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${d.ativo ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${d.ativo ? 'Ativo' : 'Fechado'}</span>
+                                    <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${estaAtivo ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${estaAtivo ? 'Ativo' : 'Encerrado'}</span>
                                 </div>
-                                <p style="margin: 0 0 6px 0; font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.descricao || 'Sem descrição'}</p>
-                                <input type="text" value="${linkPublico}" readonly style="width: 100%; font-size: 10px; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: #f8fafc; color: var(--primary);" onclick="this.select()">
+                                <p style="margin: 0 0 4px 0; font-size: 10px; color: #64748b;">⏳ Limite: ${d.dataLimite ? new Date(d.dataLimite).toLocaleString('pt-BR') : 'Sem prazo limite'}</p>
+                                <input type="text" value="${linkCurto}" readonly style="width: 100%; font-size: 10px; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: #f8fafc; color: var(--primary);" onclick="this.select()">
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 4px; min-width: 110px; flex-shrink: 0;">
-                                <button class="btn-mini verde" style="padding: 6px; font-size: 10px;" onclick="verInscricoesFormulario('${formId}', '${d.titulo.replace(/'/g, "\\'")}')">📊 Inscrições</button>
-                                <button class="btn-mini cinza" style="padding: 6px; font-size: 10px;" onclick="copiarLinkInscricao('${linkPublico}')">🔗 Copiar Link</button>
-                                <button class="btn-mini ${d.ativo ? 'vermelho' : 'verde'}" style="padding: 6px; font-size: 10px;" onclick="alternarStatusFormulario('${formId}', ${!d.ativo})">${d.ativo ? 'Fechar' : 'Abrir'}</button>
+                                <button class="btn-mini verde" style="padding: 6px; font-size: 10px;" onclick="verInscricoesFormulario('${formId}', '${d.titulo.replace(/'/g, "\\'")}')">📊 Respostas</button>
+                                <button class="btn-mini cinza" style="padding: 6px; font-size: 10px;" onclick="abrirModalFormularioExterno('${formId}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️ Editar</button>
+                                <button class="btn-mini cinza" style="padding: 6px; font-size: 10px;" onclick="copiarLinkInscricao('${linkCurto}')">🔗 Copiar Link</button>
+                                <button class="btn-mini ${estaAtivo ? 'vermelho' : 'verde'}" style="padding: 6px; font-size: 10px;" onclick="alternarStatusFormulario('${formId}', ${!estaAtivo})">${estaAtivo ? 'Fechar' : 'Abrir'}</button>
                             </div>
                         </div>
                     `;
@@ -1396,11 +1445,11 @@
         }
 
         async function verInscricoesFormulario(formId, tituloForm) {
-            document.getElementById("titulo-modal-inscritos").innerText = `📊 Inscrições: ${tituloForm}`;
+            document.getElementById("titulo-modal-inscritos").innerText = `📊 Respostas: ${tituloForm}`;
             let container = document.getElementById("lista-inscritos-conteudo");
             let contadorBadge = document.getElementById("contador-inscritos-badge");
             container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando inscrições...</p>`;
-            document.getElementById("modal-respostas-seletivo").style.display = "flex";
+            document.getElementById("modal-respostas-seletivo").style.display = 'flex';
 
             try {
                 let snapshot = await db.collection("formularios_externos").doc(formId).collection("respostas").orderBy("enviadoEm", "desc").get();
@@ -1415,31 +1464,44 @@
                 snapshot.forEach(doc => {
                     let r = doc.data();
                     let dataEnvio = r.enviadoEm ? r.enviadoEm.toDate().toLocaleString('pt-BR') : "Data não registrada";
+                    let cardId = `inscrito-${doc.id}`;
 
                     html += `
                         <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <strong style="font-size: 12px; color: var(--primary);">${r.nome}</strong>
-                                <span style="font-size: 9px; color: #64748b;">📅 ${dataEnvio}</span>
+                            <div onclick="toggleExpandirInscricao('${cardId}')" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong style="font-size: 12px; color: var(--primary); display: block;">${r.nome}</strong>
+                                    <span style="font-size: 10px; color: #64748b;">📅 ${dataEnvio}</span>
+                                </div>
+                                <span style="font-size: 11px; font-weight: 800; color: var(--primary);" id="seta-${cardId}">▼ Ver Detalhes</span>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 10px; color: #475569; margin-bottom: 6px;">
-                                <span>📧 <strong>E-mail:</strong> ${r.email}</span>
-                                <span>📱 <strong>Tel:</strong> ${r.telefone}</span>
-                                <span>🎓 <strong>Curso:</strong> ${r.curso}[cite: 10]</span>
-                                <span>📚 <strong>Período:</strong> ${r.periodo}º Período[cite: 10]</span>
+                            <div id="${cardId}" style="display: none; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; font-size: 11px; color: #475569;">
+                                <p style="margin: 2px 0;">📧 <strong>E-mail:</strong> ${r.email}</p>
+                                <p style="margin: 2px 0;">📱 <strong>Telefone:</strong> ${r.telefone}</p>
+                                <p style="margin: 2px 0;">🎓 <strong>Curso:</strong> ${r.curso}</p>
+                                ${r.periodo ? `<p style="margin: 2px 0;">📚 <strong>Período:</strong> ${r.periodo}º Período[cite: 10]</p>` : ''}
+                                ${r.motivacao ? `<div style="background: white; border: 1px solid var(--border); padding: 8px; border-radius: 6px; margin-top: 6px;"><p style="margin: 0 0 2px 0; font-weight: 800; color: #64748b;">💡 Motivação[cite: 10]:</p><p style="margin: 0; color: var(--dark);">${r.motivacao}</p></div>` : ''}
+                                ${r.comprovanteUrl ? `<div style="margin-top: 6px;"><a href="${r.comprovanteUrl}" target="_blank" style="font-weight: 800; color: var(--primary); text-decoration: none;">📎 Ver Comprovante Anexado[cite: 10]</a></div>` : ''}
                             </div>
-                            <div style="background: white; border: 1px solid var(--border); padding: 8px; border-radius: 6px; margin-top: 4px;">
-                                <p style="margin: 0 0 2px 0; font-size: 9px; font-weight: 800; color: #64748b;">💡 Por que quer fazer parte da LAPE[cite: 10]:</p>
-                                <p style="margin: 0; font-size: 10px; color: var(--dark); line-height: 1.3;">${r.motivacao}</p>
-                            </div>
-                            ${r.comprovanteUrl ? `<div style="margin-top: 6px;"><a href="${r.comprovanteUrl}" target="_blank" style="font-size: 10px; font-weight: 800; color: var(--primary); text-decoration: none;">📎 Ver Comprovante de Pagamento Anexado[cite: 10]</a></div>` : ''}
                         </div>
                     `;
                 });
                 container.innerHTML = html;
             } catch (e) {
                 console.error(e);
-                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar inscrições.</p>`;
+                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar respostas.</p>`;
+            }
+        }
+
+        function toggleExpandirInscricao(cardId) {
+            let el = document.getElementById(cardId);
+            let seta = document.getElementById(`seta-${cardId}`);
+            if (el.style.display === "none") {
+                el.style.display = "block";
+                seta.innerText = "▲ Ocultar";
+            } else {
+                el.style.display = "none";
+                seta.innerText = "▼ Ver Detalhes";
             }
         }
 
