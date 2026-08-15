@@ -2337,6 +2337,14 @@
             cancelarEdicaoAvisoDiretoria();
         }
 
+        // Função de alteração de campo personalizada incluída (Estava faltando!)
+        function alternarCampoPersonalizado(valor) {
+            let div = document.getElementById('div-data-personalizada');
+            if (div) {
+                div.style.display = (valor === 'personalizado') ? 'block' : 'none';
+            }
+        }
+
         function prepararEdicaoAvisoDiretoria(id) {
             let aviso = avisosDiretoriaCache.find(x => x.id === id);
             if (!aviso) return;
