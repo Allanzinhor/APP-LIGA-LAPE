@@ -44,9 +44,7 @@
             --transition: all 0.25s ease;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body.fundo-app {
             background: #f8fafc;
@@ -83,7 +81,6 @@
             }
         }
 
-        /* HEADER SUPREMO */
         header.cabecalho {
             background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
             color: white;
@@ -116,7 +113,6 @@
             white-space: nowrap;
         }
 
-        /* PERFIL DO DIRETOR */
         .admin-card-acao {
             background: #ffffff;
             border-radius: var(--radius);
@@ -126,7 +122,6 @@
             margin: 14px;
         }
 
-        /* MENU DE NAVEGAÇÃO MODERNO (GRID OTIMIZADO PARA CELULAR) */
         .menu-painel-executivo {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -179,7 +174,6 @@
             line-height: 1.2;
         }
 
-        /* BOTÃO DE VOLTAR AO MENU */
         .barra-voltar-menu {
             padding: 14px 14px 0 14px;
             display: none;
@@ -199,7 +193,6 @@
             gap: 8px;
         }
 
-        /* ESTILOS DE BOTÕES E FORMULÁRIOS */
         .btn-salvar {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
@@ -247,7 +240,6 @@
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
 
-        /* MODAIS REFINADOS */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -272,7 +264,6 @@
             overflow-y: auto;
         }
 
-        /* ESTADO INICIAL VAZIO */
         #estado-vazio-painel {
             text-align: center;
             padding: 60px 20px;
@@ -301,7 +292,6 @@
             line-height: 1.4;
         }
 
-        /* SLIDER DE AVISOS INTERNOS GLOBAL */
         .quadro-avisos-global {
             margin: 0 14px 14px 14px;
             background: #fffbeb;
@@ -323,17 +313,9 @@
             position: relative;
             overflow: hidden;
         }
-        .slide-global {
-            display: none;
-        }
-        .slide-global.ativo {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .slide-global { display: none; }
+        .slide-global.ativo { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="fundo-app">
@@ -372,7 +354,7 @@
 
         <!-- ================= MENU PRINCIPAL DE NAVEGAÇÃO ================= -->
         <div class="menu-painel-executivo" id="menu-painel-executivo">
-            <!-- Preenchido dinamicamente -->
+            <!-- Preenchido dinamicamente via JS -->
         </div>
 
         <!-- ================= ESTADO INICIAL VAZIO ================= -->
@@ -391,7 +373,6 @@
                 </div>
                 <p style="font-size: 11px; color: #64748b; margin-bottom: 12px; line-height: 1.3;">Dashboard analítico para tomada de decisão.</p>
                 
-                <!-- Seletor de Período -->
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; background: #e2e8f0; padding: 3px; border-radius: 10px; margin-bottom: 12px;">
                     <button class="btn-mini" id="btn-per-mensal" style="background: var(--primary); color: white; border: none; font-size: 10px; padding: 6px 2px; font-weight: 700; border-radius: 7px;" onclick="mudarPeriodoDesempenho('mensal')">Mensal</button>
                     <button class="btn-mini" id="btn-per-semestral" style="background: transparent; color: var(--dark); border: none; font-size: 10px; padding: 6px 2px; font-weight: 700; border-radius: 7px;" onclick="mudarPeriodoDesempenho('semestral')">Semestral</button>
@@ -399,7 +380,6 @@
                     <button class="btn-mini" id="btn-per-geral" style="background: transparent; color: var(--dark); border: none; font-size: 10px; padding: 6px 2px; font-weight: 700; border-radius: 7px;" onclick="mudarPeriodoDesempenho('geral')">Geral</button>
                 </div>
 
-                <!-- MACRO INDICADORES (3 colunas, perfeito para mobile) -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; text-align: center;">
                     <div style="background: #f8fafc; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
                         <span style="display: block; font-size: 14px; font-weight: 800; color: var(--primary);" id="ind-taxa-retencao">100%</span>
@@ -439,7 +419,6 @@
                     </div>
                 </div>
 
-                <!-- INTELIGÊNCIA IA -->
                 <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
                     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
                         <i class="fa-solid fa-robot" style="color: var(--primary); font-size: 13px;"></i>
@@ -450,7 +429,6 @@
                     </div>
                 </div>
 
-                <!-- ALERTAS -->
                 <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 4px;">
                         <strong style="font-size: 11px; color: #991b1b;"><i class="fa-solid fa-triangle-exclamation"></i> Alertas de Risco</strong>
@@ -461,7 +439,6 @@
                     </div>
                 </div>
 
-                <!-- RANKINGS -->
                 <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                         <strong style="font-size: 12px; color: #8b5cf6;"><i class="fa-solid fa-trophy"></i> Hall da Fama</strong>
@@ -480,7 +457,6 @@
                     <div id="container-lista-ranking-selecionado" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
                 </div>
 
-                <!-- MAPA DE ENGAJAMENTO -->
                 <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
                     <strong style="font-size: 12px; color: var(--primary); display: block; margin-bottom: 8px;"><i class="fa-solid fa-map-location-dot"></i> Mapa de Engajamento</strong>
                     
@@ -504,7 +480,23 @@
             </div>
         </div>
 
-        <!-- ABA: RECADOS INTERNOS (EXCLUSIVO PRESIDENTE) -->
+        <!-- ================= ABA: FORMULÁRIOS EXTERNOS & SELETIVO ================= -->
+        <div id="secao-formularios-seletivo" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <div>
+                    <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-wpforms"></i> Processo Seletivo & Formulários</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Gere links externos personalizados e gerencie submissões em tempo real</p>
+                </div>
+                <button class="btn-mini verde" style="padding: 8px 12px; font-size: 11px; font-weight: 800;" onclick="abrirModalCriarFormularioExterno()"><i class="fa-solid fa-plus"></i> Novo Formulário</button>
+            </div>
+
+            <!-- Lista de Formulários Gerados -->
+            <div id="lista-formularios-externos-admin" style="display: flex; flex-direction: column; gap: 10px;">
+                <p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando formulários...</p>
+            </div>
+        </div>
+
+        <!-- ABA: RECADOS INTERNOS -->
         <div id="secao-recados-internos" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a;">
                 <h3 id="titulo-form-aviso-dir" style="margin: 0 0 10px 0; color: #b45309; font-size: 15px; font-weight: 800;"><i class="fa-solid fa-pen-nib"></i> Publicar Recado Interno</h3>
@@ -570,7 +562,7 @@
             <div id="lista-admin-recados-internos"></div>
         </div>
 
-        <!-- ABA: MODO DE MANUTENÇÃO (EXCLUSIVO PRESIDENTE) -->
+        <!-- ABA: MODO DE MANUTENÇÃO -->
         <div id="secao-manutencao" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #fffbeb; border: 1px solid #fde68a;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
@@ -831,6 +823,59 @@
 
     </div>
 
+    <!-- MODAL DE CRIAÇÃO DE FORMULÁRIO EXTERNO -->
+    <div id="modal-criar-form-externo" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="max-width: 480px;">
+            <h3 style="color: var(--primary); margin-top: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo</h3>
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 14px;">Defina as informações e selecione os campos do seu novo formulário de seleção:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                <div>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Título do Formulário</label>
+                    <input type="text" id="novo-form-titulo" placeholder="Ex: Processo Seletivo LAPE 2026.2">
+                </div>
+                <div>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 3px;">Descrição / Instruções para o Candidato</label>
+                    <textarea id="novo-form-desc" rows="3" placeholder="Orientações sobre taxa de inscrição, prazos, etc..."></textarea>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
+                    <span style="font-size: 11px; font-weight: 800; color: var(--dark); display: block; margin-bottom: 8px;">📋 Campos Padrão Incluídos Automaticamente:</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Nome Completo</span>
+                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ E-mail</span>
+                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Telefone (WhatsApp)</span>
+                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Curso[cite: 10]</span>
+                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Período (1º ao 10º)[cite: 10]</span>
+                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Comprovante de Pagamento[cite: 10]</span>
+                        <span style="font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-weight: 700;">✓ Por que quer fazer parte da LAPE?[cite: 10]</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-salvar" style="flex: 1; padding: 12px;" onclick="salvarNovoFormularioExterno()">Gerar Link Público</button>
+                <button class="btn-mini cinza" style="flex: 1; padding: 12px; font-weight: 800;" onclick="fecharModalCriarFormularioExterno()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO DE RESPOSTAS / INSCRIÇÕES -->
+    <div id="modal-respostas-seletivo" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="max-width: 520px; max-height: 90vh; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">
+                <h3 style="color: var(--primary); margin: 0; font-size: 15px; font-weight: 800;" id="titulo-modal-inscritos">📊 Inscrições Recebidas</h3>
+                <span id="contador-inscritos-badge" style="font-size: 11px; background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-weight: 800;">0 inscritos</span>
+            </div>
+            
+            <div id="lista-inscritos-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
+
+            <div style="margin-top: 14px;">
+                <button class="btn-mini cinza" style="width: 100%; padding: 10px; font-weight: 800;" onclick="fecharModalRespostasSeletivo()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL PERFIL -->
     <div id="modal-perfil-ligante" class="modal" style="display:none;">
         <div class="modal-conteudo">
@@ -910,13 +955,13 @@
         let estatisticasLigantesCache = [];
 
         const permissoesCargos = {
-            "presidente": ["dashboard-principal", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "vice-presidente": ["dashboard-principal", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
-            "secretaria": ["dashboard-principal", "lista-membros", "frequencia", "avisos", "ouvidoria-admin"],
+            "presidente": ["dashboard-principal", "formularios-seletivo", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin"],
+            "secretaria": ["dashboard-principal", "formularios-seletivo", "lista-membros", "frequencia", "avisos", "ouvidoria-admin"],
             "tesoureira": ["financeiro", "avisos"],
-            "diretora de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
-            "diretora de marketing": ["avisos"]
+            "diretoria de extensão": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretoria de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos"],
+            "diretoria de marketing": ["avisos"]
         };
 
         function mascaraTelefone(input) {
@@ -996,6 +1041,7 @@
 
             const configAbas = {
                 "dashboard-principal": { nome: "Gestão Executiva", icone: "fa-chart-pie" },
+                "formularios-seletivo": { nome: "Processo Seletivo", icone: "fa-wpforms" },
                 "recados-internos": { nome: "Recados Internos", icone: "fa-bullhorn" },
                 "manutencao": { nome: "Manutenção", icone: "fa-screwdriver-wrench" },
                 "cadastro-membros": { nome: "Cadastrar Ligante", icone: "fa-user-plus" },
@@ -1040,6 +1086,8 @@
 
             if (nome === 'migracao-papel') {
                 inicializarMigracaoLote();
+            } else if (nome === 'formularios-seletivo') {
+                carregarFormulariosExternosAdmin();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1251,6 +1299,152 @@
                 renderizarRankingsComplexos();
                 renderizarMapaEngajamento();
             }
+        }
+
+        // Funções do Construtor de Formulários Externos / Processo Seletivo
+        function abrirModalCriarFormularioExterno() {
+            document.getElementById("novo-form-titulo").value = "";
+            document.getElementById("novo-form-desc").value = "";
+            document.getElementById("modal-criar-form-externo").style.display = "flex";
+        }
+
+        function fecharModalCriarFormularioExterno() {
+            document.getElementById("modal-criar-form-externo").style.display = "none";
+        }
+
+        async function salvarNovoFormularioExterno() {
+            let titulo = document.getElementById("novo-form-titulo").value.trim();
+            let descricao = document.getElementById("novo-form-desc").value.trim();
+
+            if (!titulo) {
+                alert("Preencha o título do formulário.");
+                return;
+            }
+
+            try {
+                await db.collection("formularios_externos").add({
+                    titulo,
+                    descricao,
+                    ativo: true,
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("Formulário criado com sucesso!");
+                fecharModalCriarFormularioExterno();
+                carregarFormulariosExternosAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao criar formulário.");
+            }
+        }
+
+        async function carregarFormulariosExternosAdmin() {
+            let container = document.getElementById("lista-formularios-externos-admin");
+            if (!container) return;
+
+            try {
+                let snapshot = await db.collection("formularios_externos").orderBy("criadoEm", "desc").get();
+                if (snapshot.empty) {
+                    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Nenhum formulário criado ainda.</p>`;
+                    return;
+                }
+
+                let html = "";
+                snapshot.forEach(doc => {
+                    let d = doc.data();
+                    let formId = doc.id;
+                    let linkPublico = `${window.location.origin}/inscricao.html?id=${formId}`;
+
+                    html += `
+                        <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <div style="min-width: 0; flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                                    <strong style="font-size: 12px; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.titulo}</strong>
+                                    <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${d.ativo ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${d.ativo ? 'Ativo' : 'Fechado'}</span>
+                                </div>
+                                <p style="margin: 0 0 6px 0; font-size: 10px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.descricao || 'Sem descrição'}</p>
+                                <input type="text" value="${linkPublico}" readonly style="width: 100%; font-size: 10px; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: #f8fafc; color: var(--primary);" onclick="this.select()">
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 110px; flex-shrink: 0;">
+                                <button class="btn-mini verde" style="padding: 6px; font-size: 10px;" onclick="verInscricoesFormulario('${formId}', '${d.titulo.replace(/'/g, "\\'")}')">📊 Inscrições</button>
+                                <button class="btn-mini cinza" style="padding: 6px; font-size: 10px;" onclick="copiarLinkInscricao('${linkPublico}')">🔗 Copiar Link</button>
+                                <button class="btn-mini ${d.ativo ? 'vermelho' : 'verde'}" style="padding: 6px; font-size: 10px;" onclick="alternarStatusFormulario('${formId}', ${!d.ativo})">${d.ativo ? 'Fechar' : 'Abrir'}</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar formulários.</p>`;
+            }
+        }
+
+        function copiarLinkInscricao(link) {
+            navigator.clipboard.writeText(link);
+            alert("Link copiado para a área de transferência!");
+        }
+
+        async function alternarStatusFormulario(formId, novoStatus) {
+            try {
+                await db.collection("formularios_externos").doc(formId).update({ ativo: novoStatus });
+                carregarFormulariosExternosAdmin();
+            } catch(e) {
+                console.error(e);
+                alert("Erro ao alterar status do formulário.");
+            }
+        }
+
+        async function verInscricoesFormulario(formId, tituloForm) {
+            document.getElementById("titulo-modal-inscritos").innerText = `📊 Inscrições: ${tituloForm}`;
+            let container = document.getElementById("lista-inscritos-conteudo");
+            let contadorBadge = document.getElementById("contador-inscritos-badge");
+            container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando inscrições...</p>`;
+            document.getElementById("modal-respostas-seletivo").style.display = "flex";
+
+            try {
+                let snapshot = await db.collection("formularios_externos").doc(formId).collection("respostas").orderBy("enviadoEm", "desc").get();
+                contadorBadge.innerText = `${snapshot.size} inscrito(s)`;
+
+                if (snapshot.empty) {
+                    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Nenhuma inscrição enviada neste formulário ainda.</p>`;
+                    return;
+                }
+
+                let html = "";
+                snapshot.forEach(doc => {
+                    let r = doc.data();
+                    let dataEnvio = r.enviadoEm ? r.enviadoEm.toDate().toLocaleString('pt-BR') : "Data não registrada";
+
+                    html += `
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <strong style="font-size: 12px; color: var(--primary);">${r.nome}</strong>
+                                <span style="font-size: 9px; color: #64748b;">📅 ${dataEnvio}</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 10px; color: #475569; margin-bottom: 6px;">
+                                <span>📧 <strong>E-mail:</strong> ${r.email}</span>
+                                <span>📱 <strong>Tel:</strong> ${r.telefone}</span>
+                                <span>🎓 <strong>Curso:</strong> ${r.curso}[cite: 10]</span>
+                                <span>📚 <strong>Período:</strong> ${r.periodo}º Período[cite: 10]</span>
+                            </div>
+                            <div style="background: white; border: 1px solid var(--border); padding: 8px; border-radius: 6px; margin-top: 4px;">
+                                <p style="margin: 0 0 2px 0; font-size: 9px; font-weight: 800; color: #64748b;">💡 Por que quer fazer parte da LAPE[cite: 10]:</p>
+                                <p style="margin: 0; font-size: 10px; color: var(--dark); line-height: 1.3;">${r.motivacao}</p>
+                            </div>
+                            ${r.comprovanteUrl ? `<div style="margin-top: 6px;"><a href="${r.comprovanteUrl}" target="_blank" style="font-size: 10px; font-weight: 800; color: var(--primary); text-decoration: none;">📎 Ver Comprovante de Pagamento Anexado[cite: 10]</a></div>` : ''}
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar inscrições.</p>`;
+            }
+        }
+
+        function fecharModalRespostasSeletivo() {
+            document.getElementById("modal-respostas-seletivo").style.display = "none";
         }
 
         function gerarInsightsIA(taxaPresenca, taxaRetencao, justPendentes, chTotal, ativs) {
@@ -2552,7 +2746,6 @@
                     if (reg.status === 'justificado') totalJust++;
                     if (reg.status === 'negado') totalFaltas++;
 
-                    // Ajustado para mostrar o indicativo de que confirmou no app sem alterar o status de presença definitiva
                     let badgeStatus = `<span style="background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">Pendente</span>`;
                     
                     if (reg.confirmadoAluno === true && reg.status === 'pendente') {
