@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAPE — Central de Demandas Administrativas</title>
+    <title>LAPE — Central de Solicitações Administrativas</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -22,8 +22,7 @@
 
     <style>
         /* ==========================================================================
-           LAPE — CENTRAL DE DEMANDAS ADMINISTRATIVAS (MÓDULO SOLICITAÇÕES)
-           Design System Institucional, Moderno, Sofisticado e Responsivo
+           LAPE — MÓDULO DE SOLICITAÇÕES (DESIGN SYSTEM REFINADO & RESPONSIVO)
            ========================================================================== */
         :root {
             --primary: #4f46e5;
@@ -40,8 +39,8 @@
             --bg-card: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --sidebar-width: 270px;
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 260px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] {
@@ -83,7 +82,7 @@
         }
 
         /* --------------------------------------------------------------------------
-           SIDEBAR INSTITUCIONAL RESPONSIVA
+           SIDEBAR INSTITUCIONAL
            -------------------------------------------------------------------------- */
         sidebar {
             width: var(--sidebar-width);
@@ -110,40 +109,28 @@
             font-size: 13px;
             margin: 0;
             font-weight: 800;
-            line-height: 1.2;
-        }
-
-        .sidebar-action-box {
-            padding: 12px;
         }
 
         .sidebar-menu {
             flex: 1;
             overflow-y: auto;
-            padding: 0 10px 10px 10px;
-        }
-
-        .menu-category {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-muted);
-            font-weight: 800;
-            margin: 14px 0 4px 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .menu-link {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 10px;
+            padding: 9px 12px;
             border-radius: 8px;
             color: var(--text-muted);
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
-            margin-bottom: 2px;
             text-decoration: none;
         }
 
@@ -160,7 +147,7 @@
         .menu-link span {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .badge-counter {
@@ -182,7 +169,7 @@
         }
 
         /* --------------------------------------------------------------------------
-           WORKSPACE PRINCIPAL
+           WORKSPACE PRINCIPAL & LAYOUT RESPONSIVO SEPARADO
            -------------------------------------------------------------------------- */
         .workspace {
             flex: 1;
@@ -195,31 +182,89 @@
         }
 
         .header-top {
-            padding: 12px 24px;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--bg-card);
-            min-height: 68px;
             gap: 12px;
             flex-wrap: wrap;
         }
 
-        .search-global-box {
+        /* Dashboard de Indicadores Superiores (Cards Clicáveis) */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 90px;
+        }
+
+        .metric-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .metric-card.ativo {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .metric-card .num {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+        }
+
+        .metric-card .label {
+            font-size: 9px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Barra de Pesquisa e Filtros */
+        .toolbar-box {
+            padding: 12px 24px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-card);
+            align-items: center;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .search-box {
             display: flex;
             align-items: center;
             background: var(--bg-main);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 6px 14px;
+            border-radius: 9px;
+            padding: 7px 12px;
             flex: 1;
-            max-width: 360px;
-            min-width: 200px;
+            min-width: 240px;
             gap: 8px;
         }
 
-        .search-global-box input {
+        .search-box input {
             border: none;
             background: transparent;
             outline: none;
@@ -231,184 +276,69 @@
         }
 
         /* --------------------------------------------------------------------------
-           DASHBOARD DE CARDS SUPERIORES (MÉTRICAS / FILTROS CLICÁVEIS)
+           CONTEÚDO PRINCIPAL (LAYOUT DIVIDIDO EM 2 COLUNAS NO DESKTOP, CHEIO NO MOBILE)
            -------------------------------------------------------------------------- */
-        .metrics-grid {
+        .main-split-container {
+            flex: 1;
             display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 8px;
-            padding: 14px 24px;
+            grid-template-columns: 1fr 1fr;
             background: var(--bg-main);
-            border-bottom: 1px solid var(--border);
-            overflow-x: auto;
+            overflow: hidden;
+            height: calc(100% - 180px);
         }
 
-        .metric-card {
+        .pane-listagem {
+            overflow-y: auto;
+            padding: 16px 24px;
+            border-right: 1px solid var(--border);
+            background: var(--bg-main);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pane-detalhe {
+            overflow-y: auto;
+            padding: 24px;
+            background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Card de Solicitação (Lista) */
+        .solicitacao-card-item {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            padding: 10px;
-            border-radius: 12px;
-            text-align: center;
+            border-radius: 10px;
+            padding: 14px;
             cursor: pointer;
             transition: var(--transition);
-            min-width: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
         }
 
-        .metric-card:hover {
+        .solicitacao-card-item:hover {
             border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.06);
         }
 
-        .metric-card.ativo-filtro {
+        .solicitacao-card-item.selecionado {
             border-color: var(--primary);
             background: var(--primary-light);
         }
 
-        .metric-card .num {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--primary);
-            display: block;
-        }
-
-        .metric-card .label {
-            font-size: 8px;
-            color: var(--text-muted);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-
-        /* --------------------------------------------------------------------------
-           BARRA DE FERRAMENTAS E ABAS DE VISUALIZAÇÃO
-           -------------------------------------------------------------------------- */
-        .toolbar-filters {
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            background: var(--bg-card);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .views-tabs {
-            display: flex;
-            gap: 6px;
-        }
-
-        .view-tab-btn {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .view-tab-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .view-tab-btn.ativo { background: var(--primary); color: white; border-color: var(--primary); }
-
-        /* --------------------------------------------------------------------------
-           ÁREA DE CONTEÚDO DINÂMICO
-           -------------------------------------------------------------------------- */
-        .content-workspace {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 24px;
-            background: var(--bg-main);
-        }
-
-        /* Cards e Listagens de Solicitações */
-        .solicitacao-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .solicitacao-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.08);
-            transform: translateY(-1px);
-        }
-
         .badge-status {
-            font-size: 9px;
-            padding: 3px 8px;
-            border-radius: 6px;
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
             font-weight: 800;
             text-transform: uppercase;
         }
 
-        /* Kanban Board */
-        .kanban-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 14px;
-            height: 100%;
-            overflow-x: auto;
-            min-width: 1100px;
-            padding-bottom: 20px;
-        }
-
-        .kanban-coluna {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            max-height: 100%;
-        }
-
-        .kanban-coluna-header {
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .kanban-cards-box {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .kanban-card-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .kanban-card-item:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        /* Modais Institucionais */
+        /* Modais */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -418,15 +348,15 @@
             align-items: center;
             justify-content: center;
             z-index: 2000;
-            padding: 20px;
+            padding: 16px;
         }
 
-        .modal-container {
+        .modal-card {
             background: var(--bg-card);
             border-radius: 16px;
             padding: 24px;
             width: 100%;
-            max-width: 800px;
+            max-width: 700px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
             max-height: 90vh;
             overflow-y: auto;
@@ -437,15 +367,15 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            padding: 9px 16px;
-            border-radius: 9px;
+            padding: 8px 14px;
+            border-radius: 8px;
             font-size: 11px;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
             transition: var(--transition);
         }
         .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
@@ -454,7 +384,7 @@
             background: var(--bg-main);
             color: var(--text-main);
             border: 1px solid var(--border);
-            padding: 8px 14px;
+            padding: 7px 12px;
             border-radius: 8px;
             font-size: 11px;
             font-weight: 700;
@@ -468,20 +398,18 @@
 
         input, select, textarea {
             width: 100%;
-            padding: 10px 12px;
+            padding: 9px 12px;
             border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 11px;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--bg-main);
             color: var(--text-main);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             outline: none;
-            transition: var(--transition);
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12); }
 
-        /* Toast Notifications */
         #toast-container {
             position: fixed;
             bottom: 20px;
@@ -494,17 +422,15 @@
         .toast-msg {
             background: var(--dark);
             color: #ffffff;
-            padding: 12px 18px;
-            border-radius: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
             font-size: 11px;
             font-weight: 700;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
-            gap: 10px;
-            animation: slideIn 0.3s ease;
+            gap: 8px;
         }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         #btn-hamburguer {
             display: none;
@@ -515,18 +441,16 @@
             cursor: pointer;
         }
 
-        @media (max-width: 1200px) {
-            .metrics-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            sidebar { position: fixed; left: -270px; top: 0; height: 100%; z-index: 1000; }
+        /* Responsividade para Celulares (Mobile First Adaptação) */
+        @media (max-width: 900px) {
+            sidebar { position: fixed; left: -260px; top: 0; height: 100%; z-index: 1000; }
             sidebar.ativo { left: 0; }
             .sidebar-overlay.ativo { display: block; }
             #btn-hamburguer { display: inline-flex; }
-            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-            .search-global-box { max-width: 100%; width: 100%; order: 3; }
-            .workspace { width: 100vw; }
+            .metrics-grid { grid-template-columns: repeat(3, 1fr); }
+            .main-split-container { grid-template-columns: 1fr; }
+            .pane-detalhe { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1500; }
+            .pane-detalhe.ativo-mobile { display: flex; }
         }
     </style>
 </head>
@@ -537,7 +461,7 @@
 
     <div class="app-layout">
         <!-- --------------------------------------------------------------------------
-           Navegação Lateral Institucional (Recolhível / Responsiva)
+           Navegação Lateral Institucional
            -------------------------------------------------------------------------- -->
         <sidebar id="sidebar-principal">
             <div class="sidebar-header">
@@ -548,370 +472,210 @@
                 <button onclick="toggleSidebarMobile()" style="background:none; border:none; color:white; cursor:pointer; font-size:16px; display:none;" id="btn-fechar-menu"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div class="sidebar-action-box">
+            <div style="padding: 12px;">
                 <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="abrirModalNovaSolicitacao()">
                     <i class="fa-solid fa-plus"></i> Nova Solicitação
                 </button>
             </div>
 
             <div class="sidebar-menu">
-                <div class="menu-category">Central de Demandas</div>
-                <div class="menu-link ativo" onclick="mudarSecao('todas', this)"><span><i class="fa-solid fa-inbox"></i> Todas as Solicitações</span><span class="badge-counter" id="bc-todas">0</span></div>
-                <div class="menu-link" onclick="mudarSecao('minhas', this)"><span><i class="fa-solid fa-user"></i> Minhas Solicitações</span></div>
-                <div class="menu-link" onclick="mudarSecao('atribuidas', this)"><span><i class="fa-solid fa-briefcase"></i> Atribuídas a Mim</span><span class="badge-counter" style="background:var(--info);" id="bc-atribuidas">0</span></div>
-                <div class="menu-link" onclick="mudarSecao('urgentes', this)"><span><i class="fa-solid fa-triangle-exclamation"></i> Urgentes</span><span class="badge-counter" style="background:var(--danger);" id="bc-urgentes">0</span></div>
-                <div class="menu-link" onclick="mudarSecao('atrasadas', this)"><span><i class="fa-solid fa-clock-rotate-left"></i> Atrasadas</span><span class="badge-counter" style="background:var(--danger);" id="bc-atrasadas">0</span></div>
-                <div class="menu-link" onclick="mudarSecao('revisao', this)"><span><i class="fa-solid fa-glasses"></i> Em Revisão</span></div>
+                <div style="font-size: 9px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; margin: 8px 0 2px 4px;">Demandas</div>
+                <div class="menu-link ativo" onclick="mudarSecao('todas', this)"><span><i class="fa-solid fa-inbox"></i> Todas</span><span class="badge-counter" id="bc-todas">0</span></div>
+                <div class="menu-link" onclick="mudarSecao('recebidas', this)"><span><i class="fa-solid fa-inbox-in"></i> Recebidas</span><span class="badge-counter" style="background:var(--info);" id="bc-recebidas">0</span></div>
+                <div class="menu-link" onclick="mudarSecao('enviadas', this)"><span><i class="fa-solid fa-paper-plane"></i> Enviadas</span></div>
+                <div class="menu-link" onclick="mudarSecao('minhas', this)"><span><i class="fa-solid fa-user-check"></i> Minhas Envolvidas</span></div>
+                <div class="menu-link" onclick="mudarSecao('atrasadas', this)"><span><i class="fa-solid fa-triangle-exclamation"></i> Atrasadas</span><span class="badge-counter" style="background:var(--danger);" id="bc-atrasadas">0</span></div>
                 <div class="menu-link" onclick="mudarSecao('concluidas', this)"><span><i class="fa-solid fa-circle-check"></i> Concluídas</span></div>
-                <div class="menu-link" onclick="mudarSecao('arquivadas', this)"><span><i class="fa-solid fa-box-archive"></i> Arquivo Permanente</span></div>
 
-                <div class="menu-category">Ferramentas & Visões</div>
-                <div class="menu-link" onclick="mudarSecao('calendario', this)"><span><i class="fa-regular fa-calendar-days"></i> Calendário de Prazos</span></div>
-                <div class="menu-link" onclick="mudarSecao('relatorios', this)"><span><i class="fa-solid fa-chart-pie"></i> Relatórios & Desempenho</span></div>
-                <div class="menu-link" onclick="window.location.href='diretoria.html'"><span><i class="fa-solid fa-arrow-left"></i> Voltar ao Menu Principal</span></div>
+                <div style="font-size: 9px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; margin: 12px 0 2px 4px;">Sistema</div>
+                <div class="menu-link" onclick="window.location.href='diretoria.html'"><span><i class="fa-solid fa-arrow-left"></i> Menu Principal</span></div>
             </div>
         </sidebar>
 
         <!-- --------------------------------------------------------------------------
-           WORKSPACE PRINCIPAL
+           WORKSPACE PRINCIPAL SEPARADO E FUNCIONAL
            -------------------------------------------------------------------------- -->
         <div class="workspace">
             <div class="header-top">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <button id="btn-hamburguer" onclick="toggleSidebarMobile()"><i class="fa-solid fa-bars"></i></button>
                     <div>
-                        <h2 id="titulo-pagina-header" style="margin: 0; font-size: 15px; font-weight: 800;">Solicitações</h2>
-                        <span style="font-size: 10px; color: var(--text-muted);">Gerencie, acompanhe e organize as demandas administrativas da LAPE.</span>
+                        <h2 style="margin: 0; font-size: 14px; font-weight: 800;" id="titulo-topo-pagina">Solicitações</h2>
+                        <span style="font-size: 10px; color: var(--text-muted);">Central de demandas e solicitações internas da LAPE.</span>
                     </div>
                 </div>
 
-                <!-- Pesquisa Global Avançada -->
-                <div class="search-global-box">
-                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                    <input type="text" id="input-busca-global" placeholder="Pesquisar por título, protocolo, responsável..." oninput="renderizarWorkspaceSolicitacoes()">
-                </div>
-
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn-primary" onclick="abrirModalNovaSolicitacao()">
-                        <i class="fa-solid fa-plus"></i> Nova solicitação
-                    </button>
-                    <button class="btn-secondary" onclick="alternarDarkModo()" style="padding: 8px 10px;">
-                        <i class="fa-solid fa-circle-half-stroke" id="icone-tema"></i>
-                    </button>
-                    <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; border: 2px solid var(--border);" id="user-avatar-lbl">A</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button class="btn-primary" onclick="abrirModalNovaSolicitacao()"><i class="fa-solid fa-plus"></i> Nova solicitação</button>
+                    <button class="btn-secondary" onclick="alternarDarkModo()" style="padding: 7px 10px;"><i class="fa-solid fa-circle-half-stroke" id="icone-tema"></i></button>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; border: 2px solid var(--border);" id="user-avatar-lbl">A</div>
                 </div>
             </div>
 
-            <!-- Dashboard de Indicadores Superiores (Clicáveis) -->
+            <!-- Indicadores Clicáveis (Filtros Rápidos do Topo) -->
             <div class="metrics-grid">
-                <div class="metric-card" onclick="filtrarPorCardDashboard('todas')" id="card-metric-todas">
+                <div class="metric-card ativo" onclick="filtrarPorDashboard('todas')" id="card-todas">
                     <span class="num" id="stat-todas">0</span>
                     <span class="label">Todas</span>
                 </div>
-                <div class="metric-card" onclick="filtrarPorCardDashboard('abertas')" id="card-metric-abertas">
-                    <span class="num" id="stat-abertas" style="color: var(--info);">0</span>
-                    <span class="label">Abertas</span>
+                <div class="metric-card" onclick="filtrarPorDashboard('recebidas')" id="card-recebidas">
+                    <span class="num" id="stat-recebidas" style="color: var(--info);">0</span>
+                    <span class="label">Recebidas</span>
                 </div>
-                <div class="metric-card" onclick="filtrarPorCardDashboard('andamento')" id="card-metric-andamento">
+                <div class="metric-card" onclick="filtrarPorDashboard('enviadas')" id="card-enviadas">
+                    <span class="num" id="stat-enviadas">0</span>
+                    <span class="label">Enviadas</span>
+                </div>
+                <div class="metric-card" onclick="filtrarPorDashboard('andamento')" id="card-andamento">
                     <span class="num" id="stat-andamento" style="color: var(--primary);">0</span>
                     <span class="label">Em andamento</span>
                 </div>
-                <div class="metric-card" onclick="filtrarPorCardDashboard('pendentes')" id="card-metric-pendentes">
+                <div class="metric-card" onclick="filtrarPorDashboard('pendentes')" id="card-pendentes">
                     <span class="num" id="stat-pendentes" style="color: var(--warning);">0</span>
                     <span class="label">Pendentes</span>
                 </div>
-                <div class="metric-card" onclick="filtrarPorCardDashboard('revisao')" id="card-metric-revisao">
+                <div class="metric-card" onclick="filtrarPorDashboard('revisao')" id="card-revisao">
                     <span class="num" id="stat-revisao" style="color: var(--purple);">0</span>
                     <span class="label">Em revisão</span>
                 </div>
-                <div class="metric-card" onclick="filtrarPorCardDashboard('urgentes')" id="card-metric-urgentes">
-                    <span class="num" id="stat-urgentes" style="color: var(--danger);">0</span>
-                    <span class="label">Urgentes</span>
-                </div>
-                <div class="metric-card" onclick="filtrarPorCardDashboard('atrasadas')" id="card-metric-atrasadas">
-                    <span class="num" id="stat-atrasadas" style="color: var(--danger);">0</span>
-                    <span class="label">Atrasadas</span>
-                </div>
-                <div class="metric-card" onclick="filtrarPorCardDashboard('concluidas')" id="card-metric-concluidas">
+                <div class="metric-card" onclick="filtrarPorDashboard('concluidas')" id="card-concluidas">
                     <span class="num" id="stat-concluidas" style="color: var(--success);">0</span>
                     <span class="label">Concluídas</span>
                 </div>
             </div>
 
-            <!-- Barra de Ferramentas / Alternador de Visões -->
-            <div class="toolbar-filters">
-                <div class="views-tabs">
-                    <div class="view-tab-btn ativo" onclick="mudarVisualizacao('lista', this)"><i class="fa-solid fa-list"></i> Lista</div>
-                    <div class="view-tab-btn" onclick="mudarVisualizacao('cards', this)"><i class="fa-solid fa-table-cells-large"></i> Cards</div>
-                    <div class="view-tab-btn" onclick="mudarVisualizacao('kanban', this)"><i class="fa-solid fa-columns"></i> Kanban</div>
+            <!-- Barra de Pesquisa e Filtros Customizados -->
+            <div class="toolbar-box">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted); font-size: 11px;"></i>
+                    <input type="text" id="input-busca" placeholder="Pesquisar por título, protocolo, solicitante ou conteúdo..." oninput="renderizarListagem()">
                 </div>
+                <select id="filtro-prioridade-select" onchange="renderizarListagem()" style="width: 130px; margin-bottom:0; font-size:10px;">
+                    <option value="">Prioridade</option>
+                    <option value="Urgente">Urgente</option>
+                    <option value="Importante">Importante</option>
+                    <option value="Normal">Normal</option>
+                </select>
+                <select id="filtro-status-select" onchange="renderizarListagem()" style="width: 140px; margin-bottom:0; font-size:10px;">
+                    <option value="">Status Geral</option>
+                    <option value="Não iniciada">Não iniciada</option>
+                    <option value="Em andamento">Em andamento</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em revisão">Em revisão</option>
+                    <option value="Concluída">Concluída</option>
+                </select>
+            </div>
 
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <select id="filtro-categoria-select" onchange="renderizarWorkspaceSolicitacoes()" style="margin-bottom:0; font-size:10px; width: 150px;">
-                        <option value="">Todas Categorias</option>
-                        <option value="Comunicação">Comunicação</option>
+            <!-- Conteúdo Dividido (Lista na Esquerda / Painel de Detalhes na Direita) -->
+            <div class="main-split-container">
+                <div class="pane-listagem" id="container-listagem">
+                    <p style="text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 40px;">Carregando solicitações...</p>
+                </div>
+                <div class="pane-detalhe" id="container-detalhe">
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; color:var(--text-muted);">
+                        <i class="fa-solid fa-arrow-pointer" style="font-size:32px; color:var(--primary); opacity:0.4; margin-bottom:10px;"></i>
+                        <h4 style="margin:0; font-size:13px; color:var(--text-main);">Nenhuma solicitação selecionada</h4>
+                        <p style="font-size:11px; margin:4px 0 0 0;">Clique em uma solicitação na lista para ver todos os detalhes, conversa e histórico.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- --------------------------------------------------------------------------
+       MODAL: CRIAR NOVA SOLICITAÇÃO
+       -------------------------------------------------------------------------- -->
+    <div id="modal-nova" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                <h3 style="margin: 0; color: var(--primary); font-size: 14px; font-weight: 800;"><i class="fa-solid fa-plus-circle"></i> Nova Solicitação Administrativa</h3>
+                <button class="btn-secondary" style="padding: 4px 8px;" onclick="fecharModalNova()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Título (Obrigatório):</label>
+            <input type="text" id="novo-titulo" placeholder="Ex: Produção da arte do Processo Seletivo 2026.2">
+
+            <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Subtítulo (Opcional):</label>
+            <input type="text" id="novo-subtitulo" placeholder="Ex: Material para divulgação nas redes sociais.">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Destinatário (Setor / Cargo):</label>
+                    <select id="novo-destinatario">
+                        <option value="Presidência">Presidência</option>
+                        <option value="Vice-Presidência">Vice-Presidência</option>
+                        <option value="Secretaria">Secretaria</option>
+                        <option value="Tesouraria">Tesouraria</option>
+                        <option value="Diretoria de Marketing">Diretoria de Marketing</option>
+                        <option value="Diretoria de Extensão">Diretoria de Extensão</option>
+                        <option value="Diretoria de Ensino">Diretoria de Ensino</option>
+                        <option value="Diretoria Científica">Diretoria Científica</option>
+                        <option value="Diretoria de Eventos">Diretoria de Eventos</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Responsável Individual (Opcional):</label>
+                    <input type="text" id="novo-responsavel" placeholder="Ex: Sarah Enes Carvalho Rodrigues">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Prioridade:</label>
+                    <select id="novo-prioridade">
+                        <option value="Normal">Normal</option>
+                        <option value="Importante">Importante</option>
+                        <option value="Urgente">Urgente</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Categoria:</label>
+                    <select id="novo-categoria">
                         <option value="Marketing">Marketing</option>
-                        <option value="Eventos">Eventos</option>
+                        <option value="Administrativo">Administrativo</option>
                         <option value="Extensão">Extensão</option>
                         <option value="Ensino">Ensino</option>
                         <option value="Pesquisa">Pesquisa</option>
-                        <option value="Secretaria">Secretaria</option>
+                        <option value="Eventos">Eventos</option>
                         <option value="Financeiro">Financeiro</option>
                         <option value="Presidência">Presidência</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Área de Conteúdo Dinâmico Principal -->
-            <div class="content-workspace" id="container-workspace-principal">
-                <p style="text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 50px;">Carregando central de demandas administrativas...</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Data Limite (Prazo):</label>
+                    <input type="date" id="novo-prazo-data">
+                </div>
+                <div>
+                    <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Horário Limite:</label>
+                    <input type="time" id="novo-prazo-hora" value="23:59">
+                </div>
+            </div>
+
+            <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Descrição Detalhada:</label>
+            <textarea id="novo-descricao" rows="4" placeholder="Explique detalhadamente o que precisa ser realizado..."></textarea>
+
+            <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Anexo Inicial (Opcional):</label>
+            <input type="file" id="novo-arquivo" style="background:var(--bg-main);">
+
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px;">
+                <button class="btn-secondary" onclick="fecharModalNova()">Cancelar</button>
+                <button class="btn-primary" onclick="salvarNovaSolicitacao()"><i class="fa-solid fa-paper-plane"></i> Enviar Solicitação</button>
             </div>
         </div>
     </div>
 
     <!-- --------------------------------------------------------------------------
-       MODAL: CRIAR NOVA SOLICITAÇÃO (ETAPAS GUIADAS)
-       -------------------------------------------------------------------------- -->
-    <div id="modal-nova-solicitacao" class="modal-overlay" style="display:none;">
-        <div class="modal-container" style="max-width: 750px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
-                <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-clipboard-question"></i> Nova Solicitação Administrativa</h3>
-                <button class="btn-secondary" style="padding: 4px 8px;" onclick="fecharModalNovaSolicitacao()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <!-- Etapas Indicadoras -->
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 18px;" id="etapas-indicador-box">
-                <div style="background:var(--primary); color:white; padding:6px; text-align:center; border-radius:6px; font-size:9px; font-weight:800;" id="ind-etapa-1">01. Identificação</div>
-                <div style="background:var(--bg-main); color:var(--text-muted); padding:6px; text-align:center; border-radius:6px; font-size:9px; font-weight:800;" id="ind-etapa-2">02. Destinação</div>
-                <div style="background:var(--bg-main); color:var(--text-muted); padding:6px; text-align:center; border-radius:6px; font-size:9px; font-weight:800;" id="ind-etapa-3">03. Prazo & Prioridade</div>
-                <div style="background:var(--bg-main); color:var(--text-muted); padding:6px; text-align:center; border-radius:6px; font-size:9px; font-weight:800;" id="ind-etapa-4">04. Arquivos</div>
-                <div style="background:var(--bg-main); color:var(--text-muted); padding:6px; text-align:center; border-radius:6px; font-size:9px; font-weight:800;" id="ind-etapa-5">05. Revisão</div>
-            </div>
-
-            <!-- ETAPA 1: Identificação -->
-            <div id="form-etapa-1" class="form-etapa-conteudo">
-                <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary);">01 — Identificação da Solicitação</h4>
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Título da Solicitação (Obrigatório):</label>
-                <input type="text" id="novo-titulo" placeholder="Ex: Produção da arte do Processo Seletivo 2026.2">
-                
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Subtítulo / Contextualização (Opcional):</label>
-                <input type="text" id="novo-subtitulo" placeholder="Ex: Material para divulgação nas redes sociais da LAPE.">
-                
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Categoria:</label>
-                <select id="novo-categoria">
-                    <option value="Marketing">Marketing</option>
-                    <option value="Comunicação">Comunicação</option>
-                    <option value="Eventos">Eventos</option>
-                    <option value="Extensão">Extensão</option>
-                    <option value="Ensino">Ensino</option>
-                    <option value="Pesquisa">Pesquisa</option>
-                    <option value="Secretaria">Secretaria</option>
-                    <option value="Financeiro">Financeiro</option>
-                    <option value="Presidência">Presidência</option>
-                    <option value="Outros">Outros</option>
-                </select>
-
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Descrição Detalhada:</label>
-                <textarea id="novo-descricao" rows="5" placeholder="Explique detalhadamente o que precisa ser realizado, diretrizes e objetivos..."></textarea>
-            </div>
-
-            <!-- ETAPA 2: Destinação -->
-            <div id="form-etapa-2" class="form-etapa-conteudo" style="display:none;">
-                <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary);">02 — Destinação e Responsabilidade</h4>
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Setor / Destinatário Responsável:</label>
-                <select id="novo-destinatario">
-                    <option value="Presidência">Presidência</option>
-                    <option value="Vice-Presidência">Vice-Presidência</option>
-                    <option value="Secretaria">Secretaria</option>
-                    <option value="Tesouraria">Tesouraria</option>
-                    <option value="Diretoria de Marketing">Diretoria de Marketing</option>
-                    <option value="Diretoria de Extensão">Diretoria de Extensão</option>
-                    <option value="Diretoria de Ensino">Diretoria de Ensino</option>
-                    <option value="Diretoria Científica">Diretoria Científica</option>
-                    <option value="Diretoria de Eventos">Diretoria de Eventos</option>
-                    <option value="Diretoria de Comunicação">Diretoria de Comunicação</option>
-                </select>
-
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Responsável Individual Específico (Opcional):</label>
-                <input type="text" id="novo-responsavel" placeholder="Ex: Sarah Enes Carvalho Rodrigues">
-
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Etiquetas (Separadas por vírgula):</label>
-                <input type="text" id="novo-etiquetas" placeholder="Ex: Processo Seletivo, Urgente, Redes Sociais">
-            </div>
-
-            <!-- ETAPA 3: Prazo e Prioridade -->
-            <div id="form-etapa-3" class="form-etapa-conteudo" style="display:none;">
-                <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary);">03 — Prazo e Prioridade</h4>
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Nível de Prioridade:</label>
-                <select id="novo-prioridade">
-                    <option value="Normal">🟢 Normal — Demanda administrativa comum</option>
-                    <option value="Importante">🟡 Importante — Precisa de atenção</option>
-                    <option value="Alta">🟠 Alta — Tratamento prioritário</option>
-                    <option value="Urgente">🔴 Urgente — Atenção imediata</option>
-                </select>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                    <div>
-                        <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Data Limite:</label>
-                        <input type="date" id="novo-prazo-data">
-                    </div>
-                    <div>
-                        <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Horário Limite:</label>
-                        <input type="time" id="novo-prazo-hora" value="23:59">
-                    </div>
-                </div>
-            </div>
-
-            <!-- ETAPA 4: Arquivos -->
-            <div id="form-etapa-4" class="form-etapa-conteudo" style="display:none;">
-                <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary);">04 — Anexos e Documentos Iniciais</h4>
-                <label style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Anexar Arquivo (PDF, Imagens, DOC, XLS):</label>
-                <input type="file" id="novo-arquivo-input" style="padding: 12px; background:var(--bg-main);">
-                <p style="font-size: 10px; color: var(--text-muted); font-style: italic;">Você poderá adicionar mais arquivos e gerenciar versões posteriormente dentro da solicitação.</p>
-            </div>
-
-            <!-- ETAPA 5: Revisão e Envio -->
-            <div id="form-etapa-5" class="form-etapa-conteudo" style="display:none;">
-                <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary);">05 — Revisão Final</h4>
-                <div style="background:var(--bg-main); padding:14px; border-radius:10px; border:1px solid var(--border); font-size:11px; line-height:1.6;">
-                    <p style="margin:0 0 6px 0;"><strong>Título:</strong> <span id="rev-titulo">-</span></p>
-                    <p style="margin:0 0 6px 0;"><strong>Destino:</strong> <span id="rev-destinatario">-</span></p>
-                    <p style="margin:0 0 6px 0;"><strong>Prioridade:</strong> <span id="rev-prioridade">-</span></p>
-                    <p style="margin:0 0 0;"><strong>Prazo:</strong> <span id="rev-prazo">-</span></p>
-                </div>
-            </div>
-
-            <!-- Botões de Navegação do Modal -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 14px;">
-                <button class="btn-secondary" id="btn-etapa-voltar" onclick="mudarEtapaModal(-1)" style="display:none;"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
-                <div></div>
-                <button class="btn-primary" id="btn-etapa-avancar" onclick="mudarEtapaModal(1)">Avançar <i class="fa-solid fa-arrow-right"></i></button>
-                <button class="btn-primary" id="btn-etapa-enviar" onclick="enviarNovaSolicitacao()" style="display:none; background:var(--success);"><i class="fa-solid fa-check"></i> Criar Solicitação</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- --------------------------------------------------------------------------
-       MODAL: VISUALIZAÇÃO E GESTÃO COMPLETA DA SOLICITAÇÃO (DETALHES)
-       -------------------------------------------------------------------------- -->
-    <div id="modal-detalhe-solicitacao" class="modal-overlay" style="display:none;">
-        <div class="modal-container" style="max-width: 900px; height: 90vh;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span id="detalhe-protocolo" style="background:var(--primary-light); color:var(--primary); padding:3px 8px; border-radius:6px; font-weight:800; font-size:10px;">SOL-2026-0000</span>
-                    <h3 id="detalhe-titulo" style="margin:0; font-size:14px; font-weight:800; color:var(--text-main);">Título da Solicitação</h3>
-                </div>
-                <button class="btn-secondary" style="padding: 4px 8px;" onclick="fecharModalDetalhe()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; height: calc(100% - 50px); overflow: hidden;">
-                <!-- Coluna Principal (Descrição, Conversa, Histórico, Arquivos) -->
-                <div style="overflow-y: auto; padding-right: 8px; display:flex; flex-direction:column; gap:14px;">
-                    <!-- Barra de Progresso do Fluxo -->
-                    <div style="background:var(--bg-main); padding:10px; border-radius:10px; border:1px solid var(--border); font-size:10px;">
-                        <strong>Fluxo de Trabalho:</strong>
-                        <div style="display:flex; justify-content:space-between; margin-top:6px; align-items:center;" id="fluxo-barra-status">
-                            <span>Solicitada</span> → <span>Em andamento</span> → <span>Em revisão</span> → <span>Concluída</span>
-                        </div>
-                    </div>
-
-                    <!-- Descrição -->
-                    <div>
-                        <h4 style="margin:0 0 6px 0; font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Descrição Detalhada</h4>
-                        <div id="detalhe-descricao" style="background:var(--bg-main); padding:12px; border-radius:10px; border:1px solid var(--border); font-size:11px; line-height:1.6;"></div>
-                    </div>
-
-                    <!-- Área de Arquivos e Versões -->
-                    <div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <h4 style="margin:0; font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Arquivos & Documentos</h4>
-                            <input type="file" id="input-anexar-extra" style="display:none;" onchange="anexarArquivoExtra(this)">
-                            <button class="btn-secondary" style="padding:4px 8px; font-size:9px;" onclick="document.getElementById('input-anexar-extra').click()"><i class="fa-solid fa-paperclip"></i> Adicionar Arquivo</button>
-                        </div>
-                        <div id="detalhe-arquivos-box" style="display:flex; flex-direction:column; gap:6px;"></div>
-                    </div>
-
-                    <!-- Conversa Interna (Chat Contextual) -->
-                    <div>
-                        <h4 style="margin:0 0 6px 0; font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;"><i class="fa-solid fa-comments"></i> Conversa Contextual</h4>
-                        <div id="detalhe-conversa-box" style="background:var(--bg-main); border:1px solid var(--border); border-radius:10px; padding:10px; max-height:180px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-bottom:8px;"></div>
-                        <div style="display:flex; gap:6px;">
-                            <input type="text" id="input-nova-conversa" placeholder="Escreva uma mensagem ou menção..." style="margin-bottom:0;">
-                            <button class="btn-primary" onclick="enviarMensagemConversa()"><i class="fa-solid fa-paper-plane"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- Histórico e Linha do Tempo -->
-                    <div>
-                        <h4 style="margin:0 0 6px 0; font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;"><i class="fa-solid fa-timeline"></i> Histórico & Atividades</h4>
-                        <div id="detalhe-historico-box" style="background:var(--bg-main); border:1px solid var(--border); border-radius:10px; padding:10px; max-height:140px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; font-size:10px; color:var(--text-muted);"></div>
-                    </div>
-                </div>
-
-                <!-- Coluna Lateral (Metadados e Ações Rápidas) -->
-                <div style="background:var(--bg-main); padding:14px; border-radius:12px; border:1px solid var(--border); overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
-                    <h4 style="margin:0; font-size:11px; font-weight:800; color:var(--text-main); border-bottom:1px solid var(--border); padding-bottom:6px;">Painel de Controle</h4>
-                    
-                    <div>
-                        <label style="font-size:9px; font-weight:700; color:var(--text-muted);">Status Atual:</label>
-                        <select id="detalhe-status-select" onchange="alterarStatusSolicitacao(this.value)">
-                            <option value="Não iniciada">⚪ Não iniciada</option>
-                            <option value="Em andamento">🔵 Em andamento</option>
-                            <option value="Pendente">🟡 Pendente</option>
-                            <option value="Em revisão">🟣 Em revisão</option>
-                            <option value="Aguardando informações">🟠 Aguardando informações</option>
-                            <option value="Bloqueada">🔴 Bloqueada</option>
-                            <option value="Concluída">🟢 Concluída</option>
-                            <option value="Cancelada">⚫ Cancelada</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label style="font-size:9px; font-weight:700; color:var(--text-muted);">Prioridade:</label>
-                        <p style="margin:2px 0 0 0; font-size:11px; font-weight:800;" id="detalhe-prioridade-lbl">-</p>
-                    </div>
-
-                    <div>
-                        <label style="font-size:9px; font-weight:700; color:var(--text-muted);">Destinatário / Setor:</label>
-                        <p style="margin:2px 0 0 0; font-size:11px; font-weight:800;" id="detalhe-destinatario-lbl">-</p>
-                    </div>
-
-                    <div>
-                        <label style="font-size:9px; font-weight:700; color:var(--text-muted);">Responsável:</label>
-                        <p style="margin:2px 0 0 0; font-size:11px; font-weight:800;" id="detalhe-responsavel-lbl">-</p>
-                    </div>
-
-                    <div>
-                        <label style="font-size:9px; font-weight:700; color:var(--text-muted);">Prazo Limite:</label>
-                        <p style="margin:2px 0 0 0; font-size:11px; font-weight:800; color:var(--danger);" id="detalhe-prazo-lbl">-</p>
-                    </div>
-
-                    <hr style="border:0; border-top:1px solid var(--border); margin:4px 0;">
-
-                    <!-- Botões de Aprovação / Revisão -->
-                    <div id="painel-aprovacao-box" style="display:none; flex-direction:column; gap:6px;">
-                        <button class="btn-primary" style="background:var(--success); justify-content:center;" onclick="aprovarConcluirSolicitacao()"><i class="fa-solid fa-check"></i> Aprovar e Concluir</button>
-                        <button class="btn-secondary" style="color:var(--danger); border-color:var(--danger); justify-content:center;" onclick="solicitarAlteracaoRevisao()"><i class="fa-solid fa-rotate-left"></i> Solicitar Alterações</button>
-                    </div>
-
-                    <button class="btn-secondary" style="justify-content:center;" onclick="duplicarSolicitacaoAtual()"><i class="fa-solid fa-copy"></i> Duplicar Solicitação</button>
-                    <button class="btn-secondary" style="justify-content:center;" onclick="exportarRelatorioSolicitacao()"><i class="fa-solid fa-file-pdf"></i> Exportar Relatório</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- --------------------------------------------------------------------------
-       SCRIPT PRINCIPAL — TODAS AS 60 FUNCIONALIDADES IMPLEMENTADAS COM PRECISÃO
+       SCRIPT COMPLETO E 100% FUNCIONAL
        -------------------------------------------------------------------------- -->
     <script>
         let usuarioSessao = JSON.parse(localStorage.getItem("lape_sessao_usuario") || '{"id":"master_allan", "nome":"Allan Sousa", "cargo":"Presidente"}');
         let solicitacoesCache = [];
         let secaoAtual = 'todas';
-        let cardFiltroAtual = 'todas';
-        let visualizacaoAtual = 'lista';
-        let etapaModalAtual = 1;
-        let solicitacaoAtivaId = null;
+        let filtroDashboardAtual = 'todas';
+        let solicitacaoSelecionadaId = null;
 
         document.getElementById('user-avatar-lbl').innerText = usuarioSessao.nome.charAt(0);
 
@@ -921,7 +685,7 @@
             let btnFechar = document.getElementById('btn-fechar-menu');
             sidebar.classList.toggle('ativo');
             overlay.classList.toggle('ativo');
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 900) {
                 btnFechar.style.display = sidebar.classList.contains('ativo') ? 'block' : 'none';
             }
         }
@@ -942,52 +706,39 @@
                 solicitacoesCache.push({ id: doc.id, ...doc.data() });
             });
             solicitacoesCache.sort((a,b) => (b.criadoEm?.toMillis() || 0) - (a.criadoEm?.toMillis() || 0));
-            atualizarIndicadoresDashboard();
-            renderizarWorkspaceSolicitacoes();
-        }, error => {
-            console.error("Erro no Firestore:", error);
+            atualizarKPIs();
+            renderizarListagem();
+            if (solicitacaoSelecionadaId) {
+                abrirDetalhes(solicitacaoSelecionadaId);
+            }
         });
 
         function mudarSecao(secao, el = null) {
             secaoAtual = secao;
-            cardFiltroAtual = 'todas';
+            filtroDashboardAtual = 'todas';
             if (el) {
-                document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('ativo'));
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('ativo'));
                 el.classList.add('ativo');
             }
-            if (window.innerWidth <= 768) { toggleSidebarMobile(); }
+            if (window.innerWidth <= 900) { toggleSidebarMobile(); }
 
             let titulos = {
-                'todas': ['Todas as Solicitações', 'Gerencie, acompanhe e organize as demandas administrativas da LAPE.'],
-                'minhas': ['Minhas Solicitações', 'Solicitações criadas por você.'],
-                'atribuidas': ['Solicitações Atribuídas a Mim', 'Demandas direcionadas ao seu cargo ou responsabilidade individual.'],
-                'urgentes': ['Solicitações Urgentes', 'Demandas que necessitam de atenção imediata.'],
-                'atrasadas': ['Solicitações Atrasadas', 'Demandas cujo prazo limite foi ultrapassado.'],
-                'revisao': ['Solicitações Em Revisão', 'Finalizadas pelo responsável aguardando análise e aprovação.'],
-                'concluidas': ['Solicitações Concluídas', 'Histórico de demandas finalizadas com sucesso.'],
-                'arquivadas': ['Arquivo Permanente', 'Solicitações arquivadas para consulta histórica.'],
-                'calendario': ['Calendário de Prazos', 'Visualização temporal de entregas e prazos.'],
-                'relatorios': ['Relatórios & Desempenho', 'Métricas executivas do funcionamento administrativo da LAPE.']
+                'todas': 'Todas as Solicitações',
+                'recebidas': 'Solicitações Recebidas',
+                'enviadas': 'Solicitações Enviadas',
+                'minhas': 'Minhas Solicitações Envolvidas',
+                'atrasadas': 'Solicitações Atrasadas',
+                'concluidas': 'Solicitações Concluídas'
             };
-            let info = titulos[secao] || ['Solicitações', 'Central de demandas administrativas.'];
-            document.getElementById('titulo-pagina-header').innerText = info[0];
-            document.getElementById('titulo-pagina-header').nextElementSibling.innerText = info[1];
-            renderizarWorkspaceSolicitacoes();
+            document.getElementById('titulo-topo-pagina').innerText = titulos[secao] || 'Solicitações';
+            renderizarListagem();
         }
 
-        function filtrarPorCardDashboard(tipoCard) {
-            cardFiltroAtual = tipoCard;
-            document.querySelectorAll('.metric-card').forEach(c => c.classList.remove('ativo-filtro'));
-            let cardEl = document.getElementById(`card-metric-${tipoCard}`);
-            if (cardEl) cardEl.classList.add('ativo-filtro');
-            renderizarWorkspaceSolicitacoes();
-        }
-
-        function mudarVisualizacao(vis, el) {
-            visualizacaoAtual = vis;
-            document.querySelectorAll('.view-tab-btn').forEach(b => b.classList.remove('ativo'));
-            el.classList.add('ativo');
-            renderizarWorkspaceSolicitacoes();
+        function filtrarPorDashboard(tipo) {
+            filtroDashboardAtual = tipo;
+            document.querySelectorAll('.metric-card').forEach(c => c.classList.remove('ativo'));
+            document.getElementById(`card-${tipo}`).classList.add('ativo');
+            renderizarListagem();
         }
 
         function alternarDarkModo() {
@@ -1002,441 +753,300 @@
             }
         }
 
-        function atualizarIndicadoresDashboard() {
+        function atualizarKPIs() {
             let total = solicitacoesCache.length;
-            let abertas = solicitacoesCache.filter(s => s.status !== 'Concluída' && s.status !== 'Cancelada' && s.status !== 'Arquivada').length;
+            let recebidas = solicitacoesCache.filter(s => s.destinatario?.toLowerCase().includes('marketing') || s.responsavel?.toLowerCase().includes(usuarioSessao.nome.toLowerCase())).length;
+            let enviadas = solicitacoesCache.filter(s => s.criadorId === usuarioSessao.id).length;
             let andamento = solicitacoesCache.filter(s => s.status === 'Em andamento').length;
-            let pendentes = solicitacoesCache.filter(s => s.status === 'Pendente' || s.status === 'Aguardando informações').length;
+            let pendentes = solicitacoesCache.filter(s => s.status === 'Pendente').length;
             let revisao = solicitacoesCache.filter(s => s.status === 'Em revisão').length;
-            let urgentes = solicitacoesCache.filter(s => s.prioridade === 'Urgente' && s.status !== 'Concluída').length;
-            let atrasadas = solicitacoesCache.filter(s => s.prazoData && new Date(s.prazoData) < new Date() && s.status !== 'Concluída').length;
             let concluidas = solicitacoesCache.filter(s => s.status === 'Concluída').length;
+            let atrasadas = solicitacoesCache.filter(s => s.prazoData && new Date(s.prazoData) < new Date() && s.status !== 'Concluída').length;
 
             document.getElementById('stat-todas').innerText = total;
-            document.getElementById('stat-abertas').innerText = abertas;
+            document.getElementById('stat-recebidas').innerText = recebidas;
+            document.getElementById('stat-enviadas').innerText = enviadas;
             document.getElementById('stat-andamento').innerText = andamento;
             document.getElementById('stat-pendentes').innerText = pendentes;
             document.getElementById('stat-revisao').innerText = revisao;
-            document.getElementById('stat-urgentes').innerText = urgentes;
-            document.getElementById('stat-atrasadas').innerText = atrasadas;
             document.getElementById('stat-concluidas').innerText = concluidas;
 
-            document.getElementById('bc-todas').innerText = abertas;
-            document.getElementById('bc-atribuidas').innerText = solicitacoesCache.filter(s => s.destinatario?.toLowerCase().includes('marketing') || s.responsavel?.toLowerCase().includes(usuarioSessao.nome.toLowerCase())).length;
-            document.getElementById('bc-urgentes').innerText = urgentes;
+            document.getElementById('bc-todas').innerText = total;
+            document.getElementById('bc-recebidas').innerText = recebidas;
             document.getElementById('bc-atrasadas').innerText = atrasadas;
         }
 
-        function renderizarWorkspaceSolicitacoes() {
-            let container = document.getElementById('container-workspace-principal');
-            let buscaGlobal = document.getElementById('input-busca-global').value.toLowerCase();
-            let catFiltro = document.getElementById('filtro-categoria-select').value;
-
-            if (secaoAtual === 'calendario') { renderizarCalendarioPrazos(container); return; }
-            if (secaoAtual === 'relatorios') { renderizarRelatoriosDesempenho(container); return; }
+        function renderizarListagem() {
+            let container = document.getElementById('container-listagem');
+            let busca = document.getElementById('input-busca').value.toLowerCase();
+            let pFiltro = document.getElementById('filtro-prioridade-select').value;
+            let sFiltro = document.getElementById('filtro-status-select').value;
 
             let filtradas = solicitacoesCache.filter(s => {
-                if (secaoAtual === 'minhas' && s.criadorId !== usuarioSessao.id) return false;
-                if (secaoAtual === 'atribuidas' && !s.destinatario?.toLowerCase().includes('marketing') && !s.responsavel?.toLowerCase().includes(usuarioSessao.nome.toLowerCase())) return false;
-                if (secaoAtual === 'urgentes' && s.prioridade !== 'Urgente') return false;
+                if (secaoAtual === 'recebidas' && !s.destinatario?.toLowerCase().includes('marketing')) return false;
+                if (secaoAtual === 'enviadas' && s.criadorId !== usuarioSessao.id) return false;
+                if (secaoAtual === 'minhas' && s.criadorId !== usuarioSessao.id && !s.responsavel?.toLowerCase().includes(usuarioSessao.nome.toLowerCase())) return false;
                 if (secaoAtual === 'atrasadas' && (!s.prazoData || new Date(s.prazoData) >= new Date() || s.status === 'Concluída')) return false;
-                if (secaoAtual === 'revisao' && s.status !== 'Em revisão') return false;
                 if (secaoAtual === 'concluidas' && s.status !== 'Concluída') return false;
-                if (secaoAtual === 'arquivadas' && s.status !== 'Arquivada') return false;
-                if (secaoAtual !== 'arquivadas' && s.status === 'Arquivada') return false;
 
-                if (cardFiltroAtual === 'abertas' && (s.status === 'Concluída' || s.status === 'Cancelada')) return false;
-                if (cardFiltroAtual === 'andamento' && s.status !== 'Em andamento') return false;
-                if (cardFiltroAtual === 'pendentes' && s.status !== 'Pendente' && s.status !== 'Aguardando informações') return false;
-                if (cardFiltroAtual === 'revisao' && s.status !== 'Em revisão') return false;
-                if (cardFiltroAtual === 'urgentes' && s.prioridade !== 'Urgente') return false;
-                if (cardFiltroAtual === 'atrasadas' && (!s.prazoData || new Date(s.prazoData) >= new Date() || s.status === 'Concluída')) return false;
-                if (cardFiltroAtual === 'concluidas' && s.status !== 'Concluída') return false;
+                if (filtroDashboardAtual === 'recebidas' && !s.destinatario?.toLowerCase().includes('marketing')) return false;
+                if (filtroDashboardAtual === 'enviadas' && s.criadorId !== usuarioSessao.id) return false;
+                if (filtroDashboardAtual === 'andamento' && s.status !== 'Em andamento') return false;
+                if (filtroDashboardAtual === 'pendentes' && s.status !== 'Pendente') return false;
+                if (filtroDashboardAtual === 'revisao' && s.status !== 'Em revisão') return false;
+                if (filtroDashboardAtual === 'concluidas' && s.status !== 'Concluída') return false;
 
-                if (catFiltro && s.categoria !== catFiltro) return false;
+                if (pFiltro && s.prioridade !== pFiltro) return false;
+                if (sFiltro && s.status !== sFiltro) return false;
 
-                if (buscaGlobal) {
-                    let txt = `${s.protocolo} ${s.titulo} ${s.subtitulo} ${s.descricao} ${s.responsavel} ${s.destinatario}`.toLowerCase();
-                    if (!txt.includes(buscaGlobal)) return false;
+                if (busca) {
+                    let txt = `${s.protocolo} ${s.titulo} ${s.subtitulo} ${s.descricao} ${s.responsavel} ${s.criadorNome}`.toLowerCase();
+                    if (!txt.includes(busca)) return false;
                 }
                 return true;
             });
 
             if (filtradas.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: 70px 20px; color: var(--text-muted);">
-                        <i class="fa-solid fa-clipboard-check" style="font-size: 42px; color: var(--primary); margin-bottom: 12px; opacity: 0.4;"></i>
-                        <h4 style="margin: 0 0 4px 0; color: var(--text-main); font-size: 14px;">Nenhuma solicitação encontrada</h4>
-                        <p style="font-size: 11px; margin: 0;">Tudo em ordem! Não existem demandas pendentes nesta categoria.</p>
+                    <div style="text-align: center; padding: 50px 20px; color: var(--text-muted);">
+                        <i class="fa-solid fa-folder-open" style="font-size: 36px; color: var(--primary); opacity: 0.4; margin-bottom: 8px;"></i>
+                        <h4 style="margin: 0; font-size: 12px; color: var(--text-main);">Nenhuma solicitação encontrada</h4>
+                        <p style="font-size: 10px; margin: 4px 0 0 0;">Não existem demandas correspondentes aos filtros selecionados.</p>
                     </div>
                 `;
                 return;
             }
 
-            if (visualizacaoAtual === 'kanban') {
-                renderizarQuadroKanban(container, filtradas);
-            } else if (visualizacaoAtual === 'cards') {
-                container.innerHTML = `<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;">${filtradas.map(s => gerarCardVisualHtml(s)).join('')}</div>`;
-            } else {
-                container.innerHTML = filtradas.map(s => gerarCardListaHtml(s)).join('');
+            container.innerHTML = filtradas.map(s => {
+                let selecionado = s.id === solicitacaoSelecionadaId ? 'selecionado' : '';
+                let corPrio = s.prioridade === 'Urgente' ? 'var(--danger)' : s.prioridade === 'Importante' ? 'var(--warning)' : 'var(--text-muted)';
+                let corStatus = s.status === 'Concluída' ? 'var(--success)' : s.status === 'Em andamento' ? 'var(--primary)' : s.status === 'Em revisão' ? 'var(--purple)' : 'var(--warning)';
+                let dataF = s.prazoData ? new Date(s.prazoData).toLocaleDateString('pt-BR') : 'Sem prazo';
+
+                return `
+                    <div class="solicitacao-card-item ${selecionado}" onclick="selecionarSolicitacao('${s.id}')">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:9px; font-weight:800; color:var(--primary); background:var(--primary-light); padding:2px 6px; border-radius:4px;">${s.protocolo}</span>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                <span class="badge-status" style="background:${corPrio}20; color:${corPrio};">${s.prioridade}</span>
+                                <span class="badge-status" style="background:${corStatus}20; color:${corStatus};">${s.status}</span>
+                            </div>
+                        </div>
+                        <h4 style="margin:2px 0 0 0; font-size:12px; font-weight:800; color:var(--text-main);">${s.titulo}</h4>
+                        <p style="margin:0; font-size:10px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.subtitulo || s.descricao}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:9px; color:var(--text-muted); border-top:1px solid var(--border); padding-top:6px; margin-top:2px;">
+                            <span><i class="fa-solid fa-user-tie"></i> ${s.responsavel || s.destinatario}</span>
+                            <span><i class="fa-regular fa-clock"></i> ${dataF} | 💬 ${s.conversa?.length || 0} · 📎 ${s.arquivos?.length || 0}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selecionarSolicitacao(id) {
+            solicitacaoSelecionadaId = id;
+            renderizarListagem();
+            abrirDetalhes(id);
+            if (window.innerWidth <= 900) {
+                document.getElementById('container-detalhe').classList.add('ativo-mobile');
             }
         }
 
-        function gerarCardListaHtml(s) {
-            let corPrio = s.prioridade === 'Urgente' ? 'var(--danger)' : s.prioridade === 'Alta' ? '#f97316' : s.prioridade === 'Importante' ? 'var(--warning)' : 'var(--text-muted)';
+        async function abrirDetalhes(id) {
+            let s = solicitacoesCache.find(x => x.id === id);
+            if (!s) return;
+
+            let container = document.getElementById('container-detalhe');
+            let corPrio = s.prioridade === 'Urgente' ? 'var(--danger)' : s.prioridade === 'Importante' ? 'var(--warning)' : 'var(--text-muted)';
             let corStatus = s.status === 'Concluída' ? 'var(--success)' : s.status === 'Em andamento' ? 'var(--primary)' : s.status === 'Em revisão' ? 'var(--purple)' : 'var(--warning)';
-            let dataF = s.prazoData ? new Date(s.prazoData).toLocaleDateString('pt-BR') : 'Sem prazo';
-
-            return `
-                <div class="solicitacao-card" onclick="abrirModalDetalhe('${s.id}')">
-                    <div style="flex:1; min-width:0;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                            <div style="display:flex; gap:8px; align-items:center;">
-                                <span style="font-size:10px; font-weight:800; color:var(--primary); background:var(--primary-light); padding:2px 6px; border-radius:4px;">${s.protocolo}</span>
-                                <strong style="font-size:13px; color:var(--text-main);">${s.titulo}</strong>
-                                <span class="badge-tag" style="background:${corPrio}20; color:${corPrio};">${s.prioridade}</span>
-                            </div>
-                            <span class="badge-status" style="background:${corStatus}20; color:${corStatus};">${s.status}</span>
-                        </div>
-                        <p style="margin:0 0 6px 0; font-size:11px; color:var(--text-muted);">${s.subtitulo || s.descricao.substring(0, 90) + '...'}</p>
-                        <div style="display:flex; gap:14px; font-size:10px; color:var(--text-muted); align-items:center;">
-                            <span><i class="fa-solid fa-building-user"></i> Destino: <strong>${s.destinatario}</strong></span>
-                            <span><i class="fa-solid fa-user-tie"></i> Resp: <strong>${s.responsavel || 'Não atribuído'}</strong></span>
-                            <span><i class="fa-regular fa-clock"></i> Prazo: <strong>${dataF}</strong></span>
-                            <span><i class="fa-solid fa-comments"></i> ${s.conversa?.length || 0}</span>
-                            <span><i class="fa-solid fa-paperclip"></i> ${s.arquivos?.length || 0}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function gerarCardVisualHtml(s) {
-            return `
-                <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:14px; cursor:pointer;" onclick="abrirModalDetalhe('${s.id}')">
-                    <span style="font-size:9px; font-weight:800; color:var(--primary); background:var(--primary-light); padding:2px 6px; border-radius:4px;">${s.protocolo}</span>
-                    <h4 style="margin:8px 0 4px 0; font-size:12px; font-weight:800; color:var(--text-main);">${s.titulo}</h4>
-                    <p style="margin:0 0 10px 0; font-size:10px; color:var(--text-muted);">${s.subtitulo || ''}</p>
-                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:10px; border-top:1px solid var(--border); pt:8px; margin-top:8px;">
-                        <span style="font-weight:700; color:var(--primary);">${s.responsavel || s.destinatario}</span>
-                        <span class="badge-status" style="background:var(--primary-light); color:var(--primary);">${s.status}</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderizarQuadroKanban(container, filtradas) {
-            let colunas = [
-                { id: 'Não iniciada', nome: 'Não iniciadas', cor: 'var(--text-muted)' },
-                { id: 'Em andamento', nome: 'Em andamento', cor: 'var(--primary)' },
-                { id: 'Pendente', nome: 'Pendentes', cor: 'var(--warning)' },
-                { id: 'Em revisão', nome: 'Em revisão', cor: 'var(--purple)' },
-                { id: 'Concluída', nome: 'Concluídas', cor: 'var(--success)' }
-            ];
 
             container.innerHTML = `
-                <div class="kanban-container">
-                    ${colunas.map(col => {
-                        let itensCol = filtradas.filter(s => s.status === col.id);
-                        return `
-                            <div class="kanban-coluna">
-                                <div class="kanban-coluna-header" style="color:${col.cor};">
-                                    <span>${col.nome}</span>
-                                    <span class="badge-counter" style="background:${col.cor};">${itensCol.length}</span>
-                                </div>
-                                <div class="kanban-cards-box">
-                                    ${itensCol.map(s => `
-                                        <div class="kanban-card-item" onclick="abrirModalDetalhe('${s.id}')">
-                                            <span style="font-size:8px; font-weight:800; color:var(--primary);">${s.protocolo}</span>
-                                            <h5 style="margin:4px 0; font-size:11px; font-weight:800; color:var(--text-main);">${s.titulo}</h5>
-                                            <p style="margin:0; font-size:9px; color:var(--text-muted);">${s.responsavel || s.destinatario}</p>
-                                        </div>
-                                    `).join('') || '<p style="font-size:10px; color:var(--text-muted); text-align:center; font-style:italic; margin-top:20px;">Vazio</p>'}
-                                </div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                            <span style="font-size:10px; font-weight:800; color:var(--primary); background:var(--primary-light); padding:3px 8px; border-radius:6px;">${s.protocolo}</span>
+                            <span class="badge-status" style="background:${corPrio}20; color:${corPrio};">${s.prioridade}</span>
+                            <span class="badge-status" style="background:${corStatus}20; color:${corStatus};">${s.status}</span>
+                        </div>
+                        <h2 style="margin:0; font-size:15px; font-weight:800; color:var(--text-main);">${s.titulo}</h2>
+                        <p style="margin:4px 0 0 0; font-size:11px; color:var(--text-muted);">${s.subtitulo || ''}</p>
+                    </div>
+                    <button class="btn-secondary" onclick="fecharDetalhesMobile()" style="display:${window.innerWidth <= 900 ? 'inline-flex' : 'none'};"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <!-- Bloco de Informações Resumidas -->
+                <div style="background:var(--bg-main); padding:12px; border-radius:10px; border:1px solid var(--border); display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; font-size:10px;">
+                    <div><strong>Solicitante:</strong> ${s.criadorNome}</div>
+                    <div><strong>Destinatário:</strong> ${s.destinatario}</div>
+                    <div><strong>Responsável:</strong> ${s.responsavel || 'Não atribuído'}</div>
+                    <div><strong>Categoria:</strong> ${s.categoria}</div>
+                    <div><strong>Criada em:</strong> ${s.criadoEm ? s.criadoEm.toDate().toLocaleString('pt-BR') : 'Hoje'}</div>
+                    <div><strong>Prazo:</strong> <span style="color:var(--danger);">${s.prazoData ? new Date(s.prazoData).toLocaleDateString('pt-BR') : 'Sem prazo'}</span></div>
+                </div>
+
+                <!-- Descrição -->
+                <div>
+                    <h4 style="margin:0 0 4px 0; font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Descrição</h4>
+                    <div style="background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border); font-size:11px; line-height:1.5;">${s.descricao.replace(/\n/g, '<br>')}</div>
+                </div>
+
+                <!-- Arquivos / Anexos -->
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <h4 style="margin:0; font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Anexos & Documentos (${s.arquivos?.length || 0})</h4>
+                        <input type="file" id="input-anexo-extra" style="display:none;" onchange="enviarAnexoExtra(this, '${s.id}')">
+                        <button class="btn-secondary" style="padding:3px 8px; font-size:9px;" onclick="document.getElementById('input-anexo-extra').click()"><i class="fa-solid fa-paperclip"></i> Anexar</button>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        ${(s.arquivos || []).map(a => `
+                            <div style="background:var(--bg-main); padding:6px 10px; border-radius:6px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:10px;">
+                                <span>📄 <strong>${a.nome}</strong> (${a.autor})</span>
+                                <a href="${a.url}" target="_blank" class="btn-primary" style="padding:2px 6px; font-size:8px;">Baixar</a>
                             </div>
-                        `;
-                    }).join('')}
+                        `).join('') || '<p style="font-size:10px; color:var(--text-muted); font-style:italic; margin:0;">Nenhum anexo.</p>'}
+                    </div>
+                </div>
+
+                <!-- Ações de Status e Revisão -->
+                <div style="background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border); display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <label style="font-size:10px; font-weight:700; margin:0;">Alterar Status:</label>
+                    <select id="select-alterar-status" onchange="mudarStatusSolicitacao('${s.id}', this.value)" style="width:150px; margin:0; font-size:10px;">
+                        <option value="Não iniciada" ${s.status==='Não iniciada'?'selected':''}>Não iniciada</option>
+                        <option value="Em andamento" ${s.status==='Em andamento'?'selected':''}>Em andamento</option>
+                        <option value="Pendente" ${s.status==='Pendente'?'selected':''}>Pendente</option>
+                        <option value="Em revisão" ${s.status==='Em revisão'?'selected':''}>Em revisão</option>
+                        <option value="Concluída" ${s.status==='Concluída'?'selected':''}>Concluída</option>
+                    </select>
+                    ${s.status === 'Em revisão' ? `<button class="btn-primary" style="background:var(--success); padding:5px 10px; font-size:10px;" onclick="concluirDemanda('${s.id}')">✓ Aprovar e Concluir</button>` : ''}
+                </div>
+
+                <!-- Conversa Contextual (Chat) -->
+                <div>
+                    <h4 style="margin:0 0 6px 0; font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase;"><i class="fa-solid fa-comments"></i> Conversa</h4>
+                    <div style="background:var(--bg-main); border:1px solid var(--border); border-radius:8px; padding:10px; max-height:150px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:6px;">
+                        ${(s.conversa || []).map(c => `
+                            <div style="background:var(--bg-card); padding:6px 8px; border-radius:6px; border:1px solid var(--border); font-size:10px;">
+                                <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--primary); font-weight:800; margin-bottom:2px;">
+                                    <span>${c.autor}</span>
+                                    <span style="color:var(--text-muted);">${c.data}</span>
+                                </div>
+                                <span>${c.texto}</span>
+                            </div>
+                        `).join('') || '<p style="font-size:10px; color:var(--text-muted); font-style:italic; margin:0;">Nenhuma mensagem na conversa.</p>'}
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <input type="text" id="input-conversa-msg" placeholder="Escreva uma mensagem ou menção..." style="margin:0;">
+                        <button class="btn-primary" onclick="enviarMensagemChat('${s.id}')"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+                <!-- Histórico Automático -->
+                <div>
+                    <h4 style="margin:0 0 4px 0; font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase;"><i class="fa-solid fa-timeline"></i> Histórico Automático</h4>
+                    <div style="background:var(--bg-main); border:1px solid var(--border); border-radius:8px; padding:8px; max-height:100px; overflow-y:auto; font-size:9px; color:var(--text-muted); display:flex; flex-direction:column; gap:3px;">
+                        ${(s.historico || []).map(h => `<div>• [${h.data}] ${h.acao}</div>`).join('')}
+                    </div>
                 </div>
             `;
         }
 
-        // Modal de Criação de Solicitação (Etapas Guiadas)
-        function abrirModalNovaSolicitacao() {
-            etapaModalAtual = 1;
-            atualizarEtapasModalUI();
-            document.getElementById('modal-nova-solicitacao').style.display = 'flex';
-        }
-        function fecharModalNovaSolicitacao() { document.getElementById('modal-nova-solicitacao').style.display = 'none'; }
-
-        function mudarEtapaModal(direcao) {
-            if (direcao === 1) {
-                if (etapaModalAtual === 1 && !document.getElementById('novo-titulo').value.trim()) {
-                    return alert("O título da solicitação é obrigatório!");
-                }
-                if (etapaModalAtual === 4) {
-                    document.getElementById('rev-titulo').innerText = document.getElementById('novo-titulo').value;
-                    document.getElementById('rev-destinatario').innerText = document.getElementById('novo-destinatario').value;
-                    document.getElementById('rev-prioridade').innerText = document.getElementById('novo-prioridade').value;
-                    document.getElementById('rev-prazo').innerText = document.getElementById('novo-prazo-data').value || 'Não definido';
-                }
-            }
-            etapaModalAtual += direcao;
-            if (etapaModalAtual < 1) etapaModalAtual = 1;
-            if (etapaModalAtual > 5) etapaModalAtual = 5;
-            atualizarEtapasModalUI();
+        function fecharDetalhesMobile() {
+            document.getElementById('container-detalhe').classList.remove('ativo-mobile');
         }
 
-        function atualizarEtapasModalUI() {
-            for (let i = 1; i <= 5; i++) {
-                let divEtapa = document.getElementById(`form-etapa-${i}`);
-                let indEtapa = document.getElementById(`ind-etapa-${i}`);
-                divEtapa.style.display = i === etapaModalAtual ? 'block' : 'none';
-                indEtapa.style.background = i === etapaModalAtual ? 'var(--primary)' : i < etapaModalAtual ? 'var(--success)' : 'var(--bg-main)';
-                indEtapa.style.color = i === etapaModalAtual || i < etapaModalAtual ? 'white' : 'var(--text-muted)';
-            }
-            document.getElementById('btn-etapa-voltar').style.display = etapaModalAtual > 1 ? 'inline-flex' : 'none';
-            document.getElementById('btn-etapa-avancar').style.display = etapaModalAtual < 5 ? 'inline-flex' : 'none';
-            document.getElementById('btn-etapa-enviar').style.display = etapaModalAtual === 5 ? 'inline-flex' : 'none';
-        }
+        function abrirModalNova() { document.getElementById('modal-nova').style.display = 'flex'; }
+        function fecharModalNova() { document.getElementById('modal-nova').style.display = 'none'; }
 
-        async function enviarNovaSolicitacao() {
+        async function salvarNovaSolicitacao() {
             let titulo = document.getElementById('novo-titulo').value.trim();
-            let subtitulo = document.getElementById('novo-subtitulo').value.trim();
-            let descricao = document.getElementById('novo-descricao').value.trim();
-            let categoria = document.getElementById('novo-categoria').value;
-            let destinatario = document.getElementById('novo-destinatario').value;
-            let responsavel = document.getElementById('novo-responsavel').value.trim();
-            let prioridade = document.getElementById('novo-prioridade').value;
-            let prazoData = document.getElementById('novo-prazo-data').value;
-            let fileInput = document.getElementById('novo-arquivo-input');
+            if (!titulo) return alert("O título é obrigatório!");
 
-            let anexoInicial = null;
+            let fileInput = document.getElementById('novo-arquivo');
+            let anexo = null;
             if (fileInput.files.length > 0) {
-                let url = await converterArquivoBase64(fileInput.files[0]);
-                anexoInicial = [{ nome: fileInput.files[0].name, url, autor: usuarioSessao.nome, data: new Date().toLocaleString('pt-BR') }];
+                let url = await converterBase64(fileInput.files[0]);
+                anexo = [{ nome: fileInput.files[0].name, url, autor: usuarioSessao.nome, data: new Date().toLocaleString('pt-BR') }];
             }
 
             let protocolo = `SOL-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+            let prazoData = document.getElementById('novo-prazo-data').value;
 
             await db.collection("lape_solicitacoes_administrativas").add({
                 protocolo,
                 titulo,
-                subtitulo,
-                descricao,
-                categoria,
-                destinatario,
-                responsavel: responsavel || destinatario,
-                prioridade,
+                subtitulo: document.getElementById('novo-subtitulo').value.trim(),
+                descricao: document.getElementById('novo-descricao').value.trim(),
+                destinatario: document.getElementById('novo-destinatario').value,
+                responsavel: document.getElementById('novo-responsavel').value.trim(),
+                prioridade: document.getElementById('novo-prioridade').value,
+                categoria: document.getElementById('novo-categoria').value,
                 prazoData: prazoData || null,
                 status: 'Em andamento',
                 criadorId: usuarioSessao.id,
                 criadorNome: usuarioSessao.nome,
                 criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
-                arquivos: anexoInicial || [],
+                arquivos: anexo || [],
                 conversa: [],
                 historico: [
                     { acao: `${usuarioSessao.nome} criou a solicitação.`, data: new Date().toLocaleString('pt-BR') },
-                    { acao: `Solicitação direcionada para ${destinatario}.`, data: new Date().toLocaleString('pt-BR') }
+                    { acao: `Destinada para ${document.getElementById('novo-destinatario').value}.`, data: new Date().toLocaleString('pt-BR') }
                 ]
             });
 
             mostrarToast(`Solicitação ${protocolo} criada com sucesso!`);
-            fecharModalNovaSolicitacao();
+            fecharModalNova();
         }
 
-        // Modal de Detalhes da Solicitação
-        function abrirModalDetalhe(id) {
-            solicitacaoAtivaId = id;
-            let s = solicitacoesCache.find(x => x.id === id);
-            if (!s) return;
-
-            document.getElementById('detalhe-protocolo').innerText = s.protocolo;
-            document.getElementById('detalhe-titulo').innerText = s.titulo;
-            document.getElementById('detalhe-descricao').innerHTML = s.descricao.replace(/\n/g, '<br>');
-            document.getElementById('detalhe-status-select').value = s.status;
-            document.getElementById('detalhe-prioridade-lbl').innerText = s.prioridade;
-            document.getElementById('detalhe-destinatario-lbl').innerText = s.destinatario;
-            document.getElementById('detalhe-responsavel-lbl').innerText = s.responsavel || 'Não atribuído';
-            document.getElementById('detalhe-prazo-lbl').innerText = s.prazoData ? new Date(s.prazoData).toLocaleDateString('pt-BR') : 'Indeterminado';
-
-            // Arquivos
-            let arqBox = document.getElementById('detalhe-arquivos-box');
-            arqBox.innerHTML = (s.arquivos || []).map(a => `
-                <div style="background:var(--bg-main); padding:8px; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:10px;">
-                    <span><i class="fa-solid fa-file" style="color:var(--primary);"></i> <strong>${a.nome}</strong> (${a.autor})</span>
-                    <a href="${a.url}" target="_blank" class="btn-primary" style="padding:4px 8px; font-size:9px;">Baixar</a>
-                </div>
-            `).join('') || '<p style="font-size:10px; color:var(--text-muted); font-style:italic;">Nenhum arquivo anexado.</p>';
-
-            // Conversa
-            let convBox = document.getElementById('detalhe-conversa-box');
-            convBox.innerHTML = (s.conversa || []).map(c => `
-                <div style="background:var(--bg-card); padding:8px; border-radius:8px; border:1px solid var(--border);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:9px;">
-                        <strong style="color:var(--primary);">${c.autor}</strong>
-                        <span style="color:var(--text-muted);">${c.data}</span>
-                    </div>
-                    <p style="margin:0; font-size:10px; color:var(--text-main);">${c.texto}</p>
-                </div>
-            `).join('') || '<p style="font-size:10px; color:var(--text-muted); font-style:italic;">Nenhuma mensagem na conversa ainda.</p>';
-
-            // Histórico
-            let histBox = document.getElementById('detalhe-historico-box');
-            histBox.innerHTML = (s.historico || []).map(h => `
-                <div>• [${h.data}] ${h.acao}</div>
-            `).join('');
-
-            // Painel de aprovação se estiver em revisão
-            document.getElementById('painel-aprovacao-box').style.display = s.status === 'Em revisão' ? 'flex' : 'none';
-
-            document.getElementById('modal-detalhe-solicitacao').style.display = 'flex';
-        }
-
-        function fecharModalDetalhe() { document.getElementById('modal-detalhe-solicitacao').style.display = 'none'; }
-
-        async function alterarStatusSolicitacao(novoStatus) {
-            if (!solicitacaoAtivaId) return;
-            let histMsg = { acao: `${usuarioSessao.nome} alterou o status para "${novoStatus}".`, data: new Date().toLocaleString('pt-BR') };
-            await db.collection("lape_solicitacoes_administrativas").doc(solicitacaoAtivaId).update({
+        async function mudarStatusSolicitacao(id, novoStatus) {
+            let hist = { acao: `${usuarioSessao.nome} alterou o status para "${novoStatus}".`, data: new Date().toLocaleString('pt-BR') };
+            await db.collection("lape_solicitacoes_administrativas").doc(id).update({
                 status: novoStatus,
-                historico: firebase.firestore.FieldValue.arrayUnion(histMsg)
+                historico: firebase.firestore.FieldValue.arrayUnion(hist)
             });
-            mostrarToast(`Status alterado para ${novoStatus}`);
+            mostrarToast(`Status atualizado para ${novoStatus}`);
         }
 
-        async function enviarMensagemConversa() {
-            let input = document.getElementById('input-nova-conversa');
-            let texto = input.value.trim();
-            if (!texto || !solicitacaoAtivaId) return;
+        async function concluirDemanda(id) {
+            let hist = { acao: `${usuarioSessao.nome} aprovou e concluiu a solicitação.`, data: new Date().toLocaleString('pt-BR') };
+            await db.collection("lape_solicitacoes_administrativas").doc(id).update({
+                status: 'Concluída',
+                historico: firebase.firestore.FieldValue.arrayUnion(hist)
+            });
+            mostrarToast("Solicitação concluída com sucesso!");
+        }
 
-            let novaMsg = { autor: usuarioSessao.nome, texto, data: new Date().toLocaleString('pt-BR') };
-            await db.collection("lape_solicitacoes_administrativas").doc(solicitacaoAtivaId).update({
-                conversa: firebase.firestore.FieldValue.arrayUnion(novaMsg)
+        async function enviarMensagemChat(id) {
+            let input = document.getElementById('input-conversa-msg');
+            let texto = input.value.trim();
+            if (!texto) return;
+
+            let msg = { autor: usuarioSessao.nome, texto, data: new Date().toLocaleString('pt-BR') };
+            await db.collection("lape_solicitacoes_administrativas").doc(id).update({
+                conversa: firebase.firestore.FieldValue.arrayUnion(msg)
             });
             input.value = '';
-            abrirModalDetalhe(solicitacaoAtivaId);
         }
 
-        async function anexarArquivoExtra(input) {
-            if (input.files.length === 0 || !solicitacaoAtivaId) return;
-            let url = await converterArquivoBase64(input.files[0]);
-            let novoArq = { nome: input.files[0].name, url, autor: usuarioSessao.nome, data: new Date().toLocaleString('pt-BR') };
-            let histMsg = { acao: `${usuarioSessao.nome} anexou o arquivo "${input.files[0].name}".`, data: new Date().toLocaleString('pt-BR') };
+        async function enviarAnexoExtra(input, id) {
+            if (input.files.length === 0) return;
+            let url = await converterBase64(input.files[0]);
+            let arq = { nome: input.files[0].name, url, autor: usuarioSessao.nome, data: new Date().toLocaleString('pt-BR') };
+            let hist = { acao: `${usuarioSessao.nome} anexou o documento "${input.files[0].name}".`, data: new Date().toLocaleString('pt-BR') };
 
-            await db.collection("lape_solicitacoes_administrativas").doc(solicitacaoAtivaId).update({
-                arquivos: firebase.firestore.FieldValue.arrayUnion(novoArq),
-                historico: firebase.firestore.FieldValue.arrayUnion(histMsg)
+            await db.collection("lape_solicitacoes_administrativas").doc(id).update({
+                arquivos: firebase.firestore.FieldValue.arrayUnion(arq),
+                historico: firebase.firestore.FieldValue.arrayUnion(hist)
             });
-            mostrarToast("Arquivo anexado com sucesso!");
-            abrirModalDetalhe(solicitacaoAtivaId);
+            mostrarToast("Documento anexado!");
         }
 
-        async function aprovarConcluirSolicitacao() {
-            if (!solicitacaoAtivaId) return;
-            let histMsg = { acao: `${usuarioSessao.nome} aprovou e concluiu a solicitação.`, data: new Date().toLocaleString('pt-BR') };
-            await db.collection("lape_solicitacoes_administrativas").doc(solicitacaoAtivaId).update({
-                status: 'Concluída',
-                historico: firebase.firestore.FieldValue.arrayUnion(histMsg)
-            });
-            mostrarToast("Solicitação aprovada e concluída!");
-            fecharModalDetalhe();
-        }
-
-        async function solicitarAlteracaoRevisao() {
-            if (!solicitacaoAtivaId) return;
-            let motivo = prompt("Informe o motivo da solicitação de alteração:");
-            if (!motivo) return;
-            let histMsg = { acao: `${usuarioSessao.nome} solicitou alterações: "${motivo}".`, data: new Date().toLocaleString('pt-BR') };
-            await db.collection("lape_solicitacoes_administrativas").doc(solicitacaoAtivaId).update({
-                status: 'Em andamento',
-                historico: firebase.firestore.FieldValue.arrayUnion(histMsg)
-            });
-            mostrarToast("Retornado para andamento com pedido de alteração.");
-            fecharModalDetalhe();
-        }
-
-        async function duplicarSolicitacaoAtual() {
-            let s = solicitacoesCache.find(x => x.id === solicitacaoAtivaId);
-            if (!s) return;
-            let novoProtocolo = `SOL-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-            await db.collection("lape_solicitacoes_administrativas").add({
-                protocolo: novoProtocolo,
-                titulo: `Cópia de ${s.titulo}`,
-                subtitulo: s.subtitulo,
-                descricao: s.descricao,
-                categoria: s.categoria,
-                destinatario: s.destinatario,
-                responsavel: s.responsavel,
-                prioridade: s.prioridade,
-                prazoData: s.prazoData,
-                status: 'Em andamento',
-                criadorId: usuarioSessao.id,
-                criadorNome: usuarioSessao.nome,
-                criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
-                arquivos: s.arquivos || [],
-                conversa: [],
-                historico: [{ acao: `Duplicada a partir de ${s.protocolo} por ${usuarioSessao.nome}`, data: new Date().toLocaleString('pt-BR') }]
-            });
-            mostrarToast(`Solicitação duplicada com protocolo ${novoProtocolo}`);
-            fecharModalDetalhe();
-        }
-
-        function exportarRelatorioSolicitacao() {
-            let s = solicitacoesCache.find(x => x.id === solicitacaoAtivaId);
-            if (!s) return;
-            alert(`Gerando relatório PDF institucional para ${s.protocolo} — ${s.titulo}`);
-        }
-
-        function converterArquivoBase64(file) {
+        function converterBase64(file) {
             return new Promise((res, rej) => {
                 let reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => res(reader.result);
                 reader.onerror = err => rej(err);
             });
-        }
-
-        // Renderizadores de Páginas Especiais (Calendário & Relatórios)
-        function renderizarCalendarioPrazos(container) {
-            container.innerHTML = `
-                <div style="background:var(--bg-card); padding:24px; border-radius:12px; border:1px solid var(--border);">
-                    <h3 style="margin:0 0 8px 0; color:var(--primary); font-size:15px;"><i class="fa-regular fa-calendar-days"></i> Calendário de Prazos da LAPE</h3>
-                    <p style="font-size:11px; color:var(--text-muted); margin-bottom:16px;">Visualização temporal das entregas administrativas cadastradas.</p>
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        ${solicitacoesCache.map(s => `
-                            <div style="background:var(--bg-main); padding:12px; border-radius:8px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="abrirModalDetalhe('${s.id}')">
-                                <div>
-                                    <strong style="font-size:12px; color:var(--text-main);">${s.protocolo} — ${s.titulo}</strong>
-                                    <p style="margin:4px 0 0 0; font-size:10px; color:var(--text-muted);">Responsável: ${s.responsavel || s.destinatario} | Status: ${s.status}</p>
-                                </div>
-                                <span style="font-size:11px; font-weight:800; color:var(--danger);"><i class="fa-regular fa-clock"></i> ${s.prazoData ? new Date(s.prazoData).toLocaleDateString('pt-BR') : 'Sem prazo'}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderizarRelatoriosDesempenho(container) {
-            let total = solicitacoesCache.length;
-            let concluidas = solicitacoesCache.filter(s => s.status === 'Concluída').length;
-            let atrasadas = solicitacoesCache.filter(s => s.prazoData && new Date(s.prazoData) < new Date() && s.status !== 'Concluída').length;
-            container.innerHTML = `
-                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;">
-                    <div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                        <span style="font-size:26px; font-weight:800; color:var(--primary);">${total}</span>
-                        <span style="font-size:11px; color:var(--text-muted); display:block; font-weight:700; margin-top:4px;">Total de Solicitações</span>
-                    </div>
-                    <div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                        <span style="font-size:26px; font-weight:800; color:var(--success);">${concluidas}</span>
-                        <span style="font-size:11px; color:var(--text-muted); display:block; font-weight:700; margin-top:4px;">Solicitações Concluídas</span>
-                    </div>
-                    <div style="background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-                        <span style="font-size:26px; font-weight:800; color:var(--danger);">${atrasadas}</span>
-                        <span style="font-size:11px; color:var(--text-muted); display:block; font-weight:700; margin-top:4px;">Solicitações Atrasadas</span>
-                    </div>
-                </div>
-            `;
         }
     </script>
 </body>
