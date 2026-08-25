@@ -459,7 +459,7 @@
 </head>
 <body id="corpo-pagina">
 
-    <!-- TELA DE AVISO DE MANUTENÇÃO (BLOQUEIO VISUAL) -->
+    <!-- TELA DE AVISO DE MANUTENÇÃO -->
     <div id="overlay-manutencao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; text-align: center;">
         <div style="max-width: 380px; width: 100%; background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 25px rgba(0,0,0,0.15); border: 1px solid #dee2e6;">
             <img src="brasao.png" alt="Brasão LAPE" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid #0056b3; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -496,8 +496,8 @@
         </div>
     </div>
 
-    <!-- TELA PRINCIPAL DO APP -->
-    <div class="celular-container" id="conteudo-principal-app" style="display: none; margin: 0 auto; width: 100%; max-width: 480px; box-sizing: border-box; padding: 12px;">
+    <!-- TELA PRINCIPAL DO APP - Largura total, sem margens indesejadas -->
+    <div class="celular-container" id="conteudo-principal-app" style="display: none; width: 100%; box-sizing: border-box; padding: 12px;">
         <header class="cabecalho">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
@@ -520,7 +520,7 @@
             <div class="slides-container" id="container-slides"></div>
         </section>
 
-        <!-- SEÇÃO DE ENQUETES ATIVAS COM MARGENS CORRETAS -->
+        <!-- SEÇÃO DE ENQUETES ATIVAS (BLINDADA CONTRA ERROS) -->
         <section id="secao-enquetes-container" style="display: none; margin-top: 15px; margin-bottom: 15px;">
             <div class="card-enquetes-completo" id="bloco-enquetes-ativas">
                 <!-- Preenchido dinamicamente via JS -->
@@ -553,7 +553,7 @@
             </div>
         </section>
 
-        <!-- Seção de Aniversariantes Complexa e Completa -->
+        <!-- Seção de Aniversariantes -->
         <section class="secao-historico-geral">
             <p class="titulo-secao-geral">🎉 Aniversariantes & Ciclos</p>
             <div class="card-aniversariantes-completo" id="bloco-aniversariantes">
@@ -711,7 +711,6 @@
     <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
         <div class="modal-perfil-conteudo">
             
-            <!-- TOPO GRADIENTE SPLÉNDIDO -->
             <div class="perfil-topo-splendido">
                 <div class="perfil-avatar-wrapper" id="perfil-avatar-container"></div>
                 <div class="botao-trocar-foto-flutuante" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
@@ -723,14 +722,12 @@
                 <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
             </div>
 
-            <!-- MENU DE ABAS INTERNAS (SPLENDIDO & COMPLEXO) -->
             <div class="perfil-abas-navegacao">
                 <button class="btn-aba-perfil ativa" id="aba-btn-dados" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
                 <button class="btn-aba-perfil" id="aba-btn-estatisticas" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
                 <button class="btn-aba-perfil" id="aba-btn-seguranca" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
             </div>
 
-            <!-- SEÇÃO 1: DADOS CADASTRAIS -->
             <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados">
                 <div class="perfil-grid-detalhes">
                     <div class="perfil-card-info">
@@ -768,7 +765,6 @@
                 </div>
             </div>
 
-            <!-- SEÇÃO 2: ESTATÍSTICAS E RESUMO DO LIGANTE -->
             <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas">
                 <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
                     <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
@@ -789,7 +785,6 @@
                 </div>
             </div>
 
-            <!-- SEÇÃO 3: SEGURANÇA E ALTERAR SENHA -->
             <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca">
                 <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
                     <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha Segura</span>
@@ -811,7 +806,6 @@
                 </div>
             </div>
 
-            <!-- BOTÕES DE RODAPÉ -->
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
                 <div id="btn-container-painel-admin"></div>
                 <div style="display: flex; gap: 8px;">
@@ -911,7 +905,7 @@
             document.getElementById('tela-login').style.display = 'none';
             let corpo = document.getElementById('corpo-pagina');
             corpo.style.alignItems = "flex-start";
-            corpo.style.backgroundColor = "#e9ecef";
+            
             document.getElementById('conteudo-principal-app').style.display = 'block';
             document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
             document.getElementById('subtitulo-cargo').innerText = user.cargo || "Ligante";
@@ -1313,23 +1307,30 @@
             });
         }
 
+        // --- FUNÇÃO BLINDADA DE ENQUETES ---
         function renderizarEnquetesWidget() {
             let containerSecao = document.getElementById("secao-enquetes-container");
             let blocoEnquetes = document.getElementById("bloco-enquetes-ativas");
+            
             if (!containerSecao || !blocoEnquetes) return;
 
-            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let cargoLower = (usuarioLogado && usuarioLogado.cargo) ? usuarioLogado.cargo.toLowerCase().trim() : "ligante";
             let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
             let agora = new Date();
+            let enquetesValidas = [];
 
-            let enquetesValidas = enquetesCache.filter(enq => {
-                if (enq.publico === 'diretoria' && !ehDiretoria) return false;
-                if (enq.dataLimite) {
-                    let dataLim = new Date(enq.dataLimite);
-                    if (agora > dataLim) return false;
-                }
-                return true;
-            });
+            try {
+                enquetesValidas = enquetesCache.filter(enq => {
+                    if (enq.publico === 'diretoria' && !ehDiretoria) return false;
+                    if (enq.dataLimite) {
+                        let dataLim = typeof enq.dataLimite.toDate === 'function' ? enq.dataLimite.toDate() : new Date(enq.dataLimite);
+                        if (agora > dataLim) return false;
+                    }
+                    return true;
+                });
+            } catch (err) {
+                console.error("Erro no filtro de enquetes:", err);
+            }
 
             if (enquetesValidas.length === 0) {
                 containerSecao.style.display = "none";
@@ -1337,7 +1338,6 @@
                 return;
             }
 
-            containerSecao.style.display = "block";
             let html = `
                 <div class="aniv-header-info">
                     <div>
@@ -1348,60 +1348,71 @@
                 </div>
             `;
 
-            enquetesValidas.forEach(enquete => {
-                let votosMap = enquete.votos || {};
-                let meuVotoObj = votosMap[usuarioLogado.id] || null;
-                let jaVotou = (meuVotoObj !== null && meuVotoObj !== undefined);
-                let opcaoVotada = typeof meuVotoObj === 'object' ? meuVotoObj.opcao : meuVotoObj;
-                let textoVotado = typeof meuVotoObj === 'object' ? meuVotoObj.texto : '';
+            try {
+                enquetesValidas.forEach(enquete => {
+                    let votosMap = enquete.votos || {};
+                    let meuVotoObj = usuarioLogado ? votosMap[usuarioLogado.id] : null;
+                    let jaVotou = (meuVotoObj !== null && meuVotoObj !== undefined);
+                    let opcaoVotada = typeof meuVotoObj === 'object' ? meuVotoObj.opcao : meuVotoObj;
+                    let textoVotado = typeof meuVotoObj === 'object' ? meuVotoObj.texto : '';
 
-                let badgeDiretoriaHtml = enquete.publico === 'diretoria' 
-                    ? `<div class="badge-diretoria-enquete">🔒 Exclusivo da Diretoria</div>` 
-                    : '';
+                    let badgeDiretoriaHtml = enquete.publico === 'diretoria' 
+                        ? `<div class="badge-diretoria-enquete">🔒 Exclusivo da Diretoria</div>` 
+                        : '';
 
-                let limiteMs = enquete.dataLimite ? new Date(enquete.dataLimite).getTime() : 0;
-                let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 10px; right: 12px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
-
-                // Correção robusta para garantir que opções e campos de texto apareçam independentemente do formato no Firestore
-                let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
-                let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
-
-                html += `
-                    <div class="enquete-item-card">
-                        ${contadorHtml}
-                        ${badgeDiretoriaHtml}
-                        <p style="margin: 0 0 2px 0; font-size: 13px; font-weight: bold; color: #333; padding-right: 85px;">${enquete.titulo}</p>
-                        <p style="margin: 0 0 6px 0; font-size: 11px; color: #666;">${enquete.descricao || ''}</p>
-                        <div style="margin-top: 4px;" id="container-opcoes-enq-${enquete.id}">
-                `;
-
-                if (!jaVotou) {
-                    if (temOpcoes) {
-                        enquete.opcoes.forEach(opcao => {
-                            html += `<button class="enquete-opcao-btn" onclick="votarEnquete('${enquete.id}', '${opcao}')">${opcao}</button>`;
-                        });
+                    let limiteMs = 0;
+                    if (enquete.dataLimite) {
+                        let dL = typeof enquete.dataLimite.toDate === 'function' ? enquete.dataLimite.toDate() : new Date(enquete.dataLimite);
+                        limiteMs = dL.getTime();
                     }
-                    if (permiteTexto) {
+                    
+                    let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 10px; right: 12px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
+
+                    let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
+                    let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
+
+                    html += `
+                        <div class="enquete-item-card">
+                            ${contadorHtml}
+                            ${badgeDiretoriaHtml}
+                            <p style="margin: 0 0 2px 0; font-size: 13px; font-weight: bold; color: #333; padding-right: 85px;">${enquete.titulo}</p>
+                            <p style="margin: 0 0 6px 0; font-size: 11px; color: #666;">${enquete.descricao || ''}</p>
+                            <div style="margin-top: 4px;" id="container-opcoes-enq-${enquete.id}">
+                    `;
+
+                    if (!jaVotou) {
+                        if (temOpcoes) {
+                            enquete.opcoes.forEach(opcao => {
+                                html += `<button class="enquete-opcao-btn" onclick="votarEnquete('${enquete.id}', '${opcao}')">${opcao}</button>`;
+                            });
+                        }
+                        if (permiteTexto) {
+                            html += `
+                                <div style="margin-top: 6px;">
+                                    <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 6px; font-size: 11px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
+                                    <button class="enquete-opcao-btn" style="background: #0056b3; color: white; text-align: center; margin-top: 4px;" onclick="votarEnqueteComTexto('${enquete.id}')">Enviar Resposta</button>
+                                </div>
+                            `;
+                        }
+                    } else {
                         html += `
-                            <div style="margin-top: 6px;">
-                                <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 6px; font-size: 11px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
-                                <button class="enquete-opcao-btn" style="background: #0056b3; color: white; text-align: center; margin-top: 4px;" onclick="votarEnqueteComTexto('${enquete.id}')">Enviar Resposta</button>
+                            <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 6px 8px; border-radius: 6px; font-size: 11px; color: #2b8a3e; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                <span>✓ Voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '("' + textoVotado + '")' : ''}</span>
+                                <button class="btn-mudar-voto" onclick="mudarVotoEnquete('${enquete.id}')">Mudar</button>
                             </div>
                         `;
                     }
-                } else {
-                    html += `
-                        <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 6px 8px; border-radius: 6px; font-size: 11px; color: #2b8a3e; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
-                            <span>✓ Voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '("' + textoVotado + '")' : ''}</span>
-                            <button class="btn-mudar-voto" onclick="mudarVotoEnquete('${enquete.id}')">Mudar</button>
-                        </div>
-                    `;
-                }
 
-                html += `</div></div>`;
-            });
+                    html += `</div></div>`;
+                });
 
-            blocoEnquetes.innerHTML = html;
+                // Só exibe na tela SE tudo der certo
+                blocoEnquetes.innerHTML = html;
+                containerSecao.style.display = "block";
+                
+            } catch (err) {
+                console.error("Falha fatal na renderização das enquetes:", err);
+            }
         }
 
         async function votarEnquete(enqueteId, opcaoEscolhida) {
