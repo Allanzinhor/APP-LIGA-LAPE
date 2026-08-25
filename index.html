@@ -200,7 +200,7 @@
             background: #e9ecef;
         }
 
-        /* CARD DE ENQUETES ATIVAS (MESMO ESTILO DO ANIVERSÁRIO) */
+        /* CARD DE ENQUETES ATIVAS COM MARGENS CORRETAS */
         .card-enquetes-completo {
             background: #ffffff;
             border-radius: 12px;
@@ -214,8 +214,8 @@
             background: #f8f9fa;
             border: 1px solid #e9ecef;
             border-radius: 8px;
-            padding: 10px;
-            margin-top: 8px;
+            padding: 12px;
+            margin-top: 10px;
             transition: background 0.2s;
         }
         .enquete-opcao-btn {
@@ -241,6 +241,31 @@
             background: #ebfbee;
             border-color: #2b8a3e;
             color: #2b8a3e;
+        }
+        .btn-mudar-voto {
+            width: 100%;
+            background: #e7f5ff;
+            color: #0056b3;
+            border: 1px solid #74c0fc;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .badge-diretoria-enquete {
+            background: #e7f5ff;
+            color: #0056b3;
+            border: 1px solid #74c0fc;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 6px;
         }
 
         /* CARD DE OUVIDORIA / SUGESTÕES REESTILIZADO (PADRÃO ANIVERSÁRIO) */
@@ -502,8 +527,8 @@
             <div class="slides-container" id="container-slides"></div>
         </section>
 
-        <!-- SEÇÃO DE ENQUETES ATIVAS (ACIMA DO HISTÓRICO GERAL) -->
-        <section id="secao-enquetes-container" style="display: none; margin-top: 15px;">
+        <!-- SEÇÃO DE ENQUETES ATIVAS (COM MARGEM CORRETA) -->
+        <section id="secao-enquetes-container" style="display: none; margin-top: 15px; margin-bottom: 15px;">
             <div class="card-enquetes-completo" id="bloco-enquetes-ativas">
                 <!-- Preenchido dinamicamente via JS -->
             </div>
@@ -1301,7 +1326,21 @@
             let blocoEnquetes = document.getElementById("bloco-enquetes-ativas");
             if (!containerSecao || !blocoEnquetes) return;
 
-            if (enquetesCache.length === 0) {
+            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+            let agora = new Date();
+
+            // Filtra enquetes válidas para o usuário e dentro do prazo
+            let enquetesValidas = enquetesCache.filter(enq => {
+                if (enq.publico === 'diretoria' && !ehDiretoria) return false;
+                if (enq.dataLimite) {
+                    let dataLim = new Date(enq.dataLimite);
+                    if (agora > dataLim) return false; // Expirada, some automaticamente
+                }
+                return true;
+            });
+
+            if (enquetesValidas.length === 0) {
                 containerSecao.style.display = "none";
                 blocoEnquetes.innerHTML = "";
                 return;
@@ -1318,24 +1357,40 @@
                 </div>
             `;
 
-            enquetesCache.forEach(enquete => {
+            enquetesValidas.forEach(enquete => {
                 let votosMap = enquete.votos || {};
                 let meuVotoOpcao = votosMap[usuarioLogado.id] || null;
+                let jaVotou = (meuVotoOpcao !== null && meuVotoOpcao !== undefined);
+
+                let badgeDiretoriaHtml = enquete.publico === 'diretoria' 
+                    ? `<div class="badge-diretoria-enquete">🔒 Exclusivo da Diretoria</div>` 
+                    : '';
+
+                let limiteMs = enquete.dataLimite ? new Date(enquete.dataLimite).getTime() : 0;
+                let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="font-size: 11px; color: #d97706; font-weight: bold; margin-top: 4px;">⏳ Calculando prazo...</div>` : '';
 
                 html += `
                     <div class="enquete-item-card">
-                        <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: bold; color: #333;">${enquete.titulo}</p>
-                        <p style="margin: 0 0 8px 0; font-size: 11px; color: #666;">${enquete.descricao || ''}</p>
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                        ${badgeDiretoriaHtml}
+                        <p style="margin: 0 0 4px 0; font-size: 13px; font-weight: bold; color: #333;">${enquete.titulo}</p>
+                        <p style="margin: 0 0 6px 0; font-size: 11px; color: #666;">${enquete.descricao || ''}</p>
+                        ${contadorHtml}
+                        <div style="margin-top: 8px;" id="container-opcoes-enq-${enquete.id}">
                 `;
 
-                if (enquete.opcoes && Array.isArray(enquete.opcoes)) {
-                    enquete.opcoes.forEach(opcao => {
-                        let ehMeuVoto = (meuVotoOpcao === opcao);
-                        let classeBtn = ehMeuVoto ? "enquete-opcao-btn votado" : "enquete-opcao-btn";
-                        let textoMarcado = ehMeuVoto ? " ✓ (Seu voto)" : "";
-                        html += `<button class="${classeBtn}" onclick="votarEnquete('${enquete.id}', '${opcao}')">${opcao}${textoMarcado}</button>`;
-                    });
+                if (!jaVotou) {
+                    if (enquete.opcoes && Array.isArray(enquete.opcoes)) {
+                        enquete.opcoes.forEach(opcao => {
+                            html += `<button class="enquete-opcao-btn" onclick="votarEnquete('${enquete.id}', '${opcao}')">${opcao}</button>`;
+                        });
+                    }
+                } else {
+                    html += `
+                        <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 8px; border-radius: 6px; font-size: 12px; color: #2b8a3e; font-weight: bold; text-align: center; margin-bottom: 6px;">
+                            ✓ Seu voto: ${meuVotoOpcao}
+                        </div>
+                        <button class="btn-mudar-voto" onclick="mudarVotoEnquete('${enquete.id}')">🔄 Mudar Voto</button>
+                    `;
                 }
 
                 html += `</div></div>`;
@@ -1355,10 +1410,26 @@
                 votos[usuarioLogado.id] = opcaoEscolhida;
 
                 await docRef.update({ votos: votos });
-                alert("Voto computado com sucesso!");
             } catch (e) {
                 console.error("Erro ao registrar voto:", e);
                 alert("Erro ao registrar voto. Tente novamente.");
+            }
+        }
+
+        async function mudarVotoEnquete(enqueteId) {
+            try {
+                let docRef = db.collection("enquetes").doc(enqueteId);
+                let docSnap = await docRef.get();
+                if (!docSnap.exists) return;
+
+                let data = docSnap.data();
+                let votos = data.votos || {};
+                delete votos[usuarioLogado.id];
+
+                await docRef.update({ votos: votos });
+            } catch (e) {
+                console.error("Erro ao alterar voto:", e);
+                alert("Erro ao alterar o voto.");
             }
         }
 
@@ -2133,7 +2204,7 @@
                 let agoraMs = new Date().getTime();
 
                 document.querySelectorAll('[id^="timer-"]').forEach(el => {
-                    if (el.id.includes('extra')) return;
+                    if (el.id.includes('extra') || el.id.includes('enquete')) return;
                     let limiteMs = Number(el.getAttribute('data-limite'));
                     if (!limiteMs) return;
 
@@ -2161,6 +2232,23 @@
                         let mExtra = Math.floor((diffTempExtra % (1000 * 60 * 60)) / (1000 * 60));
                         let sExtra = Math.floor((diffTempExtra % (1000 * 60)) / 1000);
                         el.innerHTML = `⏳ Expira em: ${hExtra}h ${mExtra}m ${sExtra}s`;
+                    }
+                });
+
+                // Cronômetro específico para as Enquetes Ativas
+                document.querySelectorAll('[id^="timer-enquete-"]').forEach(el => {
+                    let limiteEnqMs = Number(el.getAttribute('data-limite'));
+                    if (!limiteEnqMs) return;
+
+                    let diffEnq = limiteEnqMs - agoraMs;
+                    if (diffEnq <= 0) {
+                        renderizarEnquetesWidget();
+                    } else {
+                        let dEnq = Math.floor(diffEnq / (1000 * 60 * 60 * 24));
+                        let hEnq = Math.floor((diffEnq % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        let mEnq = Math.floor((diffEnq % (1000 * 60 * 60)) / (1000 * 60));
+                        let sEnq = Math.floor((diffEnq % (1000 * 60)) / 1000);
+                        el.innerHTML = `⏳ Encerra em: ${dEnq > 0 ? dEnq + 'd ' : ''}${hEnq}h ${mEnq}m ${sEnq}s`;
                     }
                 });
             }, 1000);
