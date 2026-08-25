@@ -1359,6 +1359,7 @@
 
         function adicionarOpcaoEnqueteUI(texto = '') {
             let idUnico = 'op_' + Math.random().toString(36).substr(2, 9);
+            // CORREÇÃO APLICADA AQUI: Adicionada a classe 'opcao-enquete-texto' para salvar corretamente
             let html = `
                 <div id="${idUnico}" style="display: flex; gap: 8px; align-items: center; background: white; padding: 8px; border-radius: 8px; border: 1px solid #c7d2fe;">
                     <input type="text" class="opcao-enquete-texto" placeholder="Texto da opção (Ex: Sim, Discordo, 15/09...)" value="${texto}" style="flex: 1; padding: 8px; font-size: 11px;">
@@ -1403,6 +1404,7 @@
                     dataLimite,
                     anonima,
                     permiteSugestao,
+                    opcoes, // <--- Opções agora salvas corretamente na nuvem
                     ativa: true
                 };
 
@@ -1456,7 +1458,7 @@
                                 <p style="margin: 0 0 4px 0; font-size: 10px; color: #64748b;">⏳ Limite: ${d.dataLimite ? new Date(d.dataLimite).toLocaleString('pt-BR') : 'Sem prazo'} | 🔒 ${d.anonima ? 'Anônima' : 'Visível'} ${d.permiteSugestao ? '| 💬 Com Sugestão' : ''}</p>
                             </div>
                             <div style="display: flex; gap: 6px; flex-shrink: 0;">
-                                <button class="btn-mini verde" style="padding: 6px 10px; font-size: 10px;" onclick="verResultadosEnquete('${enqId}', '${d.titulo.replace(/'/g, "\\'")}')">📊 Resultados</button>
+                                <button class="btn-mini verde" style="padding: 6px 10px; font-size: 10px;" onclick="verResultadosEnquete('${enqId}', '${d.titulo.replace(/'/g, "\\'경기")}')">📊 Resultados</button>
                                 <button class="btn-mini cinza" style="padding: 6px 10px; font-size: 10px;" onclick="abrirModalEnquete('${enqId}', ${JSON.stringify(d).replace(/"/g, '&quot;')})">✏️ Editar</button>
                                 <button class="btn-mini vermelho" style="padding: 6px 10px; font-size: 10px;" onclick="excluirEnquete('${enqId}')"><i class="fa-solid fa-trash"></i></button>
                             </div>
