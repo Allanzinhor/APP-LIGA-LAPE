@@ -1221,7 +1221,8 @@
                 let info = configAbas[aba] || { nome: aba, icone: "fa-folder" };
                 menuNav.innerHTML += `
                     <div class="menu-card-item" id="menu-card-${aba}" onclick="abrirAbaExecutiva('${aba}')">
-                        <i class="fa-solid ${info.icone}"><span>${info.nome}</span></i>
+                        <i class="fa-solid ${info.icone}"></i>
+                        <span>${info.nome}</span>
                     </div>
                 `;
             });
