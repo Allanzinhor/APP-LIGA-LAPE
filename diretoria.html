@@ -1599,7 +1599,7 @@
 
         async function verInscricoesFormulario(formId, tituloForm) {
             document.getElementById("titulo-modal-inscritos").innerText = `📊 Respostas: ${tituloForm}`;
-            document.getElementById("form-id-atual-visualizado").value = formId; // Guarda o ID atual para atualizar a lista ao apagar
+            document.getElementById("form-id-atual-visualizado").value = formId;
             let container = document.getElementById("lista-inscritos-conteudo");
             let contadorBadge = document.getElementById("contador-inscritos-badge");
             container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando respostas detalhadas...</p>`;
@@ -1650,15 +1650,16 @@
                     if (r.respostasExtras) {
                         for (let [pergunta, resposta] of Object.entries(r.respostasExtras)) {
                             let respFinal = resposta;
-                            // CORREÇÃO: Evita que strings longas/base64 apareçam cruas na tela. Converte para link ou miniatura amigável
-                            if(typeof resposta === 'string') {
-                                if(resposta.startsWith('http') || resposta.startsWith('data:image')) {
-                                    respFinal = `<a href="${resposta}" target="_blank" style="color:var(--primary); font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-image"></i> Ver Imagem / Arquivo Anexado</a>`;
-                                } else if (resposta.length > 200) {
-                                    // Se por acaso vier um código base64 muito longo sem tag http
-                                    respFinal = `<span style="color: #64748b; font-style: italic;">[Arquivo binário/Base64 anexado]</span> <a href="${resposta}" target="_blank" style="color:var(--primary); font-weight:800; text-decoration:none; margin-left: 6px;">Abrir</a>`;
+                            
+                            // CORREÇÃO APLICADA AQUI: Tratamento correto para imagens e arquivos sem sumir com o texto comum
+                            if (typeof resposta === 'string') {
+                                if (resposta.startsWith('data:image') || resposta.match(/\.(jpeg|jpg|png|gif)$/i)) {
+                                    respFinal = `<div style="margin-top: 6px;"><a href="${resposta}" target="_blank"><img src="${resposta}" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 1px solid var(--border); display: block; object-fit: contain;"></a><span style="font-size: 9px; color: var(--primary); display: block; margin-top: 2px;">Clique na imagem para ampliar</span></div>`;
+                                } else if (resposta.startsWith('http')) {
+                                    respFinal = `<a href="${resposta}" target="_blank" style="color:var(--primary); font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-file-arrow-down"></i> Baixar / Abrir Arquivo Anexado</a>`;
                                 }
                             }
+
                             extrasHtml += `<div style="margin-top: 6px; padding: 6px; background: white; border: 1px solid var(--border); border-radius: 6px;"><strong style="color: #64748b; display: block; margin-bottom: 2px;">${pergunta}:</strong> <span style="color: var(--dark);">${respFinal}</span></div>`;
                         }
                     }
@@ -1671,7 +1672,7 @@
                                     <span style="font-size: 10px; color: #64748b;">📅 Enviado em: ${dataEnvio}</span>
                                 </div>
                                 <div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0;">
-                                    <button class="btn-mini vermelho" style="padding: 6px 10px; font-size: 10px;" onclick="apagarInscricaoFormulario('${formId}', '${respostaId}')" title="Apagar envio errado"><i class="fa-solid fa-trash"></i> Apagar</button>
+                                    <button class="btn-mini vermelho" style="padding: 6px 10px; font-size: 10px;" onclick="apagarInscricaoFormulario('${formId}', '${respostaId}')"><i class="fa-solid fa-trash"></i> Apagar</button>
                                     <button class="btn-mini cinza" style="padding: 6px 10px; font-size: 10px;" onclick="toggleExpandirInscricao('${cardId}')" id="seta-${cardId}">Ver Ficha</button>
                                 </div>
                             </div>
@@ -1684,7 +1685,11 @@
                                     <p style="margin: 0; color: var(--dark); line-height: 1.4;">"${r.motivacao}"</p>
                                 </div>` : ''}
                                 
-                                ${r.comprovanteUrl ? `<div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; text-align: center;"><a href="${r.comprovanteUrl}" target="_blank" style="font-weight: 800; color: #166534; text-decoration: none; display: block;">🧾 Abrir Comprovante de Pagamento</a></div>` : ''}
+                                ${r.comprovanteUrl ? `
+                                <div style="margin-top: 8px; padding: 8px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; text-align: center;">
+                                    <strong style="font-size: 10px; color: #166534; display: block; margin-bottom: 4px;">Comprovante de Taxa:</strong>
+                                    <a href="${r.comprovanteUrl}" target="_blank"><img src="${r.comprovanteUrl}" style="max-width: 100%; max-height: 180px; border-radius: 6px; border: 1px solid #bbf7d0; object-fit: contain; display: block; margin: 0 auto;"></a>
+                                </div>` : ''}
 
                                 ${extrasHtml ? `<div style="margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 8px;"><strong style="color: #7c3aed; font-size: 10px; display: block; margin-bottom: 6px;">TODAS AS RESPOSTAS:</strong>${extrasHtml}</div>` : ''}
                             </div>
@@ -1698,13 +1703,11 @@
             }
         }
 
-        // NOVO: Função para apagar um envio individual errado
         async function apagarInscricaoFormulario(formId, respostaId) {
             if (confirm("Deseja realmente apagar este envio? Esta ação não pode ser desfeita.")) {
                 try {
                     await db.collection("formularios_externos").doc(formId).collection("respostas").doc(respostaId).delete();
                     alert("Inscrição apagada com sucesso!");
-                    // Atualiza a listagem do modal atual
                     let tituloAtual = document.getElementById("titulo-modal-inscritos").innerText.replace("📊 Respostas: ", "");
                     verInscricoesFormulario(formId, tituloAtual);
                 } catch (e) {
