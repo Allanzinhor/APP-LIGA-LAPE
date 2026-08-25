@@ -1496,48 +1496,30 @@
                 if (!docEnq.exists) return;
                 let dadosEnq = docEnq.data();
 
-                let votosSnap = await db.collection("enquetes").doc(enqId).collection("votos").get();
-                badgeVotos.innerText = `${votosSnap.size} voto(s)`;
+                // Pega o objeto de votos do próprio documento da enquete
+                let votosMap = dadosEnq.votos || {};
+                let totalVotosGeral = Object.keys(votosMap).length;
+                badgeVotos.innerText = `${totalVotosGeral} voto(s)`;
 
                 let contagemVotos = {};
                 if (dadosEnq.opcoes) {
                     dadosEnq.opcoes.forEach(op => contagemVotos[op] = 0);
                 }
 
-                let detalhesVotantes = [];
-                let sugestoesRecebidas = [];
-
-                votosSnap.forEach(docVoto => {
-                    let v = docVoto.data();
-                    detalhesVotantes.push(v);
-                    let escolha = v.escolha;
-                    if (Array.isArray(escolha)) {
-                        escolha.forEach(es => { if (contagemVotos[es] !== undefined) contagemVotos[es]++; });
-                    } else if (contagemVotos[escolha] !== undefined) {
+                // Mapeia os votos salvos no objeto
+                for (let [membroId, escolha] of Object.entries(votosMap)) {
+                    if (contagemVotos[escolha] !== undefined) {
                         contagemVotos[escolha]++;
+                    } else if (Array.isArray(escolha)) {
+                        escolha.forEach(es => { if (contagemVotos[es] !== undefined) contagemVotos[es]++; });
                     }
-                    if (v.sugestao && v.sugestao.trim() !== "") {
-                        sugestoesRecebidas.push({ nome: v.nomeMembro || 'Ligante', texto: v.sugestao });
-                    }
-                });
+                }
 
                 let html = "";
-                let totalVotosGeral = votosSnap.size;
-
                 if (dadosEnq.opcoes) {
                     dadosEnq.opcoes.forEach(op => {
                         let qtd = contagemVotos[op] || 0;
                         let perc = totalVotosGeral > 0 ? Math.round((qtd / totalVotosGeral) * 100) : 0;
-
-                        let votantesDestaOpcao = detalhesVotantes.filter(v => {
-                            if (Array.isArray(v.escolha)) return v.escolha.includes(op);
-                            return v.escolha === op;
-                        });
-
-                        let listaNomesHtml = "";
-                        if (!dadosEnq.anonima) {
-                            listaNomesHtml = votantesDestaOpcao.map(v => `<span style="font-size: 9px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #475569;">${v.nomeMembro || 'Ligante'}</span>`).join(' ');
-                        }
 
                         html += `
                             <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 10px;">
@@ -1548,26 +1530,9 @@
                                 <div style="width: 100%; background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
                                     <div style="background: var(--primary); width: ${perc}%; height: 100%; border-radius: 4px;"></div>
                                 </div>
-                                ${!dadosEnq.anonima ? `<div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px;">${listaNomesHtml || '<span style="font-size:9px; color:#94a3b8; font-style:italic;">Nenhum voto nesta opção.</span>'}</div>` : '<span style="font-size: 9px; color: #94a3b8; font-style: italic;">🔒 Votação anônima (nomes ocultos)</span>'}
                             </div>
                         `;
                     });
-                }
-
-                if (sugestoesRecebidas.length > 0) {
-                    let sugestoesHtml = sugestoesRecebidas.map(s => `
-                        <div style="background: white; border: 1px solid #e9d5ff; padding: 8px; border-radius: 6px; margin-bottom: 6px;">
-                            ${!dadosEnq.anonima ? `<strong style="font-size: 10px; color: #7c3aed; display: block; margin-bottom: 2px;">${s.nome}:</strong>` : ''}
-                            <p style="margin: 0; font-size: 11px; color: var(--dark);">${s.texto}</p>
-                        </div>
-                    `).join('');
-
-                    html += `
-                        <div style="background: #faf5ff; border: 1px solid #d8b4fe; border-radius: 10px; padding: 12px; margin-top: 10px;">
-                            <strong style="font-size: 12px; color: #7c3aed; display: block; margin-bottom: 8px;"><i class="fa-solid fa-comment-dots"></i> Sugestões e Comentários dos Votantes (${sugestoesRecebidas.length})</strong>
-                            ${sugestoesHtml}
-                        </div>
-                    `;
                 }
 
                 container.innerHTML = html;
