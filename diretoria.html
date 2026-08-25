@@ -508,7 +508,7 @@
             </div>
         </div>
 
-        <!-- ================= ABA: ENQUETES (NOVA) ================= -->
+        <!-- ================= ABA: ENQUETES (COM CAIXA DE SUGESTÃO OPCIONAL) ================= -->
         <div id="secao-enquetes-admin" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <div>
@@ -899,9 +899,12 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="display: flex; flex-direction: column; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
                     <label style="font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer;">
                         <input type="checkbox" id="enq-anonima"> Votação Anônima (ocultar quem votou)
+                    </label>
+                    <label style="font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="enq-permite-sugestao"> Permitir caixa de texto para sugestões/comentários ao votar
                     </label>
                 </div>
 
@@ -1093,15 +1096,14 @@
         let periodoDesempenhoSelecionado = 'mensal';
         let estatisticasLigantesCache = [];
 
-        // Permissões atualizadas incluindo enquetes para todos os cargos executivos
         const permissoesCargos = {
             "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
             "vice-presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
             "secretaria": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "frequencia", "avisos", "ouvidoria-admin", "correio-interno"],
             "tesoureira": ["formularios-seletivo", "enquetes-admin", "recados-internos", "financeiro", "avisos", "correio-interno"],
-            "diretora de extensão": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "avisos", "correio-interno"],
+            "diretora de extensao": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "avisos", "correio-interno"],
             "diretora de pesquisa": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "avisos", "correio-interno"],
-            "diretoria de marketing": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "correio-interno", "recados-internos", "avisos"]
+            "diretora de marketing": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "correio-interno", "recados-internos", "avisos"]
         };
 
         function mascaraTelefone(input) {
@@ -1169,8 +1171,23 @@
                 return;
             }
 
-            let cargoLower = (usuarioSessao.cargo || "ligante").toLowerCase().trim();
-            if (cargoLower === "ligante" || !permissoesCargos[cargoLower]) {
+            let cargoCrudo = (usuarioSessao.cargo || "ligante").toLowerCase().trim();
+            let cargoLower = cargoCrudo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace("diretor de", "diretoria de").replace("diretora de", "diretoria de");
+
+            let permissoesCargosNormalizadas = {
+                "presidente": permissoesCargos["presidente"],
+                "vice-presidente": permissoesCargos["vice-presidente"],
+                "secretaria": permissoesCargos["secretaria"],
+                "tesoureira": permissoesCargos["tesoureira"],
+                "diretoria de extensao": permissoesCargos["diretora de extensao"],
+                "diretoria de pesquisa": permissoesCargos["diretora de pesquisa"],
+                "diretoria de marketing": permissoesCargos["diretora de marketing"],
+                "marketing": permissoesCargos["diretoria de marketing"]
+            };
+
+            let abasPermitidas = permissoesCargosNormalizadas[cargoLower];
+
+            if (cargoLower === "ligante" || !abasPermitidas) {
                 alert("Você não possui permissão para acessar o painel da diretoria.");
                 window.location.href = "index.html";
                 return;
@@ -1179,7 +1196,6 @@
             renderizarPerfilTopoAdmin();
             iniciarOuvintesTempoRealAdmin();
 
-            let abasPermitidas = permissoesCargos[cargoLower];
             let menuNav = document.getElementById("menu-painel-executivo");
             menuNav.innerHTML = "";
 
@@ -1205,8 +1221,7 @@
                 let info = configAbas[aba] || { nome: aba, icone: "fa-folder" };
                 menuNav.innerHTML += `
                     <div class="menu-card-item" id="menu-card-${aba}" onclick="abrirAbaExecutiva('${aba}')">
-                        <i class="fa-solid ${info.icone}"></i>
-                        <span>${info.nome}</span>
+                        <i class="fa-solid ${info.icone}"><span>${info.nome}</span></i>
                     </div>
                 `;
             });
@@ -1303,7 +1318,7 @@
             });
         }
 
-        // ================= FUNÇÕES DA ABA DE ENQUETES ================= //
+        // ================= FUNÇÕES DA ABA DE ENQUETES (COM CAIXA DE SUGESTÃO) ================= //
         function abrirModalEnquete(id = null, dados = null) {
             document.getElementById("enquete-id-editando").value = id || "";
             document.getElementById("container-opcoes-enquete").innerHTML = "";
@@ -1316,6 +1331,7 @@
                 document.getElementById("enq-tipo-voto").value = dados.tipoVoto || "unica";
                 document.getElementById("enq-data-limite").value = dados.dataLimite || "";
                 document.getElementById("enq-anonima").checked = dados.anonima || false;
+                document.getElementById("enq-permite-sugestao").checked = dados.permiteSugestao || false;
 
                 if (dados.opcoes && Array.isArray(dados.opcoes)) {
                     dados.opcoes.forEach(op => adicionarOpcaoEnqueteUI(op));
@@ -1328,8 +1344,8 @@
                 document.getElementById("enq-tipo-voto").value = "unica";
                 document.getElementById("enq-data-limite").value = "";
                 document.getElementById("enq-anonima").checked = false;
+                document.getElementById("enq-permite-sugestao").checked = false;
                 
-                // Adiciona 2 opções padrão iniciais
                 adicionarOpcaoEnqueteUI();
                 adicionarOpcaoEnqueteUI();
             }
@@ -1359,6 +1375,7 @@
             let tipoVoto = document.getElementById("enq-tipo-voto").value;
             let dataLimite = document.getElementById("enq-data-limite").value;
             let anonima = document.getElementById("enq-anonima").checked;
+            let permiteSugestao = document.getElementById("enq-permite-sugestao").checked;
 
             if (!titulo) {
                 alert("Preencha o título da enquete.");
@@ -1384,6 +1401,7 @@
                     tipoVoto,
                     dataLimite,
                     anonima,
+                    permiteSugestao,
                     ativa: true
                 };
 
@@ -1434,7 +1452,7 @@
                                     <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${estaAtiva ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${estaAtiva ? 'Ativa' : 'Encerrada'}</span>
                                     <span style="font-size: 9px; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-weight: 800;">${d.publico === 'diretoria' ? 'Diretoria' : 'Todos'}</span>
                                 </div>
-                                <p style="margin: 0 0 4px 0; font-size: 10px; color: #64748b;">⏳ Limite: ${d.dataLimite ? new Date(d.dataLimite).toLocaleString('pt-BR') : 'Sem prazo'} | 🔒 ${d.anonima ? 'Anônima' : 'Visível'}</p>
+                                <p style="margin: 0 0 4px 0; font-size: 10px; color: #64748b;">⏳ Limite: ${d.dataLimite ? new Date(d.dataLimite).toLocaleString('pt-BR') : 'Sem prazo'} | 🔒 ${d.anonima ? 'Anônima' : 'Visível'} ${d.permiteSugestao ? '| 💬 Com Sugestão' : ''}</p>
                             </div>
                             <div style="display: flex; gap: 6px; flex-shrink: 0;">
                                 <button class="btn-mini verde" style="padding: 6px 10px; font-size: 10px;" onclick="verResultadosEnquete('${enqId}', '${d.titulo.replace(/'/g, "\\'")}')">📊 Resultados</button>
@@ -1485,6 +1503,8 @@
                 }
 
                 let detalhesVotantes = [];
+                let sugestoesRecebidas = [];
+
                 votosSnap.forEach(docVoto => {
                     let v = docVoto.data();
                     detalhesVotantes.push(v);
@@ -1493,6 +1513,9 @@
                         escolha.forEach(es => { if (contagemVotos[es] !== undefined) contagemVotos[es]++; });
                     } else if (contagemVotos[escolha] !== undefined) {
                         contagemVotos[escolha]++;
+                    }
+                    if (v.sugestao && v.sugestao.trim() !== "") {
+                        sugestoesRecebidas.push({ nome: v.nomeMembro || 'Ligante', texto: v.sugestao });
                     }
                 });
 
@@ -1527,6 +1550,22 @@
                             </div>
                         `;
                     });
+                }
+
+                if (sugestoesRecebidas.length > 0) {
+                    let sugestoesHtml = sugestoesRecebidas.map(s => `
+                        <div style="background: white; border: 1px solid #e9d5ff; padding: 8px; border-radius: 6px; margin-bottom: 6px;">
+                            ${!dadosEnq.anonima ? `<strong style="font-size: 10px; color: #7c3aed; display: block; margin-bottom: 2px;">${s.nome}:</strong>` : ''}
+                            <p style="margin: 0; font-size: 11px; color: var(--dark);">${s.texto}</p>
+                        </div>
+                    `).join('');
+
+                    html += `
+                        <div style="background: #faf5ff; border: 1px solid #d8b4fe; border-radius: 10px; padding: 12px; margin-top: 10px;">
+                            <strong style="font-size: 12px; color: #7c3aed; display: block; margin-bottom: 8px;"><i class="fa-solid fa-comment-dots"></i> Sugestões e Comentários dos Votantes (${sugestoesRecebidas.length})</strong>
+                            ${sugestoesHtml}
+                        </div>
+                    `;
                 }
 
                 container.innerHTML = html;
