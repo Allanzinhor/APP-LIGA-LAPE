@@ -1360,11 +1360,11 @@
                     : '';
 
                 let limiteMs = enquete.dataLimite ? new Date(enquete.dataLimite).getTime() : 0;
-                
-                // CONTADOR POSICIONADO NO CANTO SUPERIOR DIREITO
                 let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 10px; right: 12px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
 
-                let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true;
+                // Garante compatibilidade caso o painel envie as opções ou flag de texto
+                let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
+                let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
 
                 html += `
                     <div class="enquete-item-card">
@@ -1376,15 +1376,15 @@
                 `;
 
                 if (!jaVotou) {
-                    if (enquete.opcoes && Array.isArray(enquete.opcoes)) {
+                    if (temOpcoes) {
                         enquete.opcoes.forEach(opcao => {
-                            html += `<button class="enquete-opcao-btn" onclick="votarEnquete('${enquete.id}', '${opcao}', ${permiteTexto})">${opcao}</button>`;
+                            html += `<button class="enquete-opcao-btn" onclick="votarEnquete('${enquete.id}', '${opcao}')">${opcao}</button>`;
                         });
                     }
                     if (permiteTexto) {
                         html += `
                             <div style="margin-top: 6px;">
-                                <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 6px; font-size: 11px; box-sizing: border-box; outline: none; resize: none;"></textarea>
+                                <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 6px; font-size: 11px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
                                 <button class="enquete-opcao-btn" style="background: #0056b3; color: white; text-align: center; margin-top: 4px;" onclick="votarEnqueteComTexto('${enquete.id}')">Enviar Resposta</button>
                             </div>
                         `;
@@ -1404,11 +1404,7 @@
             blocoEnquetes.innerHTML = html;
         }
 
-        async function votarEnquete(enqueteId, opcaoEscolhida, permiteTexto) {
-            if (permiteTexto) {
-                // Se permite texto, guarda temporariamente no input ou envia se for direto
-                return;
-            }
+        async function votarEnquete(enqueteId, opcaoEscolhida) {
             try {
                 let docRef = db.collection("enquetes").doc(enqueteId);
                 let docSnap = await docRef.get();
