@@ -200,6 +200,49 @@
             background: #e9ecef;
         }
 
+        /* CARD DE ENQUETES ATIVAS (MESMO ESTILO DO ANIVERSÁRIO) */
+        .card-enquetes-completo {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #f59f00;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .enquete-item-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .enquete-opcao-btn {
+            width: 100%;
+            text-align: left;
+            background: #ffffff;
+            border: 1px solid #ced4da;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.2s;
+        }
+        .enquete-opcao-btn:hover {
+            background: #e7f5ff;
+            border-color: #1c7ed6;
+            color: #1c7ed6;
+        }
+        .enquete-opcao-btn.votado {
+            background: #ebfbee;
+            border-color: #2b8a3e;
+            color: #2b8a3e;
+        }
+
         /* CARD DE OUVIDORIA / SUGESTÕES REESTILIZADO (PADRÃO ANIVERSÁRIO) */
         .card-ouvidoria-completo {
             background: #ffffff;
@@ -457,6 +500,13 @@
                 <span id="contador-slide">1/1</span>
             </div>
             <div class="slides-container" id="container-slides"></div>
+        </section>
+
+        <!-- SEÇÃO DE ENQUETES ATIVAS (ACIMA DO HISTÓRICO GERAL) -->
+        <section id="secao-enquetes-container" style="display: none; margin-top: 15px;">
+            <div class="card-enquetes-completo" id="bloco-enquetes-ativas">
+                <!-- Preenchido dinamicamente via JS -->
+            </div>
         </section>
 
         <!-- Histórico Geral Acumulado -->
@@ -760,6 +810,7 @@
         let avisos = [];
         let membrosCache = [];
         let minhasSugestoesCache = [];
+        let enquetesCache = [];
         let indiceSlideAtual = 0;
         let eventoInstalacaoPWA = null;
         let motorCronometroGlobal = null;
@@ -1117,6 +1168,15 @@
                 }
             });
 
+            // Ouvinte em tempo real para as enquetes ativas
+            db.collection("enquetes").where("ativa", "==", true).onSnapshot((snapshot) => {
+                enquetesCache = [];
+                snapshot.forEach(doc => {
+                    enquetesCache.push({ id: doc.id, ...doc.data() });
+                });
+                renderizarEnquetesWidget();
+            });
+
             db.collection("sugestoes_ouvidoria").where("autorId", "==", usuarioLogado.id).onSnapshot((snapshot) => {
                 minhasSugestoesCache = [];
                 snapshot.forEach(doc => {
@@ -1234,6 +1294,72 @@
                 atividades.sort((a, b) => new Date(a.data + "T" + a.hora) - new Date(b.data + "T" + b.hora));
                 renderizarApp();
             });
+        }
+
+        function renderizarEnquetesWidget() {
+            let containerSecao = document.getElementById("secao-enquetes-container");
+            let blocoEnquetes = document.getElementById("bloco-enquetes-ativas");
+            if (!containerSecao || !blocoEnquetes) return;
+
+            if (enquetesCache.length === 0) {
+                containerSecao.style.display = "none";
+                blocoEnquetes.innerHTML = "";
+                return;
+            }
+
+            containerSecao.style.display = "block";
+            let html = `
+                <div class="aniv-header-info">
+                    <div>
+                        <span style="font-size: 13px; font-weight: bold; color: #f59f00;">📊 Enquetes Ativas</span>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Participe das votações em andamento na liga</p>
+                    </div>
+                    <span style="font-size: 18px;">🗳️</span>
+                </div>
+            `;
+
+            enquetesCache.forEach(enquete => {
+                let votosMap = enquete.votos || {};
+                let meuVotoOpcao = votosMap[usuarioLogado.id] || null;
+
+                html += `
+                    <div class="enquete-item-card">
+                        <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: bold; color: #333;">${enquete.titulo}</p>
+                        <p style="margin: 0 0 8px 0; font-size: 11px; color: #666;">${enquete.descricao || ''}</p>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                `;
+
+                if (enquete.opcoes && Array.isArray(enquete.opcoes)) {
+                    enquete.opcoes.forEach(opcao => {
+                        let ehMeuVoto = (meuVotoOpcao === opcao);
+                        let classeBtn = ehMeuVoto ? "enquete-opcao-btn votado" : "enquete-opcao-btn";
+                        let textoMarcado = ehMeuVoto ? " ✓ (Seu voto)" : "";
+                        html += `<button class="${classeBtn}" onclick="votarEnquete('${enquete.id}', '${opcao}')">${opcao}${textoMarcado}</button>`;
+                    });
+                }
+
+                html += `</div></div>`;
+            });
+
+            blocoEnquetes.innerHTML = html;
+        }
+
+        async function votarEnquete(enqueteId, opcaoEscolhida) {
+            try {
+                let docRef = db.collection("enquetes").doc(enqueteId);
+                let docSnap = await docRef.get();
+                if (!docSnap.exists) return;
+
+                let data = docSnap.data();
+                let votos = data.votos || {};
+                votos[usuarioLogado.id] = opcaoEscolhida;
+
+                await docRef.update({ votos: votos });
+                alert("Voto computado com sucesso!");
+            } catch (e) {
+                console.error("Erro ao registrar voto:", e);
+                alert("Erro ao registrar voto. Tente novamente.");
+            }
         }
 
         function abrirModalNovaSugestao() {
@@ -1524,7 +1650,6 @@
             document.getElementById("perfil-formatura").innerText = usuarioLogado.previsaoFormatura || "-";
             document.getElementById("perfil-ingresso").innerText = usuarioLogado.ingressoLiga ? new Date(usuarioLogado.ingressoLiga + "T00:00:00").toLocaleDateString('pt-BR') : "-";
 
-            // Calcular estatísticas gerais rapidinho para a aba de estatísticas
             let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
             let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
             let ativVisiveis = atividades.filter(a => {
@@ -1541,7 +1666,6 @@
             document.getElementById("perfil-stat-faltas").innerText = totalFaltas;
             document.getElementById("perfil-stat-ch").innerText = totalCH + "h";
 
-            // Limpa campos de senha ao abrir
             document.getElementById("input-senha-atual").value = "";
             document.getElementById("input-senha-nova").value = "";
             document.getElementById("input-senha-confirmar").value = "";
