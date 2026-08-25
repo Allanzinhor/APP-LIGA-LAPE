@@ -493,11 +493,11 @@
             </div>
         </div>
 
-        <!-- ================= ABA: FORMULÁRIOS EXTERNOS & SELETIVO ================= -->
+        <!-- ================= ABA: FORMULÁRIOS ================= -->
         <div id="secao-formularios-seletivo" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                 <div>
-                    <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-wpforms"></i> Processo Seletivo & Formulários</h3>
+                    <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-wpforms"></i> Formulários</h3>
                     <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Crie formulários customizados, adicione seus próprios campos e gerencie inscrições</p>
                 </div>
                 <button class="btn-mini verde" style="padding: 8px 12px; font-size: 11px; font-weight: 800;" onclick="abrirModalFormularioExterno()"><i class="fa-solid fa-plus"></i> Novo Formulário</button>
@@ -1003,12 +1003,12 @@
 
         const permissoesCargos = {
             "presidente": ["dashboard-principal", "formularios-seletivo", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
-            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
-            "secretaria": ["dashboard-principal", "formularios-seletivo", "lista-membros", "frequencia", "avisos", "ouvidoria-admin", "correio-interno"],
-            "tesoureira": ["financeiro", "avisos", "correio-interno"],
-            "diretoria de extensão": ["cadastro-atividades", "lista-atividades", "avisos", "correio-interno"],
-            "diretoria de pesquisa": ["cadastro-atividades", "lista-atividades", "avisos", "correio-interno"],
-            "diretoria de marketing": ["avisos", "correio-interno"]
+            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
+            "secretaria": ["dashboard-principal", "formularios-seletivo", "recados-internos", "frequencia", "avisos", "ouvidoria-admin", "correio-interno"],
+            "tesoureira": ["formularios-seletivo", "recados-internos", "financeiro", "avisos", "correio-interno"],
+            "diretora de extensão": ["formularios-seletivo", "cadastro-atividades", "lista-atividades", "recados-internos", "avisos", "correio-interno"],
+            "diretora de pesquisa": ["formularios-seletivo", "cadastro-atividades", "lista-atividades", "recados-internos", "avisos", "correio-interno"],
+            "diretoria de marketing": ["formularios-seletivo", "cadastro-atividades", "lista-atividades", "correio-interno", "recados-internos", "avisos"]
         };
 
         function mascaraTelefone(input) {
@@ -1092,7 +1092,7 @@
 
             const configAbas = {
                 "dashboard-principal": { nome: "Gestão Executiva", icone: "fa-chart-pie" },
-                "formularios-seletivo": { nome: "Processo Seletivo", icone: "fa-wpforms" },
+                "formularios-seletivo": { nome: "Formulários", icone: "fa-wpforms" },
                 "recados-internos": { nome: "Recados Internos", icone: "fa-bullhorn" },
                 "manutencao": { nome: "Manutenção", icone: "fa-screwdriver-wrench" },
                 "cadastro-membros": { nome: "Cadastrar Ligante", icone: "fa-user-plus" },
