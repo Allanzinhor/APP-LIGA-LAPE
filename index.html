@@ -12,14 +12,17 @@
     <meta name="color-scheme" content="light">
 
     <style>
-        body { background-color: #f4f7f6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #f4f7f6; margin: 0; padding: 0; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
-        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: auto; }
+        
+        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: 60px auto; }
         #tela-login h2 { color: #0056b3; font-size: 26px; margin: 10px 0 2px 0; }
         #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
+        
         .grupo-input { margin-bottom: 15px; text-align: left; }
         .grupo-input label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold; color: #555; }
         .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
+        
         .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; }
         
@@ -238,6 +241,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: background 0.2s;
+            white-space: nowrap;
         }
         .btn-mudar-voto:hover {
             background: #d0ebff;
@@ -491,8 +495,8 @@
         </div>
     </div>
 
-    <!-- TELA PRINCIPAL DO APP - CORRIGIDO: Cabeçalho colado nas bordas, conteúdo com respiro interno -->
-    <div class="celular-container" id="conteudo-principal-app" style="display: none; width: 100%; max-width: 480px; box-sizing: border-box; background-color: #f4f7f6; min-height: 100vh; margin: 0 auto;">
+    <!-- TELA PRINCIPAL DO APP - TOTALMENTE FLUIDA, SEM BORDAS NAS LATERAIS -->
+    <div id="conteudo-principal-app" style="display: none; width: 100%; box-sizing: border-box; background-color: #f4f7f6; min-height: 100vh;">
         
         <header class="cabecalho" style="margin: 0; width: 100%; border-radius: 0; box-sizing: border-box;">
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -507,8 +511,8 @@
             </div>
         </header>
 
-        <!-- MIOLO DO APLICATIVO (Onde aplicamos as margens de respiro das bordas) -->
-        <div style="padding: 15px;">
+        <!-- MIOLO DO APLICATIVO COM PADDING UNIFORME -->
+        <div style="padding: 12px;">
 
             <!-- AVISOS IMPORTANTES NO TOPO -->
             <section class="quadro-avisos" style="margin-top: 0;">
@@ -519,11 +523,11 @@
                 <div class="slides-container" id="container-slides"></div>
             </section>
 
-            <!-- SEÇÃO DE ENQUETES ATIVAS (REFORMULADA, PROPORCIONAL E BLINDADA CONTRA ERROS) -->
+            <!-- SEÇÃO DE ENQUETES ATIVAS CORRIGIDA -->
             <section id="secao-enquetes-container" style="display: none; margin-bottom: 15px;">
                 <p class="titulo-secao-geral" style="margin-top: 0; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555;">📊 Enquetes Ativas</p>
                 <div id="bloco-enquetes-ativas">
-                    <!-- Preenchido dinamicamente via JS com design corrigido -->
+                    <!-- Preenchido dinamicamente via JS -->
                 </div>
             </section>
 
@@ -613,7 +617,7 @@
                 </div>
             </section>
 
-        </div> <!-- Fim do padding interno -->
+        </div>
     </div>
 
     <!-- MODAL DE NOVA SUGESTÃO / OUVIDORIA -->
@@ -906,7 +910,6 @@
             usuarioLogado = user;
             document.getElementById('tela-login').style.display = 'none';
             
-            // Fundo perfeitamente idêntico ao aplicativo, para eliminar bordas de diferença
             let corpo = document.getElementById('corpo-pagina');
             corpo.style.alignItems = "flex-start";
             corpo.style.backgroundColor = "#f4f7f6"; 
@@ -1312,7 +1315,7 @@
             });
         }
 
-        // --- RENDERIZADOR DE ENQUETES REFORMULADO (Proporcional igual Financeiro) ---
+        // --- RENDERIZADOR DE ENQUETES REFORMULADO E PROPORCIONAL ---
         function renderizarEnquetesWidget() {
             let containerSecao = document.getElementById("secao-enquetes-container");
             let blocoEnquetes = document.getElementById("bloco-enquetes-ativas");
@@ -1362,17 +1365,17 @@
                         limiteMs = dL.getTime();
                     }
                     
-                    let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 12px; right: 14px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
+                    let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 16px; right: 16px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
 
                     let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
                     let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
 
-                    // Estrutura do card nativo (Igual ao Financeiro/Atividades)
+                    // Estrutura de card idêntica ao Financeiro/Atividades, sem container aninhado desproporcional
                     html += `
                         <div class="enquete-item-card">
                             ${contadorHtml}
                             ${badgeDiretoriaHtml}
-                            <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: bold; color: #212529; padding-right: 85px; word-break: break-word;">${enquete.titulo}</p>
+                            <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: bold; color: #212529; padding-right: 95px; word-break: break-word;">${enquete.titulo}</p>
                             <p style="margin: 0 0 8px 0; font-size: 12px; color: #666; line-height: 1.4;">${enquete.descricao || ''}</p>
                             <div style="margin-top: 8px;" id="container-opcoes-enq-${enquete.id}">
                     `;
@@ -1392,9 +1395,9 @@
                             `;
                         }
                     } else {
-                        // Design do voto redesenhado para não amassar o botão
+                        // Voto devidamente alinhado horizontalmente sem quebrar letras
                         html += `
-                            <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                            <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
                                 <div style="font-size: 12px; color: #2b8a3e; font-weight: bold; flex: 1; word-break: break-word;">
                                     ✓ Voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '<br><i>"' + textoVotado + '"</i>' : ''}
                                 </div>
