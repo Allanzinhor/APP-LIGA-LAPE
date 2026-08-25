@@ -1362,7 +1362,7 @@
                 let limiteMs = enquete.dataLimite ? new Date(enquete.dataLimite).getTime() : 0;
                 let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 10px; right: 12px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
 
-                // Garante compatibilidade caso o painel envie as opções ou flag de texto
+                // Correção robusta para garantir que opções e campos de texto apareçam independentemente do formato no Firestore
                 let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
                 let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
 
