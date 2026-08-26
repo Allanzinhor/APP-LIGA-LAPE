@@ -2,449 +2,301 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LAPE - Portal do Ligante</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="brasao.png" type="image/png">
     <link rel="apple-touch-icon" href="brasao.png">
-    <link rel="stylesheet" href="style.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <meta name="color-scheme" content="light">
 
     <style>
-        body { background-color: #f4f7f6; margin: 0; padding: 0; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
-        
-        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: 60px auto; }
-        #tela-login h2 { color: #0056b3; font-size: 26px; margin: 10px 0 2px 0; }
-        #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
-        
-        .grupo-input { margin-bottom: 15px; text-align: left; }
-        .grupo-input label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold; color: #555; }
-        .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
-        
-        .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; }
-        
-        .spinner-login {
-            width: 45px;
-            height: 45px;
-            border: 4px solid #e9ecef;
-            border-top: 4px solid #0056b3;
-            border-radius: 50%;
-            animation: girarSpinner 0.8s linear infinite;
-            margin: 20px auto 15px auto;
-        }
-        @keyframes girarSpinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* === RESET E VARIÁVEIS GERAIS === */
+        :root {
+            --azul-escuro: #0a2e7c;
+            --azul-primario: #004b9e;
+            --azul-claro: #e0ecfb;
+            --azul-texto: #175bba;
+            --fundo-cinza: #f4f6fb;
+            --verde-fundo: #d1f2dd;
+            --verde-texto: #1e7e44;
+            --vermelho-fundo: #ffe3e3;
+            --vermelho-texto: #c92a2a;
+            --amarelo-fundo: #fff3bf;
+            --amarelo-texto: #d97706;
+            --texto-principal: #002f6c;
+            --texto-secundario: #6c7b93;
+            --branco: #ffffff;
         }
 
-        .btn-desconfirmar { background-color: #e03131 !important; color: white !important; }
-        .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
-        .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
-        .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
+        body { 
+            background-color: var(--fundo-cinza); 
+            margin: 0; 
+            padding: 0 0 90px 0; 
+            color: var(--texto-principal); 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        input, select, textarea { font-family: 'Inter', sans-serif; background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; outline: none; }
+        
+        /* === TELA DE LOGIN === */
+        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,47,108,0.08); box-sizing: border-box; text-align: center; margin: 60px auto; }
+        #tela-login h2 { color: var(--azul-escuro); font-size: 26px; margin: 15px 0 2px 0; font-weight: 800; }
+        #tela-login p { color: var(--texto-secundario); font-size: 14px; margin-bottom: 25px; }
+        
+        .grupo-input { margin-bottom: 16px; text-align: left; }
+        .grupo-input label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: var(--texto-principal); }
+        .grupo-input input { width: 100%; padding: 14px; border: 1px solid #d1d9e6; border-radius: 10px; font-size: 15px; box-sizing: border-box; transition: border 0.2s; }
+        .grupo-input input:focus { border-color: var(--azul-primario); }
+        
+        .btn-entrar { width: 100%; padding: 14px; background-color: var(--azul-primario); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,75,158,0.2); }
+        .btn-instalar { width: 100%; padding: 12px; background-color: var(--verde-texto); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 12px; display: none; }
+        
+        .spinner-login { width: 45px; height: 45px; border: 4px solid #e9ecef; border-top: 4px solid var(--azul-primario); border-radius: 50%; animation: girarSpinner 0.8s linear infinite; margin: 20px auto 15px auto; }
+        @keyframes girarSpinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Estilo do Baralho de Cartas Empilhadas */
-        .secao-pilha-concluidas {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            margin-top: 20px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            width: 100%;
+        /* === CABEÇALHO GLOBAL (IDENTICO À IMAGEM) === */
+        .bg-header-global {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 280px;
+            background: linear-gradient(150deg, #0a2e7c 0%, #004b9e 100%);
+            z-index: -1;
+            overflow: hidden;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+        .bg-header-global::after {
+            content: '';
+            position: absolute;
+            top: -20px; right: -50px;
+            width: 350px; height: 350px;
+            background-image: url('brasao.png');
+            background-size: cover;
+            opacity: 0.07;
+            pointer-events: none;
         }
 
-        .pilha-header-info {
+        .cabecalho-novo {
+            padding: 45px 20px 20px 20px; /* Espaço pro status bar do celular */
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f1f3f5;
-            padding-bottom: 10px;
-            margin-bottom: 14px;
-        }
-
-        .container-cartas-pilha {
+            align-items: flex-start;
             position: relative;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            min-height: 165px;
         }
 
-        .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        .header-bloco-dinamico { display: none; flex: 1; }
+        .header-bloco-dinamico.ativo { display: flex; align-items: center; gap: 14px; }
+        .header-bloco-dinamico.ativo-coluna { display: flex; flex-direction: column; }
+
+        .logo-pequena-header { width: 65px; height: 65px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.15); object-fit: cover; background: #fff;}
+        .boas-vindas-titulo { margin: 0; font-size: 24px; color: var(--branco); font-weight: 800; letter-spacing: -0.5px; }
+        .cargo-header { font-size: 11px; color: #82b1ff; font-weight: 700; letter-spacing: 1px; display: block; margin: 2px 0 6px 0; text-transform: uppercase; }
+        .pill-codigo { background: rgba(255,255,255,0.15); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; backdrop-filter: blur(4px); }
+
+        .acoes-top-right { display: flex; align-items: center; gap: 12px; }
+        .bell-btn { width: 42px; height: 42px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; border: none; position: relative; }
+        .bell-btn svg { width: 20px; height: 20px; fill: var(--azul-texto); }
+        .bell-btn::after { content: ''; position: absolute; top: 10px; right: 12px; width: 6px; height: 6px; background: #ff4757; border-radius: 50%; border: 2px solid #fff; }
+        .avatar-topo { width: 46px; height: 46px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; background: var(--azul-primario); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; cursor: pointer; }
+        .avatar-topo img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Títulos de Seção Customizados */
+        .titulo-secao-com-icone { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px; }
+        .titulo-secao-com-icone h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--texto-principal); display: flex; align-items: center; gap: 8px; }
+        .titulo-secao-com-icone h3 svg { width: 20px; height: 20px; fill: var(--azul-texto); }
+        .link-ver-todos { font-size: 13px; font-weight: 600; color: var(--azul-texto); text-decoration: none; cursor: pointer; }
+
+        /* === COMPONENTES DA ABA INÍCIO === */
+        
+        /* Avisos - Idêntico à imagem 1 */
+        .aviso-card-wrapper { background: #ffffff; border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 8px 24px rgba(0,34,80,0.06); margin: -20px 20px 24px 20px; position: relative; z-index: 10; }
+        .aviso-icone-wrap { width: 60px; height: 60px; background: #f0f4f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .aviso-icone-wrap svg { width: 28px; height: 28px; fill: var(--azul-texto); }
+        .aviso-content { flex: 1; overflow: hidden; }
+        .avisos-header-text { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: var(--texto-secundario); margin-bottom: 4px; }
+        .pill-contador { background: var(--fundo-cinza); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; color: var(--azul-texto); }
+        .slides-container .slide { display: none; }
+        .slides-container .slide.ativo { display: block; animation: fadeSlide 0.4s ease; }
+        .slides-container h4 { margin: 0 0 4px 0; font-size: 17px; font-weight: 800; color: var(--texto-principal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .slides-container p { margin: 0; font-size: 13px; color: var(--texto-secundario); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .seta-aviso { fill: var(--texto-secundario); width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* Enquetes - Idêntico à imagem 1 */
+        .enquete-item-card { background: #ffffff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 20px rgba(0,34,80,0.04); margin-bottom: 24px; position: relative; }
+        .enquete-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .badge-diretoria-enquete { background: var(--fundo-cinza); color: var(--azul-texto); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-diretoria-enquete svg { width: 12px; height: 12px; fill: currentColor; }
+        .timer-enquete { font-size: 12px; font-weight: 700; color: var(--azul-texto); display: flex; align-items: center; gap: 4px; }
+        .enquete-titulo { margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--texto-principal); line-height: 1.3; }
+        .enquete-desc { margin: 0 0 16px 0; font-size: 13px; color: var(--texto-secundario); line-height: 1.5; }
+        .enquete-voto-confirmado { background: #f8fbf9; border: 1px solid #e2f5e9; border-radius: 12px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .enquete-voto-confirmado svg { width: 16px; height: 16px; fill: var(--verde-texto); flex-shrink:0; }
+        .enquete-voto-confirmado span { font-size: 12px; font-weight: 700; color: var(--verde-texto); }
+        .btn-acao-enquete { width: 100%; padding: 14px; background: var(--azul-primario); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; }
+        .enquete-opcao-btn { width: 100%; text-align: left; background: #ffffff; border: 1px solid #d1d9e6; padding: 12px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--texto-principal); cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
+        .enquete-opcao-btn:hover { border-color: var(--azul-primario); background: var(--azul-claro); }
+
+        /* Resumo na Liga Grid - Idêntico à imagem 1 */
+        .resumo-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+        .card-stat-mini { background: white; border-radius: 16px; padding: 16px 8px; text-align: center; box-shadow: 0 4px 15px rgba(0,34,80,0.03); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .card-stat-mini svg { width: 24px; height: 24px; margin-bottom: 8px; }
+        .card-stat-mini.azul-escuro { background: var(--azul-primario); color: white; box-shadow: 0 6px 16px rgba(0,75,158,0.25); }
+        .stat-num { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
+        .stat-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Financeiro & Aniversário Grid 2 colunas - Idêntico à imagem 1 */
+        .grid-duplo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .card-info-duplo { background: white; border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,34,80,0.03); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+        .card-titulo-duplo { font-size: 12px; font-weight: 700; color: var(--texto-secundario); display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+        .card-titulo-duplo svg { width: 16px; height: 16px; fill: var(--azul-texto); }
+        
+        .fin-label { font-size: 11px; color: var(--texto-secundario); display: block; margin-bottom: 2px; }
+        .fin-valor { font-size: 18px; font-weight: 800; margin-bottom: 10px; display: block; }
+        .badge-pago { position: absolute; top: 16px; right: 16px; background: var(--verde-fundo); color: var(--verde-texto); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;}
+        .badge-pendente { position: absolute; top: 16px; right: 16px; background: var(--vermelho-fundo); color: var(--vermelho-texto); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .fin-footer { background: var(--fundo-cinza); margin: 0 -16px -16px -16px; padding: 12px 16px; font-size: 12px; font-weight: 700; color: var(--azul-texto); display: flex; align-items: center; gap: 8px; justify-content: center; position: relative; }
+        .fin-footer svg { width: 14px; height: 14px; fill: currentColor; }
+        
+        .aniv-avatar-grande { width: 50px; height: 50px; border-radius: 50%; background: var(--azul-escuro); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .aniv-nome { font-size: 14px; font-weight: 800; color: var(--texto-principal); margin: 0 0 2px 0; line-height: 1.2; }
+        .aniv-desc { font-size: 11px; color: var(--texto-secundario); margin: 0 0 12px 0; }
+        .aniv-badges-row { display: flex; gap: 6px; align-items: center; margin-bottom: 16px; }
+        .aniv-badge-data { background: #fff; border: 1px solid #d1d9e6; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: var(--texto-principal); display: flex; align-items: center; gap: 4px; }
+        .aniv-badge-dias { background: var(--azul-claro); color: var(--azul-texto); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+        .link-ver-todos-card { text-align: center; font-size: 12px; font-weight: 700; color: var(--azul-texto); text-decoration: none; display: block; border-top: 1px solid #f0f4f8; padding-top: 12px; cursor: pointer; }
+
+        /* Desempenho em Agosto - Idêntico à imagem 1 */
+        .card-desempenho { background: white; border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,34,80,0.03); display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 24px; }
+        .desempenho-item { flex: 1; text-align: center; border-right: 1px solid #f0f4f8; display: flex; flex-direction: column; justify-content: center; }
+        .desempenho-item:last-child { border-right: none; }
+        .desempenho-item.destaque { background: #f8fbff; border-radius: 12px; margin: -8px -8px -8px 4px; padding: 8px; border: 1px solid var(--azul-claro); }
+        .desempenho-num { font-size: 18px; font-weight: 800; display: block; margin-bottom: 2px; }
+        .desempenho-label { font-size: 9px; font-weight: 700; color: var(--texto-secundario); text-transform: uppercase; }
+
+        /* === ABA CALENDÁRIO === */
+        
+        .calendario-header-titulo { margin: 0; font-size: 28px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+        .calendario-header-mes { font-size: 18px; color: #82b1ff; font-weight: 600; margin: 4px 0 8px 0; }
+        .calendario-header-desc { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; max-width: 280px; }
+
+        .card-calendario-grid { background: white; border-radius: 24px; padding: 20px; box-shadow: 0 8px 30px rgba(0,34,80,0.06); margin: -30px 20px 24px 20px; position: relative; z-index: 10; }
+        .calendario-navegacao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-nav-mes { background: transparent; border: none; font-size: 18px; font-weight: 800; color: var(--azul-escuro); cursor: pointer; padding: 4px 12px; }
+        .mes-ano-destaque { font-size: 18px; font-weight: 800; color: var(--azul-escuro); margin: 0; }
+        
+        .dias-semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 11px; font-weight: 800; color: var(--azul-escuro); margin-bottom: 12px; }
+        .dias-semana-grid div:nth-child(1), .dias-semana-grid div:nth-child(7) { color: var(--texto-secundario); } /* DOM e SAB cinzas */
+        .grid-dias-numeros { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px 0; text-align: center; }
+        .dia-calendario { height: 38px; width: 38px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: var(--texto-secundario); border-radius: 50%; cursor: pointer; position: relative; transition: all 0.2s; }
+        .dia-calendario:hover { background: var(--fundo-cinza); }
+        .dia-calendario.dia-util { color: var(--texto-principal); }
+        .dia-calendario.selecionado { background: var(--azul-texto); color: white; font-weight: 800; box-shadow: 0 4px 10px rgba(23, 91, 186, 0.3); }
+        .dia-calendario.hoje { border: 2px solid #a3c4f3; }
+        .ponto-verde { width: 5px; height: 5px; background: var(--verde-texto); border-radius: 50%; position: absolute; bottom: 4px; }
+        .ponto-verde.selecionado-dot { background: white; }
+
+        .legenda-calendario { display: flex; justify-content: center; gap: 16px; margin-top: 20px; font-size: 11px; font-weight: 600; color: var(--texto-secundario); border-top: 1px solid #f0f4f8; padding-top: 16px; }
+        .legenda-item { display: flex; align-items: center; gap: 6px; }
+        .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* Lista de Eventos do Dia - Imagem 2 */
+        .pill-data-dia { background: var(--azul-primario); color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; display: inline-block; margin-left: 8px; vertical-align: middle; }
+        .evento-dia-card { background: white; border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,34,80,0.03); margin-bottom: 12px; display: flex; align-items: center; gap: 16px; }
+        .evento-icone-wrap { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .evento-icone-wrap.verde { background: var(--verde-fundo); }
+        .evento-icone-wrap.verde svg { fill: var(--verde-texto); }
+        .evento-icone-wrap.azul { background: var(--azul-claro); }
+        .evento-icone-wrap.azul svg { fill: var(--azul-texto); }
+        .evento-icone-wrap.amarelo { background: var(--amarelo-fundo); }
+        .evento-icone-wrap.amarelo svg { fill: var(--amarelo-texto); }
+        
+        .evento-infos { flex: 1; overflow: hidden; }
+        .evento-titulo { margin: 0 0 6px 0; font-size: 15px; font-weight: 800; color: var(--texto-principal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .evento-detalhe-linha { font-size: 12px; color: var(--texto-secundario); display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+        .evento-detalhe-linha svg { width: 12px; height: 12px; fill: currentColor; }
+        
+        .badge-presenca { background: var(--verde-fundo); color: var(--verde-texto); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+        .badge-ch { background: var(--azul-claro); color: var(--azul-texto); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+
+        /* Próximas Atividades List - Imagem 2 */
+        .proxima-ativ-card { background: white; border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,34,80,0.03); margin-bottom: 12px; border-bottom: none; display: block;}
+        .proxima-ativ-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
+        .proxima-ativ-content { flex: 1; }
+        .proxima-ativ-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+        .badges-direita { display: flex; gap: 6px; }
+        .badge-ch-laranja { background: #fff4e6; color: #d9480f; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; }
+        .badge-confirmados-azul { background: var(--azul-claro); color: var(--azul-texto); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; }
+        
+        .barra-prazo { background: #fff9db; border-radius: 12px; padding: 10px 16px; font-size: 12px; font-weight: 700; color: #664d03; display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .barra-prazo svg { width: 14px; height: 14px; fill: currentColor; }
+
+        /* === BARRA DE NAVEGAÇÃO INFERIOR === */
+        .barra-navegacao-inferior {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            height: 85px;
+            background: #001f4d; /* Cor escura fiel à imagem */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding-bottom: env(safe-area-inset-bottom);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
         }
-
-        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(1) { transform: translateY(0px) scale(1); z-index: 3; }
-        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(8px) scale(0.97); z-index: 2; opacity: 0.9; }
-        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(16px) scale(0.94); z-index: 1; opacity: 0.75; }
-
-        .container-cartas-pilha.aberto {
+        .nav-item-inferior {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            min-height: auto;
-        }
-
-        .container-cartas-pilha.aberto .card-atividade-concluida {
-            position: relative;
-            transform: none !important;
-            opacity: 1 !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-
-        .hint-toque-pilha {
-            text-align: center;
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 12px;
-            font-weight: 600;
-        }
-
-        /* Aba de Aniversariantes Complexa */
-        .card-aniversariantes-completo {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-left: 4px solid #ff6b6b;
-            box-sizing: border-box;
-            width: 100%;
-        }
-        .aniv-header-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f1f3f5;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-        }
-        .aniv-bloco-secao {
-            margin-bottom: 12px;
-        }
-        .aniv-bloco-secao:last-child {
-            margin-bottom: 0;
-        }
-        .aniv-subtitulo {
-            font-size: 11px;
-            font-weight: bold;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-        .aniversario-item-complexo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            margin-bottom: 6px;
-            transition: background 0.2s;
-        }
-        .aniversario-item-complexo:hover {
-            background: #f1f3f5;
-        }
-        .aniversario-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            overflow: hidden;
-            background: #004494;
-            color: white;
-            display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-            flex-shrink: 0;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .aniv-detalhes-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 4px;
-        }
-        .aniv-badge-info {
-            font-size: 10px;
-            background: #e9ecef;
-            color: #495057;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        .btn-ver-todos-aniv {
-            width: 100%;
-            background: #f1f3f5;
-            border: none;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            color: #0056b3;
-            cursor: pointer;
-            margin-top: 8px;
-            text-align: center;
-        }
-        .btn-ver-todos-aniv:hover {
-            background: #e9ecef;
-        }
-
-        /* ESTILO CORRIGIDO DAS ENQUETES (LARGURA PADRÃO E BOTÃO EMBAIXO) */
-        .enquete-item-card {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-left: 4px solid #f59f00;
-            margin-bottom: 12px;
-            position: relative;
-            box-sizing: border-box;
-            width: 100%;
-        }
-        .enquete-opcao-btn {
-            width: 100%;
-            text-align: left;
-            background: #ffffff;
-            border: 1px solid #ced4da;
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            cursor: pointer;
-            margin-top: 6px;
-            transition: all 0.2s;
-        }
-        .enquete-opcao-btn:hover {
-            background: #e7f5ff;
-            border-color: #1c7ed6;
-            color: #1c7ed6;
-        }
-        .btn-mudar-voto {
-            background: #e7f5ff;
-            color: #0056b3;
-            border: 1px solid #74c0fc;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 6px;
-            text-align: center;
-            margin-top: 8px;
-        }
-        .btn-mudar-voto:hover {
-            background: #d0ebff;
-        }
-        .badge-diretoria-enquete {
-            background: #e7f5ff;
-            color: #0056b3;
-            border: 1px solid #74c0fc;
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-bottom: 8px;
-        }
-
-        /* CARD DE OUVIDORIA */
-        .card-ouvidoria-completo {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-left: 4px solid #7950f2;
-            box-sizing: border-box;
-            width: 100%;
-        }
-        .ouvidoria-item-card {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 10px;
-            margin-top: 8px;
-            transition: background 0.2s;
-        }
-        .ouvidoria-item-card:hover {
-            background: #f1f3f5;
-        }
-        .btn-acao-ouvidoria {
-            flex: 1;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: opacity 0.2s;
-        }
-        .btn-acao-ouvidoria:hover {
-            opacity: 0.9;
-        }
-
-        /* MODAL DE PERFIL SPLÉNDIDO */
-        .modal-perfil-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(6px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 16px;
-            box-sizing: border-box;
-        }
-        .modal-perfil-conteudo {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 24px;
-            width: 100%;
-            max-width: 480px;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
-            max-height: 94vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-            animation: surgirModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes surgirModal {
-            from { opacity: 0; transform: scale(0.95) translateY(12px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .perfil-topo-splendido {
-            text-align: center;
-            position: relative;
-            background: linear-gradient(135deg, #0056b3 0%, #003366 100%);
-            margin: -24px -24px 20px -24px;
-            padding: 28px 20px 22px 20px;
-            border-radius: 24px 24px 0 0;
-            color: white;
-            box-shadow: inset 0 -4px 10px rgba(0,0,0,0.1);
-        }
-        .perfil-avatar-wrapper {
-            position: relative;
-            width: 88px;
-            height: 88px;
-            margin: 0 auto 10px auto;
-        }
-        .perfil-avatar-img {
-            width: 88px;
-            height: 88px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #ffffff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-        }
-        .botao-trocar-foto-flutuante {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: #ff6b6b;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            cursor: pointer;
-            border: 2px solid #ffffff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-        .botao-trocar-foto-flutuante:hover {
-            transform: scale(1.1);
-        }
-        .perfil-abas-navegacao {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            background: #f1f3f5;
-            padding: 4px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-        .btn-aba-perfil {
             background: transparent;
             border: none;
-            padding: 8px 4px;
+            color: #82a0c2;
             font-size: 11px;
-            font-weight: 700;
-            color: #495057;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        .btn-aba-perfil.ativa {
-            background: #ffffff;
-            color: #0056b3;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-        .perfil-secao-conteudo {
-            display: none;
-            animation: fadeInTab 0.25s ease;
-        }
-        .perfil-secao-conteudo.ativa {
-            display: block;
-        }
-        @keyframes fadeInTab {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .perfil-grid-detalhes {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-        .perfil-card-info {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 10px 12px;
-            box-sizing: border-box;
-        }
-        .perfil-card-info.full {
-            grid-column: span 2;
-        }
-        .perfil-card-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .perfil-card-valor {
-            font-size: 13px;
             font-weight: 600;
-            color: #212529;
-            word-break: break-word;
+            cursor: pointer;
+            flex: 1;
+            height: 100%;
+            transition: all 0.2s ease;
+            padding-top: 10px;
         }
+        .icon-wrap-nav {
+            width: 50px;
+            height: 30px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
+        }
+        .nav-item-inferior svg { width: 22px; height: 22px; fill: currentColor; }
+        .nav-item-inferior.ativa { color: #ffffff; }
+        .nav-item-inferior.ativa .icon-wrap-nav { background: var(--azul-texto); color: white; }
+
+        /* Abas / App Content Fixes */
+        .app-tab-pane { display: none; padding: 0 20px 20px 20px; }
+        .app-tab-pane.ativa { display: block; animation: fadeInTab 0.3s ease; }
+        @keyframes fadeInTab { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes fadeSlide { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Modais, Perfil e Extras (Mantidos Funcionais) */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; box-sizing: border-box; backdrop-filter: blur(4px); }
+        .modal-conteudo { background: white; border-radius: 24px; padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .btn-salvar { background: var(--azul-primario); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; }
+        .btn-cancelar { background: #f0f4f8; color: var(--texto-secundario); border: none; padding: 14px; border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 8px;}
+        
+        .detalhes-expansiveis-ativ { display: none; border-top: 1px solid #f0f4f8; padding-top: 16px; margin-top: 16px; }
+        .botoes-card { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;}
+        .botoes-card button { flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; border: none; }
+        .btn-confirmar { background: var(--azul-primario); color: white; }
+        .btn-justificar { background: #f0f4f8; color: var(--texto-principal); }
+        .btn-desconfirmar { background: var(--vermelho-fundo); color: var(--vermelho-texto); }
+
     </style>
 
     <!-- Firebase SDKs -->
@@ -499,112 +351,223 @@
         </div>
     </div>
 
-    <!-- TELA PRINCIPAL DO APP - FLUIDO E SEM A BORA DE CELULAR ARTIFICIAL -->
-    <div id="conteudo-principal-app" style="display: none; width: 100%; box-sizing: border-box; background-color: #f4f7f6; min-height: 100vh;">
+    <!-- TELA PRINCIPAL DO APP -->
+    <div id="conteudo-principal-app" style="display: none; width: 100%; box-sizing: border-box; min-height: 100vh;">
         
-        <header class="cabecalho" style="margin: 0; width: 100%; border-radius: 0; box-sizing: border-box;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+        <!-- Fundo Azul Gradient fixo no topo, igual a imagem -->
+        <div class="bg-header-global"></div>
+
+        <!-- CABEÇALHO GLOBAL (Ícones e Avatares) + Títulos Dinâmicos -->
+        <header class="cabecalho-novo">
+            <!-- Header dinâmico: INÍCIO -->
+            <div class="header-bloco-dinamico ativo" id="header-dinamico-inicio">
+                <img src="brasao.png" alt="Brasão" class="logo-pequena-header">
                 <div>
-                    <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
-                    <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
+                    <h2 class="boas-vindas-titulo" id="titulo-boas-vindas">Olá, Allan! <span style="font-size: 20px;">👋</span></h2>
+                    <span class="cargo-header" id="subtitulo-cargo">PRESIDENTE</span>
+                    <span class="pill-codigo" id="topo-codigo-usuario">20252001</span>
                 </div>
             </div>
-            <div style="display: flex; align-items: center;">
-                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;"></div>
+
+            <!-- Header dinâmico: CALENDÁRIO -->
+            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-calendario">
+                <h2 class="calendario-header-titulo">Calendário</h2>
+                <div class="calendario-header-mes" id="mes-ano-texto-header">Agosto / 2026</div>
+                <p class="calendario-header-desc">Acompanhe seus eventos e atividades da LAPE.</p>
+            </div>
+
+            <!-- Header dinâmico: ATIVIDADES -->
+            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-atividades">
+                <h2 class="calendario-header-titulo">Atividades</h2>
+                <div class="calendario-header-mes">do Mês</div>
+                <p class="calendario-header-desc">Gerencie suas presenças e prazos.</p>
+            </div>
+
+            <!-- Header dinâmico: SOLICITAÇÕES -->
+            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-solicitacoes">
+                <h2 class="calendario-header-titulo" style="font-size: 24px;">Solicitações</h2>
+                <div class="calendario-header-mes">Ouvidoria</div>
+                <p class="calendario-header-desc">Envie sugestões de forma sigilosa.</p>
+            </div>
+
+            <!-- Header dinâmico: PERFIL -->
+            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-perfil">
+                <h2 class="calendario-header-titulo">Meu Perfil</h2>
+                <div class="calendario-header-mes">Conta</div>
+            </div>
+
+            <!-- Ações Top Right (Fixos) -->
+            <div class="acoes-top-right">
+                <button class="bell-btn" onclick="abrirModalHistoricoSugestoes()">
+                    <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                </button>
+                <div class="avatar-topo" id="container-avatar-topo" onclick="mudarAbaApp('perfil')"></div>
             </div>
         </header>
 
-        <!-- MIOLO DO APLICATIVO COM PADDING UNIFORME -->
-        <div style="padding: 12px;">
+        <!-- MIOLO DO APLICATIVO COM ABAS -->
+        <div style="box-sizing: border-box;">
 
-            <!-- AVISOS IMPORTANTES NO TOPO -->
-            <section class="quadro-avisos" style="margin-top: 0;">
-                <div class="avisos-header">
-                    <span>⚠️ Avisos Importantes</span>
-                    <span id="contador-slide">1/1</span>
-                </div>
-                <div class="slides-container" id="container-slides"></div>
-            </section>
-
-            <!-- SEÇÃO DE ENQUETES ATIVAS COM LARGURA PROPORCIONAL E BOTÃO MUDAR ABAIXO -->
-            <section id="secao-enquetes-container" style="display: none; margin-bottom: 15px;">
-                <p class="titulo-secao-geral" style="margin-top: 0; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555;">📊 Enquetes Ativas</p>
-                <div id="bloco-enquetes-ativas">
-                    <!-- Preenchido dinamicamente via JS -->
-                </div>
-            </section>
-
-            <!-- Histórico Geral Acumulado -->
-            <section class="secao-historico-geral">
-                <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
-                <div class="dashboard-estatisticas geral" style="grid-template-columns: repeat(4, 1fr);">
-                    <div class="card-stat"><span class="stat-numero" id="geral-atividades">0</span><span class="stat-legenda">Passadas</span></div>
-                    <div class="card-stat"><span class="stat-numero" id="geral-presencas">0</span><span class="stat-legenda">Presenças</span></div>
-                    <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Abonadas</span></div>
-                    <div class="card-stat destaque-ch"><span class="stat-numero" id="geral-ch">0h</span><span class="stat-legenda">CH Total</span></div>
-                </div>
-            </section>
-
-            <!-- Financeiro com Acumulado e Mês Atual -->
-            <section class="secao-historico-geral">
-                <p class="titulo-secao-geral">💳 Situação Financeira (<span id="mes-financeiro-texto">Mês Atual</span>)</p>
-                <div class="card-financeiro">
-                    <div class="fin-info" style="align-items: flex-start;">
-                        <div>
-                            <span class="fin-label">Valor do Mês:</span><span class="fin-valor" id="fin-valor-mes" style="font-size: 15px;">R$ 10,00</span>
-                            <span class="fin-label" style="margin-top: 6px;">Débito Total Acumulado:</span><span class="fin-valor" id="fin-debito-total" style="color: #e03131;">R$ 10,00</span>
+            <!-- ABA 1: INÍCIO -->
+            <div id="pane-inicio" class="app-tab-pane ativa">
+                
+                <!-- AVISOS IMPORTANTES NO TOPO (Card que sobrepõe o header) -->
+                <section>
+                    <div class="aviso-card-wrapper">
+                        <div class="aviso-icone-wrap">
+                            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9.46 15L8 13.54l3.54-3.54L8 6.46 9.46 5l5 5-5 5z"/></svg>
                         </div>
-                        <div><span class="fin-label">Status do Mês:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
+                        <div class="aviso-content">
+                            <div class="avisos-header-text">Avisos Importantes <span class="pill-contador" id="contador-slide">1/3</span></div>
+                            <div class="slides-container" id="container-slides"></div>
+                        </div>
+                        <svg class="seta-aviso" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
                     </div>
-                    <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()">Pagar Mensalidade do Mês (Pix)</button>
-                </div>
-            </section>
+                </section>
 
-            <!-- Seção de Aniversariantes -->
-            <section class="secao-historico-geral">
-                <p class="titulo-secao-geral">🎉 Aniversariantes & Ciclos</p>
-                <div class="card-aniversariantes-completo" id="bloco-aniversariantes">
-                    <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando painel de aniversariantes...</p>
-                </div>
-            </section>
+                <!-- SEÇÃO DE ENQUETES ATIVAS -->
+                <section id="secao-enquetes-container" style="display: none; margin-bottom: 24px;">
+                    <div class="titulo-secao-com-icone">
+                        <h3><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg> Enquetes Ativas</h3>
+                        <a class="link-ver-todos">Ver todas &gt;</a>
+                    </div>
+                    <div id="bloco-enquetes-ativas"></div>
+                </section>
 
-            <!-- Calendário -->
-            <section class="calendario-mes">
-                <div class="calendario-header">
-                    <button id="btn-prev-mes">&lt;</button>
-                    <h3 id="mes-ano-texto">Mês Ano</h3>
-                    <button id="btn-next-mes">&gt;</button>
-                </div>
-                <div class="grid-calendario dias-semana">
-                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                </div>
-                <div id="grid-dias" class="grid-calendario"></div>
-            </section>
+                <!-- Resumo na Liga (Cards 4 colunas ou 2x2 dependo da tela, mas feito 4 cols flex para caber exato) -->
+                <section style="margin-bottom: 24px;">
+                    <div class="titulo-secao-com-icone">
+                        <h3><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> Seu Resumo na Liga</h3>
+                    </div>
+                    <div class="resumo-grid-4">
+                        <div class="card-stat-mini">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--azul-texto)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            <span class="stat-num" id="geral-presencas" style="color: var(--azul-escuro);">0</span>
+                            <span class="stat-label" style="color: var(--texto-secundario);">PRESENÇAS</span>
+                        </div>
+                        <div class="card-stat-mini">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--verde-texto)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                            <span class="stat-num" id="geral-justificativas" style="color: var(--verde-texto);">0</span>
+                            <span class="stat-label" style="color: var(--texto-secundario);">ABONADAS</span>
+                        </div>
+                        <div class="card-stat-mini">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#7950f2" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <span class="stat-num" id="geral-ch" style="color: #7950f2;">0h</span>
+                            <span class="stat-label" style="color: var(--texto-secundario);">CH TOTAL</span>
+                        </div>
+                        <div class="card-stat-mini azul-escuro">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <span class="stat-num" id="geral-atividades">0</span>
+                            <span class="stat-label" style="color: rgba(255,255,255,0.7);">ATIVIDADES</span>
+                        </div>
+                    </div>
+                </section>
 
-            <!-- Desempenho do Mês -->
-            <section class="secao-historico-geral">
-                <p class="titulo-secao-geral">📅 Desempenho no Mês</p>
-                <div class="dashboard-estatisticas" style="grid-template-columns: repeat(5, 1fr); gap: 4px;">
-                    <div class="card-stat"><span class="stat-numero" id="stat-total">0</span><span class="stat-legenda" style="font-size:9px;">Total</span></div>
-                    <div class="card-stat"><span class="stat-numero" id="stat-presencas">0</span><span class="stat-legenda" style="font-size:9px;">Presença</span></div>
-                    <div class="card-stat"><span class="stat-numero" id="stat-faltas">0</span><span class="stat-legenda" style="font-size:9px;">Faltas</span></div>
-                    <div class="card-stat"><span class="stat-numero" id="stat-justificativas">0</span><span class="stat-legenda" style="font-size:9px;">Abonadas</span></div>
-                    <div class="card-stat destaque-ch"><span class="stat-numero" id="stat-ch">0h</span><span class="stat-legenda" style="font-size:9px;">CH</span></div>
+                <!-- Financeiro & Aniversariantes lado a lado -->
+                <div class="grid-duplo">
+                    <!-- Financeiro -->
+                    <div class="card-info-duplo">
+                        <div class="card-titulo-duplo">
+                            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg> Situação Financeira
+                        </div>
+                        <span id="mes-financeiro-texto" style="font-size: 10px; color: var(--texto-secundario); display: block; margin-top:-10px; margin-bottom: 12px;">Agosto / 2026</span>
+                        
+                        <div id="fin-status-badge" class="badge-pendente">Pendente</div>
+
+                        <span class="fin-label">Valor do mês</span>
+                        <span class="fin-valor" id="fin-valor-mes" style="color: var(--verde-texto);">R$ 10,00</span>
+                        
+                        <span class="fin-label">Débito total acumulado</span>
+                        <span class="fin-valor" id="fin-debito-total" style="color: var(--vermelho-texto); font-size: 16px; margin-bottom: 24px;">R$ 0,00</span>
+
+                        <div class="fin-footer" onclick="abrirModalPix()" style="cursor: pointer;" id="btn-acao-pix-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg> 
+                            <span id="texto-acao-pix">Mensalidade Quitada</span>
+                        </div>
+                    </div>
+
+                    <!-- Seção de Aniversariantes -->
+                    <div class="card-info-duplo" id="bloco-aniversariantes-wrapper">
+                        <div class="card-titulo-duplo">
+                            <svg viewBox="0 0 24 24"><path d="M12 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-2 2v4a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V8h3v11c0 1.66-1.34 3-3 3H10c-1.66 0-3-1.34-3-3V8h3z"/></svg> Próximo Aniversariante
+                        </div>
+                        <div id="bloco-aniversariantes">
+                            <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando...</p>
+                        </div>
+                    </div>
                 </div>
-            </section>
 
-            <!-- Atividades -->
-            <section class="atividades">
-                <h2>Atividades do Mês</h2>
-                <div id="lista-atividades"></div>
-            </section>
+                <!-- Desempenho do Mês -->
+                <section>
+                    <div class="titulo-secao-com-icone">
+                        <h3><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg> Seu Desempenho em <span id="nome-mes-desempenho-texto">Agosto</span></h3>
+                        <a class="link-ver-todos" onclick="mudarAbaApp('atividades')">Ver detalhes &gt;</a>
+                    </div>
+                    <div class="card-desempenho">
+                        <div class="desempenho-item"><span class="desempenho-num" id="stat-total" style="color: var(--texto-principal);">0</span><span class="desempenho-label">TOTAL</span></div>
+                        <div class="desempenho-item"><span class="desempenho-num" id="stat-presencas" style="color: var(--verde-texto);">0</span><span class="desempenho-label">PRESENÇAS</span></div>
+                        <div class="desempenho-item"><span class="desempenho-num" id="stat-faltas" style="color: var(--vermelho-texto);">0</span><span class="desempenho-label">FALTAS</span></div>
+                        <div class="desempenho-item"><span class="desempenho-num" id="stat-justificativas" style="color: var(--azul-texto);">0</span><span class="desempenho-label">ABONADAS</span></div>
+                        <div class="desempenho-item destaque"><span class="desempenho-num" id="stat-ch" style="color: var(--azul-primario);">0h</span><span class="desempenho-label" style="color: var(--azul-primario);">CH NO MÊS</span></div>
+                    </div>
+                </section>
 
-            <!-- ABA: OUVIDORIA & SUGESTÕES ANÔNIMAS -->
-            <section class="secao-historico-geral">
-                <p class="titulo-secao-geral">💡 Ouvidoria & Sugestões Anônimas</p>
-                <div class="card-ouvidoria-completo" id="bloco-ouvidoria">
-                    <div class="aniv-header-info">
+            </div>
+
+            <!-- ABA 2: CALENDÁRIO -->
+            <div id="pane-calendario" class="app-tab-pane">
+                
+                <section class="card-calendario-grid">
+                    <div class="calendario-navegacao">
+                        <button id="btn-prev-mes" class="btn-nav-mes">&lt;</button>
+                        <h3 id="mes-ano-texto" class="mes-ano-destaque">Agosto 2026</h3>
+                        <button id="btn-next-mes" class="btn-nav-mes">&gt;</button>
+                    </div>
+                    <div class="dias-semana-grid">
+                        <div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>
+                    </div>
+                    <div id="grid-dias" class="grid-dias-numeros"></div>
+                    
+                    <!-- Legenda do Calendário -->
+                    <div class="legenda-calendario">
+                        <div class="legenda-item"><div class="leg-dot" style="background: var(--verde-texto);"></div> Tem atividades</div>
+                        <div class="legenda-item"><div class="leg-dot" style="background: var(--azul-texto);"></div> Selecionado</div>
+                        <div class="legenda-item"><div class="leg-dot" style="background: #a3c4f3;"></div> Hoje</div>
+                    </div>
+                </section>
+
+                <!-- Bloco de Eventos do Dia Selecionado -->
+                <section style="margin-top: 24px;">
+                    <div class="titulo-secao-com-icone">
+                        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Eventos do dia <span class="pill-data-dia" id="data-selecionada-texto">26/08</span></h3>
+                    </div>
+                    <div id="lista-eventos-dia-calendario">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </section>
+                
+                <section style="margin-top: 24px;">
+                    <div class="titulo-secao-com-icone">
+                        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 2-2h11"></path><path d="M3 10h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><circle cx="12" cy="15" r="2"></circle></svg> Próximas atividades</h3>
+                        <a class="link-ver-todos">Ver todas &gt;</a>
+                    </div>
+                    <div id="lista-proximas-atividades-calendario">
+                        <!-- Preenchido dinamicamente se houver -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- ABA 3: ATIVIDADES -->
+            <div id="pane-atividades" class="app-tab-pane">
+                <section class="atividades" style="margin-top: 0;">
+                    <div id="lista-atividades"></div>
+                </section>
+            </div>
+
+            <!-- ABA 4: SOLICITAÇÕES / OUVIDORIA -->
+            <div id="pane-solicitacoes" class="app-tab-pane">
+                <div class="card-ouvidoria-completo" id="bloco-ouvidoria" style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f3f5; padding-bottom: 10px; margin-bottom: 12px;">
                         <div>
                             <span style="font-size: 13px; font-weight: bold; color: #7950f2;">🔒 Espaço 100% Confidencial</span>
                             <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Envie sugestões, reclamações ou feedbacks gerais sem se identificar</p>
@@ -612,16 +575,118 @@
                         <span style="font-size: 18px;">🛡️</span>
                     </div>
 
-                    <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
                         <button class="btn-acao-ouvidoria" style="background-color: #7950f2; color: white;" onclick="abrirModalNovaSugestao()">✏️ Nova Solicitação</button>
                         <button class="btn-acao-ouvidoria" style="background-color: #f1f3f5; color: #495057; border: 1px solid #ced4da;" onclick="abrirModalHistoricoSugestoes()">📋 Minhas Solicitações</button>
                     </div>
 
                     <div id="resumo-ultimas-sugestoes"></div>
                 </div>
-            </section>
+
+                <!-- Histórico Completo Inline na Aba de Solicitações -->
+                <div style="background: white; border-radius: 14px; padding: 16px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+                    <p style="margin: 0 0 10px 0; font-size: 13px; font-weight: bold; color: #003366;">📋 Histórico de Chamados e Respostas</p>
+                    <div id="lista-historico-sugestoes-inline" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+            </div>
+
+            <!-- ABA 5: PERFIL -->
+            <div id="pane-perfil" class="app-tab-pane">
+                <div style="background: #ffffff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    <div style="text-align: center; position: relative; background: linear-gradient(135deg, #0056b3 0%, #003366 100%); margin: -20px -20px 20px -20px; padding: 28px 20px 22px 20px; border-radius: 20px 20px 0 0; color: white;">
+                        <div style="position: relative; width: 88px; height: 88px; margin: 0 auto 10px auto;" id="perfil-avatar-container"></div>
+                        <div style="position: absolute; bottom: 30px; right: 50%; margin-right: -45px; background: #ff6b6b; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; border: 2px solid #ffffff;" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
+                        <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
+                        
+                        <h3 id="perfil-nome" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #ffffff;">Nome Completo</h3>
+                        <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 4px;" id="perfil-codigo">20261000</div>
+                        <p id="perfil-cargo" style="margin: 0; font-size: 11px; font-weight: 700; color: #69db7c; text-transform: uppercase; letter-spacing: 0.8px;">Cargo</p>
+                        <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #f1f3f5; padding: 4px; border-radius: 12px; margin-bottom: 16px;">
+                        <button class="btn-aba-perfil ativa" id="aba-btn-dados" style="background: transparent; border: none; padding: 8px 4px; font-size: 11px; font-weight: 700; color: #495057; border-radius: 8px; cursor: pointer;" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
+                        <button class="btn-aba-perfil" id="aba-btn-estatisticas" style="background: transparent; border: none; padding: 8px 4px; font-size: 11px; font-weight: 700; color: #495057; border-radius: 8px; cursor: pointer;" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
+                        <button class="btn-aba-perfil" id="aba-btn-seguranca" style="background: transparent; border: none; padding: 8px 4px; font-size: 11px; font-weight: 700; color: #495057; border-radius: 8px; cursor: pointer;" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
+                    </div>
+
+                    <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados" style="display: block;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">E-mail</span><span id="perfil-email" style="font-size: 11px; font-weight: 600; word-break: break-word;">-</span></div>
+                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Telefone</span><span id="perfil-tel" style="font-size: 13px; font-weight: 600;">-</span></div>
+                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Nascimento</span><span id="perfil-nascimento" style="font-size: 13px; font-weight: 600;">-</span></div>
+                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Ingresso</span><span id="perfil-ingresso" style="font-size: 13px; font-weight: 600;">-</span></div>
+                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px; grid-column: span 2;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Curso & Turno</span><span id="perfil-curso" style="font-size: 13px; font-weight: 600;">-</span></div>
+                        </div>
+                    </div>
+
+                    <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas" style="display: none;">
+                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                            <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;"><span style="display: block; font-size: 16px; font-weight: 800; color: #2b8a3e;" id="perfil-stat-presencas">0</span><span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Presenças</span></div>
+                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;"><span style="display: block; font-size: 16px; font-weight: 800; color: #c92a2a;" id="perfil-stat-faltas">0</span><span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Faltas</span></div>
+                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;"><span style="display: block; font-size: 16px; font-weight: 800; color: #1c7ed6;" id="perfil-stat-ch">0h</span><span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">CH</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca" style="display: none;">
+                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+                            <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha</span>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <input type="password" id="input-senha-atual" placeholder="Senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                                <input type="password" id="input-senha-nova" placeholder="Nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                                <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                                <button class="btn-salvar" style="padding: 9px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                        <div id="btn-container-painel-admin"></div>
+                        <button style="background-color: #e03131; width: 100%; padding: 12px; border-radius: 10px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair da Conta</button>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
+
+        <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA IDÊNTICA À IMAGEM -->
+        <nav class="barra-navegacao-inferior">
+            <button class="nav-item-inferior ativa" id="nav-btn-inicio" onclick="mudarAbaApp('inicio')">
+                <div class="icon-wrap-nav">
+                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                </div>
+                <span>Início</span>
+            </button>
+            <button class="nav-item-inferior" id="nav-btn-calendario" onclick="mudarAbaApp('calendario')">
+                <div class="icon-wrap-nav">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                </div>
+                <span>Calendário</span>
+            </button>
+            <button class="nav-item-inferior" id="nav-btn-atividades" onclick="mudarAbaApp('atividades')">
+                <div class="icon-wrap-nav">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                </div>
+                <span>Atividades</span>
+            </button>
+            <button class="nav-item-inferior" id="nav-btn-solicitacoes" onclick="mudarAbaApp('solicitacoes')">
+                <div class="icon-wrap-nav">
+                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                </div>
+                <span>Solicitações</span>
+            </button>
+            <button class="nav-item-inferior" id="nav-btn-perfil" onclick="mudarAbaApp('perfil')">
+                <div class="icon-wrap-nav">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                </div>
+                <span>Perfil</span>
+            </button>
+        </nav>
+
     </div>
 
     <!-- MODAL DE NOVA SUGESTÃO / OUVIDORIA -->
@@ -680,13 +745,13 @@
                 <img src="qrcode.png" alt="QR Code Pix" style="width: 150px; height: 150px; object-fit: contain; display: block; margin: 0 auto;">
             </div>
             <div class="copia-cola" style="margin-top: 10px;">
-                <input type="text" id="chave-pix-input" value="lapewyden@gmail.com" readonly>
-                <button class="btn-copiar" onclick="copiarPix()">Copiar</button>
+                <input type="text" id="chave-pix-input" value="lapewyden@gmail.com" readonly style="width:100%; padding: 10px; border-radius: 8px;">
+                <button class="btn-copiar" onclick="copiarPix()" style="width: 100%; padding: 10px; background: #0056b3; color: white; border: none; border-radius: 8px; margin-top: 8px; font-weight: bold; cursor:pointer;">Copiar</button>
             </div>
-            <p id="aviso-copiado" class="texto-sucesso" style="display:none;">Chave copiada!</p>
+            <p id="aviso-copiado" style="display:none; color: #2b8a3e; font-weight:bold; margin-top: 8px;">Chave copiada!</p>
             <div class="botoes-modal" style="margin-top: 15px; display:flex; gap:8px;">
-                <button class="btn-salvar" onclick="notificarPagamento()">Já realizei o pagamento</button>
-                <button class="btn-cancelar" onclick="fecharModalPix()">Sair</button>
+                <button class="btn-salvar" style="flex:1; padding: 10px;" onclick="notificarPagamento()">Já realizei o pagamento</button>
+                <button class="btn-cancelar" style="flex:1; padding: 10px;" onclick="fecharModalPix()">Sair</button>
             </div>
         </div>
     </div>
@@ -713,115 +778,6 @@
             <div style="display: flex; gap: 8px; margin-top: 15px;">
                 <button class="btn-salvar" style="flex: 1; padding: 10px;" onclick="enviarJustificativaCustomizada()">Enviar Justificativa</button>
                 <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalJustificativa()">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE PERFIL SPLÉNDIDO & COMPLEXO COM ABAS -->
-    <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
-        <div class="modal-perfil-conteudo">
-            
-            <div class="perfil-topo-splendido">
-                <div class="perfil-avatar-wrapper" id="perfil-avatar-container"></div>
-                <div class="botao-trocar-foto-flutuante" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
-                <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
-                
-                <h3 id="perfil-nome" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #ffffff;">Nome Completo</h3>
-                <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 4px;" id="perfil-codigo">20261000</div>
-                <p id="perfil-cargo" style="margin: 0; font-size: 11px; font-weight: 700; color: #69db7c; text-transform: uppercase; letter-spacing: 0.8px;">Cargo</p>
-                <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
-            </div>
-
-            <div class="perfil-abas-navegacao">
-                <button class="btn-aba-perfil ativa" id="aba-btn-dados" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
-                <button class="btn-aba-perfil" id="aba-btn-estatisticas" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
-                <button class="btn-aba-perfil" id="aba-btn-seguranca" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
-            </div>
-
-            <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados">
-                <div class="perfil-grid-detalhes">
-                    <div class="perfil-card-info">
-                        <span class="perfil-card-label">E-mail</span>
-                        <span class="perfil-card-valor" id="perfil-email" style="font-size: 11px;">-</span>
-                    </div>
-                    <div class="perfil-card-info">
-                        <span class="perfil-card-label">Telefone</span>
-                        <span class="perfil-card-valor" id="perfil-tel">-</span>
-                    </div>
-                    <div class="perfil-card-info">
-                        <span class="perfil-card-label">Nascimento</span>
-                        <span class="perfil-card-valor" id="perfil-nascimento">-</span>
-                    </div>
-                    <div class="perfil-card-info">
-                        <span class="perfil-card-label">Ingresso Liga</span>
-                        <span class="perfil-card-valor" id="perfil-ingresso">-</span>
-                    </div>
-                    <div class="perfil-card-info full">
-                        <span class="perfil-card-label">Curso & Turno</span>
-                        <span class="perfil-card-valor" id="perfil-curso">-</span>
-                    </div>
-                    <div class="perfil-card-info">
-                        <span class="perfil-card-label">Matrícula</span>
-                        <span class="perfil-card-valor" id="perfil-matricula">-</span>
-                    </div>
-                    <div class="perfil-card-info">
-                        <span class="perfil-card-label">Formatura Prevista</span>
-                        <span class="perfil-card-valor" id="perfil-formatura">-</span>
-                    </div>
-                    <div class="perfil-card-info full">
-                        <span class="perfil-card-label">Instituição</span>
-                        <span class="perfil-card-valor" id="perfil-instituicao">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas">
-                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
-                            <span style="display: block; font-size: 16px; font-weight: 800; color: #2b8a3e;" id="perfil-stat-presencas">0</span>
-                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Presenças</span>
-                        </div>
-                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
-                            <span style="display: block; font-size: 16px; font-weight: 800; color: #c92a2a;" id="perfil-stat-faltas">0</span>
-                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Faltas</span>
-                        </div>
-                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
-                            <span style="display: block; font-size: 16px; font-weight: 800; color: #1c7ed6;" id="perfil-stat-ch">0h</span>
-                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Carga Horária</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca">
-                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
-                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha Segura</span>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <div>
-                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Senha Atual</label>
-                            <input type="password" id="input-senha-atual" placeholder="Sua senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                        </div>
-                        <div>
-                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Nova Senha</label>
-                            <input type="password" id="input-senha-nova" placeholder="Mínimo de caracteres" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                        </div>
-                        <div>
-                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Confirmar Nova Senha</label>
-                            <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                        </div>
-                        <button class="btn-salvar" style="padding: 9px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha no Sistema</button>
-                    </div>
-                </div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <div id="btn-container-painel-admin"></div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair da Conta</button>
-                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharPerfilModal()">Fechar Perfil</button>
-                </div>
             </div>
         </div>
     </div>
@@ -916,11 +872,12 @@
             
             let corpo = document.getElementById('corpo-pagina');
             corpo.style.alignItems = "flex-start";
-            corpo.style.backgroundColor = "#f4f7f6"; 
+            corpo.style.backgroundColor = "var(--fundo-cinza)"; 
             
             document.getElementById('conteudo-principal-app').style.display = 'block';
-            document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
-            document.getElementById('subtitulo-cargo').innerText = user.cargo || "Ligante";
+            document.getElementById('titulo-boas-vindas').innerHTML = `Olá, ${user.nome.split(' ')[0]}! <span style="font-size: 20px;">👋</span>`;
+            document.getElementById('subtitulo-cargo').innerText = (user.cargo || "Ligante").toUpperCase();
+            document.getElementById('topo-codigo-usuario').innerText = user.codigo || "";
 
             renderizarAvatarTopo();
             iniciarOuvintesTempoReal();
@@ -928,15 +885,41 @@
             registrarServiceWorkerENotificacoes();
         }
 
+        function mudarAbaApp(nomeAba) {
+            document.querySelectorAll('.app-tab-pane').forEach(pane => pane.classList.remove('ativa'));
+            document.querySelectorAll('.nav-item-inferior').forEach(btn => btn.classList.remove('ativa'));
+            document.querySelectorAll('.header-bloco-dinamico').forEach(el => el.classList.remove('ativo', 'ativo-coluna'));
+
+            let paneAlvo = document.getElementById(`pane-${nomeAba}`);
+            let btnAlvo = document.getElementById(`nav-btn-${nomeAba}`);
+            let headerAlvo = document.getElementById(`header-dinamico-${nomeAba}`);
+
+            if (paneAlvo) paneAlvo.classList.add('ativa');
+            if (btnAlvo) btnAlvo.classList.add('ativa');
+            
+            if (headerAlvo) {
+                if (nomeAba === 'inicio') headerAlvo.classList.add('ativo');
+                else headerAlvo.classList.add('ativo-coluna');
+            } else {
+                document.getElementById('header-dinamico-inicio').classList.add('ativo');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (nomeAba === 'perfil') {
+                preencherDadosPerfilCompleto();
+            }
+        }
+
         function renderizarAvatarTopo() {
             let container = document.getElementById("container-avatar-topo");
             if (!usuarioLogado) return;
 
             if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
-                container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
+                container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
-                container.innerHTML = `<div style="width:100%; height:100%; background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:16px;">${inicial}</div>`;
+                container.innerHTML = `${inicial}`;
             }
         }
 
@@ -1006,91 +989,30 @@
 
             listaProcessada.sort((a, b) => a.diffDias - b.diffDias);
 
-            let aniversariantesHoje = listaProcessada.filter(x => x.ehHoje);
-            let proximoAniversariante = listaProcessada.find(x => !x.ehHoje);
+            let proximoAniversariante = listaProcessada[0];
             let totalMesAtual = listaProcessada.filter(x => x.mesAtual).length;
 
-            let html = `
-                <div class="aniv-header-info">
-                    <div>
-                        <span style="font-size: 13px; font-weight: bold; color: #0056b3;">🎂 Painel de Aniversariantes</span>
-                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">${totalMesAtual} aniversariante(s) neste mês de ${nomesMeses[mesHoje - 1].toLowerCase()}</p>
-                    </div>
-                    <span style="font-size: 18px;">🎉</span>
-                </div>
-            `;
-
-            if (aniversariantesHoje.length > 0) {
-                html += `<div class="aniv-bloco-secao"><div class="aniv-subtitulo">🌟 Aniversariantes de Hoje</div>`;
-                aniversariantesHoje.forEach(aniv => {
-                    let avatarHtml = aniv.fotoUrl 
-                        ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
-                        : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
-
-                    html += `
-                        <div class="aniversario-item-complexo" style="border-color: #ff6b6b; background: #fff5f5;">
-                            ${avatarHtml}
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">${aniv.nome}</p>
-                                    <span style="font-size: 11px; background: #ff6b6b; color: white; padding: 1px 6px; border-radius: 4px; font-weight: bold;">Hoje! 🥳</span>
-                                </div>
-                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completando <strong>${aniv.idade} anos</strong></p>
-                                <div class="aniv-detalhes-grid">
-                                    <span class="aniv-badge-info">📅 ${aniv.dataFormatada}</span>
-                                    <span class="aniv-badge-info">💼 ${aniv.cargo}</span>
-                                    <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            } else {
-                html += `
-                    <div class="aniv-bloco-secao">
-                        <div class="aniv-subtitulo">Aniversariante de Hoje</div>
-                        <div class="aniversario-item-complexo">
-                            <div class="aniversario-avatar" style="background: #e9ecef; color: #6c757d;">📅</div>
-                            <div style="flex: 1;">
-                                <p style="margin: 0; font-size: 12px; font-weight: bold; color: #555;">Nenhum aniversariante hoje</p>
-                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #777;">Aproveite para conferir o próximo colega da liga abaixo!</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
+            let html = "";
             if (proximoAniversariante) {
-                let textoDias = proximoAniversariante.diffDias === 1 ? "Amanhã" : `Daqui a ${proximoAniversariante.diffDias} dias`;
+                let textoDias = proximoAniversariante.ehHoje ? "Hoje! 🥳" : (proximoAniversariante.diffDias === 1 ? "Amanhã" : `Daqui a ${proximoAniversariante.diffDias} dias`);
                 let avatarProximoHtml = proximoAniversariante.fotoUrl 
-                    ? `<div class="aniversario-avatar"><img src="${proximoAniversariante.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
-                    : `<div class="aniversario-avatar">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
+                    ? `<div class="aniv-avatar-grande"><img src="${proximoAniversariante.fotoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>`
+                    : `<div class="aniv-avatar-grande">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
 
-                html += `
-                    <div class="aniv-bloco-secao" style="margin-top: 10px;">
-                        <div class="aniv-subtitulo">⏭️ Próximo Aniversariante</div>
-                        <div class="aniversario-item-complexo">
-                            ${avatarProximoHtml}
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${proximoAniversariante.nome}</p>
-                                    <span style="font-size: 10px; background: #e7f5ff; color: #0056b3; padding: 1px 6px; border-radius: 4px; font-weight: bold;">${textoDias}</span>
-                                </div>
-                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completará ${proximoAniversariante.idade} anos</p>
-                                <div class="aniv-detalhes-grid">
-                                    <span class="aniv-badge-info">📅 ${proximoAniversariante.dataFormatada}</span>
-                                    <span class="aniv-badge-info">💼 ${proximoAniversariante.cargo}</span>
-                                    <span class="aniv-badge-info">🎓 ${proximoAniversariante.curso}</span>
-                                </div>
-                            </div>
+                html = `
+                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        ${avatarProximoHtml}
+                        <h4 class="aniv-nome">${proximoAniversariante.nome}</h4>
+                        <p class="aniv-desc">${proximoAniversariante.idade} anos • ${proximoAniversariante.curso}</p>
+                        <div class="aniv-badges-row">
+                            <span class="aniv-badge-data"><svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:var(--texto-secundario);"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg> ${proximoAniversariante.dataFormatada}</span>
+                            <span class="aniv-badge-dias">${textoDias}</span>
                         </div>
                     </div>
                 `;
             }
 
-            html += `<button class="btn-ver-todos-aniv" onclick="abrirModalTodosAniversariantes()">Ver Lista Completa do Mês (${totalMesAtual})</button>`;
-
+            html += `<a class="link-ver-todos-card" onclick="abrirModalTodosAniversariantes()">Ver lista completa do mês (${totalMesAtual}) &gt;</a>`;
             container.innerHTML = html;
         }
 
@@ -1126,21 +1048,21 @@
             } else {
                 aniversariantesMes.forEach(aniv => {
                     let avatarHtml = aniv.fotoUrl 
-                        ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
-                        : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
+                        ? `<div style="width:40px; height:40px; border-radius:50%; overflow:hidden;"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                        : `<div style="width:40px; height:40px; border-radius:50%; background:var(--azul-primario); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold;">${aniv.nome.charAt(0).toUpperCase()}</div>`;
 
                     htmlModal += `
-                        <div class="aniversario-item-complexo">
+                        <div style="display:flex; align-items:center; gap:12px; padding:10px; background:#f4f6fb; border-radius:12px; margin-bottom:8px;">
                             ${avatarHtml}
                             <div style="flex: 1;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${aniv.nome}</p>
-                                    <span style="font-size: 11px; font-weight: bold; color: #d63384;">${aniv.dataFormatada}</span>
+                                    <p style="margin: 0; font-size: 13px; font-weight: 800; color: var(--texto-principal);">${aniv.nome}</p>
+                                    <span style="font-size: 11px; font-weight: 800; color: #d63384;">${aniv.dataFormatada}</span>
                                 </div>
-                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Vai completar ${aniv.idade} anos</p>
-                                <div class="aniv-detalhes-grid">
-                                    <span class="aniv-badge-info">💼 ${aniv.cargo}</span>
-                                    <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: var(--texto-secundario);">Vai completar ${aniv.idade} anos</p>
+                                <div style="display:flex; gap:6px;">
+                                    <span style="font-size:10px; background:#fff; border:1px solid #d1d9e6; padding:2px 6px; border-radius:4px; font-weight:700;">💼 ${aniv.cargo}</span>
+                                    <span style="font-size:10px; background:#fff; border:1px solid #d1d9e6; padding:2px 6px; border-radius:4px; font-weight:700;">🎓 ${aniv.curso}</span>
                                 </div>
                             </div>
                         </div>
@@ -1182,12 +1104,12 @@
                     }
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                     renderizarAvatarTopo();
-                    document.getElementById('subtitulo-cargo').innerText = usuarioLogado.cargo || "Ligante";
+                    document.getElementById('subtitulo-cargo').innerText = (usuarioLogado.cargo || "Ligante").toUpperCase();
                     atualizarFinanceiroApp();
 
-                    let modalPerfil = document.getElementById("modal-perfil");
-                    if (modalPerfil && modalPerfil.style.display === "flex") {
-                        abrirPerfilModal();
+                    let panePerfil = document.getElementById("pane-perfil");
+                    if (panePerfil && panePerfil.classList.contains("ativa")) {
+                        preencherDadosPerfilCompleto();
                     }
                 }
             });
@@ -1211,6 +1133,7 @@
                     return tB - tA;
                 });
                 renderizarOuvidoriaWidget();
+                renderizarListaHistoricoSugestoesModal();
             });
 
             db.collection("avisos").onSnapshot((snapshot) => {
@@ -1319,7 +1242,6 @@
             });
         }
 
-        // --- RENDERIZADOR DE ENQUETES REFORMULADO (Proporcional e Botão "Mudar" embaixo) ---
         function renderizarEnquetesWidget() {
             let containerSecao = document.getElementById("secao-enquetes-container");
             let blocoEnquetes = document.getElementById("bloco-enquetes-ativas");
@@ -1360,8 +1282,8 @@
                     let textoVotado = typeof meuVotoObj === 'object' ? meuVotoObj.texto : '';
 
                     let badgeDiretoriaHtml = enquete.publico === 'diretoria' 
-                        ? `<div class="badge-diretoria-enquete">🔒 Exclusivo da Diretoria</div>` 
-                        : '';
+                        ? `<div class="badge-diretoria-enquete"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg> Exclusivo da Diretoria</div>` 
+                        : '<div></div>';
 
                     let limiteMs = 0;
                     if (enquete.dataLimite) {
@@ -1369,19 +1291,20 @@
                         limiteMs = dL.getTime();
                     }
                     
-                    let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 16px; right: 16px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
+                    let contadorHtml = limiteMs ? `<div class="timer-enquete" id="timer-enquete-${enquete.id}" data-limite="${limiteMs}"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg> Calculando...</div>` : '';
 
                     let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
                     let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
 
-                    // Estrutura ajustada com largura 100% igual aos demais blocos e sem restrições de largura excedentes
                     html += `
                         <div class="enquete-item-card">
-                            ${contadorHtml}
-                            ${badgeDiretoriaHtml}
-                            <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: bold; color: #212529; padding-right: 85px; word-break: break-word;">${enquete.titulo}</p>
-                            <p style="margin: 0 0 8px 0; font-size: 12px; color: #666; line-height: 1.4;">${enquete.descricao || ''}</p>
-                            <div style="margin-top: 8px;" id="container-opcoes-enq-${enquete.id}">
+                            <div class="enquete-top-bar">
+                                ${badgeDiretoriaHtml}
+                                ${contadorHtml}
+                            </div>
+                            <h4 class="enquete-titulo">${enquete.titulo}</h4>
+                            <p class="enquete-desc">${enquete.descricao || ''}</p>
+                            <div id="container-opcoes-enq-${enquete.id}">
                     `;
 
                     if (!jaVotou) {
@@ -1393,20 +1316,18 @@
                         if (permiteTexto) {
                             html += `
                                 <div style="margin-top: 8px;">
-                                    <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 12px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
-                                    <button class="enquete-opcao-btn" style="background: #0056b3; color: white; text-align: center; margin-top: 6px;" onclick="votarEnqueteComTexto('${enquete.id}')">Enviar Resposta</button>
+                                    <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 12px 14px; border: 1px solid #d1d9e6; border-radius: 10px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: var(--texto-principal); font-family: 'Inter', sans-serif;"></textarea>
+                                    <button class="btn-acao-enquete" style="margin-top: 8px;" onclick="votarEnqueteComTexto('${enquete.id}')">Enviar Resposta</button>
                                 </div>
                             `;
                         }
                     } else {
-                        // Voto devidamente estruturado em coluna (flex-direction: column) para o botão "Mudar" descer e ocupar o espaço com harmonia
                         html += `
-                            <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
-                                <div style="font-size: 12px; color: #2b8a3e; font-weight: bold; word-break: break-word;">
-                                    ✓ Voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '<br><i>"' + textoVotado + '"</i>' : ''}
-                                </div>
-                                <button class="btn-mudar-voto" onclick="mudarVotoEnquete('${enquete.id}')">Mudar Voto</button>
+                            <div class="enquete-voto-confirmado">
+                                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                <span>Seu voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '<br><i>"' + textoVotado + '"</i>' : ''}</span>
                             </div>
+                            <button class="btn-acao-enquete" onclick="mudarVotoEnquete('${enquete.id}')">Mudar / Alterar voto</button>
                         `;
                     }
 
@@ -1541,7 +1462,7 @@
             let badgeStyle = getBadgeStatusStyle(ultima.status);
 
             container.innerHTML = `
-                <div class="ouvidoria-item-card">
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 10px; margin-top: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${ultima.tipo}]</span>
                         <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${ultima.status}</span>
@@ -1553,38 +1474,38 @@
         }
 
         function renderizarListaHistoricoSugestoesModal() {
-            let container = document.getElementById("lista-historico-sugestoes-conteudo");
-            if (!container) return;
-
-            if (minhasSugestoesCache.length === 0) {
-                container.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Você ainda não enviou nenhuma sugestão ou reclamação.</p>`;
-                return;
-            }
+            let containerModal = document.getElementById("lista-historico-sugestoes-conteudo");
+            let containerInline = document.getElementById("lista-historico-sugestoes-inline");
 
             let html = "";
-            minhasSugestoesCache.forEach(item => {
-                let badgeStyle = getBadgeStatusStyle(item.status);
-                let respostaHtml = item.respostaDiretoria ? `
-                    <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
-                        <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta da Diretoria:</p>
-                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #333;">${item.respostaDiretoria}</p>
-                    </div>
-                ` : "";
-
-                html += `
-                    <div class="ouvidoria-item-card" style="margin-top: 0; margin-bottom: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${item.tipo}]</span>
-                            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
+            if (minhasSugestoesCache.length === 0) {
+                html = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Você ainda não enviou nenhuma sugestão ou reclamação.</p>`;
+            } else {
+                minhasSugestoesCache.forEach(item => {
+                    let badgeStyle = getBadgeStatusStyle(item.status);
+                    let respostaHtml = item.respostaDiretoria ? `
+                        <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
+                            <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta da Diretoria:</p>
+                            <p style="margin: 2px 0 0 0; font-size: 11px; color: #333;">${item.respostaDiretoria}</p>
                         </div>
-                        <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${item.titulo}</p>
-                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #555; line-height: 1.3;">${item.texto}</p>
-                        ${respostaHtml}
-                    </div>
-                `;
-            });
+                    ` : "";
 
-            container.innerHTML = html;
+                    html += `
+                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 10px; margin-top: 0; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${item.tipo}]</span>
+                                <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
+                            </div>
+                            <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${item.titulo}</p>
+                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #555; line-height: 1.3;">${item.texto}</p>
+                            ${respostaHtml}
+                        </div>
+                    `;
+                });
+            }
+
+            if (containerModal) containerModal.innerHTML = html;
+            if (containerInline) containerInline.innerHTML = html;
         }
 
         function getBadgeStatusStyle(status) {
@@ -1646,6 +1567,7 @@
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
+        let diaSelecionadoCalendario = dataAtual.getDate();
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function atualizarFinanceiroApp() {
@@ -1656,7 +1578,8 @@
             let finMap = usuarioLogado.financeiro || {};
             let statusMes = finMap[chaveMesAtual] || 'pendente';
             let badgeStatus = document.getElementById("fin-status-badge");
-            let btnPix = document.getElementById("btn-acao-pix");
+            let btnPixWrap = document.getElementById("btn-acao-pix-wrapper");
+            let textoPix = document.getElementById("texto-acao-pix");
             let valMesEl = document.getElementById("fin-valor-mes");
             let debTotalEl = document.getElementById("fin-debito-total");
 
@@ -1668,35 +1591,39 @@
             if(!cobravelAtual) {
                 valMesEl.innerText = "R$ 0,00";
                 badgeStatus.innerText = "Não Cobrado";
-                badgeStatus.className = "badge-status-financeiro badge-fin abonado";
-                btnPix.style.display = "none";
+                badgeStatus.className = "badge-pendente";
+                badgeStatus.style.background = "#e9ecef";
+                badgeStatus.style.color = "#495057";
+                btnPixWrap.style.display = "none";
             } else {
                 valMesEl.innerText = "R$ 10,00";
-                btnPix.style.display = "block";
+                btnPixWrap.style.display = "flex";
                 if(statusMes === 'pago') {
-                    badgeStatus.innerText = "Pago ✓";
-                    badgeStatus.className = "badge-status-financeiro badge-fin pago";
-                    btnPix.innerText = "Mensalidade Quitada";
-                    btnPix.disabled = true;
-                    btnPix.style.background = "#6c757d";
+                    badgeStatus.innerHTML = "Pago ✓";
+                    badgeStatus.className = "badge-pago";
+                    textoPix.innerText = "Mensalidade Quitada";
+                    btnPixWrap.style.pointerEvents = "none";
+                    btnPixWrap.style.color = "var(--texto-secundario)";
                 } else if(statusMes === 'analise') {
-                    badgeStatus.innerText = "Aguardando Confirmação";
-                    badgeStatus.className = "badge-status-financeiro badge-fin analise";
-                    btnPix.innerText = "Em análise pelo financeiro";
-                    btnPix.disabled = true;
-                    btnPix.style.background = "#f59f00";
+                    badgeStatus.innerText = "Em Análise";
+                    badgeStatus.className = "badge-pendente";
+                    badgeStatus.style.background = "#fff3bf";
+                    badgeStatus.style.color = "#f59f00";
+                    textoPix.innerText = "Em análise pelo financeiro";
+                    btnPixWrap.style.pointerEvents = "none";
                 } else if(statusMes === 'abonado') {
                     badgeStatus.innerText = "Abonado";
-                    badgeStatus.className = "badge-status-financeiro badge-fin abonado";
-                    btnPix.innerText = "Isento / Abonado";
-                    btnPix.disabled = true;
-                    btnPix.style.background = "#adb5bd";
+                    badgeStatus.className = "badge-pendente";
+                    badgeStatus.style.background = "#e9ecef";
+                    badgeStatus.style.color = "#495057";
+                    textoPix.innerText = "Isento / Abonado";
+                    btnPixWrap.style.pointerEvents = "none";
                 } else {
                     badgeStatus.innerText = "Pendente";
-                    badgeStatus.className = "badge-status-financeiro badge-fin pendente";
-                    btnPix.innerText = "Pagar Mensalidade do Mês (Pix)";
-                    btnPix.disabled = false;
-                    btnPix.style.background = "#0056b3";
+                    badgeStatus.className = "badge-pendente";
+                    textoPix.innerText = "Pagar Mensalidade do Mês (Pix)";
+                    btnPixWrap.style.pointerEvents = "auto";
+                    btnPixWrap.style.color = "var(--azul-texto)";
                 }
             }
 
@@ -1746,17 +1673,26 @@
         }
 
         function mudarAbaPerfil(nomeAba) {
-            document.querySelectorAll('.btn-aba-perfil').forEach(btn => btn.classList.remove('ativa'));
-            document.querySelectorAll('.perfil-secao-conteudo').forEach(sec => sec.classList.remove('ativa'));
+            document.querySelectorAll('.btn-aba-perfil').forEach(btn => {
+                btn.classList.remove('ativa');
+                btn.style.background = 'transparent';
+                btn.style.color = '#495057';
+            });
+            document.querySelectorAll('.perfil-secao-conteudo').forEach(sec => sec.style.display = 'none');
 
-            document.getElementById(`aba-btn-${nomeAba}`).classList.add('ativa');
-            document.getElementById(`aba-conteudo-${nomeAba}`).classList.add('ativa');
+            let btnAtivo = document.getElementById(`aba-btn-${nomeAba}`);
+            btnAtivo.classList.add('ativa');
+            btnAtivo.style.background = '#ffffff';
+            btnAtivo.style.color = '#0056b3';
+            
+            document.getElementById(`aba-conteudo-${nomeAba}`).style.display = 'block';
         }
 
-        function abrirPerfilModal() {
+        function preencherDadosPerfilCompleto() {
+            if (!usuarioLogado) return;
             document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
             document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo || "-";
-            document.getElementById("perfil-cargo").innerText = usuarioLogado.cargo || "Ligante";
+            document.getElementById("perfil-cargo").innerText = (usuarioLogado.cargo || "Ligante").toUpperCase();
             
             document.getElementById("perfil-email").innerText = usuarioLogado.email || "-";
             document.getElementById("perfil-tel").innerText = usuarioLogado.tel || "-";
@@ -1801,23 +1737,19 @@
 
             let avatarModal = document.getElementById("perfil-avatar-container");
             if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
-                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" class="perfil-avatar-img">`;
+                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover; border-radius:50%; border: 3px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
-                avatarModal.innerHTML = `<div class="perfil-avatar-img" style="background:#003366; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px;">${inicial}</div>`;
+                avatarModal.innerHTML = `<div style="background:#004b9e; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px; width:100%; height:100%; border-radius:50%; border: 3px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">${inicial}</div>`;
             }
 
             let containerAdminBtn = document.getElementById("btn-container-painel-admin");
             if (cargoLower !== "ligante" && cargoLower !== "membro" && cargoLower !== "marketing") {
-                containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3; width: 100%; padding: 12px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
+                containerAdminBtn.innerHTML = `<button style="background-color: #004b9e; width: 100%; padding: 12px; border-radius: 10px; border:none; color:white; font-weight:bold; cursor:pointer; margin-bottom: 8px;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
             } else {
                 containerAdminBtn.innerHTML = "";
             }
-
-            document.getElementById("modal-perfil").style.display = "flex";
         }
-
-        function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
 
         async function salvarNovaSenha() {
             let senhaAtualInput = document.getElementById("input-senha-atual").value.trim();
@@ -1893,7 +1825,7 @@
                             fotoTempUrl: base64Image,
                             fotoStatus: 'analise'
                         });
-                        abrirPerfilModal();
+                        preencherDadosPerfilCompleto();
                         alert("Foto enviada para análise da diretoria com sucesso!");
                     } catch(e) {
                         console.error(e);
@@ -1910,7 +1842,14 @@
         }
 
         function renderizarApp() {
+            // Header do Calendário (Estilo imagem 2)
             document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
+            let nomeMesEl = document.getElementById("nome-mes-desempenho-texto");
+            if (nomeMesEl) nomeMesEl.innerText = nomesMeses[mesAtual];
+            
+            let mesHeaderCalendario = document.getElementById("mes-ano-texto-header");
+            if(mesHeaderCalendario) mesHeaderCalendario.innerText = `${nomesMeses[mesAtual]} / ${anoAtual}`;
+
             const gridDias = document.getElementById("grid-dias");
             if(!gridDias) return;
             gridDias.innerHTML = "";
@@ -1921,7 +1860,7 @@
             const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
             const totalDiasMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
-            for (let i = 0; i < primeiroDiaMes; i++) { gridDias.innerHTML += `<div class="dia-calendario vazio"></div>`; }
+            for (let i = 0; i < primeiroDiaMes; i++) { gridDias.innerHTML += `<div></div>`; }
             for (let dia = 1; dia <= totalDiasMes; dia++) {
                 let dataFormatada = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
                 let temAtividade = atividades.some(ativ => {
@@ -1930,15 +1869,150 @@
                     if (usuarioLogado.ingressoLiga && ativ.data < usuarioLogado.ingressoLiga) return false;
                     return true;
                 });
-                let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
+                
                 let hoje = new Date();
-                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "dia-hoje" : "";
-                gridDias.innerHTML += `<div class="dia-calendario ${ehHoje}">${dia}${htmlPonto}</div>`;
+                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear());
+                let ehSelecionado = (dia === diaSelecionadoCalendario);
+                
+                let classList = ["dia-calendario", "dia-util"];
+                if (ehHoje) classList.push("hoje");
+                if (ehSelecionado) classList.push("selecionado");
+                
+                let htmlPonto = temAtividade ? `<div class="ponto-verde ${ehSelecionado ? 'selecionado-dot' : ''}"></div>` : ``;
+
+                gridDias.innerHTML += `
+                    <div class="${classList.join(' ')}" onclick="selecionarDiaCalendario(${dia})">
+                        ${dia}
+                        ${htmlPonto}
+                    </div>
+                `;
             }
 
             renderizarHistoricoGeral();
             renderizarCardsENumeros();
+            renderizarEventosDiaCalendario();
             atualizarFinanceiroApp();
+        }
+
+        function selecionarDiaCalendario(dia) {
+            diaSelecionadoCalendario = dia;
+            renderizarApp();
+        }
+
+        function renderizarEventosDiaCalendario() {
+            let container = document.getElementById("lista-eventos-dia-calendario");
+            let containerProx = document.getElementById("lista-proximas-atividades-calendario");
+            let textoData = document.getElementById("data-selecionada-texto");
+            
+            if (!container) return;
+
+            let dataStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(diaSelecionadoCalendario).padStart(2, '0')}`;
+            if (textoData) textoData.innerText = `${String(diaSelecionadoCalendario).padStart(2,'0')}/${String(mesAtual + 1).padStart(2,'0')}`;
+
+            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+
+            let evsDoDia = atividades.filter(a => {
+                if (a.data !== dataStr || a.cancelada) return false;
+                if (a.publico === 'diretoria' && !ehDiretoria) return false;
+                if (usuarioLogado.ingressoLiga && a.data < usuarioLogado.ingressoLiga) return false;
+                return true;
+            });
+
+            if (evsDoDia.length === 0) {
+                container.innerHTML = `<div style="background: white; padding: 16px; border-radius: 16px; font-size: 13px; color: var(--texto-secundario); text-align: center; box-shadow: 0 4px 15px rgba(0,34,80,0.03);">Nenhuma atividade agendada para este dia.</div>`;
+            } else {
+                let html = "";
+                evsDoDia.forEach((ativ, index) => {
+                    // Alternar ícones e cores conforme imagem 2 (verde para reunião, azul para estudo, etc)
+                    let iconeClass = (index % 2 === 0) ? 'verde' : 'azul';
+                    let svgIcone = (index % 2 === 0) 
+                        ? `<svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>` // Pessoas
+                        : `<svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>`; // Livro
+                    
+                    let badgeClass = (index % 2 === 0) ? 'badge-presenca' : 'badge-ch';
+                    let textoBadge = (index % 2 === 0) ? `Presença ${ativ.ch}h` : `CH ${ativ.ch}h`;
+
+                    html += `
+                        <div class="evento-dia-card">
+                            <div class="evento-icone-wrap ${iconeClass}">
+                                ${svgIcone}
+                            </div>
+                            <div class="evento-infos">
+                                <h4 class="evento-titulo">${ativ.titulo}</h4>
+                                <div class="evento-detalhe-linha">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    ${ativ.hora}
+                                </div>
+                                <div class="evento-detalhe-linha">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    ${ativ.local}
+                                </div>
+                            </div>
+                            <div class="${badgeClass}">${textoBadge}</div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            // Renderizar Próximas Atividades (do mês pra frente)
+            if (containerProx) {
+                let hojeStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
+                let proximas = atividades.filter(a => {
+                    if (a.cancelada) return false;
+                    if (a.publico === 'diretoria' && !ehDiretoria) return false;
+                    if (usuarioLogado.ingressoLiga && a.data < usuarioLogado.ingressoLiga) return false;
+                    return a.data >= hojeStr;
+                }).slice(0, 3); // Pega as próximas 3
+
+                if (proximas.length === 0) {
+                    containerProx.innerHTML = `<div style="background: white; padding: 16px; border-radius: 16px; font-size: 13px; color: var(--texto-secundario); text-align: center; box-shadow: 0 4px 15px rgba(0,34,80,0.03);">Nenhuma próxima atividade.</div>`;
+                } else {
+                    let htmlProx = "";
+                    proximas.forEach(ativ => {
+                        let dataObj = new Date(ativ.data + "T00:00:00");
+                        let dataFormatada = `${String(dataObj.getDate()).padStart(2,'0')}/${String(dataObj.getMonth()+1).padStart(2,'0')}/${dataObj.getFullYear()}`;
+                        
+                        let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
+                        let limiteMs = dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000);
+                        let timerId = `timer-${ativ.id}`;
+
+                        htmlProx += `
+                            <div class="proxima-ativ-card" onclick="mudarAbaApp('atividades')">
+                                <div class="proxima-ativ-top">
+                                    <div class="evento-icone-wrap amarelo">
+                                        <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                                    </div>
+                                    <div class="proxima-ativ-content">
+                                        <div class="proxima-ativ-header">
+                                            <h4 class="evento-titulo" style="font-size: 16px;">${ativ.titulo}</h4>
+                                            <div class="badges-direita">
+                                                <span class="badge-ch-laranja">${ativ.ch}h de CH</span>
+                                                <span class="badge-confirmados-azul">${ativ.totalConfirmados} confirmados</span>
+                                            </div>
+                                        </div>
+                                        <div class="evento-detalhe-linha" style="margin-top: 4px;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                            ${dataFormatada} às ${ativ.hora}
+                                        </div>
+                                        <div class="evento-detalhe-linha">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                            ${ativ.local}
+                                        </div>
+                                    </div>
+                                    <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:var(--texto-secundario); align-self:center;"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                                </div>
+                                <div class="barra-prazo" id="${timerId}" data-limite="${limiteMs}">
+                                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg> 
+                                    Prazo limite: Calculando...
+                                </div>
+                            </div>
+                        `;
+                    });
+                    containerProx.innerHTML = htmlProx;
+                }
+            }
         }
 
         function renderizarHistoricoGeral() {
@@ -2002,7 +2076,7 @@
             document.getElementById("stat-ch").innerText = totalCH + "h";
 
             if (atividadesDesteMes.length === 0) {
-                listaAtividades.innerHTML = "<p class='sem-atividade'>Não há atividades agendadas para este mês.</p>";
+                listaAtividades.innerHTML = "<p class='sem-atividade' style='text-align: center; color: var(--texto-secundario); font-size: 13px; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,34,80,0.03);'>Não há atividades agendadas para este mês.</p>";
                 return;
             }
 
@@ -2017,29 +2091,28 @@
 
                 if (ativ.publico === 'diretoria') {
                     sinalizacaoDiretoriaHtml = `
-                        <div style="background: #e7f5ff; border-left: 4px solid #1c7ed6; padding: 8px; border-radius: 6px; margin-bottom: 8px;">
-                            <p style="color: #1971c2; font-size: 12px; font-weight: bold; margin: 0;">👔 Atividade Exclusiva da Diretoria</p>
+                        <div style="background: var(--azul-claro); border-left: 4px solid var(--azul-texto); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                            <p style="color: var(--azul-texto); font-size: 12px; font-weight: 700; margin: 0;">👔 Atividade Exclusiva da Diretoria</p>
                         </div>
                     `;
                 }
 
                 if (ativ.cancelada) {
                     statusOficialHtml = `
-                        <div style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                            <p style="color: #e67700; font-size: 13px; font-weight: bold; margin: 0;">🚫 Atividade Cancelada</p>
-                            <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                        <div style="background: var(--amarelo-fundo); border-left: 4px solid var(--amarelo-texto); padding: 10px; border-radius: 8px; margin-top: 12px;">
+                            <p style="color: var(--amarelo-texto); font-size: 13px; font-weight: 700; margin: 0;">🚫 Atividade Cancelada</p>
+                            <p style="color: var(--texto-secundario); font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                         </div>
                     `;
                 } else if (ativ.statusAdmin === 'aguardando_analise') {
                     statusOficialHtml = `
-                        <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #d97706; font-weight: bold;">
+                        <div style="background: var(--amarelo-fundo); border-left: 4px solid var(--amarelo-texto); padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 12px; color: var(--amarelo-texto); font-weight: 700;">
                             ⏳ Justificativa em análise pela diretoria
                         </div>
                     `;
-                    botoesCardHtml = `<span style="font-size: 11px; color: #888;">Aguardando avaliação da diretoria</span>`;
+                    botoesCardHtml = `<span style="font-size: 12px; color: var(--texto-secundario); font-weight:600;">Aguardando avaliação...</span>`;
                 } else if (ativ.statusAdmin === 'justificado') {
-                    statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
-                    botoesCardHtml = `<span style="font-size: 11px; color: #2b8a3e; font-weight: bold;">Sua justificativa foi aceita pela diretoria.</span>`;
+                    statusOficialHtml = `<p style="color: var(--verde-texto); font-size: 13px; font-weight: 700; margin-top: 12px;">✓ Justificativa Aceita (Abonada)</p>`;
                 } else {
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
@@ -2059,10 +2132,10 @@
 
                     if (estaComPrazoExtraAberto) {
                         let timestampExtraMs = expiraEmDate ? expiraEmDate.getTime() : 0;
-                        let contadorExtraHtml = `<div id="timer-extra-${ativ.id}" data-expira="${timestampExtraMs}" style="font-size: 10px; margin-top: 2px;">⏳ Calculando prazo extra...</div>`;
+                        let contadorExtraHtml = `<div id="timer-extra-${ativ.id}" data-expira="${timestampExtraMs}" style="font-size: 11px; margin-top: 2px;">⏳ Calculando prazo extra...</div>`;
 
                         statusOficialHtml = `
-                            <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
+                            <div style="background: var(--verde-fundo); border-left: 4px solid var(--verde-texto); padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 12px; color: var(--verde-texto); font-weight: 700;">
                                 🔓 Prazo extra aberto pela diretoria
                                 ${contadorExtraHtml}
                             </div>
@@ -2070,7 +2143,7 @@
 
                         if (agora < dataHoraAtiv) {
                             if (ativ.confirmadoAluno) {
-                                botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                                botoesCardHtml = `<button class="btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
                             } else {
                                 botoesCardHtml = `
                                     <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
@@ -2086,36 +2159,37 @@
                         let expirado = ativ.prazoFechadoManual === true || prazoNaturalExpirado || prazoExtraExpiradoPorTempo;
 
                         if (ativ.statusAdmin === 'presente') {
-                            statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
+                            statusOficialHtml = `<p style="color: var(--verde-texto); font-size: 13px; font-weight: 700; margin-top: 12px;">✓ Presença validada pela Diretoria</p>`;
                         } else if ((ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada') && expirado && !ativ.confirmadoAluno) {
                             statusOficialHtml = `
-                                <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                                    <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
-                                    <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                <div style="background: var(--vermelho-fundo); border-left: 4px solid var(--vermelho-texto); padding: 10px; border-radius: 8px; margin-top: 12px;">
+                                    <p style="color: var(--vermelho-texto); font-size: 13px; font-weight: 700; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                    <p style="color: var(--texto-secundario); font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                                 </div>
                             `;
                         } else if (ativ.statusAdmin === 'negado') {
-                            statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta</p>`;
+                            statusOficialHtml = `<p style="color: var(--vermelho-texto); font-size: 13px; font-weight: 700; margin-top: 12px;">✕ Falta Registrada</p>`;
                         } else if (ativ.statusAdmin === 'justificativa_negada') {
-                            statusOficialHtml = `<p class="tag-justificativa-negada" style="margin-top: 8px;">✕ Justificativa Negada</p>`;
+                            statusOficialHtml = `<p style="color: var(--vermelho-texto); font-size: 13px; font-weight: 700; margin-top: 12px;">✕ Justificativa Negada</p>`;
                         } else {
                             if (expirado) {
                                 statusOficialHtml = `
-                                    <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                                        <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
-                                        <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                    <div style="background: var(--vermelho-fundo); border-left: 4px solid var(--vermelho-texto); padding: 10px; border-radius: 8px; margin-top: 12px;">
+                                        <p style="color: var(--vermelho-texto); font-size: 13px; font-weight: 700; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                        <p style="color: var(--texto-secundario); font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                                     </div>
                                 `;
                             } else {
                                 let limiteMs = limitePrazo.getTime();
                                 statusOficialHtml = `
-                                    <div id="timer-${ativ.id}" data-limite="${limiteMs}" style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #664d03; font-weight: bold;">
-                                        ⏳ Calculando prazo limite...
+                                    <div id="timer-${ativ.id}" data-limite="${limiteMs}" style="background: #fff9db; border-radius: 8px; padding: 10px; margin-top: 12px; font-size: 12px; color: #664d03; font-weight: 700; display:flex; align-items:center; gap:6px;">
+                                        <svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                        Calculando prazo...
                                     </div>
                                 `;
 
                                 if (ativ.confirmadoAluno) {
-                                    botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                                    botoesCardHtml = `<button class="btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
                                 } else {
                                     botoesCardHtml = `
                                         <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
@@ -2132,30 +2206,30 @@
                 let textoConfirmadoAndamento = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
 
                 listaAtividades.innerHTML += `
-                    <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo}">
+                    <div id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo} background: white; border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,34,80,0.04);">
                         ${sinalizacaoDiretoriaHtml}
-                        <div class="badges" style="margin-bottom: 6px;">
-                            <span class="badge-dias">${ativ.ch}h de CH</span>
-                            <span class="badge-confirmados">${textoConfirmadoAndamento}</span>
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                            <span style="background: #fff4e6; color: #d9480f; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800;">${ativ.ch}h de CH</span>
+                            <span style="background: var(--azul-claro); color: var(--azul-texto); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800;">${textoConfirmadoAndamento}</span>
                         </div>
                         
-                        <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
-                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
-                            <div style="text-align: right; white-space: nowrap; color: #0056b3; font-weight: bold; font-size: 11px; padding-top: 2px;">
-                                <span id="seta-ativ-${ativ.id}">${estaAberto ? '▲ Ocultar' : '▼ Detalhes'}</span>
+                        <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 12px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
+                            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--texto-principal); word-break: break-word; line-height:1.3;">${ativ.titulo}</h3>
+                            <div style="text-align: right; color: var(--texto-secundario); padding-top: 4px;">
+                                <svg id="seta-ativ-${ativ.id}" viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor; transform: ${estaAberto ? 'rotate(180deg)' : 'rotate(0)'}; transition: transform 0.3s;"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
                             </div>
                         </div>
 
-                        <div class="info-atividade" style="margin-top: 8px;" onclick="toggleExpandirAtividadeApp('${ativ.id}')" style="cursor: pointer;">
-                            <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
-                            <p style="margin: 2px 0;"><strong>Local:</strong> ${ativ.local}</p>
+                        <div style="margin-top: 12px; font-size: 13px; color: var(--texto-secundario);" onclick="toggleExpandirAtividadeApp('${ativ.id}')" style="cursor: pointer;">
+                            <p style="margin: 4px 0; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            <p style="margin: 4px 0; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${ativ.local}</p>
                         </div>
 
                         ${statusOficialHtml}
 
-                        <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: ${estaAberto ? 'block' : 'none'}; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
-                            <p class="desc-atividade" style="margin-bottom: 10px;">${ativ.desc}</p>
-                            ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
+                        <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: ${estaAberto ? 'block' : 'none'};">
+                            <p style="margin-bottom: 12px; font-size: 13px; color: var(--texto-principal); line-height:1.5;">${ativ.desc}</p>
+                            ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card">${botoesCardHtml}</div>` : ''}
                         </div>
                     </div>
                 `;
@@ -2168,9 +2242,8 @@
                 ativConcluidas.forEach(ativ => {
                     const dataObj = new Date(ativ.data + "T00:00:00");
                     let mensagemConcluida = "Atividade Concluída";
-                    let corStatus = "#2b8a3e";
-                    let fundoStatus = "#ebfbee";
-                    let bordaStatus = "#2b8a3e";
+                    let corStatus = "var(--verde-texto)";
+                    let fundoStatus = "var(--verde-fundo)";
 
                     if (ativ.statusAdmin === 'presente') {
                         mensagemConcluida = "Presença Validada (" + ativ.ch + "h)";
@@ -2178,57 +2251,53 @@
                         mensagemConcluida = "Justificativa Aceita (Abonada)";
                     } else if (ativ.statusAdmin === 'negado') {
                         mensagemConcluida = "Falta Registrada";
-                        corStatus = "#c92a2a";
-                        fundoStatus = "#ffe3e3";
-                        bordaStatus = "#e03131";
+                        corStatus = "var(--vermelho-texto)";
+                        fundoStatus = "var(--vermelho-fundo)";
                     } else if (ativ.statusAdmin === 'justificativa_negada') {
                         mensagemConcluida = "Justificativa Negada (Falta)";
-                        corStatus = "#c92a2a";
-                        fundoStatus = "#ffe3e3";
-                        bordaStatus = "#e03131";
+                        corStatus = "var(--vermelho-texto)";
+                        fundoStatus = "var(--vermelho-fundo)";
                     }
 
                     let textoPresente = ativ.totalPresentes === 1 ? "1 presente" : `${ativ.totalPresentes} presentes`;
                     let textoJust = ativ.totalJustificativas === 1 ? "1 justificativa" : `${ativ.totalJustificativas} justificativas`;
                     let textoFalta = ativ.totalFaltas === 1 ? "1 falta" : `${ativ.totalFaltas} faltas`;
-                    let textoJustNegadas = ativ.totalJustNegadas === 1 ? "1 just. negada" : `${ativ.totalJustNegadas} just. negadas`;
 
                     htmlCartasConcluidas += `
-                        <div class="card-atividade card-atividade-concluida">
-                            <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
-                                <span class="badge-dias" style="background: #e9ecef; color: #343a40; font-weight: bold;">${ativ.ch}h de CH</span>
-                                <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
-                                <span class="badge-dias" style="background: #e7f5ff; color: #1c7ed6; font-weight: bold;">${textoJust}</span>
-                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoFalta}</span>
-                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoJustNegadas}</span>
+                        <div class="card-atividade-concluida" style="background: white; border-radius: 20px; padding: 18px; border: 1px solid #e2e8f0;">
+                            <div style="margin-bottom: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+                                <span style="background: #f0f4f8; color: #495057; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">${ativ.ch}h CH</span>
+                                <span style="background: var(--verde-fundo); color: var(--verde-texto); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">${textoPresente}</span>
+                                <span style="background: var(--azul-claro); color: var(--azul-texto); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">${textoJust}</span>
+                                <span style="background: var(--vermelho-fundo); color: var(--vermelho-texto); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">${textoFalta}</span>
                             </div>
                             
-                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
+                            <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--texto-principal); word-break: break-word;">${ativ.titulo}</h3>
 
-                            <div class="info-atividade" style="margin-top: 6px;">
+                            <div style="margin-top: 8px; font-size: 12px; color: var(--texto-secundario);">
                                 <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
                             </div>
 
-                            <div style="background: ${fundoStatus}; border-left: 4px solid ${bordaStatus}; padding: 8px 10px; border-radius: 6px; margin-top: 8px;">
-                                <p style="color: ${corStatus}; font-size: 12px; font-weight: bold; margin: 0;">✅ ${mensagemConcluida}</p>
+                            <div style="background: ${fundoStatus}; border-left: 4px solid ${corStatus}; padding: 10px; border-radius: 8px; margin-top: 12px;">
+                                <p style="color: ${corStatus}; font-size: 12px; font-weight: 700; margin: 0;">✅ ${mensagemConcluida}</p>
                             </div>
                         </div>
                     `;
                 });
 
                 listaAtividades.innerHTML += `
-                    <div class="secao-pilha-concluidas">
-                        <div class="pilha-header-info">
+                    <div class="secao-pilha-concluidas" style="background: #ffffff; border-radius: 24px; padding: 20px; box-shadow: 0 4px 20px rgba(0,34,80,0.04); margin-top: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f4f8; padding-bottom: 14px; margin-bottom: 16px;">
                             <div>
-                                <span style="font-size: 13px; font-weight: bold; color: #0056b3;">✔️ Atividades Concluídas</span>
-                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Histórico do mês de ${nomeMesAtual.toLowerCase()}</p>
+                                <span style="font-size: 15px; font-weight: 800; color: var(--azul-primario);">✔️ Atividades Concluídas</span>
+                                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--texto-secundario);">Histórico do mês de ${nomeMesAtual.toLowerCase()}</p>
                             </div>
-                            <span style="font-size: 16px;">📚</span>
+                            <span style="font-size: 24px;">📚</span>
                         </div>
                         <div class="container-cartas-pilha" id="pilha-cartas-concluidas" onclick="togglePilhaConcluidas()">
                             ${htmlCartasConcluidas}
                         </div>
-                        <div class="hint-toque-pilha">👆 Toque na pilha para expandir / recolher</div>
+                        <div style="text-align: center; font-size: 12px; color: var(--texto-secundario); margin-top: 16px; font-weight: 600;">👆 Toque na pilha para expandir / recolher</div>
                     </div>
                 `;
             }
@@ -2262,7 +2331,7 @@
                         let horas = Math.floor((diffTempo % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         let minutos = Math.floor((diffTempo % (1000 * 60 * 60)) / (1000 * 60 * 60 / 60));
                         let segundos = Math.floor((diffTempo % (1000 * 60)) / 1000);
-                        el.innerHTML = `⏳ Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
+                        el.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg> Prazo limite: ${dias}d ${horas}h ${minutos}m ${segundos}s`;
                     }
                 });
 
@@ -2293,7 +2362,7 @@
                         let hEnq = Math.floor((diffEnq % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         let mEnq = Math.floor((diffEnq % (1000 * 60 * 60)) / (1000 * 60));
                         let sEnq = Math.floor((diffEnq % (1000 * 60)) / 1000);
-                        el.innerHTML = `⏳ ${dEnq > 0 ? dEnq + 'd ' : ''}${hEnq}h ${mEnq}m ${sEnq}s`;
+                        el.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor;"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg> ${dEnq > 0 ? dEnq + 'd ' : ''}${hEnq}h ${mEnq}m ${sEnq}s`;
                     }
                 });
             }, 1000);
@@ -2302,12 +2371,12 @@
         function toggleExpandirAtividadeApp(id) {
             let detalhes = document.getElementById(`detalhes-ativ-${id}`);
             let seta = document.getElementById(`seta-ativ-${id}`);
-            if (detalhes.style.display === "none") {
+            if (detalhes.style.display === "none" || detalhes.style.display === "") {
                 detalhes.style.display = "block";
-                seta.innerText = "▲ Ocultar";
+                seta.style.transform = "rotate(180deg)";
             } else {
                 detalhes.style.display = "none";
-                seta.innerText = "▼ Detalhes";
+                seta.style.transform = "rotate(0deg)";
             }
         }
 
@@ -2317,7 +2386,7 @@
             if(!container) return;
             container.innerHTML = "";
             if(avisos.length === 0) { 
-                container.innerHTML = "<p style='font-size:11px; padding:5px;'>Nenhum aviso no momento.</p>"; 
+                container.innerHTML = "<p style='font-size:12px; padding:5px;'>Nenhum aviso no momento.</p>"; 
                 if(contador) contador.innerText = "0/0";
                 return; 
             }
