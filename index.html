@@ -12,7 +12,7 @@
     <meta name="color-scheme" content="light">
 
     <style>
-        body { background-color: #f4f7f6; margin: 0; padding: 0 0 70px 0; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #f4f7f6; margin: 0; padding: 0; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
         
         #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: 60px auto; }
@@ -44,64 +44,6 @@
         .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
         .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
-
-        /* Barra de Navegação Inferior Estilo App Nativo */
-        .barra-navegacao-inferior {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 65px;
-            background: #002244;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 999;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
-            box-sizing: border-box;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .nav-item-inferior {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.6);
-            font-size: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            height: 100%;
-            transition: all 0.2s ease;
-        }
-        .nav-item-inferior svg {
-            width: 22px;
-            height: 22px;
-            margin-bottom: 3px;
-            fill: currentColor;
-        }
-        .nav-item-inferior.ativo {
-            color: #ffffff;
-        }
-        .nav-item-inferior.ativo .nav-pill-bg {
-            background: #0056b3;
-            padding: 4px 16px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,86,179,0.4);
-        }
-
-        /* Seções de Abas */
-        .app-tab-pane {
-            display: none;
-        }
-        .app-tab-pane.ativa {
-            display: block;
-        }
 
         /* Estilo do Baralho de Cartas Empilhadas */
         .secao-pilha-concluidas {
@@ -261,7 +203,7 @@
             background: #e9ecef;
         }
 
-        /* ESTILO CORRIGIDO DAS ENQUETES */
+        /* ESTILO CORRIGIDO DAS ENQUETES (LARGURA PADRÃO E BOTÃO EMBAIXO) */
         .enquete-item-card {
             background: #ffffff;
             border-radius: 12px;
@@ -557,180 +499,111 @@
         </div>
     </div>
 
-    <!-- TELA PRINCIPAL DO APP COM ABAS INFERIORES -->
+    <!-- TELA PRINCIPAL DO APP - FLUIDO E SEM A BORA DE CELULAR ARTIFICIAL -->
     <div id="conteudo-principal-app" style="display: none; width: 100%; box-sizing: border-box; background-color: #f4f7f6; min-height: 100vh;">
         
-        <!-- CABEÇALHO COM ESTILO VISUAL REFINADO -->
-        <header class="cabecalho" style="margin: 0; width: 100%; border-radius: 0; box-sizing: border-box; background: linear-gradient(135deg, #004494 0%, #002244 100%); padding: 20px 16px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <img src="brasao.png" alt="Brasão" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+        <header class="cabecalho" style="margin: 0; width: 100%; border-radius: 0; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
                 <div>
-                    <h2 id="titulo-boas-vindas" style="margin: 0 0 2px 0; font-size: 20px; color: #fff; font-weight: 800;">Olá, Allan!</h2>
-                    <span id="subtitulo-cargo" style="font-size: 11px; color: #69db7c; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">PRESIDENTE</span>
-                    <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 1px 8px; border-radius: 10px; font-size: 10px; color: #fff; font-weight: 700; margin-top: 2px;" id="topo-codigo-usuario">20252001</div>
+                    <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
+                    <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 38px; height: 38px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer;" onclick="abrirModalHistoricoSugestoes()" title="Notificações">
-                    🔔
-                </div>
-                <div class="avatar-perfil" id="container-avatar-topo" onclick="mudarAbaApp('perfil')" style="cursor: pointer; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"></div>
+            <div style="display: flex; align-items: center;">
+                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;"></div>
             </div>
         </header>
 
-        <!-- MIOLO DO APLICATIVO COM ABAS -->
-        <div style="padding: 12px; box-sizing: border-box;">
+        <!-- MIOLO DO APLICATIVO COM PADDING UNIFORME -->
+        <div style="padding: 12px;">
 
-            <!-- ABA 1: INÍCIO -->
-            <div id="pane-inicio" class="app-tab-pane ativa">
-                
-                <!-- AVISOS IMPORTANTES NO TOPO -->
-                <section class="quadro-avisos" style="margin-top: 0;">
-                    <div class="avisos-header">
-                        <span>⚠️ Avisos Importantes</span>
-                        <span id="contador-slide">1/3</span>
-                    </div>
-                    <div class="slides-container" id="container-slides"></div>
-                </section>
-
-                <!-- SEÇÃO DE ENQUETES ATIVAS -->
-                <section id="secao-enquetes-container" style="display: none; margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <p class="titulo-secao-geral" style="margin: 0; font-weight: bold; font-size: 14px; color: #333;">📊 Enquetes Ativas</p>
-                        <span style="font-size: 12px; color: #0056b3; font-weight: bold; cursor: pointer;">Ver todas &gt;</span>
-                    </div>
-                    <div id="bloco-enquetes-ativas"></div>
-                </section>
-
-                <!-- Resumo na Liga (Cards 2x2 customizados) -->
-                <section class="secao-historico-geral">
-                    <p class="titulo-secao-geral">👤 Seu Resumo na Liga</p>
-                    <div class="dashboard-estatisticas geral" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-                        <div class="card-stat" style="background: white; border-radius: 14px; padding: 12px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                            <div style="font-size: 18px; margin-bottom: 4px;">📅</div>
-                            <span class="stat-numero" id="geral-presencas" style="font-size: 18px; font-weight: 800; color: #2b8a3e;">0</span>
-                            <span class="stat-legenda" style="font-size: 10px; color: #666; font-weight: 700; display: block; margin-top: 2px;">PRESENÇAS</span>
-                        </div>
-                        <div class="card-stat" style="background: white; border-radius: 14px; padding: 12px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                            <div style="font-size: 18px; margin-bottom: 4px;">🛡️</div>
-                            <span class="stat-numero" id="geral-justificativas" style="font-size: 18px; font-weight: 800; color: #1c7ed6;">0</span>
-                            <span class="stat-legenda" style="font-size: 10px; color: #666; font-weight: 700; display: block; margin-top: 2px;">ABONADAS</span>
-                        </div>
-                        <div class="card-stat" style="background: white; border-radius: 14px; padding: 12px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                            <div style="font-size: 18px; margin-bottom: 4px;">⏱️</div>
-                            <span class="stat-numero" id="geral-ch" style="font-size: 16px; font-weight: 800; color: #495057;">0h</span>
-                            <span class="stat-legenda" style="font-size: 10px; color: #666; font-weight: 700; display: block; margin-top: 2px;">CH TOTAL</span>
-                        </div>
-                        <div class="card-stat destaque-ch" style="background: #003366; border-radius: 14px; padding: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,51,102,0.2);">
-                            <div style="font-size: 18px; margin-bottom: 4px;">⭐</div>
-                            <span class="stat-numero" id="geral-atividades" style="font-size: 18px; font-weight: 800; color: #ffffff;">0</span>
-                            <span class="stat-legenda" style="font-size: 10px; color: #cbd5e1; font-weight: 700; display: block; margin-top: 2px;">ATIVIDADES</span>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Financeiro & Aniversariantes lado a lado / empilhados harmoniosamente -->
-                <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 15px;">
-                    <!-- Financeiro -->
-                    <section class="secao-historico-geral" style="margin: 0;">
-                        <p class="titulo-secao-geral">💳 Situação Financeira (<span id="mes-financeiro-texto">Agosto / 2026</span>)</p>
-                        <div class="card-financeiro" style="background: #fff; border-radius: 14px; padding: 16px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                            <div class="fin-info" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                                <div>
-                                    <span class="fin-label" style="font-size: 11px; color: #666; display: block;">Valor do mês</span>
-                                    <span class="fin-valor" id="fin-valor-mes" style="font-size: 16px; font-weight: 800; color: #2b8a3e;">R$ 10,00</span>
-                                    <span class="fin-label" style="margin-top: 8px; font-size: 11px; color: #666; display: block;">Débito total acumulado</span>
-                                    <span class="fin-valor" id="fin-debito-total" style="font-size: 15px; font-weight: 800; color: #e03131;">R$ 0,00</span>
-                                </div>
-                                <div>
-                                    <span class="fin-label" style="font-size: 11px; color: #666; display: block; margin-bottom: 2px;">Status</span>
-                                    <span class="badge-status-financeiro" id="fin-status-badge" style="background: #ebfbee; color: #2b8a3e; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800;">Pendente</span>
-                                </div>
-                            </div>
-                            <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()" style="width: 100%; background: #0056b3; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">Pagar Mensalidade do Mês (Pix)</button>
-                        </div>
-                    </section>
-
-                    <!-- Seção de Aniversariantes -->
-                    <section class="secao-historico-geral" style="margin: 0;">
-                        <p class="titulo-secao-geral">🎉 Próximo Aniversariante</p>
-                        <div class="card-aniversariantes-completo" id="bloco-aniversariantes" style="margin: 0;">
-                            <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando painel de aniversariantes...</p>
-                        </div>
-                    </section>
+            <!-- AVISOS IMPORTANTES NO TOPO -->
+            <section class="quadro-avisos" style="margin-top: 0;">
+                <div class="avisos-header">
+                    <span>⚠️ Avisos Importantes</span>
+                    <span id="contador-slide">1/1</span>
                 </div>
+                <div class="slides-container" id="container-slides"></div>
+            </section>
 
-                <!-- Desempenho do Mês -->
-                <section class="secao-historico-geral">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <p class="titulo-secao-geral" style="margin: 0;">📅 Seu Desempenho em <span id="nome-mes-desempenho-texto">Agosto</span></p>
-                        <span style="font-size: 12px; color: #0056b3; font-weight: bold; cursor: pointer;" onclick="mudarAbaApp('atividades')">Ver detalhes &gt;</span>
-                    </div>
-                    <div class="dashboard-estatisticas" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; background: white; padding: 12px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                        <div class="card-stat" style="text-align: center;"><span class="stat-numero" id="stat-total" style="font-size: 15px; font-weight: 800;">0</span><span class="stat-legenda" style="font-size: 9px; color: #666; font-weight: 700; display: block;">TOTAL</span></div>
-                        <div class="card-stat" style="text-align: center;"><span class="stat-numero" id="stat-presencas" style="font-size: 15px; font-weight: 800; color: #2b8a3e;">0</span><span class="stat-legenda" style="font-size: 9px; color: #666; font-weight: 700; display: block;">PRESENÇA</span></div>
-                        <div class="card-stat" style="text-align: center;"><span class="stat-numero" id="stat-faltas" style="font-size: 15px; font-weight: 800; color: #c92a2a;">0</span><span class="stat-legenda" style="font-size: 9px; color: #666; font-weight: 700; display: block;">FALTAS</span></div>
-                        <div class="card-stat" style="text-align: center;"><span class="stat-numero" id="stat-justificativas" style="font-size: 15px; font-weight: 800; color: #1c7ed6;">0</span><span class="stat-legenda" style="font-size: 9px; color: #666; font-weight: 700; display: block;">ABONADAS</span></div>
-                        <div class="card-stat destaque-ch" style="text-align: center;"><span class="stat-numero" id="stat-ch" style="font-size: 15px; font-weight: 800; color: #0056b3;">0h</span><span class="stat-legenda" style="font-size: 9px; color: #666; font-weight: 700; display: block;">CH</span></div>
-                    </div>
-                </section>
-
-            </div>
-
-            <!-- ABA 2: CALENDÁRIO -->
-            <div id="pane-calendario" class="app-tab-pane">
-                <div style="margin-bottom: 12px;">
-                    <h2 style="margin: 0; font-size: 22px; color: #003366; font-weight: 800;">Calendário</h2>
-                    <p style="margin: 2px 0 0 0; font-size: 12px; color: #666;">Acompanhe seus eventos e atividades da LAPE.</p>
+            <!-- SEÇÃO DE ENQUETES ATIVAS COM LARGURA PROPORCIONAL E BOTÃO MUDAR ABAIXO -->
+            <section id="secao-enquetes-container" style="display: none; margin-bottom: 15px;">
+                <p class="titulo-secao-geral" style="margin-top: 0; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555;">📊 Enquetes Ativas</p>
+                <div id="bloco-enquetes-ativas">
+                    <!-- Preenchido dinamicamente via JS -->
                 </div>
+            </section>
 
-                <section class="calendario-mes" style="background: white; border-radius: 16px; padding: 16px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <div class="calendario-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                        <button id="btn-prev-mes" style="background: #f1f3f5; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer;">&lt;</button>
-                        <h3 id="mes-ano-texto" style="margin: 0; font-size: 16px; color: #003366; font-weight: 800;">Mês Ano</h3>
-                        <button id="btn-next-mes" style="background: #f1f3f5; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer;">&gt;</button>
-                    </div>
-                    <div class="grid-calendario dias-semana" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px;">
-                        <div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>
-                    </div>
-                    <div id="grid-dias" class="grid-calendario" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;"></div>
-                    
-                    <!-- Legenda do Calendário -->
-                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #f1f3f5; font-size: 10px; color: #666; font-weight: 600;">
-                        <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #2b8a3e; border-radius: 50%;"></span> Tem atividades</span>
-                        <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #0056b3; border-radius: 50%;"></span> Selecionado</span>
-                        <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #7950f2; border-radius: 50%;"></span> Hoje</span>
-                    </div>
-                </section>
-
-                <!-- Bloco de Eventos do Dia Selecionado -->
-                <section style="margin-top: 15px;">
-                    <p style="font-weight: bold; font-size: 14px; color: #333; margin-bottom: 8px;">📅 Eventos do dia <span id="data-selecionada-texto">26/08</span></p>
-                    <div id="lista-eventos-dia-calendario">
-                        <!-- Preenchido dinamicamente ou listado -->
-                    </div>
-                </section>
-            </div>
-
-            <!-- ABA 3: ATIVIDADES -->
-            <div id="pane-atividades" class="app-tab-pane">
-                <div style="margin-bottom: 12px;">
-                    <h2 style="margin: 0; font-size: 22px; color: #003366; font-weight: 800;">Atividades do Mês</h2>
-                    <p style="margin: 2px 0 0 0; font-size: 12px; color: #666;">Gerencie suas presenças e prazos de justificativa.</p>
+            <!-- Histórico Geral Acumulado -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
+                <div class="dashboard-estatisticas geral" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="card-stat"><span class="stat-numero" id="geral-atividades">0</span><span class="stat-legenda">Passadas</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="geral-presencas">0</span><span class="stat-legenda">Presenças</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Abonadas</span></div>
+                    <div class="card-stat destaque-ch"><span class="stat-numero" id="geral-ch">0h</span><span class="stat-legenda">CH Total</span></div>
                 </div>
-                <section class="atividades" style="margin-top: 0;">
-                    <div id="lista-atividades"></div>
-                </section>
-            </div>
+            </section>
 
-            <!-- ABA 4: SOLICITAÇÕES / OUVIDORIA -->
-            <div id="pane-solicitacoes" class="app-tab-pane">
-                <div style="margin-bottom: 12px;">
-                    <h2 style="margin: 0; font-size: 22px; color: #003366; font-weight: 800;">Ouvidoria & Solicitações</h2>
-                    <p style="margin: 2px 0 0 0; font-size: 12px; color: #666;">Envie sugestões, relatos ou acompanhe seus chamados de forma sigilosa.</p>
+            <!-- Financeiro com Acumulado e Mês Atual -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">💳 Situação Financeira (<span id="mes-financeiro-texto">Mês Atual</span>)</p>
+                <div class="card-financeiro">
+                    <div class="fin-info" style="align-items: flex-start;">
+                        <div>
+                            <span class="fin-label">Valor do Mês:</span><span class="fin-valor" id="fin-valor-mes" style="font-size: 15px;">R$ 10,00</span>
+                            <span class="fin-label" style="margin-top: 6px;">Débito Total Acumulado:</span><span class="fin-valor" id="fin-debito-total" style="color: #e03131;">R$ 10,00</span>
+                        </div>
+                        <div><span class="fin-label">Status do Mês:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
+                    </div>
+                    <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()">Pagar Mensalidade do Mês (Pix)</button>
                 </div>
+            </section>
 
-                <div class="card-ouvidoria-completo" id="bloco-ouvidoria" style="margin-bottom: 15px;">
+            <!-- Seção de Aniversariantes -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">🎉 Aniversariantes & Ciclos</p>
+                <div class="card-aniversariantes-completo" id="bloco-aniversariantes">
+                    <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando painel de aniversariantes...</p>
+                </div>
+            </section>
+
+            <!-- Calendário -->
+            <section class="calendario-mes">
+                <div class="calendario-header">
+                    <button id="btn-prev-mes">&lt;</button>
+                    <h3 id="mes-ano-texto">Mês Ano</h3>
+                    <button id="btn-next-mes">&gt;</button>
+                </div>
+                <div class="grid-calendario dias-semana">
+                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                </div>
+                <div id="grid-dias" class="grid-calendario"></div>
+            </section>
+
+            <!-- Desempenho do Mês -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">📅 Desempenho no Mês</p>
+                <div class="dashboard-estatisticas" style="grid-template-columns: repeat(5, 1fr); gap: 4px;">
+                    <div class="card-stat"><span class="stat-numero" id="stat-total">0</span><span class="stat-legenda" style="font-size:9px;">Total</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="stat-presencas">0</span><span class="stat-legenda" style="font-size:9px;">Presença</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="stat-faltas">0</span><span class="stat-legenda" style="font-size:9px;">Faltas</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="stat-justificativas">0</span><span class="stat-legenda" style="font-size:9px;">Abonadas</span></div>
+                    <div class="card-stat destaque-ch"><span class="stat-numero" id="stat-ch">0h</span><span class="stat-legenda" style="font-size:9px;">CH</span></div>
+                </div>
+            </section>
+
+            <!-- Atividades -->
+            <section class="atividades">
+                <h2>Atividades do Mês</h2>
+                <div id="lista-atividades"></div>
+            </section>
+
+            <!-- ABA: OUVIDORIA & SUGESTÕES ANÔNIMAS -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">💡 Ouvidoria & Sugestões Anônimas</p>
+                <div class="card-ouvidoria-completo" id="bloco-ouvidoria">
                     <div class="aniv-header-info">
                         <div>
                             <span style="font-size: 13px; font-weight: bold; color: #7950f2;">🔒 Espaço 100% Confidencial</span>
@@ -739,164 +612,16 @@
                         <span style="font-size: 18px;">🛡️</span>
                     </div>
 
-                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <div style="display: flex; gap: 8px; margin-bottom: 4px;">
                         <button class="btn-acao-ouvidoria" style="background-color: #7950f2; color: white;" onclick="abrirModalNovaSugestao()">✏️ Nova Solicitação</button>
                         <button class="btn-acao-ouvidoria" style="background-color: #f1f3f5; color: #495057; border: 1px solid #ced4da;" onclick="abrirModalHistoricoSugestoes()">📋 Minhas Solicitações</button>
                     </div>
 
                     <div id="resumo-ultimas-sugestoes"></div>
                 </div>
-
-                <!-- Histórico Completo Inline na Aba de Solicitações -->
-                <div style="background: white; border-radius: 14px; padding: 16px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                    <p style="margin: 0 0 10px 0; font-size: 13px; font-weight: bold; color: #003366;">📋 Histórico de Chamados e Respostas</p>
-                    <div id="lista-historico-sugestoes-inline" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                </div>
-            </div>
-
-            <!-- ABA 5: PERFIL -->
-            <div id="pane-perfil" class="app-tab-pane">
-                <div style="background: #ffffff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
-                    
-                    <div class="perfil-topo-splendido" style="border-radius: 16px; margin: 0 0 16px 0; padding: 24px 16px;">
-                        <div class="perfil-avatar-wrapper" id="perfil-avatar-container"></div>
-                        <div class="botao-trocar-foto-flutuante" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
-                        <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
-                        
-                        <h3 id="perfil-nome" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #ffffff;">Nome Completo</h3>
-                        <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 4px;" id="perfil-codigo">20261000</div>
-                        <p id="perfil-cargo" style="margin: 0; font-size: 11px; font-weight: 700; color: #69db7c; text-transform: uppercase; letter-spacing: 0.8px;">Cargo</p>
-                        <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
-                    </div>
-
-                    <div class="perfil-abas-navegacao">
-                        <button class="btn-aba-perfil ativa" id="aba-btn-dados" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
-                        <button class="btn-aba-perfil" id="aba-btn-estatisticas" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
-                        <button class="btn-aba-perfil" id="aba-btn-seguranca" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
-                    </div>
-
-                    <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados">
-                        <div class="perfil-grid-detalhes">
-                            <div class="perfil-card-info">
-                                <span class="perfil-card-label">E-mail</span>
-                                <span class="perfil-card-valor" id="perfil-email" style="font-size: 11px;">-</span>
-                            </div>
-                            <div class="perfil-card-info">
-                                <span class="perfil-card-label">Telefone</span>
-                                <span class="perfil-card-valor" id="perfil-tel">-</span>
-                            </div>
-                            <div class="perfil-card-info">
-                                <span class="perfil-card-label">Nascimento</span>
-                                <span class="perfil-card-valor" id="perfil-nascimento">-</span>
-                            </div>
-                            <div class="perfil-card-info">
-                                <span class="perfil-card-label">Ingresso Liga</span>
-                                <span class="perfil-card-valor" id="perfil-ingresso">-</span>
-                            </div>
-                            <div class="perfil-card-info full">
-                                <span class="perfil-card-label">Curso & Turno</span>
-                                <span class="perfil-card-valor" id="perfil-curso">-</span>
-                            </div>
-                            <div class="perfil-card-info">
-                                <span class="perfil-card-label">Matrícula</span>
-                                <span class="perfil-card-valor" id="perfil-matricula">-</span>
-                            </div>
-                            <div class="perfil-card-info">
-                                <span class="perfil-card-label">Formatura Prevista</span>
-                                <span class="perfil-card-valor" id="perfil-formatura">-</span>
-                            </div>
-                            <div class="perfil-card-info full">
-                                <span class="perfil-card-label">Instituição</span>
-                                <span class="perfil-card-valor" id="perfil-instituicao">-</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas">
-                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <span style="display: block; font-size: 16px; font-weight: 800; color: #2b8a3e;" id="perfil-stat-presencas">0</span>
-                                    <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Presenças</span>
-                                </div>
-                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <span style="display: block; font-size: 16px; font-weight: 800; color: #c92a2a;" id="perfil-stat-faltas">0</span>
-                                    <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Faltas</span>
-                                </div>
-                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <span style="display: block; font-size: 16px; font-weight: 800; color: #1c7ed6;" id="perfil-stat-ch">0h</span>
-                                    <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Carga Horária</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca">
-                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
-                            <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha Segura</span>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <div>
-                                    <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Senha Atual</label>
-                                    <input type="password" id="input-senha-atual" placeholder="Sua senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                                </div>
-                                <div>
-                                    <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Nova Senha</label>
-                                    <input type="password" id="input-senha-nova" placeholder="Mínimo de caracteres" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                                </div>
-                                <div>
-                                    <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Confirmar Nova Senha</label>
-                                    <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-                                </div>
-                                <button class="btn-salvar" style="padding: 9px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha no Sistema</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                        <div id="btn-container-painel-admin"></div>
-                        <button class="btn-fechar-perfil" style="background-color: #e03131; width: 100%; padding: 12px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair da Conta</button>
-                    </div>
-
-                </div>
-            </div>
+            </section>
 
         </div>
-
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA -->
-        <nav class="barra-navegacao-inferior">
-            <button class="nav-item-inferior ativo" id="nav-btn-inicio" onclick="mudarAbaApp('inicio')">
-                <div class="nav-pill-bg">
-                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                    <span>Início</span>
-                </div>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-calendario" onclick="mudarAbaApp('calendario')">
-                <div class="nav-pill-bg">
-                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
-                    <span>Calendário</span>
-                </div>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-atividades" onclick="mudarAbaApp('atividades')">
-                <div class="nav-pill-bg">
-                    <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                    <span>Atividades</span>
-                </div>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-solicitacoes" onclick="mudarAbaApp('solicitacoes')">
-                <div class="nav-pill-bg">
-                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-                    <span>Solicitações</span>
-                </div>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-perfil" onclick="mudarAbaApp('perfil')">
-                <div class="nav-pill-bg">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-                    <span>Perfil</span>
-                </div>
-            </button>
-        </nav>
-
     </div>
 
     <!-- MODAL DE NOVA SUGESTÃO / OUVIDORIA -->
@@ -988,6 +713,115 @@
             <div style="display: flex; gap: 8px; margin-top: 15px;">
                 <button class="btn-salvar" style="flex: 1; padding: 10px;" onclick="enviarJustificativaCustomizada()">Enviar Justificativa</button>
                 <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalJustificativa()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PERFIL SPLÉNDIDO & COMPLEXO COM ABAS -->
+    <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
+        <div class="modal-perfil-conteudo">
+            
+            <div class="perfil-topo-splendido">
+                <div class="perfil-avatar-wrapper" id="perfil-avatar-container"></div>
+                <div class="botao-trocar-foto-flutuante" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
+                <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
+                
+                <h3 id="perfil-nome" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #ffffff;">Nome Completo</h3>
+                <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 4px;" id="perfil-codigo">20261000</div>
+                <p id="perfil-cargo" style="margin: 0; font-size: 11px; font-weight: 700; color: #69db7c; text-transform: uppercase; letter-spacing: 0.8px;">Cargo</p>
+                <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
+            </div>
+
+            <div class="perfil-abas-navegacao">
+                <button class="btn-aba-perfil ativa" id="aba-btn-dados" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
+                <button class="btn-aba-perfil" id="aba-btn-estatisticas" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
+                <button class="btn-aba-perfil" id="aba-btn-seguranca" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
+            </div>
+
+            <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados">
+                <div class="perfil-grid-detalhes">
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">E-mail</span>
+                        <span class="perfil-card-valor" id="perfil-email" style="font-size: 11px;">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Telefone</span>
+                        <span class="perfil-card-valor" id="perfil-tel">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Nascimento</span>
+                        <span class="perfil-card-valor" id="perfil-nascimento">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Ingresso Liga</span>
+                        <span class="perfil-card-valor" id="perfil-ingresso">-</span>
+                    </div>
+                    <div class="perfil-card-info full">
+                        <span class="perfil-card-label">Curso & Turno</span>
+                        <span class="perfil-card-valor" id="perfil-curso">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Matrícula</span>
+                        <span class="perfil-card-valor" id="perfil-matricula">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Formatura Prevista</span>
+                        <span class="perfil-card-valor" id="perfil-formatura">-</span>
+                    </div>
+                    <div class="perfil-card-info full">
+                        <span class="perfil-card-label">Instituição</span>
+                        <span class="perfil-card-valor" id="perfil-instituicao">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas">
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #2b8a3e;" id="perfil-stat-presencas">0</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Presenças</span>
+                        </div>
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #c92a2a;" id="perfil-stat-faltas">0</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Faltas</span>
+                        </div>
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #1c7ed6;" id="perfil-stat-ch">0h</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Carga Horária</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca">
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha Segura</span>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Senha Atual</label>
+                            <input type="password" id="input-senha-atual" placeholder="Sua senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Nova Senha</label>
+                            <input type="password" id="input-senha-nova" placeholder="Mínimo de caracteres" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Confirmar Nova Senha</label>
+                            <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <button class="btn-salvar" style="padding: 9px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha no Sistema</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                <div id="btn-container-painel-admin"></div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair da Conta</button>
+                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharPerfilModal()">Fechar Perfil</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1085,31 +919,13 @@
             corpo.style.backgroundColor = "#f4f7f6"; 
             
             document.getElementById('conteudo-principal-app').style.display = 'block';
-            document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}!`;
-            document.getElementById('subtitulo-cargo').innerText = (user.cargo || "Ligante").toUpperCase();
-            document.getElementById('topo-codigo-usuario').innerText = user.codigo || "";
+            document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
+            document.getElementById('subtitulo-cargo').innerText = user.cargo || "Ligante";
 
             renderizarAvatarTopo();
             iniciarOuvintesTempoReal();
             carregarAniversariantes();
             registrarServiceWorkerENotificacoes();
-        }
-
-        function mudarAbaApp(nomeAba) {
-            document.querySelectorAll('.app-tab-pane').forEach(pane => pane.classList.remove('ativa'));
-            document.querySelectorAll('.nav-item-inferior').forEach(btn => btn.classList.remove('ativa'));
-
-            let paneAlvo = document.getElementById(`pane-${nomeAba}`);
-            let btnAlvo = document.getElementById(`nav-btn-${nomeAba}`);
-
-            if (paneAlvo) paneAlvo.classList.add('ativa');
-            if (btnAlvo) btnAlvo.classList.add('ativa');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (nomeAba === 'perfil') {
-                preencherDadosPerfilCompleto();
-            }
         }
 
         function renderizarAvatarTopo() {
@@ -1190,32 +1006,91 @@
 
             listaProcessada.sort((a, b) => a.diffDias - b.diffDias);
 
-            let proximoAniversariante = listaProcessada[0];
+            let aniversariantesHoje = listaProcessada.filter(x => x.ehHoje);
+            let proximoAniversariante = listaProcessada.find(x => !x.ehHoje);
             let totalMesAtual = listaProcessada.filter(x => x.mesAtual).length;
 
-            let html = "";
-            if (proximoAniversariante) {
-                let textoDias = proximoAniversariante.ehHoje ? "Hoje! 🥳" : (proximoAniversariante.diffDias === 1 ? "Amanhã" : `Daqui a ${proximoAniversariante.diffDias} dias`);
-                let avatarProximoHtml = proximoAniversariante.fotoUrl 
-                    ? `<div class="aniversario-avatar"><img src="${proximoAniversariante.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
-                    : `<div class="aniversario-avatar">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
-
-                html = `
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        ${avatarProximoHtml}
-                        <div style="flex: 1; overflow: hidden;">
-                            <p style="margin: 0; font-size: 14px; font-weight: bold; color: #003366; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${proximoAniversariante.nome}</p>
-                            <p style="margin: 2px 0 0 0; font-size: 11px; color: #555;">${proximoAniversariante.idade} anos • ${proximoAniversariante.curso}</p>
-                        </div>
+            let html = `
+                <div class="aniv-header-info">
+                    <div>
+                        <span style="font-size: 13px; font-weight: bold; color: #0056b3;">🎂 Painel de Aniversariantes</span>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">${totalMesAtual} aniversariante(s) neste mês de ${nomesMeses[mesHoje - 1].toLowerCase()}</p>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;">
-                        <span style="font-size: 11px; font-weight: bold; color: #555;">📅 ${proximoAniversariante.dataFormatada}</span>
-                        <span style="font-size: 11px; background: #e7f5ff; color: #0056b3; padding: 2px 8px; border-radius: 6px; font-weight: bold;">${textoDias}</span>
+                    <span style="font-size: 18px;">🎉</span>
+                </div>
+            `;
+
+            if (aniversariantesHoje.length > 0) {
+                html += `<div class="aniv-bloco-secao"><div class="aniv-subtitulo">🌟 Aniversariantes de Hoje</div>`;
+                aniversariantesHoje.forEach(aniv => {
+                    let avatarHtml = aniv.fotoUrl 
+                        ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                        : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
+
+                    html += `
+                        <div class="aniversario-item-complexo" style="border-color: #ff6b6b; background: #fff5f5;">
+                            ${avatarHtml}
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">${aniv.nome}</p>
+                                    <span style="font-size: 11px; background: #ff6b6b; color: white; padding: 1px 6px; border-radius: 4px; font-weight: bold;">Hoje! 🥳</span>
+                                </div>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completando <strong>${aniv.idade} anos</strong></p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">📅 ${aniv.dataFormatada}</span>
+                                    <span class="aniv-badge-info">💼 ${aniv.cargo}</span>
+                                    <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            } else {
+                html += `
+                    <div class="aniv-bloco-secao">
+                        <div class="aniv-subtitulo">Aniversariante de Hoje</div>
+                        <div class="aniversario-item-complexo">
+                            <div class="aniversario-avatar" style="background: #e9ecef; color: #6c757d;">📅</div>
+                            <div style="flex: 1;">
+                                <p style="margin: 0; font-size: 12px; font-weight: bold; color: #555;">Nenhum aniversariante hoje</p>
+                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #777;">Aproveite para conferir o próximo colega da liga abaixo!</p>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
 
-            html += `<button class="btn-ver-todos-aniv" onclick="abrirModalTodosAniversariantes()">Ver lista completa do mês (${totalMesAtual}) &gt;</button>`;
+            if (proximoAniversariante) {
+                let textoDias = proximoAniversariante.diffDias === 1 ? "Amanhã" : `Daqui a ${proximoAniversariante.diffDias} dias`;
+                let avatarProximoHtml = proximoAniversariante.fotoUrl 
+                    ? `<div class="aniversario-avatar"><img src="${proximoAniversariante.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                    : `<div class="aniversario-avatar">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
+
+                html += `
+                    <div class="aniv-bloco-secao" style="margin-top: 10px;">
+                        <div class="aniv-subtitulo">⏭️ Próximo Aniversariante</div>
+                        <div class="aniversario-item-complexo">
+                            ${avatarProximoHtml}
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${proximoAniversariante.nome}</p>
+                                    <span style="font-size: 10px; background: #e7f5ff; color: #0056b3; padding: 1px 6px; border-radius: 4px; font-weight: bold;">${textoDias}</span>
+                                </div>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completará ${proximoAniversariante.idade} anos</p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">📅 ${proximoAniversariante.dataFormatada}</span>
+                                    <span class="aniv-badge-info">💼 ${proximoAniversariante.cargo}</span>
+                                    <span class="aniv-badge-info">🎓 ${proximoAniversariante.curso}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `<button class="btn-ver-todos-aniv" onclick="abrirModalTodosAniversariantes()">Ver Lista Completa do Mês (${totalMesAtual})</button>`;
+
             container.innerHTML = html;
         }
 
@@ -1307,12 +1182,12 @@
                     }
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                     renderizarAvatarTopo();
-                    document.getElementById('subtitulo-cargo').innerText = (usuarioLogado.cargo || "Ligante").toUpperCase();
+                    document.getElementById('subtitulo-cargo').innerText = usuarioLogado.cargo || "Ligante";
                     atualizarFinanceiroApp();
 
-                    let panePerfil = document.getElementById("pane-perfil");
-                    if (panePerfil && panePerfil.classList.contains("ativa")) {
-                        preencherDadosPerfilCompleto();
+                    let modalPerfil = document.getElementById("modal-perfil");
+                    if (modalPerfil && modalPerfil.style.display === "flex") {
+                        abrirPerfilModal();
                     }
                 }
             });
@@ -1336,7 +1211,6 @@
                     return tB - tA;
                 });
                 renderizarOuvidoriaWidget();
-                renderizarListaHistoricoSugestoesModal();
             });
 
             db.collection("avisos").onSnapshot((snapshot) => {
@@ -1445,6 +1319,7 @@
             });
         }
 
+        // --- RENDERIZADOR DE ENQUETES REFORMULADO (Proporcional e Botão "Mudar" embaixo) ---
         function renderizarEnquetesWidget() {
             let containerSecao = document.getElementById("secao-enquetes-container");
             let blocoEnquetes = document.getElementById("bloco-enquetes-ativas");
@@ -1499,6 +1374,7 @@
                     let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
                     let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
 
+                    // Estrutura ajustada com largura 100% igual aos demais blocos e sem restrições de largura excedentes
                     html += `
                         <div class="enquete-item-card">
                             ${contadorHtml}
@@ -1523,12 +1399,13 @@
                             `;
                         }
                     } else {
+                        // Voto devidamente estruturado em coluna (flex-direction: column) para o botão "Mudar" descer e ocupar o espaço com harmonia
                         html += `
                             <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
                                 <div style="font-size: 12px; color: #2b8a3e; font-weight: bold; word-break: break-word;">
-                                    ✓ Seu voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '<br><i>"' + textoVotado + '"</i>' : ''}
+                                    ✓ Voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '<br><i>"' + textoVotado + '"</i>' : ''}
                                 </div>
-                                <button class="btn-mudar-voto" onclick="mudarVotoEnquete('${enquete.id}')">Mudar / Alterar voto</button>
+                                <button class="btn-mudar-voto" onclick="mudarVotoEnquete('${enquete.id}')">Mudar Voto</button>
                             </div>
                         `;
                     }
@@ -1676,38 +1553,38 @@
         }
 
         function renderizarListaHistoricoSugestoesModal() {
-            let containerModal = document.getElementById("lista-historico-sugestoes-conteudo");
-            let containerInline = document.getElementById("lista-historico-sugestoes-inline");
+            let container = document.getElementById("lista-historico-sugestoes-conteudo");
+            if (!container) return;
 
-            let html = "";
             if (minhasSugestoesCache.length === 0) {
-                html = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Você ainda não enviou nenhuma sugestão ou reclamação.</p>`;
-            } else {
-                minhasSugestoesCache.forEach(item => {
-                    let badgeStyle = getBadgeStatusStyle(item.status);
-                    let respostaHtml = item.respostaDiretoria ? `
-                        <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
-                            <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta da Diretoria:</p>
-                            <p style="margin: 2px 0 0 0; font-size: 11px; color: #333;">${item.respostaDiretoria}</p>
-                        </div>
-                    ` : "";
-
-                    html += `
-                        <div class="ouvidoria-item-card" style="margin-top: 0; margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${item.tipo}]</span>
-                                <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
-                            </div>
-                            <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${item.titulo}</p>
-                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #555; line-height: 1.3;">${item.texto}</p>
-                            ${respostaHtml}
-                        </div>
-                    `;
-                });
+                container.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Você ainda não enviou nenhuma sugestão ou reclamação.</p>`;
+                return;
             }
 
-            if (containerModal) containerModal.innerHTML = html;
-            if (containerInline) containerInline.innerHTML = html;
+            let html = "";
+            minhasSugestoesCache.forEach(item => {
+                let badgeStyle = getBadgeStatusStyle(item.status);
+                let respostaHtml = item.respostaDiretoria ? `
+                    <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
+                        <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta da Diretoria:</p>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #333;">${item.respostaDiretoria}</p>
+                    </div>
+                ` : "";
+
+                html += `
+                    <div class="ouvidoria-item-card" style="margin-top: 0; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${item.tipo}]</span>
+                            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
+                        </div>
+                        <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${item.titulo}</p>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #555; line-height: 1.3;">${item.texto}</p>
+                        ${respostaHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         function getBadgeStatusStyle(status) {
@@ -1769,7 +1646,6 @@
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
-        let diaSelecionadoCalendario = dataAtual.getDate();
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function atualizarFinanceiroApp() {
@@ -1792,37 +1668,32 @@
             if(!cobravelAtual) {
                 valMesEl.innerText = "R$ 0,00";
                 badgeStatus.innerText = "Não Cobrado";
-                badgeStatus.style.background = "#e9ecef";
-                badgeStatus.style.color = "#495057";
+                badgeStatus.className = "badge-status-financeiro badge-fin abonado";
                 btnPix.style.display = "none";
             } else {
                 valMesEl.innerText = "R$ 10,00";
                 btnPix.style.display = "block";
                 if(statusMes === 'pago') {
                     badgeStatus.innerText = "Pago ✓";
-                    badgeStatus.style.background = "#ebfbee";
-                    badgeStatus.style.color = "#2b8a3e";
+                    badgeStatus.className = "badge-status-financeiro badge-fin pago";
                     btnPix.innerText = "Mensalidade Quitada";
                     btnPix.disabled = true;
                     btnPix.style.background = "#6c757d";
                 } else if(statusMes === 'analise') {
-                    badgeStatus.innerText = "Em Análise";
-                    badgeStatus.style.background = "#fff3bf";
-                    badgeStatus.style.color = "#f59f00";
+                    badgeStatus.innerText = "Aguardando Confirmação";
+                    badgeStatus.className = "badge-status-financeiro badge-fin analise";
                     btnPix.innerText = "Em análise pelo financeiro";
                     btnPix.disabled = true;
                     btnPix.style.background = "#f59f00";
                 } else if(statusMes === 'abonado') {
                     badgeStatus.innerText = "Abonado";
-                    badgeStatus.style.background = "#e9ecef";
-                    badgeStatus.style.color = "#495057";
+                    badgeStatus.className = "badge-status-financeiro badge-fin abonado";
                     btnPix.innerText = "Isento / Abonado";
                     btnPix.disabled = true;
                     btnPix.style.background = "#adb5bd";
                 } else {
                     badgeStatus.innerText = "Pendente";
-                    badgeStatus.style.background = "#ffe3e3";
-                    badgeStatus.style.color = "#c92a2a";
+                    badgeStatus.className = "badge-status-financeiro badge-fin pendente";
                     btnPix.innerText = "Pagar Mensalidade do Mês (Pix)";
                     btnPix.disabled = false;
                     btnPix.style.background = "#0056b3";
@@ -1882,11 +1753,10 @@
             document.getElementById(`aba-conteudo-${nomeAba}`).classList.add('ativa');
         }
 
-        function preencherDadosPerfilCompleto() {
-            if (!usuarioLogado) return;
+        function abrirPerfilModal() {
             document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
             document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo || "-";
-            document.getElementById("perfil-cargo").innerText = (usuarioLogado.cargo || "Ligante").toUpperCase();
+            document.getElementById("perfil-cargo").innerText = usuarioLogado.cargo || "Ligante";
             
             document.getElementById("perfil-email").innerText = usuarioLogado.email || "-";
             document.getElementById("perfil-tel").innerText = usuarioLogado.tel || "-";
@@ -1931,19 +1801,23 @@
 
             let avatarModal = document.getElementById("perfil-avatar-container");
             if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
-                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" class="perfil-avatar-img" style="width:100%; height:100%; object-fit:cover;">`;
+                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" class="perfil-avatar-img">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
-                avatarModal.innerHTML = `<div class="perfil-avatar-img" style="background:#003366; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px; width:100%; height:100%;">${inicial}</div>`;
+                avatarModal.innerHTML = `<div class="perfil-avatar-img" style="background:#003366; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px;">${inicial}</div>`;
             }
 
             let containerAdminBtn = document.getElementById("btn-container-painel-admin");
             if (cargoLower !== "ligante" && cargoLower !== "membro" && cargoLower !== "marketing") {
-                containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3; width: 100%; padding: 12px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer; margin-bottom: 8px;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
+                containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3; width: 100%; padding: 12px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
             } else {
                 containerAdminBtn.innerHTML = "";
             }
+
+            document.getElementById("modal-perfil").style.display = "flex";
         }
+
+        function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
 
         async function salvarNovaSenha() {
             let senhaAtualInput = document.getElementById("input-senha-atual").value.trim();
@@ -2019,7 +1893,7 @@
                             fotoTempUrl: base64Image,
                             fotoStatus: 'analise'
                         });
-                        preencherDadosPerfilCompleto();
+                        abrirPerfilModal();
                         alert("Foto enviada para análise da diretoria com sucesso!");
                     } catch(e) {
                         console.error(e);
@@ -2037,9 +1911,6 @@
 
         function renderizarApp() {
             document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
-            let nomeMesEl = document.getElementById("nome-mes-desempenho-texto");
-            if (nomeMesEl) nomeMesEl.innerText = nomesMeses[mesAtual];
-
             const gridDias = document.getElementById("grid-dias");
             if(!gridDias) return;
             gridDias.innerHTML = "";
@@ -2059,67 +1930,15 @@
                     if (usuarioLogado.ingressoLiga && ativ.data < usuarioLogado.ingressoLiga) return false;
                     return true;
                 });
-                let htmlPonto = temAtividade ? `<div class="ponto-verde" style="width: 5px; height: 5px; background: #2b8a3e; border-radius: 50%; margin: 2px auto 0 auto;"></div>` : ``;
+                let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
                 let hoje = new Date();
-                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "border: 2px solid #7950f2;" : "";
-                let ehSelecionado = (dia === diaSelecionadoCalendario) ? "background: #0056b3; color: white; font-weight: bold;" : "background: #f8f9fa; color: #333;";
-
-                gridDias.innerHTML += `
-                    <div class="dia-calendario" onclick="selecionarDiaCalendario(${dia})" style="padding: 8px 0; border-radius: 8px; cursor: pointer; font-size: 13px; ${ehSelecionado} ${ehHoje}">
-                        ${dia}
-                        ${htmlPonto}
-                    </div>
-                `;
+                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "dia-hoje" : "";
+                gridDias.innerHTML += `<div class="dia-calendario ${ehHoje}">${dia}${htmlPonto}</div>`;
             }
 
             renderizarHistoricoGeral();
             renderizarCardsENumeros();
-            renderizarEventosDiaCalendario();
             atualizarFinanceiroApp();
-        }
-
-        function selecionarDiaCalendario(dia) {
-            diaSelecionadoCalendario = dia;
-            renderizarApp();
-        }
-
-        function renderizarEventosDiaCalendario() {
-            let container = document.getElementById("lista-eventos-dia-calendario");
-            let textoData = document.getElementById("data-selecionada-texto");
-            if (!container) return;
-
-            let dataStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(diaSelecionadoCalendario).padStart(2, '0')}`;
-            if (textoData) textoData.innerText = `${String(diaSelecionadoCalendario).padStart(2,'0')}/${String(mesAtual + 1).padStart(2,'0')}`;
-
-            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
-            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
-
-            let evsDoDia = atividades.filter(a => {
-                if (a.data !== dataStr || a.cancelada) return false;
-                if (a.publico === 'diretoria' && !ehDiretoria) return false;
-                if (usuarioLogado.ingressoLiga && a.data < usuarioLogado.ingressoLiga) return false;
-                return true;
-            });
-
-            if (evsDoDia.length === 0) {
-                container.innerHTML = `<div style="background: white; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 12px; color: #666; text-align: center;">Nenhuma atividade agendada para este dia.</div>`;
-                return;
-            }
-
-            let html = "";
-            evsDoDia.forEach(ativ => {
-                html += `
-                    <div style="background: white; border-radius: 12px; padding: 14px; border: 1px solid #e2e8f0; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 6px;">
-                            <h4 style="margin: 0; font-size: 14px; color: #003366; font-weight: 800;">${ativ.titulo}</h4>
-                            <span style="font-size: 10px; background: #ebfbee; color: #2b8a3e; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${ativ.ch}h CH</span>
-                        </div>
-                        <p style="margin: 2px 0; font-size: 12px; color: #555;">⏰ ${ativ.hora}</p>
-                        <p style="margin: 2px 0; font-size: 12px; color: #555;">📍 ${ativ.local}</p>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
         }
 
         function renderizarHistoricoGeral() {
@@ -2183,7 +2002,7 @@
             document.getElementById("stat-ch").innerText = totalCH + "h";
 
             if (atividadesDesteMes.length === 0) {
-                listaAtividades.innerHTML = "<p class='sem-atividade' style='text-align: center; color: #666; font-size: 13px; padding: 20px;'>Não há atividades agendadas para este mês.</p>";
+                listaAtividades.innerHTML = "<p class='sem-atividade'>Não há atividades agendadas para este mês.</p>";
                 return;
             }
 
@@ -2313,21 +2132,21 @@
                 let textoConfirmadoAndamento = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
 
                 listaAtividades.innerHTML += `
-                    <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo} background: #ffffff; border-radius: 14px; padding: 16px; border: 1px solid #e2e8f0; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+                    <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo}">
                         ${sinalizacaoDiretoriaHtml}
-                        <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px;">
-                            <span class="badge-dias" style="background: #e7f5ff; color: #0056b3; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">${ativ.ch}h de CH</span>
-                            <span class="badge-confirmados" style="background: #f1f3f5; color: #495057; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">${textoConfirmadoAndamento}</span>
+                        <div class="badges" style="margin-bottom: 6px;">
+                            <span class="badge-dias">${ativ.ch}h de CH</span>
+                            <span class="badge-confirmados">${textoConfirmadoAndamento}</span>
                         </div>
                         
                         <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
-                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; font-weight: 800; color: #003366; word-break: break-word;">${ativ.titulo}</h3>
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
                             <div style="text-align: right; white-space: nowrap; color: #0056b3; font-weight: bold; font-size: 11px; padding-top: 2px;">
                                 <span id="seta-ativ-${ativ.id}">${estaAberto ? '▲ Ocultar' : '▼ Detalhes'}</span>
                             </div>
                         </div>
 
-                        <div class="info-atividade" style="margin-top: 8px; font-size: 12px; color: #555;" onclick="toggleExpandirAtividadeApp('${ativ.id}')" style="cursor: pointer;">
+                        <div class="info-atividade" style="margin-top: 8px;" onclick="toggleExpandirAtividadeApp('${ativ.id}')" style="cursor: pointer;">
                             <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
                             <p style="margin: 2px 0;"><strong>Local:</strong> ${ativ.local}</p>
                         </div>
@@ -2335,8 +2154,8 @@
                         ${statusOficialHtml}
 
                         <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: ${estaAberto ? 'block' : 'none'}; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
-                            <p class="desc-atividade" style="margin-bottom: 10px; font-size: 12px; color: #444;">${ativ.desc}</p>
-                            ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px; display: flex; gap: 8px;">${botoesCardHtml}</div>` : ''}
+                            <p class="desc-atividade" style="margin-bottom: 10px;">${ativ.desc}</p>
+                            ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
                         </div>
                     </div>
                 `;
@@ -2375,17 +2194,18 @@
                     let textoJustNegadas = ativ.totalJustNegadas === 1 ? "1 just. negada" : `${ativ.totalJustNegadas} just. negadas`;
 
                     htmlCartasConcluidas += `
-                        <div class="card-atividade card-atividade-concluida" style="background: white; border-radius: 14px; padding: 16px; border: 1px solid #e2e8f0;">
+                        <div class="card-atividade card-atividade-concluida">
                             <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
-                                <span class="badge-dias" style="background: #e9ecef; color: #343a40; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">${ativ.ch}h de CH</span>
-                                <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">${textoPresente}</span>
-                                <span class="badge-dias" style="background: #e7f5ff; color: #1c7ed6; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">${textoJust}</span>
-                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">${textoFalta}</span>
+                                <span class="badge-dias" style="background: #e9ecef; color: #343a40; font-weight: bold;">${ativ.ch}h de CH</span>
+                                <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
+                                <span class="badge-dias" style="background: #e7f5ff; color: #1c7ed6; font-weight: bold;">${textoJust}</span>
+                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoFalta}</span>
+                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoJustNegadas}</span>
                             </div>
                             
-                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; font-weight: 800; color: #003366; word-break: break-word;">${ativ.titulo}</h3>
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
 
-                            <div class="info-atividade" style="margin-top: 6px; font-size: 12px; color: #555;">
+                            <div class="info-atividade" style="margin-top: 6px;">
                                 <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
                             </div>
 
