@@ -2,286 +2,449 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LAPE - Portal do Ligante</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="brasao.png" type="image/png">
     <link rel="apple-touch-icon" href="brasao.png">
-    <!-- Fonte idêntica à imagem de referência -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
     <meta name="color-scheme" content="light">
 
     <style>
-        /* === RESET E VARIÁVEIS GERAIS === */
-        :root {
-            --azul-escuro: #002244;
-            --azul-primario: #004494;
-            --azul-botao: #0047a0;
-            --azul-claro: #e7f5ff;
-            --azul-texto: #0056b3;
-            --fundo-cinza: #f4f7f6;
-            --verde-fundo: #ebfbee;
-            --verde-texto: #2b8a3e;
-            --vermelho-fundo: #ffe3e3;
-            --vermelho-texto: #c92a2a;
-            --amarelo-fundo: #fff3bf;
-            --amarelo-texto: #d97706;
-            --roxo-fundo: #f3f0ff;
-            --roxo-texto: #7950f2;
-            --texto-principal: #002244;
-            --texto-secundario: #666666;
-            --branco: #ffffff;
-            --borda: #e2e8f0;
+        body { background-color: #f4f7f6; margin: 0; padding: 0; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
+        
+        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; text-align: center; margin: 60px auto; }
+        #tela-login h2 { color: #0056b3; font-size: 26px; margin: 10px 0 2px 0; }
+        #tela-login p { color: #666; font-size: 13px; margin-bottom: 25px; }
+        
+        .grupo-input { margin-bottom: 15px; text-align: left; }
+        .grupo-input label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold; color: #555; }
+        .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; }
+        
+        .btn-entrar { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-instalar { width: 100%; padding: 10px; background-color: #2b8a3e; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 8px; display: none; }
+        
+        .spinner-login {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #0056b3;
+            border-radius: 50%;
+            animation: girarSpinner 0.8s linear infinite;
+            margin: 20px auto 15px auto;
+        }
+        @keyframes girarSpinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        body { 
-            background-color: var(--fundo-cinza); 
-            margin: 0; 
-            padding: 0 0 90px 0; 
-            color: var(--texto-principal); 
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        input, select, textarea { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; outline: none; }
-        
-        /* === TELA DE LOGIN === */
-        #tela-login { width: 100%; max-width: 400px; background-color: #ffffff; padding: 30px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,34,68,0.08); box-sizing: border-box; text-align: center; margin: 60px auto; }
-        #tela-login h2 { color: var(--azul-escuro); font-size: 26px; margin: 15px 0 2px 0; font-weight: 800; }
-        #tela-login p { color: var(--texto-secundario); font-size: 14px; margin-bottom: 25px; }
-        
-        .grupo-input { margin-bottom: 16px; text-align: left; }
-        .grupo-input label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: var(--texto-principal); }
-        .grupo-input input { width: 100%; padding: 14px; border: 1px solid #ced4da; border-radius: 10px; font-size: 15px; box-sizing: border-box; transition: border 0.2s; }
-        .grupo-input input:focus { border-color: var(--azul-primario); }
-        
-        .btn-entrar { width: 100%; padding: 14px; background-color: var(--azul-botao); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,68,148,0.2); }
-        .btn-instalar { width: 100%; padding: 12px; background-color: var(--verde-texto); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 12px; display: none; }
-        
-        .spinner-login { width: 45px; height: 45px; border: 4px solid #e9ecef; border-top: 4px solid var(--azul-botao); border-radius: 50%; animation: girarSpinner 0.8s linear infinite; margin: 20px auto 15px auto; }
-        @keyframes girarSpinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn-desconfirmar { background-color: #e03131 !important; color: white !important; }
+        .tag-falta { color: #fa5252; font-size: 12px; font-weight: bold; margin-top: 6px; }
+        .tag-justificado { color: #2b8a3e; font-size: 12px; font-weight: bold; margin-top: 6px; }
+        .tag-justificativa-negada { color: #c92a2a; font-size: 12px; font-weight: bold; margin-top: 6px; }
 
-        /* === CABEÇALHO GLOBAL === */
-        .cabecalho-novo {
-            background: linear-gradient(135deg, #004494 0%, #002244 100%);
-            padding: 45px 20px 20px 20px;
+        /* Estilo do Baralho de Cartas Empilhadas */
+        .secao-pilha-concluidas {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .pilha-header-info {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        /* Marca d'água do brasão sutil */
-        .cabecalho-novo::after {
-            content: '';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 250px;
-            height: 250px;
-            background-image: url('brasao.png');
-            background-size: cover;
-            opacity: 0.05;
-            pointer-events: none;
-        }
-
-        .header-bloco-dinamico { display: none; flex: 1; z-index: 2; }
-        .header-bloco-dinamico.ativo { display: flex; align-items: center; gap: 14px; }
-        .header-bloco-dinamico.ativo-coluna { display: flex; flex-direction: column; justify-content: center; height: 65px; }
-
-        .logo-pequena-header { width: 65px; height: 65px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 2px 10px rgba(0,0,0,0.15); object-fit: cover; background: #fff;}
-        .boas-vindas-titulo { margin: 0; font-size: 22px; color: var(--branco); font-weight: 800; }
-        .cargo-header { font-size: 11px; color: #69db7c; font-weight: 800; letter-spacing: 0.8px; display: block; margin: 2px 0 6px 0; text-transform: uppercase; }
-        .pill-codigo { background: rgba(255,255,255,0.2); color: #fff; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; display: inline-block; }
-
-        .acoes-top-right { display: flex; align-items: center; gap: 10px; z-index: 2; }
-        .bell-btn { width: 40px; height: 40px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; border: none; position: relative; font-size: 16px; }
-        .bell-btn::after { content: ''; position: absolute; top: 10px; right: 12px; width: 6px; height: 6px; background: #ff4d4f; border-radius: 50%; border: 2px solid #fff; }
-        .avatar-topo { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; background: var(--azul-primario); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .avatar-topo img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Títulos de Seção Customizados */
-        .titulo-secao-com-icone { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px; }
-        .titulo-secao-com-icone h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--texto-principal); display: flex; align-items: center; gap: 8px; }
-        .link-ver-todos { font-size: 12px; font-weight: 700; color: var(--azul-texto); text-decoration: none; cursor: pointer; }
-
-        /* === COMPONENTES DA ABA INÍCIO === */
-        .padding-padrao { padding: 20px 16px; }
-
-        /* Avisos */
-        .aviso-card-wrapper { background: #ffffff; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 24px; border: 1px solid var(--borda); }
-        .aviso-icone-wrap { width: 48px; height: 48px; background: var(--fundo-cinza); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
-        .aviso-content { flex: 1; overflow: hidden; }
-        .avisos-header-text { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: var(--azul-texto); margin-bottom: 4px; }
-        .pill-contador { background: var(--azul-claro); padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 800; color: var(--azul-texto); }
-        .slides-container .slide { display: none; }
-        .slides-container .slide.ativo { display: block; animation: fadeSlide 0.4s ease; }
-        .slides-container h4 { margin: 0 0 4px 0; font-size: 15px; font-weight: 800; color: var(--texto-principal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .slides-container p { margin: 0; font-size: 12px; color: var(--texto-secundario); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        /* Enquetes */
-        .enquete-item-card { background: #ffffff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid var(--borda); }
-        .enquete-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .badge-diretoria-enquete { background: var(--azul-claro); color: var(--azul-texto); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
-        .timer-enquete { font-size: 11px; font-weight: 700; color: var(--azul-texto); display: flex; align-items: center; gap: 4px; }
-        .enquete-titulo { margin: 0 0 8px 0; font-size: 15px; font-weight: 800; color: var(--texto-principal); line-height: 1.3; }
-        .enquete-desc { margin: 0 0 16px 0; font-size: 12px; color: var(--texto-secundario); line-height: 1.5; }
-        .enquete-voto-confirmado { background: var(--verde-fundo); border: 1px solid #b2f2bb; border-radius: 10px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        .enquete-voto-confirmado span { font-size: 12px; font-weight: 700; color: var(--verde-texto); }
-        .btn-acao-enquete { width: 100%; padding: 12px; background: var(--azul-botao); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; }
-        .enquete-opcao-btn { width: 100%; text-align: left; background: #ffffff; border: 1px solid var(--borda); padding: 10px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--texto-principal); cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
-        .enquete-opcao-btn:hover { border-color: var(--azul-texto); background: var(--azul-claro); }
-
-        /* Resumo na Liga Grid - 4 colunas */
-        .resumo-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 24px; }
-        .card-stat-mini { background: white; border-radius: 14px; padding: 12px 6px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border: 1px solid var(--borda); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .card-stat-mini .icone-estatistica { font-size: 20px; margin-bottom: 4px; }
-        .card-stat-mini.azul-escuro { background: var(--azul-escuro); color: white; border: none; box-shadow: 0 4px 12px rgba(0,34,68,0.2); }
-        .stat-num { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
-        .stat-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* Financeiro & Aniversário Grid 2 colunas */
-        .grid-duplo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .card-info-duplo { background: white; border-radius: 14px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border: 1px solid var(--borda); display: flex; flex-direction: column; position: relative; }
-        .card-titulo-duplo { font-size: 13px; font-weight: 800; color: var(--texto-principal); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-        
-        .fin-label { font-size: 10px; color: var(--texto-secundario); display: block; margin-bottom: 2px; font-weight: 600; }
-        .fin-valor { font-size: 16px; font-weight: 800; margin-bottom: 8px; display: block; }
-        .badge-status { position: absolute; top: 14px; right: 14px; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 800; display: flex; align-items: center; gap: 4px; }
-        .badge-status.pago { background: var(--verde-fundo); color: var(--verde-texto); }
-        .badge-status.pendente { background: var(--vermelho-fundo); color: var(--vermelho-texto); }
-        
-        .fin-footer { background: var(--fundo-cinza); margin: auto -14px -14px -14px; padding: 10px 14px; font-size: 11px; font-weight: 700; color: var(--texto-secundario); display: flex; align-items: center; justify-content: center; gap: 6px; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; }
-        
-        .aniv-avatar-grande { width: 46px; height: 46px; border-radius: 50%; background: var(--azul-escuro); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; margin: 10px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .aniv-nome { font-size: 13px; font-weight: 800; color: var(--texto-principal); margin: 0 0 2px 0; text-align: center; word-break: break-word; line-height: 1.2; }
-        .aniv-desc { font-size: 10px; color: var(--texto-secundario); margin: 0 0 10px 0; text-align: center; }
-        .aniv-badges-row { display: flex; gap: 4px; justify-content: center; margin-bottom: 10px; }
-        .aniv-badge { border: 1px solid var(--borda); padding: 4px 6px; border-radius: 6px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
-        .aniv-badge.dias { background: var(--azul-claro); color: var(--azul-texto); border: none; }
-        .link-ver-todos-card { text-align: center; font-size: 11px; font-weight: 700; color: var(--azul-texto); text-decoration: none; display: block; border-top: 1px solid var(--fundo-cinza); padding-top: 10px; cursor: pointer; margin-top: auto; }
-
-        /* Desempenho em Agosto - Grid 5 colunas */
-        .card-desempenho { background: white; border-radius: 14px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border: 1px solid var(--borda); display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; align-items: stretch; margin-bottom: 24px; text-align: center; }
-        .desempenho-item { display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--fundo-cinza); }
-        .desempenho-item:last-child { border-right: none; }
-        .desempenho-item.destaque { background: var(--azul-claro); border-radius: 8px; margin: -6px -6px -6px 2px; padding: 6px; border: 1px solid #bce2ff; }
-        .desempenho-num { font-size: 16px; font-weight: 800; display: block; margin-bottom: 2px; }
-        .desempenho-label { font-size: 8px; font-weight: 800; color: var(--texto-secundario); text-transform: uppercase; }
-
-        /* === ABA CALENDÁRIO === */
-        .calendario-header-titulo { margin: 0; font-size: 24px; font-weight: 800; color: white; }
-        .calendario-header-mes { font-size: 15px; color: #69db7c; font-weight: 700; margin: 2px 0 6px 0; }
-        .calendario-header-desc { font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.3; }
-
-        .card-calendario-grid { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--borda); margin-bottom: 24px; }
-        .calendario-navegacao { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .btn-nav-mes { background: var(--fundo-cinza); border: none; font-size: 16px; font-weight: 800; color: var(--azul-escuro); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .mes-ano-destaque { font-size: 16px; font-weight: 800; color: var(--azul-escuro); margin: 0; }
-        
-        .dias-semana-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 11px; font-weight: 800; color: var(--texto-secundario); margin-bottom: 8px; }
-        .grid-dias-numeros { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
-        .dia-calendario { height: 34px; width: 34px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--texto-secundario); border-radius: 50%; cursor: pointer; position: relative; transition: all 0.2s; }
-        .dia-calendario.dia-util { color: var(--texto-principal); }
-        .dia-calendario.selecionado { background: var(--azul-botao); color: white; font-weight: 800; }
-        .dia-calendario.hoje { border: 2px solid var(--roxo-texto); }
-        .ponto-verde { width: 5px; height: 5px; background: var(--verde-texto); border-radius: 50%; position: absolute; bottom: 4px; }
-        .ponto-verde.selecionado-dot { background: white; }
-
-        .legenda-calendario { display: flex; justify-content: center; gap: 12px; margin-top: 16px; font-size: 10px; font-weight: 600; color: var(--texto-secundario); border-top: 1px solid var(--fundo-cinza); padding-top: 12px; flex-wrap: wrap; }
-        .legenda-item { display: flex; align-items: center; gap: 4px; }
-        .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-        /* Lista de Eventos do Dia */
-        .pill-data-dia { background: var(--azul-botao); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-block; margin-left: 6px; vertical-align: middle; }
-        .evento-dia-card { background: white; border-radius: 14px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border: 1px solid var(--borda); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
-        .evento-icone-wrap { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
-        .evento-icone-wrap.verde { background: var(--verde-fundo); color: var(--verde-texto); }
-        .evento-icone-wrap.azul { background: var(--azul-claro); color: var(--azul-texto); }
-        .evento-icone-wrap.amarelo { background: var(--amarelo-fundo); color: var(--amarelo-texto); }
-        
-        .evento-infos { flex: 1; overflow: hidden; }
-        .evento-titulo { margin: 0 0 4px 0; font-size: 14px; font-weight: 800; color: var(--texto-principal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .evento-detalhe-linha { font-size: 11px; color: var(--texto-secundario); display: flex; align-items: center; gap: 4px; margin-bottom: 2px; font-weight: 500; }
-        
-        .badge-presenca { background: var(--verde-fundo); color: var(--verde-texto); padding: 4px 8px; border-radius: 10px; font-size: 10px; font-weight: 800; white-space: nowrap; }
-        .badge-ch { background: var(--azul-claro); color: var(--azul-texto); padding: 4px 8px; border-radius: 10px; font-size: 10px; font-weight: 800; white-space: nowrap; }
-
-        /* Próximas Atividades List */
-        .proxima-ativ-card { background: white; border-radius: 14px; padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border: 1px solid var(--borda); margin-bottom: 10px; display: block; }
-        .proxima-ativ-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
-        .proxima-ativ-content { flex: 1; }
-        .proxima-ativ-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-        .badges-direita { display: flex; gap: 4px; }
-        .badge-ch-laranja { background: var(--amarelo-fundo); color: var(--amarelo-texto); padding: 2px 6px; border-radius: 6px; font-size: 9px; font-weight: 800; }
-        .badge-confirmados-azul { background: var(--azul-claro); color: var(--azul-texto); padding: 2px 6px; border-radius: 6px; font-size: 9px; font-weight: 800; }
-        
-        .barra-prazo { background: var(--amarelo-fundo); border-radius: 10px; padding: 8px 12px; font-size: 11px; font-weight: 700; color: var(--amarelo-texto); display: flex; align-items: center; gap: 6px; margin-top: 4px; }
-
-        /* === BARRA DE NAVEGAÇÃO INFERIOR === */
-        .barra-navegacao-inferior {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%;
-            height: 70px;
-            background: #002244;
-            display: flex;
-            justify-content: space-around;
             align-items: center;
-            z-index: 999;
-            padding-bottom: env(safe-area-inset-bottom);
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+            border-bottom: 1px solid #f1f3f5;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
         }
-        .nav-item-inferior {
+
+        .container-cartas-pilha {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            min-height: 165px;
+        }
+
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(1) { transform: translateY(0px) scale(1); z-index: 3; }
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(2) { transform: translateY(8px) scale(0.97); z-index: 2; opacity: 0.9; }
+        .container-cartas-pilha:not(.aberto) .card-atividade-concluida:nth-last-child(n+3) { transform: translateY(16px) scale(0.94); z-index: 1; opacity: 0.75; }
+
+        .container-cartas-pilha.aberto {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.6);
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            flex: 1;
-            height: 100%;
-            transition: all 0.2s ease;
+            gap: 12px;
+            min-height: auto;
         }
-        .icon-wrap-nav {
-            width: 40px;
-            height: 28px;
-            border-radius: 14px;
+
+        .container-cartas-pilha.aberto .card-atividade-concluida {
+            position: relative;
+            transform: none !important;
+            opacity: 1 !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .hint-toque-pilha {
+            text-align: center;
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        /* Aba de Aniversariantes Complexa */
+        .card-aniversariantes-completo {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #ff6b6b;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .aniv-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f3f5;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .aniv-bloco-secao {
+            margin-bottom: 12px;
+        }
+        .aniv-bloco-secao:last-child {
+            margin-bottom: 0;
+        }
+        .aniv-subtitulo {
+            font-size: 11px;
+            font-weight: bold;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .aniversario-item-complexo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 6px;
+            transition: background 0.2s;
+        }
+        .aniversario-item-complexo:hover {
+            background: #f1f3f5;
+        }
+        .aniversario-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #004494;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 2px;
-            transition: all 0.2s ease;
-            font-size: 18px;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .nav-item-inferior svg { width: 22px; height: 22px; fill: currentColor; }
-        .nav-item-inferior.ativa { color: #ffffff; }
-        .nav-item-inferior.ativa .icon-wrap-nav { background: var(--azul-botao); color: white; box-shadow: 0 2px 8px rgba(0,86,179,0.4); }
+        .aniv-detalhes-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .aniv-badge-info {
+            font-size: 10px;
+            background: #e9ecef;
+            color: #495057;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .btn-ver-todos-aniv {
+            width: 100%;
+            background: #f1f3f5;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #0056b3;
+            cursor: pointer;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .btn-ver-todos-aniv:hover {
+            background: #e9ecef;
+        }
 
-        /* Abas / App Content Fixes */
-        .app-tab-pane { display: none; padding: 16px; }
-        .app-tab-pane.ativa { display: block; animation: fadeInTab 0.3s ease; }
-        @keyframes fadeInTab { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeSlide { from { opacity: 0; } to { opacity: 1; } }
+        /* ESTILO CORRIGIDO DAS ENQUETES (LARGURA PADRÃO E BOTÃO EMBAIXO) */
+        .enquete-item-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #f59f00;
+            margin-bottom: 12px;
+            position: relative;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .enquete-opcao-btn {
+            width: 100%;
+            text-align: left;
+            background: #ffffff;
+            border: 1px solid #ced4da;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: all 0.2s;
+        }
+        .enquete-opcao-btn:hover {
+            background: #e7f5ff;
+            border-color: #1c7ed6;
+            color: #1c7ed6;
+        }
+        .btn-mudar-voto {
+            background: #e7f5ff;
+            color: #0056b3;
+            border: 1px solid #74c0fc;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-align: center;
+            margin-top: 8px;
+        }
+        .btn-mudar-voto:hover {
+            background: #d0ebff;
+        }
+        .badge-diretoria-enquete {
+            background: #e7f5ff;
+            color: #0056b3;
+            border: 1px solid #74c0fc;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
 
-        /* Modais e Botões Extras */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; box-sizing: border-box; }
-        .modal-conteudo { background: white; border-radius: 20px; padding: 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .btn-salvar { background: var(--azul-botao); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; font-size: 14px; }
-        .btn-cancelar { background: var(--fundo-cinza); color: var(--texto-secundario); border: none; padding: 12px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 8px; font-size: 14px; }
-        
-        .detalhes-expansiveis-ativ { display: none; border-top: 1px solid var(--fundo-cinza); padding-top: 12px; margin-top: 12px; }
-        .botoes-card { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;}
-        .botoes-card button { flex: 1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; border: none; }
-        .btn-confirmar { background: var(--azul-botao); color: white; }
-        .btn-justificar { background: var(--fundo-cinza); color: var(--texto-principal); border: 1px solid var(--borda); }
-        .btn-desconfirmar { background: var(--vermelho-fundo); color: var(--vermelho-texto); }
+        /* CARD DE OUVIDORIA */
+        .card-ouvidoria-completo {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #7950f2;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .ouvidoria-item-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .ouvidoria-item-card:hover {
+            background: #f1f3f5;
+        }
+        .btn-acao-ouvidoria {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+        .btn-acao-ouvidoria:hover {
+            opacity: 0.9;
+        }
 
+        /* MODAL DE PERFIL SPLÉNDIDO */
+        .modal-perfil-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .modal-perfil-conteudo {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
+            max-height: 94vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            animation: surgirModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes surgirModal {
+            from { opacity: 0; transform: scale(0.95) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .perfil-topo-splendido {
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, #0056b3 0%, #003366 100%);
+            margin: -24px -24px 20px -24px;
+            padding: 28px 20px 22px 20px;
+            border-radius: 24px 24px 0 0;
+            color: white;
+            box-shadow: inset 0 -4px 10px rgba(0,0,0,0.1);
+        }
+        .perfil-avatar-wrapper {
+            position: relative;
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 10px auto;
+        }
+        .perfil-avatar-img {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        }
+        .botao-trocar-foto-flutuante {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #ff6b6b;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .botao-trocar-foto-flutuante:hover {
+            transform: scale(1.1);
+        }
+        .perfil-abas-navegacao {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            background: #f1f3f5;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .btn-aba-perfil {
+            background: transparent;
+            border: none;
+            padding: 8px 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #495057;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .btn-aba-perfil.ativa {
+            background: #ffffff;
+            color: #0056b3;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .perfil-secao-conteudo {
+            display: none;
+            animation: fadeInTab 0.25s ease;
+        }
+        .perfil-secao-conteudo.ativa {
+            display: block;
+        }
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .perfil-grid-detalhes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .perfil-card-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 10px 12px;
+            box-sizing: border-box;
+        }
+        .perfil-card-info.full {
+            grid-column: span 2;
+        }
+        .perfil-card-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .perfil-card-valor {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212529;
+            word-break: break-word;
+        }
     </style>
 
     <!-- Firebase SDKs -->
@@ -336,338 +499,129 @@
         </div>
     </div>
 
-    <!-- TELA PRINCIPAL DO APP -->
-    <div id="conteudo-principal-app" style="display: none; width: 100%; box-sizing: border-box; min-height: 100vh;">
+    <!-- TELA PRINCIPAL DO APP - FLUIDO E SEM A BORA DE CELULAR ARTIFICIAL -->
+    <div id="conteudo-principal-app" style="display: none; width: 100%; box-sizing: border-box; background-color: #f4f7f6; min-height: 100vh;">
         
-        <!-- CABEÇALHO GLOBAL -->
-        <header class="cabecalho-novo">
-            <!-- Header dinâmico: INÍCIO -->
-            <div class="header-bloco-dinamico ativo" id="header-dinamico-inicio">
-                <img src="brasao.png" alt="Brasão" class="logo-pequena-header">
+        <header class="cabecalho" style="margin: 0; width: 100%; border-radius: 0; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="brasao.png" alt="Brasão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
                 <div>
-                    <h2 class="boas-vindas-titulo" id="titulo-boas-vindas">Olá, Allan! 👋</h2>
-                    <span class="cargo-header" id="subtitulo-cargo">PRESIDENTE</span>
-                    <span class="pill-codigo" id="topo-codigo-usuario">20252001</span>
+                    <h2 id="titulo-boas-vindas" style="margin-bottom: 2px;">Minha Liga</h2>
+                    <span id="subtitulo-cargo" style="font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ligante</span>
                 </div>
             </div>
-
-            <!-- Header dinâmico: CALENDÁRIO -->
-            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-calendario">
-                <h2 class="calendario-header-titulo">Calendário</h2>
-                <div class="calendario-header-mes" id="mes-ano-texto-header">Agosto / 2026</div>
-                <p class="calendario-header-desc">Acompanhe seus eventos e atividades da LAPE.</p>
-            </div>
-
-            <!-- Header dinâmico: ATIVIDADES -->
-            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-atividades">
-                <h2 class="calendario-header-titulo">Atividades</h2>
-                <div class="calendario-header-mes">do Mês</div>
-                <p class="calendario-header-desc">Gerencie suas presenças e prazos.</p>
-            </div>
-
-            <!-- Header dinâmico: SOLICITAÇÕES -->
-            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-solicitacoes">
-                <h2 class="calendario-header-titulo" style="font-size: 22px;">Solicitações</h2>
-                <div class="calendario-header-mes">Ouvidoria</div>
-                <p class="calendario-header-desc">Envie sugestões de forma sigilosa.</p>
-            </div>
-
-            <!-- Header dinâmico: PERFIL -->
-            <div class="header-bloco-dinamico ativo-coluna" id="header-dinamico-perfil">
-                <h2 class="calendario-header-titulo">Meu Perfil</h2>
-                <div class="calendario-header-mes">Conta</div>
-            </div>
-
-            <!-- Ações Top Right (Fixos) -->
-            <div class="acoes-top-right">
-                <button class="bell-btn" onclick="abrirModalHistoricoSugestoes()">
-                    🔔
-                </button>
-                <div class="avatar-topo" id="container-avatar-topo" onclick="mudarAbaApp('perfil')"></div>
+            <div style="display: flex; align-items: center;">
+                <div class="avatar-perfil" id="container-avatar-topo" onclick="abrirPerfilModal()" style="cursor: pointer;"></div>
             </div>
         </header>
 
-        <!-- MIOLO DO APLICATIVO COM ABAS -->
-        <div>
+        <!-- MIOLO DO APLICATIVO COM PADDING UNIFORME -->
+        <div style="padding: 12px;">
 
-            <!-- ABA 1: INÍCIO -->
-            <div id="pane-inicio" class="app-tab-pane ativa">
-                
-                <!-- AVISOS IMPORTANTES -->
-                <section>
-                    <div class="aviso-card-wrapper">
-                        <div class="aviso-icone-wrap">
-                            📢
-                        </div>
-                        <div class="aviso-content">
-                            <div class="avisos-header-text">Avisos Importantes <span class="pill-contador" id="contador-slide">1/3</span></div>
-                            <div class="slides-container" id="container-slides"></div>
-                        </div>
-                        <div style="color: #ced4da;">&gt;</div>
-                    </div>
-                </section>
-
-                <!-- SEÇÃO DE ENQUETES ATIVAS -->
-                <section id="secao-enquetes-container" style="display: none; margin-bottom: 24px;">
-                    <div class="titulo-secao-com-icone">
-                        <h3>📊 Enquetes Ativas</h3>
-                        <a class="link-ver-todos">Ver todas &gt;</a>
-                    </div>
-                    <div id="bloco-enquetes-ativas"></div>
-                </section>
-
-                <!-- Resumo na Liga Grid -->
-                <section style="margin-bottom: 24px;">
-                    <div class="titulo-secao-com-icone">
-                        <h3>👤 Seu Resumo na Liga</h3>
-                    </div>
-                    <div class="resumo-grid-4">
-                        <div class="card-stat-mini">
-                            <div class="icone-estatistica">📅</div>
-                            <span class="stat-num" id="geral-presencas" style="color: var(--texto-principal);">0</span>
-                            <span class="stat-label" style="color: var(--texto-secundario);">PRESENÇAS</span>
-                        </div>
-                        <div class="card-stat-mini">
-                            <div class="icone-estatistica">🛡️</div>
-                            <span class="stat-num" id="geral-justificativas" style="color: var(--verde-texto);">0</span>
-                            <span class="stat-label" style="color: var(--texto-secundario);">ABONADAS</span>
-                        </div>
-                        <div class="card-stat-mini">
-                            <div class="icone-estatistica">⏱️</div>
-                            <span class="stat-num" id="geral-ch" style="color: var(--roxo-texto);">0h</span>
-                            <span class="stat-label" style="color: var(--texto-secundario);">CH TOTAL</span>
-                        </div>
-                        <div class="card-stat-mini azul-escuro">
-                            <div class="icone-estatistica">⭐</div>
-                            <span class="stat-num" id="geral-atividades">0</span>
-                            <span class="stat-label" style="color: rgba(255,255,255,0.8);">ATIVIDADES</span>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Financeiro & Aniversariantes lado a lado -->
-                <div class="grid-duplo">
-                    <!-- Financeiro -->
-                    <div class="card-info-duplo">
-                        <div class="card-titulo-duplo">
-                            💳 Situação Financeira
-                        </div>
-                        <span id="mes-financeiro-texto" style="font-size: 10px; color: var(--texto-secundario); display: block; margin-bottom: 10px;">Agosto / 2026</span>
-                        
-                        <div id="fin-status-badge" class="badge-status pendente">Pendente</div>
-
-                        <span class="fin-label">Valor do mês</span>
-                        <span class="fin-valor" id="fin-valor-mes" style="color: var(--verde-texto);">R$ 10,00</span>
-                        
-                        <span class="fin-label">Débito total acumulado</span>
-                        <span class="fin-valor" id="fin-debito-total" style="color: var(--vermelho-texto); font-size: 14px; margin-bottom: 20px;">R$ 0,00</span>
-
-                        <div class="fin-footer" onclick="abrirModalPix()" style="cursor: pointer;" id="btn-acao-pix-wrapper">
-                            <span>🛡️</span> <span id="texto-acao-pix">Mensalidade Quitada</span>
-                        </div>
-                    </div>
-
-                    <!-- Seção de Aniversariantes -->
-                    <div class="card-info-duplo" id="bloco-aniversariantes-wrapper">
-                        <div class="card-titulo-duplo">
-                            🎂 Próximo Aniversariante
-                        </div>
-                        <div id="bloco-aniversariantes">
-                            <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando...</p>
-                        </div>
-                    </div>
+            <!-- AVISOS IMPORTANTES NO TOPO -->
+            <section class="quadro-avisos" style="margin-top: 0;">
+                <div class="avisos-header">
+                    <span>⚠️ Avisos Importantes</span>
+                    <span id="contador-slide">1/1</span>
                 </div>
+                <div class="slides-container" id="container-slides"></div>
+            </section>
 
-                <!-- Desempenho do Mês -->
-                <section>
-                    <div class="titulo-secao-com-icone">
-                        <h3>📈 Seu Desempenho em <span id="nome-mes-desempenho-texto">Agosto</span></h3>
-                        <a class="link-ver-todos" onclick="mudarAbaApp('atividades')">Ver detalhes &gt;</a>
-                    </div>
-                    <div class="card-desempenho">
-                        <div class="desempenho-item"><span class="desempenho-num" id="stat-total" style="color: var(--texto-principal);">0</span><span class="desempenho-label">TOTAL</span></div>
-                        <div class="desempenho-item"><span class="desempenho-num" id="stat-presencas" style="color: var(--verde-texto);">0</span><span class="desempenho-label">PRESENÇAS</span></div>
-                        <div class="desempenho-item"><span class="desempenho-num" id="stat-faltas" style="color: var(--vermelho-texto);">0</span><span class="desempenho-label">FALTAS</span></div>
-                        <div class="desempenho-item"><span class="desempenho-num" id="stat-justificativas" style="color: var(--roxo-texto);">0</span><span class="desempenho-label">ABONADAS</span></div>
-                        <div class="desempenho-item destaque"><span class="desempenho-num" id="stat-ch" style="color: var(--azul-texto);">0h</span><span class="desempenho-label" style="color: var(--azul-texto);">CH NO MÊS</span></div>
-                    </div>
-                </section>
+            <!-- SEÇÃO DE ENQUETES ATIVAS COM LARGURA PROPORCIONAL E BOTÃO MUDAR ABAIXO -->
+            <section id="secao-enquetes-container" style="display: none; margin-bottom: 15px;">
+                <p class="titulo-secao-geral" style="margin-top: 0; margin-bottom: 5px; font-weight: bold; font-size: 14px; color: #555;">📊 Enquetes Ativas</p>
+                <div id="bloco-enquetes-ativas">
+                    <!-- Preenchido dinamicamente via JS -->
+                </div>
+            </section>
 
-            </div>
+            <!-- Histórico Geral Acumulado -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">📊 Histórico Geral na Liga</p>
+                <div class="dashboard-estatisticas geral" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="card-stat"><span class="stat-numero" id="geral-atividades">0</span><span class="stat-legenda">Passadas</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="geral-presencas">0</span><span class="stat-legenda">Presenças</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="geral-justificativas">0</span><span class="stat-legenda">Abonadas</span></div>
+                    <div class="card-stat destaque-ch"><span class="stat-numero" id="geral-ch">0h</span><span class="stat-legenda">CH Total</span></div>
+                </div>
+            </section>
 
-            <!-- ABA 2: CALENDÁRIO -->
-            <div id="pane-calendario" class="app-tab-pane">
-                
-                <section class="card-calendario-grid">
-                    <div class="calendario-navegacao">
-                        <button id="btn-prev-mes" class="btn-nav-mes">&lt;</button>
-                        <h3 id="mes-ano-texto" class="mes-ano-destaque">Agosto 2026</h3>
-                        <button id="btn-next-mes" class="btn-nav-mes">&gt;</button>
-                    </div>
-                    <div class="dias-semana-grid">
-                        <div>DOM</div><div>SEG</div><div>TER</div><div>QUA</div><div>QUI</div><div>SEX</div><div>SÁB</div>
-                    </div>
-                    <div id="grid-dias" class="grid-dias-numeros"></div>
-                    
-                    <!-- Legenda do Calendário -->
-                    <div class="legenda-calendario">
-                        <div class="legenda-item"><div class="leg-dot" style="background: var(--verde-texto);"></div> Tem atividades</div>
-                        <div class="legenda-item"><div class="leg-dot" style="background: var(--azul-texto);"></div> Selecionado</div>
-                        <div class="legenda-item"><div class="leg-dot" style="background: var(--roxo-texto);"></div> Hoje</div>
-                    </div>
-                </section>
-
-                <!-- Bloco de Eventos do Dia Selecionado -->
-                <section style="margin-top: 24px;">
-                    <div class="titulo-secao-com-icone">
-                        <h3>📅 Eventos do dia <span class="pill-data-dia" id="data-selecionada-texto">26/08</span></h3>
-                    </div>
-                    <div id="lista-eventos-dia-calendario">
-                        <!-- Preenchido dinamicamente -->
-                    </div>
-                </section>
-                
-                <section style="margin-top: 24px;">
-                    <div class="titulo-secao-com-icone">
-                        <h3>⏳ Próximas atividades</h3>
-                        <a class="link-ver-todos">Ver todas &gt;</a>
-                    </div>
-                    <div id="lista-proximas-atividades-calendario">
-                        <!-- Preenchido dinamicamente se houver -->
-                    </div>
-                </section>
-            </div>
-
-            <!-- ABA 3: ATIVIDADES -->
-            <div id="pane-atividades" class="app-tab-pane">
-                <section class="atividades" style="margin-top: 0;">
-                    <div id="lista-atividades"></div>
-                </section>
-            </div>
-
-            <!-- ABA 4: SOLICITAÇÕES / OUVIDORIA -->
-            <div id="pane-solicitacoes" class="app-tab-pane">
-                <div style="background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--borda); margin-bottom: 16px;" id="bloco-ouvidoria">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--fundo-cinza); padding-bottom: 12px; margin-bottom: 12px;">
+            <!-- Financeiro com Acumulado e Mês Atual -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">💳 Situação Financeira (<span id="mes-financeiro-texto">Mês Atual</span>)</p>
+                <div class="card-financeiro">
+                    <div class="fin-info" style="align-items: flex-start;">
                         <div>
-                            <span style="font-size: 13px; font-weight: 800; color: var(--roxo-texto);">🔒 Espaço 100% Confidencial</span>
-                            <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--texto-secundario);">Envie sugestões, reclamações ou feedbacks sem se identificar</p>
+                            <span class="fin-label">Valor do Mês:</span><span class="fin-valor" id="fin-valor-mes" style="font-size: 15px;">R$ 10,00</span>
+                            <span class="fin-label" style="margin-top: 6px;">Débito Total Acumulado:</span><span class="fin-valor" id="fin-debito-total" style="color: #e03131;">R$ 10,00</span>
                         </div>
-                        <span style="font-size: 20px;">🛡️</span>
+                        <div><span class="fin-label">Status do Mês:</span><span class="badge-status-financeiro" id="fin-status-badge">Pendente</span></div>
+                    </div>
+                    <button class="btn-pagar" id="btn-acao-pix" onclick="abrirModalPix()">Pagar Mensalidade do Mês (Pix)</button>
+                </div>
+            </section>
+
+            <!-- Seção de Aniversariantes -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">🎉 Aniversariantes & Ciclos</p>
+                <div class="card-aniversariantes-completo" id="bloco-aniversariantes">
+                    <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">Carregando painel de aniversariantes...</p>
+                </div>
+            </section>
+
+            <!-- Calendário -->
+            <section class="calendario-mes">
+                <div class="calendario-header">
+                    <button id="btn-prev-mes">&lt;</button>
+                    <h3 id="mes-ano-texto">Mês Ano</h3>
+                    <button id="btn-next-mes">&gt;</button>
+                </div>
+                <div class="grid-calendario dias-semana">
+                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                </div>
+                <div id="grid-dias" class="grid-calendario"></div>
+            </section>
+
+            <!-- Desempenho do Mês -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">📅 Desempenho no Mês</p>
+                <div class="dashboard-estatisticas" style="grid-template-columns: repeat(5, 1fr); gap: 4px;">
+                    <div class="card-stat"><span class="stat-numero" id="stat-total">0</span><span class="stat-legenda" style="font-size:9px;">Total</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="stat-presencas">0</span><span class="stat-legenda" style="font-size:9px;">Presença</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="stat-faltas">0</span><span class="stat-legenda" style="font-size:9px;">Faltas</span></div>
+                    <div class="card-stat"><span class="stat-numero" id="stat-justificativas">0</span><span class="stat-legenda" style="font-size:9px;">Abonadas</span></div>
+                    <div class="card-stat destaque-ch"><span class="stat-numero" id="stat-ch">0h</span><span class="stat-legenda" style="font-size:9px;">CH</span></div>
+                </div>
+            </section>
+
+            <!-- Atividades -->
+            <section class="atividades">
+                <h2>Atividades do Mês</h2>
+                <div id="lista-atividades"></div>
+            </section>
+
+            <!-- ABA: OUVIDORIA & SUGESTÕES ANÔNIMAS -->
+            <section class="secao-historico-geral">
+                <p class="titulo-secao-geral">💡 Ouvidoria & Sugestões Anônimas</p>
+                <div class="card-ouvidoria-completo" id="bloco-ouvidoria">
+                    <div class="aniv-header-info">
+                        <div>
+                            <span style="font-size: 13px; font-weight: bold; color: #7950f2;">🔒 Espaço 100% Confidencial</span>
+                            <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Envie sugestões, reclamações ou feedbacks gerais sem se identificar</p>
+                        </div>
+                        <span style="font-size: 18px;">🛡️</span>
                     </div>
 
-                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                        <button style="flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 13px; background-color: var(--roxo-texto); color: white; border: none; cursor: pointer;" onclick="abrirModalNovaSugestao()">✏️ Nova Solicitação</button>
-                        <button style="flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 13px; background-color: var(--fundo-cinza); color: var(--texto-principal); border: 1px solid var(--borda); cursor: pointer;" onclick="abrirModalHistoricoSugestoes()">📋 Minhas Solicitações</button>
+                    <div style="display: flex; gap: 8px; margin-bottom: 4px;">
+                        <button class="btn-acao-ouvidoria" style="background-color: #7950f2; color: white;" onclick="abrirModalNovaSugestao()">✏️ Nova Solicitação</button>
+                        <button class="btn-acao-ouvidoria" style="background-color: #f1f3f5; color: #495057; border: 1px solid #ced4da;" onclick="abrirModalHistoricoSugestoes()">📋 Minhas Solicitações</button>
                     </div>
 
                     <div id="resumo-ultimas-sugestoes"></div>
                 </div>
-
-                <!-- Histórico Completo Inline na Aba de Solicitações -->
-                <div style="background: white; border-radius: 16px; padding: 16px; border: 1px solid var(--borda); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
-                    <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: 800; color: var(--texto-principal);">📋 Histórico de Chamados e Respostas</p>
-                    <div id="lista-historico-sugestoes-inline" style="display: flex; flex-direction: column; gap: 10px;"></div>
-                </div>
-            </div>
-
-            <!-- ABA 5: PERFIL -->
-            <div id="pane-perfil" class="app-tab-pane">
-                <div style="background: #ffffff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--borda);">
-                    <div style="text-align: center; position: relative; background: linear-gradient(135deg, #0056b3 0%, #003366 100%); margin: -20px -20px 20px -20px; padding: 28px 20px 22px 20px; border-radius: 20px 20px 0 0; color: white;">
-                        <div style="position: relative; width: 88px; height: 88px; margin: 0 auto 10px auto;" id="perfil-avatar-container"></div>
-                        <div style="position: absolute; bottom: 30px; right: 50%; margin-right: -45px; background: #ff6b6b; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; border: 2px solid #ffffff;" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
-                        <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
-                        
-                        <h3 id="perfil-nome" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #ffffff;">Nome Completo</h3>
-                        <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 4px;" id="perfil-codigo">20261000</div>
-                        <p id="perfil-cargo" style="margin: 0; font-size: 11px; font-weight: 700; color: #69db7c; text-transform: uppercase; letter-spacing: 0.8px;">Cargo</p>
-                        <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--fundo-cinza); padding: 4px; border-radius: 12px; margin-bottom: 16px;">
-                        <button class="btn-aba-perfil ativa" id="aba-btn-dados" style="background: transparent; border: none; padding: 8px 4px; font-size: 11px; font-weight: 700; color: var(--texto-secundario); border-radius: 8px; cursor: pointer;" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
-                        <button class="btn-aba-perfil" id="aba-btn-estatisticas" style="background: transparent; border: none; padding: 8px 4px; font-size: 11px; font-weight: 700; color: var(--texto-secundario); border-radius: 8px; cursor: pointer;" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
-                        <button class="btn-aba-perfil" id="aba-btn-seguranca" style="background: transparent; border: none; padding: 8px 4px; font-size: 11px; font-weight: 700; color: var(--texto-secundario); border-radius: 8px; cursor: pointer;" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
-                    </div>
-
-                    <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados" style="display: block;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
-                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">E-mail</span><span id="perfil-email" style="font-size: 11px; font-weight: 600; word-break: break-word;">-</span></div>
-                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Telefone</span><span id="perfil-tel" style="font-size: 13px; font-weight: 600;">-</span></div>
-                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Nascimento</span><span id="perfil-nascimento" style="font-size: 13px; font-weight: 600;">-</span></div>
-                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Ingresso</span><span id="perfil-ingresso" style="font-size: 13px; font-weight: 600;">-</span></div>
-                            <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 10px 12px; grid-column: span 2;"><span style="font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px;">Curso & Turno</span><span id="perfil-curso" style="font-size: 13px; font-weight: 600;">-</span></div>
-                        </div>
-                    </div>
-
-                    <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas" style="display: none;">
-                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                            <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;"><span style="display: block; font-size: 16px; font-weight: 800; color: #2b8a3e;" id="perfil-stat-presencas">0</span><span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Presenças</span></div>
-                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;"><span style="display: block; font-size: 16px; font-weight: 800; color: #c92a2a;" id="perfil-stat-faltas">0</span><span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Faltas</span></div>
-                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;"><span style="display: block; font-size: 16px; font-weight: 800; color: #1c7ed6;" id="perfil-stat-ch">0h</span><span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">CH</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca" style="display: none;">
-                        <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
-                            <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha</span>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <input type="password" id="input-senha-atual" placeholder="Senha atual" style="width: 100%; padding: 10px; border-radius: 8px; font-size: 12px; box-sizing: border-box;">
-                                <input type="password" id="input-senha-nova" placeholder="Nova senha" style="width: 100%; padding: 10px; border-radius: 8px; font-size: 12px; box-sizing: border-box;">
-                                <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 10px; border-radius: 8px; font-size: 12px; box-sizing: border-box;">
-                                <button class="btn-salvar" style="padding: 12px; font-size: 13px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                        <div id="btn-container-painel-admin"></div>
-                        <button style="background-color: #e03131; width: 100%; padding: 12px; border-radius: 10px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair da Conta</button>
-                    </div>
-
-                </div>
-            </div>
+            </section>
 
         </div>
-
-        <!-- BARRA DE NAVEGAÇÃO INFERIOR FIXA -->
-        <nav class="barra-navegacao-inferior">
-            <button class="nav-item-inferior ativa" id="nav-btn-inicio" onclick="mudarAbaApp('inicio')">
-                <div class="icon-wrap-nav">
-                    🏠
-                </div>
-                <span>Início</span>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-calendario" onclick="mudarAbaApp('calendario')">
-                <div class="icon-wrap-nav">
-                    📅
-                </div>
-                <span>Calendário</span>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-atividades" onclick="mudarAbaApp('atividades')">
-                <div class="icon-wrap-nav">
-                    📋
-                </div>
-                <span>Atividades</span>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-solicitacoes" onclick="mudarAbaApp('solicitacoes')">
-                <div class="icon-wrap-nav">
-                    💬
-                </div>
-                <span>Solicitações</span>
-            </button>
-            <button class="nav-item-inferior" id="nav-btn-perfil" onclick="mudarAbaApp('perfil')">
-                <div class="icon-wrap-nav">
-                    👤
-                </div>
-                <span>Perfil</span>
-            </button>
-        </nav>
-
     </div>
 
     <!-- MODAL DE NOVA SUGESTÃO / OUVIDORIA -->
@@ -697,8 +651,8 @@
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button class="btn-salvar" style="flex: 1; padding: 12px; background-color: #7950f2;" onclick="enviarSugestaoAnonima()">Enviar Anonimamente</button>
-                <button class="btn-cancelar" style="flex: 1; padding: 12px;" onclick="fecharModalNovaSugestao()">Cancelar</button>
+                <button class="btn-salvar" style="flex: 1; padding: 10px; background-color: #7950f2;" onclick="enviarSugestaoAnonima()">Enviar Anonimamente</button>
+                <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalNovaSugestao()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -712,7 +666,7 @@
             <div id="lista-historico-sugestoes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
 
             <div style="margin-top: 15px;">
-                <button class="btn-cancelar" style="width: 100%; padding: 12px;" onclick="fecharModalHistoricoSugestoes()">Fechar</button>
+                <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalHistoricoSugestoes()">Fechar</button>
             </div>
         </div>
     </div>
@@ -720,19 +674,19 @@
     <!-- MODAL PIX -->
     <div id="modal-pix" class="modal" style="display:none;">
         <div class="modal-conteudo text-center" style="text-align:center;">
-            <h3 style="margin-top:0;">Pagamento via Pix</h3>
-            <p style="font-size: 13px; color: #666;">Escaneie o QR Code ou copie a chave abaixo:</p>
-            <div style="padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 12px; display: inline-block; margin-bottom: 12px;">
+            <h3>Pagamento via Pix</h3>
+            <p>Escaneie o QR Code ou copie a chave abaixo:</p>
+            <div class="qrcode-box" style="padding: 5px; background: #fff;">
                 <img src="qrcode.png" alt="QR Code Pix" style="width: 150px; height: 150px; object-fit: contain; display: block; margin: 0 auto;">
             </div>
-            <div style="margin-top: 10px;">
-                <input type="text" id="chave-pix-input" value="lapewyden@gmail.com" readonly style="width:100%; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; color: #333; background: #f8f9fa;">
-                <button onclick="copiarPix()" style="width: 100%; padding: 12px; background: #0056b3; color: white; border: none; border-radius: 8px; margin-top: 8px; font-weight: bold; cursor:pointer;">Copiar Chave</button>
+            <div class="copia-cola" style="margin-top: 10px;">
+                <input type="text" id="chave-pix-input" value="lapewyden@gmail.com" readonly>
+                <button class="btn-copiar" onclick="copiarPix()">Copiar</button>
             </div>
-            <p id="aviso-copiado" style="display:none; color: #2b8a3e; font-weight:bold; margin-top: 8px; font-size: 13px;">Chave copiada com sucesso!</p>
-            <div style="margin-top: 15px; display:flex; gap:8px;">
-                <button class="btn-salvar" style="flex:1; padding: 12px; font-size:13px;" onclick="notificarPagamento()">Já realizei o pagamento</button>
-                <button class="btn-cancelar" style="flex:1; padding: 12px; font-size:13px;" onclick="fecharModalPix()">Sair</button>
+            <p id="aviso-copiado" class="texto-sucesso" style="display:none;">Chave copiada!</p>
+            <div class="botoes-modal" style="margin-top: 15px; display:flex; gap:8px;">
+                <button class="btn-salvar" onclick="notificarPagamento()">Já realizei o pagamento</button>
+                <button class="btn-cancelar" onclick="fecharModalPix()">Sair</button>
             </div>
         </div>
     </div>
@@ -744,7 +698,7 @@
             <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Todos os membros que completam ano no decorrer deste mês:</p>
             <div id="lista-modal-aniversariantes-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
             <div style="margin-top: 15px;">
-                <button class="btn-cancelar" style="width: 100%; padding: 12px;" onclick="fecharModalTodosAniversariantes()">Fechar</button>
+                <button class="btn-cancelar" style="width: 100%; padding: 10px;" onclick="fecharModalTodosAniversariantes()">Fechar</button>
             </div>
         </div>
     </div>
@@ -755,10 +709,119 @@
             <h3 style="color: #0056b3; margin-top: 0; font-size: 18px;">Justificar Ausência</h3>
             <p style="font-size: 12px; color: #666; margin-bottom: 12px;">Explique o motivo da sua ausência para avaliação da diretoria:</p>
             <input type="hidden" id="justificativa-ativ-id">
-            <textarea id="texto-justificativa-input" rows="4" placeholder="Digite sua justificativa detalhadamente..." style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 10px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
+            <textarea id="texto-justificativa-input" rows="4" placeholder="Digite sua justificativa detalhadamente..." style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
             <div style="display: flex; gap: 8px; margin-top: 15px;">
-                <button class="btn-salvar" style="flex: 1; padding: 12px;" onclick="enviarJustificativaCustomizada()">Enviar Justificativa</button>
-                <button class="btn-cancelar" style="flex: 1; padding: 12px;" onclick="fecharModalJustificativa()">Cancelar</button>
+                <button class="btn-salvar" style="flex: 1; padding: 10px;" onclick="enviarJustificativaCustomizada()">Enviar Justificativa</button>
+                <button class="btn-cancelar" style="flex: 1; padding: 10px;" onclick="fecharModalJustificativa()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PERFIL SPLÉNDIDO & COMPLEXO COM ABAS -->
+    <div id="modal-perfil" class="modal-perfil-overlay" style="display:none;">
+        <div class="modal-perfil-conteudo">
+            
+            <div class="perfil-topo-splendido">
+                <div class="perfil-avatar-wrapper" id="perfil-avatar-container"></div>
+                <div class="botao-trocar-foto-flutuante" onclick="document.getElementById('input-arquivo-foto').click()" title="Alterar foto de perfil">📷</div>
+                <input type="file" id="input-arquivo-foto" accept="image/*" style="display:none;" onchange="anexarFotoGaleria(event)">
+                
+                <h3 id="perfil-nome" style="margin: 0 0 4px 0; font-size: 18px; font-weight: 800; color: #ffffff;">Nome Completo</h3>
+                <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 4px;" id="perfil-codigo">20261000</div>
+                <p id="perfil-cargo" style="margin: 0; font-size: 11px; font-weight: 700; color: #69db7c; text-transform: uppercase; letter-spacing: 0.8px;">Cargo</p>
+                <div id="status-foto-msg" style="font-size: 11px; margin-top: 4px; font-weight: 700;"></div>
+            </div>
+
+            <div class="perfil-abas-navegacao">
+                <button class="btn-aba-perfil ativa" id="aba-btn-dados" onclick="mudarAbaPerfil('dados')">📋 Dados</button>
+                <button class="btn-aba-perfil" id="aba-btn-estatisticas" onclick="mudarAbaPerfil('estatisticas')">📊 Estatísticas</button>
+                <button class="btn-aba-perfil" id="aba-btn-seguranca" onclick="mudarAbaPerfil('seguranca')">🔒 Segurança</button>
+            </div>
+
+            <div class="perfil-secao-conteudo ativa" id="aba-conteudo-dados">
+                <div class="perfil-grid-detalhes">
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">E-mail</span>
+                        <span class="perfil-card-valor" id="perfil-email" style="font-size: 11px;">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Telefone</span>
+                        <span class="perfil-card-valor" id="perfil-tel">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Nascimento</span>
+                        <span class="perfil-card-valor" id="perfil-nascimento">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Ingresso Liga</span>
+                        <span class="perfil-card-valor" id="perfil-ingresso">-</span>
+                    </div>
+                    <div class="perfil-card-info full">
+                        <span class="perfil-card-label">Curso & Turno</span>
+                        <span class="perfil-card-valor" id="perfil-curso">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Matrícula</span>
+                        <span class="perfil-card-valor" id="perfil-matricula">-</span>
+                    </div>
+                    <div class="perfil-card-info">
+                        <span class="perfil-card-label">Formatura Prevista</span>
+                        <span class="perfil-card-valor" id="perfil-formatura">-</span>
+                    </div>
+                    <div class="perfil-card-info full">
+                        <span class="perfil-card-label">Instituição</span>
+                        <span class="perfil-card-valor" id="perfil-instituicao">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-secao-conteudo" id="aba-conteudo-estatisticas">
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🌟 Status Geral na Liga</span>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #2b8a3e;" id="perfil-stat-presencas">0</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Presenças</span>
+                        </div>
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #c92a2a;" id="perfil-stat-faltas">0</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Faltas</span>
+                        </div>
+                        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <span style="display: block; font-size: 16px; font-weight: 800; color: #1c7ed6;" id="perfil-stat-ch">0h</span>
+                            <span style="font-size: 9px; color: #666; font-weight: 700; text-transform: uppercase;">Carga Horária</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-secao-conteudo" id="aba-conteudo-seguranca">
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+                    <span style="font-size: 12px; font-weight: 800; color: #0056b3; display: block; margin-bottom: 10px;">🔒 Alteração de Senha Segura</span>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Senha Atual</label>
+                            <input type="password" id="input-senha-atual" placeholder="Sua senha atual" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Nova Senha</label>
+                            <input type="password" id="input-senha-nova" placeholder="Mínimo de caracteres" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; color: #555; display: block; margin-bottom: 2px;">Confirmar Nova Senha</label>
+                            <input type="password" id="input-senha-confirmar" placeholder="Repita a nova senha" style="width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <button class="btn-salvar" style="padding: 9px; font-size: 12px; margin-top: 4px; background: #0056b3;" onclick="salvarNovaSenha()">Atualizar Senha no Sistema</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                <div id="btn-container-painel-admin"></div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-fechar-perfil" style="background-color: #e03131; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fazerLogout()">Sair da Conta</button>
+                    <button class="btn-fechar-perfil" style="background-color: #495057; flex: 1; padding: 10px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharPerfilModal()">Fechar Perfil</button>
+                </div>
             </div>
         </div>
     </div>
@@ -853,12 +916,11 @@
             
             let corpo = document.getElementById('corpo-pagina');
             corpo.style.alignItems = "flex-start";
-            corpo.style.backgroundColor = "var(--fundo-cinza)"; 
+            corpo.style.backgroundColor = "#f4f7f6"; 
             
             document.getElementById('conteudo-principal-app').style.display = 'block';
-            document.getElementById('titulo-boas-vindas').innerHTML = `Olá, ${user.nome.split(' ')[0]}! 👋`;
-            document.getElementById('subtitulo-cargo').innerText = (user.cargo || "Ligante").toUpperCase();
-            document.getElementById('topo-codigo-usuario').innerText = user.codigo || "";
+            document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}`;
+            document.getElementById('subtitulo-cargo').innerText = user.cargo || "Ligante";
 
             renderizarAvatarTopo();
             iniciarOuvintesTempoReal();
@@ -866,41 +928,15 @@
             registrarServiceWorkerENotificacoes();
         }
 
-        function mudarAbaApp(nomeAba) {
-            document.querySelectorAll('.app-tab-pane').forEach(pane => pane.classList.remove('ativa'));
-            document.querySelectorAll('.nav-item-inferior').forEach(btn => btn.classList.remove('ativa'));
-            document.querySelectorAll('.header-bloco-dinamico').forEach(el => el.classList.remove('ativo', 'ativo-coluna'));
-
-            let paneAlvo = document.getElementById(`pane-${nomeAba}`);
-            let btnAlvo = document.getElementById(`nav-btn-${nomeAba}`);
-            let headerAlvo = document.getElementById(`header-dinamico-${nomeAba}`);
-
-            if (paneAlvo) paneAlvo.classList.add('ativa');
-            if (btnAlvo) btnAlvo.classList.add('ativa');
-            
-            if (headerAlvo) {
-                if (nomeAba === 'inicio') headerAlvo.classList.add('ativo');
-                else headerAlvo.classList.add('ativo-coluna');
-            } else {
-                document.getElementById('header-dinamico-inicio').classList.add('ativo');
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (nomeAba === 'perfil') {
-                preencherDadosPerfilCompleto();
-            }
-        }
-
         function renderizarAvatarTopo() {
             let container = document.getElementById("container-avatar-topo");
             if (!usuarioLogado) return;
 
             if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
-                container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto">`;
+                container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
-                container.innerHTML = `${inicial}`;
+                container.innerHTML = `<div style="width:100%; height:100%; background:#004494; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:16px;">${inicial}</div>`;
             }
         }
 
@@ -970,30 +1006,91 @@
 
             listaProcessada.sort((a, b) => a.diffDias - b.diffDias);
 
-            let proximoAniversariante = listaProcessada[0];
+            let aniversariantesHoje = listaProcessada.filter(x => x.ehHoje);
+            let proximoAniversariante = listaProcessada.find(x => !x.ehHoje);
             let totalMesAtual = listaProcessada.filter(x => x.mesAtual).length;
 
-            let html = "";
-            if (proximoAniversariante) {
-                let textoDias = proximoAniversariante.ehHoje ? "Hoje! 🥳" : (proximoAniversariante.diffDias === 1 ? "Amanhã" : `Daqui a ${proximoAniversariante.diffDias} dias`);
-                let avatarProximoHtml = proximoAniversariante.fotoUrl 
-                    ? `<div class="aniv-avatar-grande"><img src="${proximoAniversariante.fotoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>`
-                    : `<div class="aniv-avatar-grande">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
+            let html = `
+                <div class="aniv-header-info">
+                    <div>
+                        <span style="font-size: 13px; font-weight: bold; color: #0056b3;">🎂 Painel de Aniversariantes</span>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">${totalMesAtual} aniversariante(s) neste mês de ${nomesMeses[mesHoje - 1].toLowerCase()}</p>
+                    </div>
+                    <span style="font-size: 18px;">🎉</span>
+                </div>
+            `;
 
-                html = `
-                    <div style="display: flex; flex-direction: column; align-items: center;">
-                        ${avatarProximoHtml}
-                        <h4 class="aniv-nome">${proximoAniversariante.nome}</h4>
-                        <p class="aniv-desc">${proximoAniversariante.idade} anos • ${proximoAniversariante.curso}</p>
-                        <div class="aniv-badges-row">
-                            <span class="aniv-badge">📅 ${proximoAniversariante.dataFormatada}</span>
-                            <span class="aniv-badge dias">${textoDias}</span>
+            if (aniversariantesHoje.length > 0) {
+                html += `<div class="aniv-bloco-secao"><div class="aniv-subtitulo">🌟 Aniversariantes de Hoje</div>`;
+                aniversariantesHoje.forEach(aniv => {
+                    let avatarHtml = aniv.fotoUrl 
+                        ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                        : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
+
+                    html += `
+                        <div class="aniversario-item-complexo" style="border-color: #ff6b6b; background: #fff5f5;">
+                            ${avatarHtml}
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d63384;">${aniv.nome}</p>
+                                    <span style="font-size: 11px; background: #ff6b6b; color: white; padding: 1px 6px; border-radius: 4px; font-weight: bold;">Hoje! 🥳</span>
+                                </div>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completando <strong>${aniv.idade} anos</strong></p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">📅 ${aniv.dataFormatada}</span>
+                                    <span class="aniv-badge-info">💼 ${aniv.cargo}</span>
+                                    <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            } else {
+                html += `
+                    <div class="aniv-bloco-secao">
+                        <div class="aniv-subtitulo">Aniversariante de Hoje</div>
+                        <div class="aniversario-item-complexo">
+                            <div class="aniversario-avatar" style="background: #e9ecef; color: #6c757d;">📅</div>
+                            <div style="flex: 1;">
+                                <p style="margin: 0; font-size: 12px; font-weight: bold; color: #555;">Nenhum aniversariante hoje</p>
+                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #777;">Aproveite para conferir o próximo colega da liga abaixo!</p>
+                            </div>
                         </div>
                     </div>
                 `;
             }
 
-            html += `<a class="link-ver-todos-card" onclick="abrirModalTodosAniversariantes()">Ver lista completa do mês (${totalMesAtual}) &gt;</a>`;
+            if (proximoAniversariante) {
+                let textoDias = proximoAniversariante.diffDias === 1 ? "Amanhã" : `Daqui a ${proximoAniversariante.diffDias} dias`;
+                let avatarProximoHtml = proximoAniversariante.fotoUrl 
+                    ? `<div class="aniversario-avatar"><img src="${proximoAniversariante.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                    : `<div class="aniversario-avatar">${proximoAniversariante.nome.charAt(0).toUpperCase()}</div>`;
+
+                html += `
+                    <div class="aniv-bloco-secao" style="margin-top: 10px;">
+                        <div class="aniv-subtitulo">⏭️ Próximo Aniversariante</div>
+                        <div class="aniversario-item-complexo">
+                            ${avatarProximoHtml}
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${proximoAniversariante.nome}</p>
+                                    <span style="font-size: 10px; background: #e7f5ff; color: #0056b3; padding: 1px 6px; border-radius: 4px; font-weight: bold;">${textoDias}</span>
+                                </div>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Completará ${proximoAniversariante.idade} anos</p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">📅 ${proximoAniversariante.dataFormatada}</span>
+                                    <span class="aniv-badge-info">💼 ${proximoAniversariante.cargo}</span>
+                                    <span class="aniv-badge-info">🎓 ${proximoAniversariante.curso}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `<button class="btn-ver-todos-aniv" onclick="abrirModalTodosAniversariantes()">Ver Lista Completa do Mês (${totalMesAtual})</button>`;
+
             container.innerHTML = html;
         }
 
@@ -1029,21 +1126,21 @@
             } else {
                 aniversariantesMes.forEach(aniv => {
                     let avatarHtml = aniv.fotoUrl 
-                        ? `<div style="width:40px; height:40px; border-radius:50%; overflow:hidden;"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
-                        : `<div style="width:40px; height:40px; border-radius:50%; background:var(--azul-primario); color:white; display:flex; align-items:center; justify-content:center; font-weight:bold;">${aniv.nome.charAt(0).toUpperCase()}</div>`;
+                        ? `<div class="aniversario-avatar"><img src="${aniv.fotoUrl}" style="width:100%; height:100%; object-fit:cover;"></div>`
+                        : `<div class="aniversario-avatar">${aniv.nome.charAt(0).toUpperCase()}</div>`;
 
                     htmlModal += `
-                        <div style="display:flex; align-items:center; gap:12px; padding:12px; background:var(--fundo-cinza); border: 1px solid var(--borda); border-radius:12px; margin-bottom:8px;">
+                        <div class="aniversario-item-complexo">
                             ${avatarHtml}
                             <div style="flex: 1;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <p style="margin: 0; font-size: 13px; font-weight: 800; color: var(--texto-principal);">${aniv.nome}</p>
-                                    <span style="font-size: 11px; font-weight: 800; color: #d63384;">${aniv.dataFormatada}</span>
+                                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #0056b3;">${aniv.nome}</p>
+                                    <span style="font-size: 11px; font-weight: bold; color: #d63384;">${aniv.dataFormatada}</span>
                                 </div>
-                                <p style="margin: 2px 0 6px 0; font-size: 11px; color: var(--texto-secundario);">Vai completar ${aniv.idade} anos</p>
-                                <div style="display:flex; gap:6px;">
-                                    <span style="font-size:10px; background:#fff; border:1px solid var(--borda); padding:2px 6px; border-radius:6px; font-weight:700;">💼 ${aniv.cargo}</span>
-                                    <span style="font-size:10px; background:#fff; border:1px solid var(--borda); padding:2px 6px; border-radius:6px; font-weight:700;">🎓 ${aniv.curso}</span>
+                                <p style="margin: 2px 0 4px 0; font-size: 11px; color: #555;">Vai completar ${aniv.idade} anos</p>
+                                <div class="aniv-detalhes-grid">
+                                    <span class="aniv-badge-info">💼 ${aniv.cargo}</span>
+                                    <span class="aniv-badge-info">🎓 ${aniv.curso}</span>
                                 </div>
                             </div>
                         </div>
@@ -1085,12 +1182,12 @@
                     }
                     localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
                     renderizarAvatarTopo();
-                    document.getElementById('subtitulo-cargo').innerText = (usuarioLogado.cargo || "Ligante").toUpperCase();
+                    document.getElementById('subtitulo-cargo').innerText = usuarioLogado.cargo || "Ligante";
                     atualizarFinanceiroApp();
 
-                    let panePerfil = document.getElementById("pane-perfil");
-                    if (panePerfil && panePerfil.classList.contains("ativa")) {
-                        preencherDadosPerfilCompleto();
+                    let modalPerfil = document.getElementById("modal-perfil");
+                    if (modalPerfil && modalPerfil.style.display === "flex") {
+                        abrirPerfilModal();
                     }
                 }
             });
@@ -1114,7 +1211,6 @@
                     return tB - tA;
                 });
                 renderizarOuvidoriaWidget();
-                renderizarListaHistoricoSugestoesModal();
             });
 
             db.collection("avisos").onSnapshot((snapshot) => {
@@ -1223,6 +1319,7 @@
             });
         }
 
+        // --- RENDERIZADOR DE ENQUETES REFORMULADO (Proporcional e Botão "Mudar" embaixo) ---
         function renderizarEnquetesWidget() {
             let containerSecao = document.getElementById("secao-enquetes-container");
             let blocoEnquetes = document.getElementById("bloco-enquetes-ativas");
@@ -1264,7 +1361,7 @@
 
                     let badgeDiretoriaHtml = enquete.publico === 'diretoria' 
                         ? `<div class="badge-diretoria-enquete">🔒 Exclusivo da Diretoria</div>` 
-                        : '<div></div>';
+                        : '';
 
                     let limiteMs = 0;
                     if (enquete.dataLimite) {
@@ -1272,20 +1369,19 @@
                         limiteMs = dL.getTime();
                     }
                     
-                    let contadorHtml = limiteMs ? `<div class="timer-enquete" id="timer-enquete-${enquete.id}" data-limite="${limiteMs}">⏳ Calculando...</div>` : '';
+                    let contadorHtml = limiteMs ? `<div id="timer-enquete-${enquete.id}" data-limite="${limiteMs}" style="position: absolute; top: 16px; right: 16px; font-size: 10px; color: #d97706; font-weight: bold;">⏳ Calculando...</div>` : '';
 
                     let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
                     let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
 
+                    // Estrutura ajustada com largura 100% igual aos demais blocos e sem restrições de largura excedentes
                     html += `
                         <div class="enquete-item-card">
-                            <div class="enquete-top-bar">
-                                ${badgeDiretoriaHtml}
-                                ${contadorHtml}
-                            </div>
-                            <h4 class="enquete-titulo">${enquete.titulo}</h4>
-                            <p class="enquete-desc">${enquete.descricao || ''}</p>
-                            <div id="container-opcoes-enq-${enquete.id}">
+                            ${contadorHtml}
+                            ${badgeDiretoriaHtml}
+                            <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: bold; color: #212529; padding-right: 85px; word-break: break-word;">${enquete.titulo}</p>
+                            <p style="margin: 0 0 8px 0; font-size: 12px; color: #666; line-height: 1.4;">${enquete.descricao || ''}</p>
+                            <div style="margin-top: 8px;" id="container-opcoes-enq-${enquete.id}">
                     `;
 
                     if (!jaVotou) {
@@ -1297,18 +1393,20 @@
                         if (permiteTexto) {
                             html += `
                                 <div style="margin-top: 8px;">
-                                    <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 12px 14px; border: 1px solid var(--borda); border-radius: 10px; font-size: 13px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: var(--texto-principal); font-family: 'Plus Jakarta Sans', sans-serif;"></textarea>
-                                    <button class="btn-acao-enquete" style="margin-top: 8px;" onclick="votarEnqueteComTexto('${enquete.id}')">Enviar Resposta</button>
+                                    <textarea id="input-texto-enq-${enquete.id}" rows="2" placeholder="Escreva sua resposta..." style="width: 100%; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 12px; box-sizing: border-box; outline: none; resize: none; background: #fff; color: #333;"></textarea>
+                                    <button class="enquete-opcao-btn" style="background: #0056b3; color: white; text-align: center; margin-top: 6px;" onclick="votarEnqueteComTexto('${enquete.id}')">Enviar Resposta</button>
                                 </div>
                             `;
                         }
                     } else {
+                        // Voto devidamente estruturado em coluna (flex-direction: column) para o botão "Mudar" descer e ocupar o espaço com harmonia
                         html += `
-                            <div class="enquete-voto-confirmado">
-                                <span>✓</span>
-                                <span>Seu voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '<br><i>"' + textoVotado + '"</i>' : ''}</span>
+                            <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                                <div style="font-size: 12px; color: #2b8a3e; font-weight: bold; word-break: break-word;">
+                                    ✓ Voto: ${opcaoVotada || 'Enviado'} ${textoVotado ? '<br><i>"' + textoVotado + '"</i>' : ''}
+                                </div>
+                                <button class="btn-mudar-voto" onclick="mudarVotoEnquete('${enquete.id}')">Mudar Voto</button>
                             </div>
-                            <button class="btn-acao-enquete" onclick="mudarVotoEnquete('${enquete.id}')">Mudar / Alterar voto</button>
                         `;
                     }
 
@@ -1443,61 +1541,61 @@
             let badgeStyle = getBadgeStatusStyle(ultima.status);
 
             container.innerHTML = `
-                <div style="background: var(--fundo-cinza); border: 1px solid var(--borda); border-radius: 12px; padding: 12px; margin-top: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 11px; font-weight: 800; color: var(--roxo-texto);">[${ultima.tipo}]</span>
-                        <span style="font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700; ${badgeStyle}">${ultima.status}</span>
+                <div class="ouvidoria-item-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${ultima.tipo}]</span>
+                        <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${ultima.status}</span>
                     </div>
-                    <p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--texto-principal);">${ultima.titulo}</p>
-                    <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--texto-secundario); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ultima.texto}</p>
+                    <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${ultima.titulo}</p>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ultima.texto}</p>
                 </div>
             `;
         }
 
         function renderizarListaHistoricoSugestoesModal() {
-            let containerModal = document.getElementById("lista-historico-sugestoes-conteudo");
-            let containerInline = document.getElementById("lista-historico-sugestoes-inline");
+            let container = document.getElementById("lista-historico-sugestoes-conteudo");
+            if (!container) return;
 
-            let html = "";
             if (minhasSugestoesCache.length === 0) {
-                html = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Você ainda não enviou nenhuma sugestão ou reclamação.</p>`;
-            } else {
-                minhasSugestoesCache.forEach(item => {
-                    let badgeStyle = getBadgeStatusStyle(item.status);
-                    let respostaHtml = item.respostaDiretoria ? `
-                        <div style="background: var(--azul-claro); border-left: 3px solid var(--azul-texto); padding: 8px 10px; border-radius: 6px; margin-top: 8px;">
-                            <p style="margin: 0; font-size: 11px; font-weight: 800; color: var(--azul-texto);">💬 Resposta da Diretoria:</p>
-                            <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--texto-principal);">${item.respostaDiretoria}</p>
-                        </div>
-                    ` : "";
-
-                    html += `
-                        <div style="background: var(--fundo-cinza); border: 1px solid var(--borda); border-radius: 12px; padding: 12px; margin-top: 0; margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <span style="font-size: 11px; font-weight: 800; color: var(--roxo-texto);">[${item.tipo}]</span>
-                                <span style="font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700; ${badgeStyle}">${item.status}</span>
-                            </div>
-                            <p style="margin: 0; font-size: 14px; font-weight: 800; color: var(--texto-principal);">${item.titulo}</p>
-                            <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--texto-secundario); line-height: 1.4;">${item.texto}</p>
-                            ${respostaHtml}
-                        </div>
-                    `;
-                });
+                container.innerHTML = `<p style="font-size: 12px; color: #888; text-align: center; padding: 20px;">Você ainda não enviou nenhuma sugestão ou reclamação.</p>`;
+                return;
             }
 
-            if (containerModal) containerModal.innerHTML = html;
-            if (containerInline) containerInline.innerHTML = html;
+            let html = "";
+            minhasSugestoesCache.forEach(item => {
+                let badgeStyle = getBadgeStatusStyle(item.status);
+                let respostaHtml = item.respostaDiretoria ? `
+                    <div style="background: #e7f5ff; border-left: 3px solid #1c7ed6; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
+                        <p style="margin: 0; font-size: 11px; font-weight: bold; color: #1971c2;">💬 Resposta da Diretoria:</p>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #333;">${item.respostaDiretoria}</p>
+                    </div>
+                ` : "";
+
+                html += `
+                    <div class="ouvidoria-item-card" style="margin-top: 0; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 11px; font-weight: bold; color: #7950f2;">[${item.tipo}]</span>
+                            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; ${badgeStyle}">${item.status}</span>
+                        </div>
+                        <p style="margin: 0; font-size: 13px; font-weight: bold; color: #333;">${item.titulo}</p>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #555; line-height: 1.3;">${item.texto}</p>
+                        ${respostaHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         function getBadgeStatusStyle(status) {
             if (status === 'Implementado' || status === 'Concluído') {
-                return 'background: var(--verde-fundo); color: var(--verde-texto);';
+                return 'background: #ebfbee; color: #2b8a3e;';
             } else if (status === 'Negado') {
-                return 'background: var(--vermelho-fundo); color: var(--vermelho-texto);';
+                return 'background: #ffe3e3; color: #c92a2a;';
             } else if (status === 'Precisa de mais detalhes') {
-                return 'background: var(--amarelo-fundo); color: var(--amarelo-texto);';
+                return 'background: #fff3bf; color: #f59f00;';
             } else {
-                return 'background: var(--azul-claro); color: var(--azul-texto);';
+                return 'background: #e7f5ff; color: #1c7ed6;';
             }
         }
 
@@ -1548,7 +1646,6 @@
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
-        let diaSelecionadoCalendario = dataAtual.getDate();
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         function atualizarFinanceiroApp() {
@@ -1559,8 +1656,7 @@
             let finMap = usuarioLogado.financeiro || {};
             let statusMes = finMap[chaveMesAtual] || 'pendente';
             let badgeStatus = document.getElementById("fin-status-badge");
-            let btnPixWrap = document.getElementById("btn-acao-pix-wrapper");
-            let textoPix = document.getElementById("texto-acao-pix");
+            let btnPix = document.getElementById("btn-acao-pix");
             let valMesEl = document.getElementById("fin-valor-mes");
             let debTotalEl = document.getElementById("fin-debito-total");
 
@@ -1572,41 +1668,35 @@
             if(!cobravelAtual) {
                 valMesEl.innerText = "R$ 0,00";
                 badgeStatus.innerText = "Não Cobrado";
-                badgeStatus.className = "badge-status";
-                badgeStatus.style.background = "var(--fundo-cinza)";
-                badgeStatus.style.color = "var(--texto-secundario)";
-                btnPixWrap.style.display = "none";
+                badgeStatus.className = "badge-status-financeiro badge-fin abonado";
+                btnPix.style.display = "none";
             } else {
                 valMesEl.innerText = "R$ 10,00";
-                btnPixWrap.style.display = "flex";
+                btnPix.style.display = "block";
                 if(statusMes === 'pago') {
-                    badgeStatus.innerHTML = "Pago ✓";
-                    badgeStatus.className = "badge-status pago";
-                    badgeStatus.style.background = ""; badgeStatus.style.color = "";
-                    textoPix.innerText = "Mensalidade Quitada";
-                    btnPixWrap.style.pointerEvents = "none";
-                    btnPixWrap.style.color = "var(--texto-secundario)";
+                    badgeStatus.innerText = "Pago ✓";
+                    badgeStatus.className = "badge-status-financeiro badge-fin pago";
+                    btnPix.innerText = "Mensalidade Quitada";
+                    btnPix.disabled = true;
+                    btnPix.style.background = "#6c757d";
                 } else if(statusMes === 'analise') {
-                    badgeStatus.innerText = "Em Análise";
-                    badgeStatus.className = "badge-status";
-                    badgeStatus.style.background = "var(--amarelo-fundo)";
-                    badgeStatus.style.color = "var(--amarelo-texto)";
-                    textoPix.innerText = "Em análise pelo financeiro";
-                    btnPixWrap.style.pointerEvents = "none";
+                    badgeStatus.innerText = "Aguardando Confirmação";
+                    badgeStatus.className = "badge-status-financeiro badge-fin analise";
+                    btnPix.innerText = "Em análise pelo financeiro";
+                    btnPix.disabled = true;
+                    btnPix.style.background = "#f59f00";
                 } else if(statusMes === 'abonado') {
                     badgeStatus.innerText = "Abonado";
-                    badgeStatus.className = "badge-status";
-                    badgeStatus.style.background = "var(--fundo-cinza)";
-                    badgeStatus.style.color = "var(--texto-secundario)";
-                    textoPix.innerText = "Isento / Abonado";
-                    btnPixWrap.style.pointerEvents = "none";
+                    badgeStatus.className = "badge-status-financeiro badge-fin abonado";
+                    btnPix.innerText = "Isento / Abonado";
+                    btnPix.disabled = true;
+                    btnPix.style.background = "#adb5bd";
                 } else {
                     badgeStatus.innerText = "Pendente";
-                    badgeStatus.className = "badge-status pendente";
-                    badgeStatus.style.background = ""; badgeStatus.style.color = "";
-                    textoPix.innerText = "Pagar Mensalidade do Mês (Pix)";
-                    btnPixWrap.style.pointerEvents = "auto";
-                    btnPixWrap.style.color = "var(--azul-texto)";
+                    badgeStatus.className = "badge-status-financeiro badge-fin pendente";
+                    btnPix.innerText = "Pagar Mensalidade do Mês (Pix)";
+                    btnPix.disabled = false;
+                    btnPix.style.background = "#0056b3";
                 }
             }
 
@@ -1656,26 +1746,17 @@
         }
 
         function mudarAbaPerfil(nomeAba) {
-            document.querySelectorAll('.btn-aba-perfil').forEach(btn => {
-                btn.classList.remove('ativa');
-                btn.style.background = 'transparent';
-                btn.style.color = 'var(--texto-secundario)';
-            });
-            document.querySelectorAll('.perfil-secao-conteudo').forEach(sec => sec.style.display = 'none');
+            document.querySelectorAll('.btn-aba-perfil').forEach(btn => btn.classList.remove('ativa'));
+            document.querySelectorAll('.perfil-secao-conteudo').forEach(sec => sec.classList.remove('ativa'));
 
-            let btnAtivo = document.getElementById(`aba-btn-${nomeAba}`);
-            btnAtivo.classList.add('ativa');
-            btnAtivo.style.background = '#ffffff';
-            btnAtivo.style.color = 'var(--azul-texto)';
-            
-            document.getElementById(`aba-conteudo-${nomeAba}`).style.display = 'block';
+            document.getElementById(`aba-btn-${nomeAba}`).classList.add('ativa');
+            document.getElementById(`aba-conteudo-${nomeAba}`).classList.add('ativa');
         }
 
-        function preencherDadosPerfilCompleto() {
-            if (!usuarioLogado) return;
+        function abrirPerfilModal() {
             document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
             document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo || "-";
-            document.getElementById("perfil-cargo").innerText = (usuarioLogado.cargo || "Ligante").toUpperCase();
+            document.getElementById("perfil-cargo").innerText = usuarioLogado.cargo || "Ligante";
             
             document.getElementById("perfil-email").innerText = usuarioLogado.email || "-";
             document.getElementById("perfil-tel").innerText = usuarioLogado.tel || "-";
@@ -1720,19 +1801,23 @@
 
             let avatarModal = document.getElementById("perfil-avatar-container");
             if (usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
-                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover; border-radius:50%; border: 3px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">`;
+                avatarModal.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" class="perfil-avatar-img">`;
             } else {
                 let inicial = usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
-                avatarModal.innerHTML = `<div style="background:var(--azul-primario); color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px; width:100%; height:100%; border-radius:50%; border: 3px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">${inicial}</div>`;
+                avatarModal.innerHTML = `<div class="perfil-avatar-img" style="background:#003366; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:32px;">${inicial}</div>`;
             }
 
             let containerAdminBtn = document.getElementById("btn-container-painel-admin");
             if (cargoLower !== "ligante" && cargoLower !== "membro" && cargoLower !== "marketing") {
-                containerAdminBtn.innerHTML = `<button style="background-color: var(--azul-botao); width: 100%; padding: 12px; border-radius: 10px; border:none; color:white; font-weight:bold; cursor:pointer; margin-bottom: 8px;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
+                containerAdminBtn.innerHTML = `<button class="btn-fechar-perfil" style="background-color: #0056b3; width: 100%; padding: 12px; border-radius: 8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='diretoria.html'">Painel da Diretoria</button>`;
             } else {
                 containerAdminBtn.innerHTML = "";
             }
+
+            document.getElementById("modal-perfil").style.display = "flex";
         }
+
+        function fecharPerfilModal() { document.getElementById("modal-perfil").style.display = "none"; }
 
         async function salvarNovaSenha() {
             let senhaAtualInput = document.getElementById("input-senha-atual").value.trim();
@@ -1808,7 +1893,7 @@
                             fotoTempUrl: base64Image,
                             fotoStatus: 'analise'
                         });
-                        preencherDadosPerfilCompleto();
+                        abrirPerfilModal();
                         alert("Foto enviada para análise da diretoria com sucesso!");
                     } catch(e) {
                         console.error(e);
@@ -1826,12 +1911,6 @@
 
         function renderizarApp() {
             document.getElementById("mes-ano-texto").innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
-            let nomeMesEl = document.getElementById("nome-mes-desempenho-texto");
-            if (nomeMesEl) nomeMesEl.innerText = nomesMeses[mesAtual];
-            
-            let mesHeaderCalendario = document.getElementById("mes-ano-texto-header");
-            if(mesHeaderCalendario) mesHeaderCalendario.innerText = `${nomesMeses[mesAtual]} / ${anoAtual}`;
-
             const gridDias = document.getElementById("grid-dias");
             if(!gridDias) return;
             gridDias.innerHTML = "";
@@ -1842,7 +1921,7 @@
             const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
             const totalDiasMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
-            for (let i = 0; i < primeiroDiaMes; i++) { gridDias.innerHTML += `<div></div>`; }
+            for (let i = 0; i < primeiroDiaMes; i++) { gridDias.innerHTML += `<div class="dia-calendario vazio"></div>`; }
             for (let dia = 1; dia <= totalDiasMes; dia++) {
                 let dataFormatada = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
                 let temAtividade = atividades.some(ativ => {
@@ -1851,139 +1930,15 @@
                     if (usuarioLogado.ingressoLiga && ativ.data < usuarioLogado.ingressoLiga) return false;
                     return true;
                 });
-                
+                let htmlPonto = temAtividade ? `<div class="ponto-verde"></div>` : ``;
                 let hoje = new Date();
-                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear());
-                let ehSelecionado = (dia === diaSelecionadoCalendario);
-                
-                let classList = ["dia-calendario", "dia-util"];
-                if (ehHoje) classList.push("hoje");
-                if (ehSelecionado) classList.push("selecionado");
-                
-                let htmlPonto = temAtividade ? `<div class="ponto-verde ${ehSelecionado ? 'selecionado-dot' : ''}"></div>` : ``;
-
-                gridDias.innerHTML += `
-                    <div class="${classList.join(' ')}" onclick="selecionarDiaCalendario(${dia})">
-                        ${dia}
-                        ${htmlPonto}
-                    </div>
-                `;
+                let ehHoje = (dia === hoje.getDate() && mesAtual === hoje.getMonth() && anoAtual === hoje.getFullYear()) ? "dia-hoje" : "";
+                gridDias.innerHTML += `<div class="dia-calendario ${ehHoje}">${dia}${htmlPonto}</div>`;
             }
 
             renderizarHistoricoGeral();
             renderizarCardsENumeros();
-            renderizarEventosDiaCalendario();
             atualizarFinanceiroApp();
-        }
-
-        function selecionarDiaCalendario(dia) {
-            diaSelecionadoCalendario = dia;
-            renderizarApp();
-        }
-
-        function renderizarEventosDiaCalendario() {
-            let container = document.getElementById("lista-eventos-dia-calendario");
-            let containerProx = document.getElementById("lista-proximas-atividades-calendario");
-            let textoData = document.getElementById("data-selecionada-texto");
-            
-            if (!container) return;
-
-            let dataStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(diaSelecionadoCalendario).padStart(2, '0')}`;
-            if (textoData) textoData.innerText = `${String(diaSelecionadoCalendario).padStart(2,'0')}/${String(mesAtual + 1).padStart(2,'0')}`;
-
-            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
-            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
-
-            let evsDoDia = atividades.filter(a => {
-                if (a.data !== dataStr || a.cancelada) return false;
-                if (a.publico === 'diretoria' && !ehDiretoria) return false;
-                if (usuarioLogado.ingressoLiga && a.data < usuarioLogado.ingressoLiga) return false;
-                return true;
-            });
-
-            if (evsDoDia.length === 0) {
-                container.innerHTML = `<div style="background: white; padding: 16px; border-radius: 14px; font-size: 13px; color: var(--texto-secundario); text-align: center; border: 1px solid var(--borda);">Nenhuma atividade agendada para este dia.</div>`;
-            } else {
-                let html = "";
-                evsDoDia.forEach((ativ, index) => {
-                    let iconeClass = (index % 2 === 0) ? 'verde' : 'azul';
-                    let icone = (index % 2 === 0) ? '👥' : '📖'; 
-                    let badgeClass = (index % 2 === 0) ? 'badge-presenca' : 'badge-ch';
-                    let textoBadge = (index % 2 === 0) ? `Presença ${ativ.ch}h` : `CH ${ativ.ch}h`;
-
-                    html += `
-                        <div class="evento-dia-card">
-                            <div class="evento-icone-wrap ${iconeClass}">
-                                ${icone}
-                            </div>
-                            <div class="evento-infos">
-                                <h4 class="evento-titulo">${ativ.titulo}</h4>
-                                <div class="evento-detalhe-linha">
-                                    ⏰ ${ativ.hora}
-                                </div>
-                                <div class="evento-detalhe-linha">
-                                    📍 ${ativ.local}
-                                </div>
-                            </div>
-                            <div class="${badgeClass}">${textoBadge}</div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            }
-
-            if (containerProx) {
-                let hojeStr = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
-                let proximas = atividades.filter(a => {
-                    if (a.cancelada) return false;
-                    if (a.publico === 'diretoria' && !ehDiretoria) return false;
-                    if (usuarioLogado.ingressoLiga && a.data < usuarioLogado.ingressoLiga) return false;
-                    return a.data >= hojeStr;
-                }).slice(0, 3); 
-
-                if (proximas.length === 0) {
-                    containerProx.innerHTML = `<div style="background: white; padding: 16px; border-radius: 14px; font-size: 13px; color: var(--texto-secundario); text-align: center; border: 1px solid var(--borda);">Nenhuma próxima atividade.</div>`;
-                } else {
-                    let htmlProx = "";
-                    proximas.forEach(ativ => {
-                        let dataObj = new Date(ativ.data + "T00:00:00");
-                        let dataFormatada = `${String(dataObj.getDate()).padStart(2,'0')}/${String(dataObj.getMonth()+1).padStart(2,'0')}/${dataObj.getFullYear()}`;
-                        
-                        let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
-                        let limiteMs = dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000);
-                        let timerId = `timer-${ativ.id}`;
-
-                        htmlProx += `
-                            <div class="proxima-ativ-card" onclick="mudarAbaApp('atividades')" style="cursor: pointer;">
-                                <div class="proxima-ativ-top">
-                                    <div class="evento-icone-wrap amarelo">
-                                        📋
-                                    </div>
-                                    <div class="proxima-ativ-content">
-                                        <div class="proxima-ativ-header">
-                                            <h4 class="evento-titulo">${ativ.titulo}</h4>
-                                            <div class="badges-direita">
-                                                <span class="badge-ch-laranja">${ativ.ch}h CH</span>
-                                                <span class="badge-confirmados-azul">${ativ.totalConfirmados} conf.</span>
-                                            </div>
-                                        </div>
-                                        <div class="evento-detalhe-linha" style="margin-top: 4px;">
-                                            📅 ${dataFormatada} às ${ativ.hora}
-                                        </div>
-                                        <div class="evento-detalhe-linha">
-                                            📍 ${ativ.local}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="barra-prazo" id="${timerId}" data-limite="${limiteMs}">
-                                    ⏳ Prazo limite: Calculando...
-                                </div>
-                            </div>
-                        `;
-                    });
-                    containerProx.innerHTML = htmlProx;
-                }
-            }
         }
 
         function renderizarHistoricoGeral() {
@@ -2047,7 +2002,7 @@
             document.getElementById("stat-ch").innerText = totalCH + "h";
 
             if (atividadesDesteMes.length === 0) {
-                listaAtividades.innerHTML = "<p class='sem-atividade' style='text-align: center; color: var(--texto-secundario); font-size: 13px; padding: 20px; background: white; border-radius: 16px; border: 1px solid var(--borda);'>Não há atividades agendadas para este mês.</p>";
+                listaAtividades.innerHTML = "<p class='sem-atividade'>Não há atividades agendadas para este mês.</p>";
                 return;
             }
 
@@ -2062,28 +2017,29 @@
 
                 if (ativ.publico === 'diretoria') {
                     sinalizacaoDiretoriaHtml = `
-                        <div style="background: var(--azul-claro); border-left: 4px solid var(--azul-texto); padding: 8px 10px; border-radius: 8px; margin-bottom: 12px;">
-                            <p style="color: var(--azul-texto); font-size: 11px; font-weight: 800; margin: 0;">👔 Atividade Exclusiva da Diretoria</p>
+                        <div style="background: #e7f5ff; border-left: 4px solid #1c7ed6; padding: 8px; border-radius: 6px; margin-bottom: 8px;">
+                            <p style="color: #1971c2; font-size: 12px; font-weight: bold; margin: 0;">👔 Atividade Exclusiva da Diretoria</p>
                         </div>
                     `;
                 }
 
                 if (ativ.cancelada) {
                     statusOficialHtml = `
-                        <div style="background: var(--amarelo-fundo); border-left: 4px solid var(--amarelo-texto); padding: 10px; border-radius: 8px; margin-top: 12px;">
-                            <p style="color: var(--amarelo-texto); font-size: 13px; font-weight: 800; margin: 0;">🚫 Atividade Cancelada</p>
-                            <p style="color: var(--texto-secundario); font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                        <div style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                            <p style="color: #e67700; font-size: 13px; font-weight: bold; margin: 0;">🚫 Atividade Cancelada</p>
+                            <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                         </div>
                     `;
                 } else if (ativ.statusAdmin === 'aguardando_analise') {
                     statusOficialHtml = `
-                        <div style="background: var(--amarelo-fundo); border-left: 4px solid var(--amarelo-texto); padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 11px; color: var(--amarelo-texto); font-weight: 800;">
+                        <div style="background: #fff9db; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #d97706; font-weight: bold;">
                             ⏳ Justificativa em análise pela diretoria
                         </div>
                     `;
-                    botoesCardHtml = `<span style="font-size: 11px; color: var(--texto-secundario); font-weight:700;">Aguardando avaliação...</span>`;
+                    botoesCardHtml = `<span style="font-size: 11px; color: #888;">Aguardando avaliação da diretoria</span>`;
                 } else if (ativ.statusAdmin === 'justificado') {
-                    statusOficialHtml = `<p style="color: var(--verde-texto); font-size: 12px; font-weight: 800; margin-top: 12px;">✓ Justificativa Aceita (Abonada)</p>`;
+                    statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Justificativa Aceita (Abonada)</p>`;
+                    botoesCardHtml = `<span style="font-size: 11px; color: #2b8a3e; font-weight: bold;">Sua justificativa foi aceita pela diretoria.</span>`;
                 } else {
                     let dataHoraAtiv = new Date(`${ativ.data}T${ativ.hora}:00`);
                     let limitePrazo = new Date(dataHoraAtiv.getTime() - (24 * 60 * 60 * 1000));
@@ -2106,7 +2062,7 @@
                         let contadorExtraHtml = `<div id="timer-extra-${ativ.id}" data-expira="${timestampExtraMs}" style="font-size: 10px; margin-top: 2px;">⏳ Calculando prazo extra...</div>`;
 
                         statusOficialHtml = `
-                            <div style="background: var(--verde-fundo); border-left: 4px solid var(--verde-texto); padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 11px; color: var(--verde-texto); font-weight: 800;">
+                            <div style="background: #ebfbee; border-left: 4px solid #2b8a3e; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #2b8a3e; font-weight: bold;">
                                 🔓 Prazo extra aberto pela diretoria
                                 ${contadorExtraHtml}
                             </div>
@@ -2114,7 +2070,7 @@
 
                         if (agora < dataHoraAtiv) {
                             if (ativ.confirmadoAluno) {
-                                botoesCardHtml = `<button class="btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                                botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
                             } else {
                                 botoesCardHtml = `
                                     <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
@@ -2130,36 +2086,36 @@
                         let expirado = ativ.prazoFechadoManual === true || prazoNaturalExpirado || prazoExtraExpiradoPorTempo;
 
                         if (ativ.statusAdmin === 'presente') {
-                            statusOficialHtml = `<p style="color: var(--verde-texto); font-size: 12px; font-weight: 800; margin-top: 12px;">✓ Presença validada pela Diretoria</p>`;
+                            statusOficialHtml = `<p class="tag-justificado" style="margin-top: 8px;">✓ Presença validada pela Diretoria</p>`;
                         } else if ((ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada') && expirado && !ativ.confirmadoAluno) {
                             statusOficialHtml = `
-                                <div style="background: var(--vermelho-fundo); border-left: 4px solid var(--vermelho-texto); padding: 10px; border-radius: 8px; margin-top: 12px;">
-                                    <p style="color: var(--vermelho-texto); font-size: 13px; font-weight: 800; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
-                                    <p style="color: var(--texto-secundario); font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                    <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                    <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                                 </div>
                             `;
                         } else if (ativ.statusAdmin === 'negado') {
-                            statusOficialHtml = `<p style="color: var(--vermelho-texto); font-size: 12px; font-weight: 800; margin-top: 12px;">✕ Falta Registrada</p>`;
+                            statusOficialHtml = `<p class="tag-falta" style="margin-top: 8px;">✕ Falta</p>`;
                         } else if (ativ.statusAdmin === 'justificativa_negada') {
-                            statusOficialHtml = `<p style="color: var(--vermelho-texto); font-size: 12px; font-weight: 800; margin-top: 12px;">✕ Justificativa Negada</p>`;
+                            statusOficialHtml = `<p class="tag-justificativa-negada" style="margin-top: 8px;">✕ Justificativa Negada</p>`;
                         } else {
                             if (expirado) {
                                 statusOficialHtml = `
-                                    <div style="background: var(--vermelho-fundo); border-left: 4px solid var(--vermelho-texto); padding: 10px; border-radius: 8px; margin-top: 12px;">
-                                        <p style="color: var(--vermelho-texto); font-size: 13px; font-weight: 800; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
-                                        <p style="color: var(--texto-secundario); font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
+                                    <div style="background: #ffe3e3; border-left: 4px solid #e03131; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                                        <p style="color: #c92a2a; font-size: 13px; font-weight: bold; margin: 0;">🚫 Prazo de Confirmação Encerrado</p>
+                                        <p style="color: #495057; font-size: 11px; margin: 4px 0 0 0;">Aguardando posicionamento da diretoria.</p>
                                     </div>
                                 `;
                             } else {
                                 let limiteMs = limitePrazo.getTime();
                                 statusOficialHtml = `
-                                    <div id="timer-${ativ.id}" data-limite="${limiteMs}" style="background: var(--amarelo-fundo); border-radius: 8px; padding: 10px; margin-top: 12px; font-size: 11px; color: var(--amarelo-texto); font-weight: 800; display:flex; align-items:center; gap:6px;">
-                                        ⏳ Calculando prazo...
+                                    <div id="timer-${ativ.id}" data-limite="${limiteMs}" style="background: #fff3bf; border-left: 4px solid #f59f00; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 11px; color: #664d03; font-weight: bold;">
+                                        ⏳ Calculando prazo limite...
                                     </div>
                                 `;
 
                                 if (ativ.confirmadoAluno) {
-                                    botoesCardHtml = `<button class="btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+                                    botoesCardHtml = `<button class="btn-confirmado btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
                                 } else {
                                     botoesCardHtml = `
                                         <button class="btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
@@ -2171,35 +2127,35 @@
                     }
                 }
 
-                let badgeCanceladaEstilo = ativ.cancelada ? 'opacity: 0.7;' : '';
+                let badgeCanceladaEstilo = ativ.cancelada ? 'opacity: 0.85;' : '';
                 let estaAberto = idsAbertos.includes(ativ.id);
                 let textoConfirmadoAndamento = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
 
                 listaAtividades.innerHTML += `
-                    <div id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo} background: white; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--borda);">
+                    <div class="card-atividade" id="card-ativ-${ativ.id}" style="${badgeCanceladaEstilo}">
                         ${sinalizacaoDiretoriaHtml}
-                        <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
-                            <span style="background: var(--amarelo-fundo); color: var(--amarelo-texto); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">${ativ.ch}h de CH</span>
-                            <span style="background: var(--azul-claro); color: var(--azul-texto); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">${textoConfirmadoAndamento}</span>
+                        <div class="badges" style="margin-bottom: 6px;">
+                            <span class="badge-dias">${ativ.ch}h de CH</span>
+                            <span class="badge-confirmados">${textoConfirmadoAndamento}</span>
                         </div>
                         
-                        <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 12px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
-                            <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--texto-principal); word-break: break-word; line-height:1.3;">${ativ.titulo}</h3>
-                            <div style="text-align: right; color: var(--texto-secundario); padding-top: 4px;">
-                                <span id="seta-ativ-${ativ.id}" style="font-size: 12px;">${estaAberto ? '▲' : '▼'}</span>
+                        <div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; cursor: pointer;" onclick="toggleExpandirAtividadeApp('${ativ.id}')">
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
+                            <div style="text-align: right; white-space: nowrap; color: #0056b3; font-weight: bold; font-size: 11px; padding-top: 2px;">
+                                <span id="seta-ativ-${ativ.id}">${estaAberto ? '▲ Ocultar' : '▼ Detalhes'}</span>
                             </div>
                         </div>
 
-                        <div style="margin-top: 10px; font-size: 12px; color: var(--texto-secundario);" onclick="toggleExpandirAtividadeApp('${ativ.id}')" style="cursor: pointer;">
-                            <p style="margin: 4px 0;">📅 ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
-                            <p style="margin: 4px 0;">📍 ${ativ.local}</p>
+                        <div class="info-atividade" style="margin-top: 8px;" onclick="toggleExpandirAtividadeApp('${ativ.id}')" style="cursor: pointer;">
+                            <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            <p style="margin: 2px 0;"><strong>Local:</strong> ${ativ.local}</p>
                         </div>
 
                         ${statusOficialHtml}
 
-                        <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: ${estaAberto ? 'block' : 'none'};">
-                            <p style="margin-bottom: 12px; font-size: 12px; color: var(--texto-principal); line-height:1.5;">${ativ.desc}</p>
-                            ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card">${botoesCardHtml}</div>` : ''}
+                        <div class="detalhes-expansiveis-ativ" id="detalhes-ativ-${ativ.id}" style="display: ${estaAberto ? 'block' : 'none'}; margin-top: 12px; border-top: 1px solid #eee; padding-top: 10px;">
+                            <p class="desc-atividade" style="margin-bottom: 10px;">${ativ.desc}</p>
+                            ${!ativ.cancelada && botoesCardHtml ? `<div class="botoes-card" style="margin-top: 10px;">${botoesCardHtml}</div>` : ''}
                         </div>
                     </div>
                 `;
@@ -2212,8 +2168,9 @@
                 ativConcluidas.forEach(ativ => {
                     const dataObj = new Date(ativ.data + "T00:00:00");
                     let mensagemConcluida = "Atividade Concluída";
-                    let corStatus = "var(--verde-texto)";
-                    let fundoStatus = "var(--verde-fundo)";
+                    let corStatus = "#2b8a3e";
+                    let fundoStatus = "#ebfbee";
+                    let bordaStatus = "#2b8a3e";
 
                     if (ativ.statusAdmin === 'presente') {
                         mensagemConcluida = "Presença Validada (" + ativ.ch + "h)";
@@ -2221,60 +2178,69 @@
                         mensagemConcluida = "Justificativa Aceita (Abonada)";
                     } else if (ativ.statusAdmin === 'negado') {
                         mensagemConcluida = "Falta Registrada";
-                        corStatus = "var(--vermelho-texto)";
-                        fundoStatus = "var(--vermelho-fundo)";
+                        corStatus = "#c92a2a";
+                        fundoStatus = "#ffe3e3";
+                        bordaStatus = "#e03131";
                     } else if (ativ.statusAdmin === 'justificativa_negada') {
                         mensagemConcluida = "Justificativa Negada (Falta)";
-                        corStatus = "var(--vermelho-texto)";
-                        fundoStatus = "var(--vermelho-fundo)";
+                        corStatus = "#c92a2a";
+                        fundoStatus = "#ffe3e3";
+                        bordaStatus = "#e03131";
                     }
 
                     let textoPresente = ativ.totalPresentes === 1 ? "1 presente" : `${ativ.totalPresentes} presentes`;
                     let textoJust = ativ.totalJustificativas === 1 ? "1 justificativa" : `${ativ.totalJustificativas} justificativas`;
                     let textoFalta = ativ.totalFaltas === 1 ? "1 falta" : `${ativ.totalFaltas} faltas`;
+                    let textoJustNegadas = ativ.totalJustNegadas === 1 ? "1 just. negada" : `${ativ.totalJustNegadas} just. negadas`;
 
                     htmlCartasConcluidas += `
-                        <div style="background: white; border-radius: 16px; padding: 16px; border: 1px solid var(--borda); margin-bottom: 12px;">
-                            <div style="margin-bottom: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
-                                <span style="background: var(--fundo-cinza); color: var(--texto-secundario); padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;">${ativ.ch}h CH</span>
-                                <span style="background: var(--verde-fundo); color: var(--verde-texto); padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;">${textoPresente}</span>
-                                <span style="background: var(--azul-claro); color: var(--azul-texto); padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;">${textoJust}</span>
-                                <span style="background: var(--vermelho-fundo); color: var(--vermelho-texto); padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 800;">${textoFalta}</span>
+                        <div class="card-atividade card-atividade-concluida">
+                            <div class="badges" style="margin-bottom: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
+                                <span class="badge-dias" style="background: #e9ecef; color: #343a40; font-weight: bold;">${ativ.ch}h de CH</span>
+                                <span class="badge-dias" style="background: #ebfbee; color: #2b8a3e; font-weight: bold;">${textoPresente}</span>
+                                <span class="badge-dias" style="background: #e7f5ff; color: #1c7ed6; font-weight: bold;">${textoJust}</span>
+                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoFalta}</span>
+                                <span class="badge-dias" style="background: #ffe3e3; color: #c92a2a; font-weight: bold;">${textoJustNegadas}</span>
                             </div>
                             
-                            <h3 style="margin: 0; font-size: 15px; font-weight: 800; color: var(--texto-principal); word-break: break-word;">${ativ.titulo}</h3>
+                            <h3 class="titulo-atividade" style="margin: 0; font-size: 15px; word-break: break-word;">${ativ.titulo}</h3>
 
-                            <div style="margin-top: 8px; font-size: 11px; color: var(--texto-secundario);">
-                                <p style="margin: 2px 0;">📅 ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
+                            <div class="info-atividade" style="margin-top: 6px;">
+                                <p style="margin: 2px 0;"><strong>Data:</strong> ${dataObj.toLocaleDateString('pt-BR')} às ${ativ.hora}</p>
                             </div>
 
-                            <div style="background: ${fundoStatus}; border-left: 4px solid ${corStatus}; padding: 8px 10px; border-radius: 8px; margin-top: 12px;">
-                                <p style="color: ${corStatus}; font-size: 11px; font-weight: 800; margin: 0;">✅ ${mensagemConcluida}</p>
+                            <div style="background: ${fundoStatus}; border-left: 4px solid ${bordaStatus}; padding: 8px 10px; border-radius: 6px; margin-top: 8px;">
+                                <p style="color: ${corStatus}; font-size: 12px; font-weight: bold; margin: 0;">✅ ${mensagemConcluida}</p>
                             </div>
                         </div>
                     `;
                 });
 
                 listaAtividades.innerHTML += `
-                    <div style="background: #ffffff; border-radius: 16px; padding: 16px; border: 1px solid var(--borda); margin-top: 24px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--fundo-cinza); padding-bottom: 12px; margin-bottom: 12px;">
+                    <div class="secao-pilha-concluidas">
+                        <div class="pilha-header-info">
                             <div>
-                                <span style="font-size: 14px; font-weight: 800; color: var(--azul-texto);">✔️ Atividades Concluídas</span>
-                                <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--texto-secundario);">Histórico de ${nomeMesAtual.toLowerCase()}</p>
+                                <span style="font-size: 13px; font-weight: bold; color: #0056b3;">✔️ Atividades Concluídas</span>
+                                <p style="margin: 2px 0 0 0; font-size: 11px; color: #666;">Histórico do mês de ${nomeMesAtual.toLowerCase()}</p>
                             </div>
-                            <span style="font-size: 20px;">📚</span>
+                            <span style="font-size: 16px;">📚</span>
                         </div>
-                        <div id="pilha-cartas-concluidas" style="display: none; flex-direction: column;">
+                        <div class="container-cartas-pilha" id="pilha-cartas-concluidas" onclick="togglePilhaConcluidas()">
                             ${htmlCartasConcluidas}
                         </div>
-                        <div style="text-align: center; font-size: 12px; color: var(--azul-texto); font-weight: 700; cursor: pointer;" onclick="document.getElementById('pilha-cartas-concluidas').style.display = document.getElementById('pilha-cartas-concluidas').style.display === 'none' ? 'flex' : 'none';">
-                            Mostrar / Ocultar Histórico
-                        </div>
+                        <div class="hint-toque-pilha">👆 Toque na pilha para expandir / recolher</div>
                     </div>
                 `;
             }
 
             iniciarMotorGlobalCronometros();
+        }
+
+        function togglePilhaConcluidas() {
+            let container = document.getElementById("pilha-cartas-concluidas");
+            if (container) {
+                container.classList.toggle("aberto");
+            }
         }
 
         function iniciarMotorGlobalCronometros() {
@@ -2333,13 +2299,25 @@
             }, 1000);
         }
 
+        function toggleExpandirAtividadeApp(id) {
+            let detalhes = document.getElementById(`detalhes-ativ-${id}`);
+            let seta = document.getElementById(`seta-ativ-${id}`);
+            if (detalhes.style.display === "none") {
+                detalhes.style.display = "block";
+                seta.innerText = "▲ Ocultar";
+            } else {
+                detalhes.style.display = "none";
+                seta.innerText = "▼ Detalhes";
+            }
+        }
+
         function renderizarAvisos() {
             const container = document.getElementById("container-slides");
             const contador = document.getElementById("contador-slide");
             if(!container) return;
             container.innerHTML = "";
             if(avisos.length === 0) { 
-                container.innerHTML = "<p style='font-size:12px; padding:5px;'>Nenhum aviso no momento.</p>"; 
+                container.innerHTML = "<p style='font-size:11px; padding:5px;'>Nenhum aviso no momento.</p>"; 
                 if(contador) contador.innerText = "0/0";
                 return; 
             }
