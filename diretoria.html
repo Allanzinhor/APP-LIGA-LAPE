@@ -15,8 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (Adicionado o SDK de Auth) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
       const firebaseConfig = {
@@ -26,6 +27,30 @@
       };
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
+
+      // Garante autenticação persistente e login automático no Firestore
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+          firebase.auth().onAuthStateChanged((user) => {
+              if (!user) {
+                  let sessao = localStorage.getItem("lape_sessao_usuario");
+                  if (sessao) {
+                      let dados = JSON.parse(sessao);
+                      let emailFicticio = dados.codigo + "@lape.app";
+                      firebase.auth().signInWithEmailAndPassword(emailFicticio, dados.senhaPadrao || "LAPE2026")
+                          .then(() => verificarPermissoesAdmin())
+                          .catch(() => {
+                              alert("Sessão expirada. Faça login novamente.");
+                              window.location.href = "index.html";
+                          });
+                  } else {
+                      alert("Acesso restrito. Faça login.");
+                      window.location.href = "index.html";
+                  }
+              } else {
+                  verificarPermissoesAdmin();
+              }
+          });
+      });
     </script>
 
     <style>
@@ -3644,10 +3669,6 @@
                 await db.collection("avisos").doc(id).delete();
             }
         }
-
-        window.onload = () => {
-            verificarPermissoesAdmin();
-        };
     </script>
 </body>
 </html>

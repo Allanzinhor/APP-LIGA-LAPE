@@ -1827,25 +1827,34 @@
             if(sessaoSalva) { iniciarAppComUsuario(JSON.parse(sessaoSalva)); }
         }
 
-        async function fazerLogin() {
-            let codigoInput = document.getElementById('login-codigo').value.trim();
-            let senhaInput = document.getElementById('login-senha').value.trim();
-            if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
+async function fazerLogin() {
+    let codigoInput = document.getElementById('login-codigo').value.trim();
+    let senhaInput = document.getElementById('login-senha').value.trim();
+    if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
 
-            try {
-                let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
-                if(snapshot.empty) { alert("Código não encontrado!"); return; }
-
-                let dadosUser = null;
-                snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
-
-                if(dadosUser.senhaPadrao !== senhaInput) { alert("Senha incorreta!"); return; }
-                if(dadosUser.desligado === true) { alert("Acesso negado. Membro desligado."); return; }
-
-                localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
-                iniciarAppComUsuario(dadosUser);
-            } catch(e) { console.error(e); alert("Erro ao logar."); }
+    try {
+        let emailFicticio = codigoInput + "@lape.app";
+        await firebase.auth().signInWithEmailAndPassword(emailFicticio, senhaInput);
+        
+        let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
+        if(snapshot.empty) { alert("Membro não encontrado!"); return; }
+        
+        let dadosUser = null;
+        snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
+        
+        if(dadosUser.desligado === true) { 
+            await firebase.auth().signOut();
+            alert("Acesso negado. Membro desligado."); 
+            return; 
         }
+
+        localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
+        iniciarAppComUsuario(dadosUser);
+    } catch(e) { 
+        console.error(e); 
+        alert("Código ou senha incorretos."); 
+    }
+}
 
         function iniciarAppComUsuario(user) {
             usuarioLogado = user;
