@@ -879,15 +879,18 @@ async function fazerLogin() {
     if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
 
     try {
+        let emailFicticio = codigoInput + "@lape.app";
+        // Cria a sessão autenticada exigida pelas regras de segurança
+        await firebase.auth().signInWithEmailAndPassword(emailFicticio, senhaInput);
+        
         let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
-        if(snapshot.empty) { alert("Código não encontrado!"); return; }
+        if(snapshot.empty) { alert("Membro não encontrado!"); return; }
 
         let dadosUser = null;
         snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
 
-        if(dadosUser.senhaPadrao !== senhaInput) { alert("Senha incorreta!"); return; }
-
         if(dadosUser.desligado === true) {
+            await firebase.auth().signOut();
             alert("Acesso negado. Este cadastro encontra-se desligado da liga.");
             return;
         }
@@ -902,7 +905,7 @@ async function fazerLogin() {
 
     } catch(e) { 
         console.error(e); 
-        alert("Erro ao logar. Verifique sua conexão."); 
+        alert("Erro ao logar. Certifique-se de que o usuário está cadastrado na aba Authentication do Firebase."); 
     }
 }
 
