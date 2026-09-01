@@ -449,6 +449,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
       const firebaseConfig = {
@@ -873,41 +874,40 @@
             }
         }
 
-async function fazerLogin() {
-    let codigoInput = document.getElementById('login-codigo').value.trim();
-    let senhaInput = document.getElementById('login-senha').value.trim();
-    if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
+        async function fazerLogin() {
+            let codigoInput = document.getElementById('login-codigo').value.trim();
+            let senhaInput = document.getElementById('login-senha').value.trim();
+            if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
 
-    try {
-        let emailFicticio = codigoInput + "@lape.app";
-        // Cria a sessão autenticada exigida pelas regras de segurança
-        await firebase.auth().signInWithEmailAndPassword(emailFicticio, senhaInput);
-        
-        let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
-        if(snapshot.empty) { alert("Membro não encontrado!"); return; }
+            try {
+                let emailFicticio = codigoInput + "@lape.app";
+                await firebase.auth().signInWithEmailAndPassword(emailFicticio, senhaInput);
+                
+                let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
+                if(snapshot.empty) { alert("Membro não encontrado!"); return; }
 
-        let dadosUser = null;
-        snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
+                let dadosUser = null;
+                snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
 
-        if(dadosUser.desligado === true) {
-            await firebase.auth().signOut();
-            alert("Acesso negado. Este cadastro encontra-se desligado da liga.");
-            return;
+                if(dadosUser.desligado === true) {
+                    await firebase.auth().signOut();
+                    alert("Acesso negado. Este cadastro encontra-se desligado da liga.");
+                    return;
+                }
+
+                document.getElementById('conteudo-formulario-login').style.display = 'none';
+                document.getElementById('loading-login').style.display = 'block';
+
+                setTimeout(() => {
+                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
+                    iniciarAppComUsuario(dadosUser);
+                }, 1000);
+
+            } catch(e) { 
+                console.error(e); 
+                alert("Erro ao logar. Certifique-se de que o usuário está cadastrado na aba Authentication do Firebase."); 
+            }
         }
-
-        document.getElementById('conteudo-formulario-login').style.display = 'none';
-        document.getElementById('loading-login').style.display = 'block';
-
-        setTimeout(() => {
-            localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
-            iniciarAppComUsuario(dadosUser);
-        }, 1000);
-
-    } catch(e) { 
-        console.error(e); 
-        alert("Erro ao logar. Certifique-se de que o usuário está cadastrado na aba Authentication do Firebase."); 
-    }
-}
 
         function iniciarAppComUsuario(user) {
             if(user.desligado === true) {
@@ -1380,7 +1380,6 @@ async function fazerLogin() {
                     let temOpcoes = enquete.opcoes && Array.isArray(enquete.opcoes) && enquete.opcoes.length > 0;
                     let permiteTexto = enquete.permiteTexto === true || enquete.tipo === 'texto' || enquete.caixaTexto === true || !temOpcoes;
 
-                    // Estrutura ajustada com largura 100% igual aos demais blocos e sem restrições de largura excedentes
                     html += `
                         <div class="enquete-item-card">
                             ${contadorHtml}
@@ -1405,7 +1404,6 @@ async function fazerLogin() {
                             `;
                         }
                     } else {
-                        // Voto devidamente estruturado em coluna (flex-direction: column) para o botão "Mudar" descer e ocupar o espaço com harmonia
                         html += `
                             <div style="background: #ebfbee; border: 1px solid #b2f2bb; padding: 10px; border-radius: 8px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
                                 <div style="font-size: 12px; color: #2b8a3e; font-weight: bold; word-break: break-word;">
@@ -1912,7 +1910,9 @@ async function fazerLogin() {
 
         function fazerLogout() {
             localStorage.removeItem("lape_sessao_usuario");
-            location.reload();
+            firebase.auth().signOut().then(() => {
+                location.reload();
+            });
         }
 
         function renderizarApp() {
@@ -2348,9 +2348,40 @@ async function fazerLogin() {
         document.getElementById("btn-next-mes").addEventListener("click", () => { mesAtual++; if (mesAtual > 11) { mesAtual = 0; anoAtual++; } renderizarApp(); });
 
         window.onload = () => {
-            let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
-            if(sessaoSalva) { iniciarAppComUsuario(JSON.parse(sessaoSalva)); }
-        }
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                firebase.auth().onAuthStateChanged(async (user) => {
+                    if (user) {
+                        let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
+                        if (sessaoSalva) {
+                            iniciarAppComUsuario(JSON.parse(sessaoSalva));
+                        } else {
+                            try {
+                                let codigo = user.email.split('@')[0];
+                                let snapshot = await db.collection("membros").where("codigo", "==", codigo).get();
+                                if (!snapshot.empty) {
+                                    let dadosUser = null;
+                                    snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
+                                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
+                                    iniciarAppComUsuario(dadosUser);
+                                }
+                            } catch (e) {
+                                console.error("Erro ao recuperar sessão:", e);
+                            }
+                        }
+                    } else {
+                        let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
+                        if (sessaoSalva) {
+                            // Se o token auth expirou mas há localStorage, limpa para evitar loops
+                            localStorage.removeItem("lape_sessao_usuario");
+                        }
+                    }
+                });
+            }).catch((error) => {
+                console.error("Erro ao configurar persistência:", error);
+                let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
+                if (sessaoSalva) { iniciarAppComUsuario(JSON.parse(sessaoSalva)); }
+            });
+        };
     </script>
 </body>
 </html>
