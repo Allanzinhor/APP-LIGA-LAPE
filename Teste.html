@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- CORREÇÃO DE DELAY E PISCAR DA TELA DE LOGIN -->
+    <script>
+        if (localStorage.getItem("lape_sessao_usuario")) {
+            const style = document.createElement('style');
+            style.innerHTML = '#tela-login { display: none !important; } #conteudo-principal-app { display: block !important; }';
+            document.head.appendChild(style);
+        }
+    </script>
     <style>
         /* =========================================
            RESET E ESTILOS GERAIS
@@ -21,15 +29,6 @@
             padding-bottom: 90px; 
         }
         * { box-sizing: border-box; }
-
-        /* =========================================
-           TELA DE LOGIN
-           ========================================= */
-        #tela-login { width: 100%; max-width: 400px; background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin: 60px auto; text-align: center; }
-        .grupo-input { margin-bottom: 15px; text-align: left; }
-        .grupo-input label { font-size: 12px; font-weight: bold; color: #555; }
-        .grupo-input input { width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; margin-top: 5px; outline: none; }
-        .btn-entrar { width: 100%; padding: 12px; background: #0037a3; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
         /* =========================================
            CABEÇALHO AZUL
@@ -1147,20 +1146,412 @@
             .perfil-card-principal { flex-direction: column; align-items: stretch; gap: 12px; }
             .perfil-info-direita { flex-direction: row; justify-content: space-between; align-items: center; border-top: 1px solid #f1f3f5; padding-top: 10px; }
         }
+
+        /* =========================================
+           ESTILO EXATO DO CARD DE REFERÊNCIA (PERFIL)
+           ========================================= */
+        .perfil-card-referencia {
+            background: #f7faff;
+            border-radius: 20px;
+            padding: 18px 20px;
+            box-shadow: 0 4px 20px rgba(0, 26, 77, 0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .perfil-ref-bloco-esquerda {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+        }
+        .perfil-ref-circulo-icone {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #e2ecff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .perfil-ref-icone-interno {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0037a3;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .perfil-bloco-coluna {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .perfil-bloco-coluna.com-borda {
+            border-left: 1px solid #cbd5e1;
+            padding-left: 20px;
+        }
+        .perfil-ref-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #64748b;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .perfil-ref-valor-principal {
+            font-size: 16px;
+            font-weight: 800;
+            color: #001a4d;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+        .perfil-ref-sub {
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        /* =========================================
+           CORREÇÃO DE LAYOUT LADO A LADO E RESPONSIVO
+           ========================================= */
+        .perfil-secoes-duplas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        .perfil-coluna-infos {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .perfil-titulo-secao {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #001a4d;
+            margin: 0 0 8px 2px;
+            white-space: nowrap;
+        }
+        .perfil-card-infos {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 4px 20px rgba(0, 26, 77, 0.04);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100%;
+        }
+        .perfil-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+        .perfil-info-item:not(:last-child) {
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .perfil-info-icone {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0f5ff;
+            color: #0037a3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        .perfil-info-textos {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            flex: 1;
+        }
+        .perfil-info-label {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 1px;
+        }
+        .perfil-info-valor {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #001a4d;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* =========================================
+           ESTILOS SEÇÃO CONTA E MODAL DE SENHA
+           ========================================= */
+        .perfil-secao-conta-container {
+            margin-top: 10px;
+            margin-bottom: 30px;
+            width: 100%;
+            grid-column: span 2;
+        }
+        .perfil-card-conta {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 6px 16px;
+            box-shadow: 0 4px 20px rgba(0, 26, 77, 0.04);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .perfil-conta-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .perfil-conta-item:not(:last-child) {
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .perfil-conta-icone {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f0f5ff;
+            color: #0037a3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+        .perfil-conta-icone.perigo {
+            background: #fff5f5;
+            color: #e03131;
+        }
+        .perfil-conta-textos {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+        }
+        .perfil-conta-titulo {
+            font-size: 13px;
+            font-weight: 800;
+            color: #001a4d;
+            margin-bottom: 2px;
+        }
+        .perfil-conta-titulo.perigo {
+            color: #e03131;
+        }
+        .perfil-conta-sub {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+        }
+        .perfil-conta-seta {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        /* Modal de Senha */
+        .modal-senha-overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 2000; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 16px;
+        }
+        .modal-senha-conteudo {
+            background: white; 
+            padding: 24px; 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+/* =========================================
+   NOVA TELA DE LOGIN (REFERÊNCIA BRANCA/CLARA)
+   ========================================= */
+/* 1. RESTAURA O CORPO DO APP PARA O PADRÃO */
+body { 
+    background-color: #f4f7fa; 
+    margin: 0; padding: 0; 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    color: #333;
+    padding-bottom: 90px; 
+}
+
+/* 2. OVERLAY DA TELA DE LOGIN (Fundo Claro) */
+#tela-login {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #f4f7fa; /* Fundo claro e limpo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Efeito de marca d'água sutil no fundo (opcional, como na imagem) */
+#tela-login::before {
+    content: "";
+    position: absolute;
+    top: -5%; right: -10%;
+    width: 450px; height: 450px;
+    background-image: url('brasao.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.03;
+    pointer-events: none;
+}
+
+/* 3. CAIXA BRANCA CENTRAL */
+.login-box-branca {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+}
+
+.login-logo-topo {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #0037a3;
+    padding: 4px;
+    margin: 0 auto 16px auto;
+    display: flex; align-items: center; justify-content: center;
+}
+.login-logo-topo img { width: 100%; height: 100%; border-radius: 50%; object-fit: contain; }
+
+.login-titulo-app { margin: 0 0 4px 0; font-size: 28px; font-weight: 800; color: #001a4d; }
+.login-sub-app { margin: 0 0 16px 0; font-size: 15px; font-weight: 500; color: #0037a3; }
+
+/* Linhas divisórias com ícones */
+.login-divider-icon {
+    display: flex; align-items: center; text-align: center;
+    margin: 16px 0; color: #cbd5e1; font-size: 14px;
+}
+.login-divider-icon::before, .login-divider-icon::after {
+    content: ''; flex: 1; border-bottom: 1px solid #e2e8f0;
+}
+.login-divider-icon::before { margin-right: 12px; }
+.login-divider-icon::after { margin-left: 12px; }
+
+.login-desc-boas-vindas { margin: 0 0 24px 0; font-size: 13px; color: #64748b; line-height: 1.5; font-weight: 500; }
+
+.login-grupo-input { margin-bottom: 18px; text-align: left; }
+.login-grupo-input label { font-size: 12px; font-weight: 700; color: #334155; display: block; margin-bottom: 8px; }
+
+/* Estilo exato dos campos de input da nova referência */
+.login-input-wrapper {
+    display: flex; align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+.login-input-wrapper:focus-within { border-color: #0037a3; }
+
+/* Área cinza clara do ícone à esquerda */
+.login-input-prefix {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    color: #0037a3; font-size: 16px;
+    border-right: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.login-input-wrapper input {
+    flex: 1; border: none; background: transparent;
+    padding: 12px 14px; font-size: 14px; font-weight: 600; color: #001a4d;
+    outline: none; font-family: inherit;
+}
+
+/* Ícone do olho à direita */
+.login-input-suffix {
+    padding: 0 14px; color: #64748b; font-size: 14px; cursor: pointer; display: flex; align-items: center; height: 100%;
+}
+
+.login-opcoes-linha { display: flex; justify-content: space-between; align-items: center; margin: 16px 0 24px 0; font-size: 12px; }
+.login-checkbox-label { display: flex; align-items: center; gap: 8px; font-weight: 500; color: #475569; cursor: pointer; }
+.login-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: #0037a3; cursor: pointer; }
+.login-link-esqueci { color: #0037a3; font-weight: 600; text-decoration: none; }
+
+/* Botão Azul Escuro */
+.login-btn-entrar {
+    width: 100%; padding: 14px;
+    background: #0b225c; color: white;
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.2s; font-family: inherit;
+}
+.login-btn-entrar:hover { background: #071640; }
+
+.login-card-suporte {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px;
+    padding: 16px; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; margin-top: 16px;
+}
+.login-suporte-icone {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #0b225c; color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.login-suporte-textos { flex: 1; min-width: 0; }
+.login-suporte-textos h5 { margin: 0 0 2px 0; font-size: 13px; font-weight: 800; color: #001a4d; }
+.login-suporte-textos p { margin: 0; font-size: 11px; color: #64748b; font-weight: 500; }
+.login-suporte-seta { color: #64748b; font-size: 12px; }
+
     </style>
 
-    <!-- Inicialização Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
-        authDomain: "app-lape.firebaseapp.com",
-        projectId: "app-lape"
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-    </script>
+<!-- Inicialização Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
+    authDomain: "app-lape.firebaseapp.com",
+    projectId: "app-lape"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+</script>
 </head>
 <body>
 
@@ -1174,6 +1565,29 @@
             <div style="display: flex; gap: 8px; margin-top: 15px;">
                 <button class="ativ-btn-confirmar" style="flex: 1; padding: 10px;" onclick="enviarJustificativaCustomizada()">Enviar Justificativa</button>
                 <button class="ativ-btn-justificar" style="flex: 1; padding: 10px;" onclick="fecharModalJustificativa()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ALTERAR SENHA -->
+    <div id="modal-alterar-senha" class="modal-senha-overlay">
+        <div class="modal-senha-conteudo">
+            <h3 style="color: #0037a3; margin-top: 0; font-size: 18px; font-weight: 800;">🔒 Alterar Senha</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 16px; line-height: 1.4;">Insira sua senha atual e escolha uma nova senha segura para sua conta.</p>
+            
+            <div class="grupo-input" style="margin-bottom: 12px;">
+                <label style="font-size: 11px; font-weight: 800; color: #555;">Senha Atual</label>
+                <input type="password" id="input-senha-atual" placeholder="Digite a senha atual" style="width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 10px; font-size: 13px; margin-top: 4px; outline: none; box-sizing: border-box;">
+            </div>
+
+            <div class="grupo-input" style="margin-bottom: 16px;">
+                <label style="font-size: 11px; font-weight: 800; color: #555;">Nova Senha</label>
+                <input type="password" id="input-senha-nova" placeholder="Mínimo de 6 caracteres" style="width: 100%; padding: 11px; border: 1px solid #ced4da; border-radius: 10px; font-size: 13px; margin-top: 4px; outline: none; box-sizing: border-box;">
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="ativ-btn-confirmar" style="flex: 1; padding: 12px; border: none; border-radius: 10px; background: #0037a3; color: white; font-weight: 800; cursor: pointer;" onclick="salvarNovaSenha()">Atualizar Senha</button>
+                <button class="ativ-btn-justificar" style="flex: 1; padding: 12px; border: 1px solid #ced4da; border-radius: 10px; background: #f8f9fa; color: #495057; font-weight: 800; cursor: pointer;" onclick="fecharModalAlterarSenha()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -1211,20 +1625,73 @@
         </div>
     </div>
 
-    <!-- TELA DE LOGIN -->
+<!-- TELA DE LOGIN -->
     <div id="tela-login">
-        <img src="brasao.png" alt="Brasão LAPE" style="width: 75px; height: 75px; border-radius: 50%; border: 2px solid #0056b3; margin-bottom: 5px;">
-        <h2>LAPE</h2>
-        <p>Portal do Ligante</p>
-        <div class="grupo-input">
-            <label>Código do Ligante</label>
-            <input type="text" id="login-codigo" placeholder="Ex: 20261001">
+        <div class="login-box-branca">
+            
+            <div class="login-logo-topo">
+                <img src="brasao.png" alt="Brasão LAPE">
+            </div>
+            
+            <h2 class="login-titulo-app">LAPE</h2>
+            <div class="login-sub-app">Portal do Ligante</div>
+            
+            <!-- Divisor com ícone de flor/lótus -->
+            <div class="login-divider-icon"><i class="fa-solid fa-spa"></i></div>
+            
+            <p class="login-desc-boas-vindas">Seja bem-vindo(a)! Faça login para<br>acessar o portal da Liga.</p>
+            
+            <div class="login-grupo-input">
+                <label>Código do Ligante</label>
+                <div class="login-input-wrapper">
+                    <div class="login-input-prefix">
+                        <i class="fa-regular fa-id-badge"></i>
+                    </div>
+                    <input type="text" id="login-codigo" placeholder="20252001">
+                </div>
+            </div>
+
+            <div class="login-grupo-input">
+                <label>Senha</label>
+                <div class="login-input-wrapper">
+                    <div class="login-input-prefix">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <input type="password" id="login-senha" placeholder="••••••••••">
+                    <div class="login-input-suffix" onclick="alternarVisibilidadeSenha()">
+                        <i class="fa-regular fa-eye" id="toggle-senha"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-opcoes-linha">
+                <label class="login-checkbox-label">
+                    <input type="checkbox" id="check-lembrar" checked> Lembrar meu acesso
+                </label>
+                <a href="javascript:void(0)" class="login-link-esqueci" onclick="alert('Entre em contato com a diretoria para redefinir sua senha.')">Esqueci minha senha</a>
+            </div>
+
+            <button class="login-btn-entrar" onclick="fazerLogin()">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Entrar
+            </button>
+
+            <!-- Divisor com ícone de escudo -->
+            <div class="login-divider-icon" style="margin-top: 24px;"><i class="fa-solid fa-shield-halved"></i></div>
+
+            <div class="login-card-suporte" onclick="alert('Canal de suporte e dúvidas da diretoria da LAPE.')">
+                <div class="login-suporte-icone">
+                    <i class="fa-solid fa-question"></i>
+                </div>
+                <div class="login-suporte-textos">
+                    <h5>Dúvidas ou problemas?</h5>
+                    <p>Entre em contato com a diretoria da liga.</p>
+                </div>
+                <div class="login-suporte-seta">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+
         </div>
-        <div class="grupo-input">
-            <label>Senha</label>
-            <input type="password" id="login-senha" placeholder="Sua senha">
-        </div>
-        <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
     </div>
 
     <!-- APLICATIVO PRINCIPAL -->
@@ -1281,6 +1748,17 @@
                 <div class="header-actions" style="align-self: center;">
                     <div class="notif-btn"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
                     <div class="avatar-perfil" id="container-avatar-topo-sol"></div> 
+                </div>
+            </div>
+            <!-- Perfil -->
+            <div id="header-perfil" class="header-content-perfil" style="display: none; width: 100%; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: white;">Meu Perfil</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.8);">Gerencie suas informações e acompanhe seu desempenho.</p>
+                </div>
+                <div class="header-actions" style="align-self: center;">
+                    <div class="notif-btn"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
+                    <div class="avatar-perfil" id="container-avatar-topo-perfil"></div> 
                 </div>
             </div>
         </header>
@@ -1379,11 +1857,44 @@
                         <span id="fin-status-badge" class="badge-fin-status pago">Pago ✓</span>
                     </div>
 
-                    <button class="btn-fin-acao" id="btn-acao-pix" onclick="abrirModalPix()">
-                        <i class="fa-solid fa-file-invoice-dollar"></i> Mensalidade Quitada
-                    </button>
+                       <button class="btn-fin-acao" id="btn-acao-pix" onclick="abrirModalPagamentoPix('2026-09', '10,00')">
+                       <i class="fa-solid fa-file-invoice-dollar"></i> Pagar Mensalidade (Pix)
+                       </button>
                 </div>
 
+<!-- MODAL DE PAGAMENTO PIX -->
+<div id="modal-pagamento-pix" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; padding: 16px;">
+    <div class="modal-conteudo" style="background: white; padding: 24px; border-radius: 16px; width: 100%; max-width: 450px; text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px;">
+            <h3 style="color: #0037a3; margin: 0; font-size: 15px; font-weight: 800;"><i class="fa-solid fa-wallet"></i> Pagamento de Mensalidade</h3>
+            <button class="ativ-btn-justificar" style="width: auto; padding: 4px 8px;" onclick="fecharModalPix()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div id="conteudo-fluxo-pix">
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">Escaneie o QR Code abaixo ou copie a chave Pix para realizar o pagamento de <strong id="valor-mensalidade-pix">R$ 10,00</strong> referente a <span id="mes-mensalidade-pix">Setembro/2026</span>.</p>
+
+            <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; display: inline-block; margin-bottom: 12px;">
+                <img id="img-qrcode-pix" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126580014br.gov.bcb.pix...pix-lape" style="width: 140px; height: 140px; border-radius: 8px; display: block; margin: 0 auto;" alt="QR Code Pix">
+            </div>
+
+            <div style="margin-bottom: 12px; text-align: left;">
+                <label style="font-size: 10px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">Chave Pix (CNPJ / E-mail):</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="input-chave-pix" value="12.345.678/0001-99" readonly style="font-size: 11px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; border-radius: 8px; flex: 1; outline: none;">
+                    <button class="ativ-btn-confirmar" style="padding: 0 12px; width: auto;" onclick="copiarChavePix()"><i class="fa-solid fa-copy"></i> Copiar</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 14px; text-align: left; background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                <label style="font-size: 10px; font-weight: 700; color: #001a4d; display: block; margin-bottom: 4px;"><i class="fa-solid fa-paperclip"></i> Anexar Comprovante (Opcional/Recomendado):</label>
+                <input type="file" id="arquivo-comprovante-pix" accept="image/*,application/pdf" style="font-size: 10px; padding: 6px; background: white; width: 100%; border: 1px solid #cbd5e1; border-radius: 6px;">
+            </div>
+
+            <button class="ativ-btn-confirmar" style="width: 100%; margin-bottom: 8px; background: #2b8a3e;" onclick="enviarPagamentoRealizado()"><i class="fa-solid fa-check"></i> Pagamento Realizado</button>
+            <button class="ativ-btn-justificar" style="width: 100%; padding: 10px; font-weight: 800;" onclick="fecharModalPix()">Cancelar</button>
+        </div>
+    </div>
+</div>
                 <!-- CARD 2: PRÓXIMO ANIVERSARIANTE -->
                 <div class="card-painel-estilizado">
                     <div class="card-painel-header" style="margin-bottom: 6px;">
@@ -1403,6 +1914,21 @@
                 </div>
 
             </div>
+
+            <!-- MODAL DE LISTA DE ANIVERSARIANTES DO MÊS -->
+<div id="modal-todos-aniversariantes" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; padding: 16px;">
+    <div class="modal-conteudo" style="background: white; padding: 24px; border-radius: 20px; width: 100%; max-width: 420px; max-height: 80vh; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+            <h3 style="color: #0037a3; margin: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-cake-candles" style="color: #ff6b6b;"></i> Aniversariantes do Mês</h3>
+            <button class="ativ-btn-justificar" style="width: auto; padding: 4px 8px;" onclick="fecharModalAniversariantes()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="lista-modal-aniversariantes-corpo" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; padding-right: 4px;">
+            <!-- Renderizado via script -->
+        </div>
+        <button class="ativ-btn-confirmar" style="width: 100%; margin-top: 14px;" onclick="fecharModalAniversariantes()">Fechar</button>
+    </div>
+</div>
+
 
             <!-- SEU DESEMPENHO NO MÊS -->
             <section style="margin-top: 10px; margin-bottom: 20px;">
@@ -1711,20 +2237,9 @@
             </div>
         </div>
 
-        <!-- ABA PERFIL -->
+<!-- ABA PERFIL -->
         <div id="aba-perfil" class="conteudo-aba">
-            <div class="perfil-topo-header">
-                <div class="perfil-topo-textos">
-                    <h2>Meu Perfil</h2>
-                    <p>Gerencie suas informações e acompanhe seu desempenho.</p>
-                </div>
-                <div class="perfil-topo-acoes">
-                    <div class="perfil-icone-acao"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
-                    <div class="perfil-icone-acao"><i class="fa-solid fa-gear"></i></div>
-                </div>
-            </div>
-
-            <div class="perfil-card-principal">
+            <div class="perfil-card-principal" style="margin-top: -40px;">
                 <div class="perfil-info-esquerda">
                     <div class="perfil-avatar-wrapper" onclick="document.getElementById('input-arquivo-foto').click()">
                         <div id="perfil-avatar-container" class="perfil-avatar-img-box"></div>
@@ -1749,11 +2264,12 @@
                 </div>
             </div>
 
-            <section style="margin-top: 15px; margin-bottom: 25px;">
-                <div class="secao-header">
+            <!-- 1. RESUMO GERAL LOGO ABAIXO DO PERFIL -->
+            <section style="margin-top: 15px; margin-bottom: 20px;">
+                <div class="secao-header" style="margin-bottom: 12px;">
                     <div class="secao-titulo">
-                        <i class="fa-solid fa-chart-pie" style="color: #0056b3; font-size: 18px;"></i>
-                        <h3>Resumo Geral</h3>
+                        <i class="fa-solid fa-chart-pie" style="color: #0037a3; font-size: 18px;"></i>
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #001a4d;">Resumo Geral</h3>
                     </div>
                 </div>
                 <div class="resumo-grid-cards">
@@ -1779,6 +2295,134 @@
                     </div>
                 </div>
             </section>
+
+            <!-- CARD DE MEMBRO ATIVO DESDE -->
+            <div class="perfil-card-referencia">
+                <div class="perfil-ref-bloco-esquerda">
+                    <div class="perfil-ref-circulo-icone">
+                        <div class="perfil-ref-icone-interno">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                    </div>
+                    <div class="perfil-bloco-coluna">
+                        <span class="perfil-ref-label">Membro ativo desde</span>
+                        <span class="perfil-ref-valor-principal" id="perfil-ref-mes-ano-ingresso">Março de 2025</span>
+                        <span class="perfil-ref-sub" id="perfil-ref-tempo-lapes">4 meses de LAPE</span>
+                    </div>
+                </div>
+                <div class="perfil-bloco-coluna com-borda">
+                    <span class="perfil-ref-label">Função atual</span>
+                    <span class="perfil-ref-valor-principal" id="perfil-ref-cargo-atual" style="color: #0037a3;">Presidente</span>
+                    <span class="perfil-ref-sub" id="perfil-ref-desde-cargo">Desde mai/2025</span>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE INFORMAÇÕES PESSOAIS E ACADÊMICAS -->
+            <div class="perfil-secoes-duplas">
+                
+                <!-- INFORMAÇÕES PESSOAIS -->
+                <div class="perfil-coluna-infos">
+                    <div class="perfil-titulo-secao">
+                        <i class="fa-regular fa-user" style="color: #0037a3;"></i>
+                        <span>Informações Pessoais</span>
+                    </div>
+                    <div class="perfil-card-infos">
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-regular fa-envelope"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">E-mail</span>
+                                <span class="perfil-info-valor" id="perfil-info-email">-</span>
+                            </div>
+                        </div>
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-solid fa-phone"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">Telefone</span>
+                                <span class="perfil-info-valor" id="perfil-info-tel">-</span>
+                            </div>
+                        </div>
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-regular fa-calendar"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">Data de nascimento</span>
+                                <span class="perfil-info-valor" id="perfil-info-nascimento">-</span>
+                            </div>
+                        </div>
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-regular fa-id-card"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">Matrícula</span>
+                                <span class="perfil-info-valor" id="perfil-info-matricula">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFORMAÇÕES ACADÊMICAS -->
+                <div class="perfil-coluna-infos">
+                    <div class="perfil-titulo-secao">
+                        <i class="fa-solid fa-graduation-cap" style="color: #0037a3;"></i>
+                        <span>Informações Acadêmicas</span>
+                    </div>
+                    <div class="perfil-card-infos">
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">Curso</span>
+                                <span class="perfil-info-valor" id="perfil-info-curso">-</span>
+                            </div>
+                        </div>
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-regular fa-moon"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">Turno</span>
+                                <span class="perfil-info-valor" id="perfil-info-turno">-</span>
+                            </div>
+                        </div>
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-solid fa-layer-group"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">Período</span>
+                                <span class="perfil-info-valor" id="perfil-info-periodo">-</span>
+                            </div>
+                        </div>
+                        <div class="perfil-info-item">
+                            <div class="perfil-info-icone"><i class="fa-solid fa-landmark"></i></div>
+                            <div class="perfil-info-textos">
+                                <span class="perfil-info-label">Instituição</span>
+                                <span class="perfil-info-valor" id="perfil-info-instituicao">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO CONTA -->
+                <div class="perfil-secao-conta-container">
+                    <div class="perfil-titulo-secao" style="margin-bottom: 8px;">
+                        <i class="fa-solid fa-lock" style="color: #0037a3;"></i>
+                        <span>Conta</span>
+                    </div>
+                    <div class="perfil-card-conta">
+                        <div class="perfil-conta-item" onclick="abrirModalAlterarSenha()">
+                            <div class="perfil-conta-icone"><i class="fa-solid fa-lock"></i></div>
+                            <div class="perfil-conta-textos">
+                                <span class="perfil-conta-titulo">Alterar senha</span>
+                                <span class="perfil-conta-sub">Mantenha sua conta segura</span>
+                            </div>
+                            <div class="perfil-conta-seta"><i class="fa-solid fa-chevron-right"></i></div>
+                        </div>
+                        <div class="perfil-conta-item" onclick="fazerLogoutApp()">
+                            <div class="perfil-conta-icone perigo"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                            <div class="perfil-conta-textos">
+                                <span class="perfil-conta-titulo perigo">Sair da conta</span>
+                                <span class="perfil-conta-sub">Encerrar sessão neste dispositivo</span>
+                            </div>
+                            <div class="perfil-conta-seta"><i class="fa-solid fa-chevron-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <!-- MENU INFERIOR -->
@@ -1808,7 +2452,7 @@
 
     <!-- JAVASCRIPT PRINCIPAL -->
     <script>
-        let usuarioLogado = null;
+  let usuarioLogado = null;
         let avisos = [];
         let atividades = [];
         let membrosCache = [];
@@ -1820,12 +2464,38 @@
         let dataAtual = new Date();
         let mesAtual = dataAtual.getMonth(); 
         let anoAtual = dataAtual.getFullYear();
+        let calTabMes = mesAtual;
+        let calTabAno = anoAtual;
+        let dLocal = new Date();
+        let dataSelecionadaCal = `${dLocal.getFullYear()}-${String(dLocal.getMonth() + 1).padStart(2, '0')}-${String(dLocal.getDate()).padStart(2, '0')}`;
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-
-        window.onload = () => {
+        
+window.onload = () => {
+    firebase.auth().onAuthStateChanged(async (userAuth) => {
+        if (userAuth) {
             let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
-            if(sessaoSalva) { iniciarAppComUsuario(JSON.parse(sessaoSalva)); }
+            if (sessaoSalva) {
+                iniciarAppComUsuario(JSON.parse(sessaoSalva));
+            } else {
+                try {
+                    let email = userAuth.email;
+                    let codigo = email.split('@')[0];
+                    let snapshot = await db.collection("membros").where("codigo", "==", codigo).get();
+                    if (!snapshot.empty) {
+                        let dadosUser = null;
+                        snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
+                        localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
+                        iniciarAppComUsuario(dadosUser);
+                    }
+                } catch(e) {
+                    console.error("Erro ao recuperar sessão:", e);
+                }
+            }
+        } else {
+            localStorage.removeItem("lape_sessao_usuario");
         }
+    });
+};
 
 async function fazerLogin() {
     let codigoInput = document.getElementById('login-codigo').value.trim();
@@ -1905,7 +2575,7 @@ async function fazerLogin() {
             }
         }
 
-        function mudarAba(idAba, elementoClicado) {
+function mudarAba(idAba, elementoClicado) {
             document.querySelectorAll('.conteudo-aba').forEach(aba => aba.classList.remove('ativa'));
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.classList.remove('active');
@@ -1926,12 +2596,14 @@ async function fazerLogin() {
             let headCal = document.getElementById('header-calendario');
             let headAtiv = document.getElementById('header-atividades');
             let headSol = document.getElementById('header-solicitacoes');
+            let headPerfil = document.getElementById('header-perfil');
 
-            if (headInicio && headCal && headAtiv && headSol) {
+            if (headInicio && headCal && headAtiv && headSol && headPerfil) {
                 headInicio.style.display = 'none';
                 headCal.style.display = 'none';
                 headAtiv.style.display = 'none';
                 headSol.style.display = 'none';
+                headPerfil.style.display = 'none';
 
                 if (idAba === 'calendario') {
                     headCal.style.display = 'flex';
@@ -1946,6 +2618,8 @@ async function fazerLogin() {
                     renderizarAvatarTopoSol();
                     carregarMinhasSolicitações();
                 } else if (idAba === 'perfil') {
+                    headPerfil.style.display = 'flex';
+                    renderizarAvatarTopoPerfil();
                     renderizarPerfilTab();
                 } else {
                     headInicio.style.display = 'flex';
@@ -1986,6 +2660,17 @@ async function fazerLogin() {
             }
         }
 
+        function renderizarAvatarTopoPerfil() {
+            let container = document.getElementById("container-avatar-topo-perfil");
+            if (!container) return;
+            if (usuarioLogado && usuarioLogado.fotoStatus === 'aprovada' && usuarioLogado.fotoUrl) {
+                container.innerHTML = `<img src="${usuarioLogado.fotoUrl}" alt="Foto" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                let inicial = usuarioLogado && usuarioLogado.nome ? usuarioLogado.nome.charAt(0).toUpperCase() : "L";
+                container.innerHTML = `<div style="width:100%; height:100%; background:#0037a3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:18px;">${inicial}</div>`;
+            }
+        }
+
         function renderizarPerfilTab() {
             if (!usuarioLogado) return;
             document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
@@ -1993,6 +2678,31 @@ async function fazerLogin() {
             document.getElementById("perfil-cargo").innerText = (usuarioLogado.cargo || "Ligante").toUpperCase();
             document.getElementById("perfil-curso").innerText = `${usuarioLogado.curso || 'Enfermagem'} (${usuarioLogado.turno || 'Noturno'})`;
             document.getElementById("perfil-instituicao").innerText = usuarioLogado.instituicao || "Centro Universitário Facimp Wyden";
+            document.getElementById("perfil-info-email").innerText = usuarioLogado.email || "-";
+            document.getElementById("perfil-info-tel").innerText = usuarioLogado.tel || usuarioLogado.telefone || "-";
+            document.getElementById("perfil-info-nascimento").innerText = usuarioLogado.nascimento ? new Date(usuarioLogado.nascimento + "T00:00:00").toLocaleDateString('pt-BR') : "-";
+            document.getElementById("perfil-info-matricula").innerText = usuarioLogado.matricula || "-";
+            document.getElementById("perfil-info-curso").innerText = usuarioLogado.curso || "Enfermagem";
+            document.getElementById("perfil-info-turno").innerText = usuarioLogado.turno || "Noturno";
+            document.getElementById("perfil-info-periodo").innerText = usuarioLogado.previsaoFormatura || usuarioLogado.periodo || "-";
+            document.getElementById("perfil-info-instituicao").innerText = usuarioLogado.instituicao || "Centro Universitário Facimp Wyden";
+
+            let dataIngressoStr = usuarioLogado.ingressoLiga || "2025-03-01";
+            let partesIngresso = dataIngressoStr.split("-");
+            let anoIngresso = parseInt(partesIngresso[0]) || 2025;
+            let mesIngresso = parseInt(partesIngresso[1]) || 3;
+            
+            let dataIngressoObj = new Date(anoIngresso, mesIngresso - 1, 1);
+            let hoje = new Date();
+            
+            let diffMeses = (hoje.getFullYear() - dataIngressoObj.getFullYear()) * 12 + (hoje.getMonth() - dataIngressoObj.getMonth());
+            if (diffMeses < 0) diffMeses = 0;
+
+            document.getElementById("perfil-ref-mes-ano-ingresso").innerText = `${nomesMeses[mesIngresso - 1]} de ${anoIngresso}`;
+            document.getElementById("perfil-ref-tempo-lapes").innerText = `${diffMeses} ${diffMeses === 1 ? 'mês' : 'meses'} de LAPE`;
+            
+            document.getElementById("perfil-ref-cargo-atual").innerText = usuarioLogado.cargo || "Ligante";
+            document.getElementById("perfil-ref-desde-cargo").innerText = `Desde ${nomesMeses[mesIngresso - 1].toLowerCase().substring(0,3)}/${anoIngresso}`;
 
             let containerAvatar = document.getElementById("perfil-avatar-container");
             if (containerAvatar) {
@@ -2114,7 +2824,32 @@ async function fazerLogin() {
             }
         }
 
-        function iniciarOuvintesTempoReal() {
+function iniciarOuvintesTempoReal() {
+            // Ouvinte em tempo real para os dados do próprio usuário (Financeiro, Cargo, Perfil, etc.)
+            if (usuarioLogado && usuarioLogado.id) {
+                db.collection("membros").doc(usuarioLogado.id).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        let dadosAtualizados = { id: doc.id, ...doc.data() };
+                        if (dadosAtualizados.desligado === true) {
+                            alert("Sua conta foi desligada.");
+                            fazerLogoutApp();
+                            return;
+                        }
+                        usuarioLogado = dadosAtualizados;
+                        localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                        
+                        // Atualiza componentes visuais do usuário em tempo real
+                        renderizarAvatarTopo();
+                        atualizarFinanceiroApp();
+                        renderizarHistoricoGeral();
+                        renderizarDesempenhoMensal();
+                        if (document.getElementById("aba-perfil").classList.contains("ativa")) {
+                            renderizarPerfilTab();
+                        }
+                    }
+                });
+            }
+
             db.collection("avisos").onSnapshot((snapshot) => {
                 let novosAvisos = [];
                 snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
@@ -2422,7 +3157,7 @@ async function fazerLogin() {
             document.getElementById("desempenho-ch").innerText = chMes + "h";
         }
 
-        function atualizarFinanceiroApp() {
+function atualizarFinanceiroApp() {
             if (!usuarioLogado) return;
             let chaveMesAtual = `${anoAtual}-${String(mesAtual + 1).padStart(2, '0')}`;
             let elMesText = document.getElementById("mes-financeiro-texto");
@@ -2463,6 +3198,14 @@ async function fazerLogin() {
                     btnPix.disabled = true;
                     btnPix.style.background = "#fff9db";
                     btnPix.style.color = "#f59f00";
+                } else if(statusMes === 'abonado') {
+                    badgeStatus.innerText = "Abonado";
+                    badgeStatus.className = "badge-fin-status abonado";
+                    btnPix.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Mensalidade Abonada`;
+                    btnPix.disabled = true;
+                    btnPix.style.background = "#f1f3f5";
+                    btnPix.style.color = "#495057";
+                    btnPix.style.borderColor = "#e2e8f0";
                 } else {
                     badgeStatus.innerText = "Pendente";
                     badgeStatus.className = "badge-fin-status pendente";
@@ -2554,13 +3297,141 @@ async function fazerLogin() {
             `;
         }
 
-        function abrirModalTodosAniversariantes() {}
-        function abrirModalPix() {}
+function abrirModalTodosAniversariantes() {
+    let containerCorpo = document.getElementById("lista-modal-aniversariantes-corpo");
+    if (!containerCorpo) return;
 
-        let calTabMes = new Date().getMonth();
-        let calTabAno = new Date().getFullYear();
-        let dataSelecionadaCal = new Date().toISOString().split('T')[0];
+    let hoje = new Date();
+    let mesHoje = hoje.getMonth() + 1;
 
+    let aniversariantesDoMes = membrosCache.filter(m => {
+        if (!m.nascimento) return false;
+        let partes = m.nascimento.split("-");
+        return parseInt(partes[1]) === mesHoje;
+    });
+
+    aniversariantesDoMes.sort((a, b) => {
+        let diaA = parseInt(a.nascimento.split("-")[2]);
+        let diaB = parseInt(b.nascimento.split("-")[2]);
+        return diaA - diaB;
+    });
+
+    if (aniversariantesDoMes.length === 0) {
+        containerCorpo.innerHTML = `<p style="text-align: center; color: #888; font-size: 13px; padding: 20px 0;">Nenhum aniversariante registrado para este mês.</p>`;
+    } else {
+        let html = "";
+        aniversariantesDoMes.forEach(m => {
+            let partes = m.nascimento.split("-");
+            let dataFormatada = `${partes[2]}/${partes[1]}`;
+            let anoNasc = parseInt(partes[0]);
+            let idade = hoje.getFullYear() - anoNasc;
+
+            let avatarHtml = m.fotoUrl 
+                ? `<div class="aniv-mini-avatar" style="width: 44px; height: 44px;"><img src="${m.fotoUrl}"></div>`
+                : `<div class="aniv-mini-avatar" style="width: 44px; height: 44px;">${m.nome.charAt(0).toUpperCase()}</div>`;
+
+            html += `
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 10px 12px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        ${avatarHtml}
+                        <div>
+                            <h5 style="margin: 0 0 2px 0; font-size: 13px; font-weight: 800; color: #001a4d;">${m.nome}</h5>
+                            <p style="margin: 0; font-size: 11px; color: #64748b; font-weight: 600;">${idade} anos • ${m.curso || 'Enfermagem'}</p>
+                        </div>
+                    </div>
+                    <span class="aniv-pill-tag" style="background: #e7f5ff; color: #0037a3; border-color: #d0ebff; font-weight: 800;"><i class="fa-regular fa-calendar"></i> ${dataFormatada}</span>
+                </div>
+            `;
+        });
+        containerCorpo.innerHTML = html;
+    }
+
+    document.getElementById("modal-todos-aniversariantes").style.display = "flex";
+}
+
+function fecharModalAniversariantes() {
+    document.getElementById("modal-todos-aniversariantes").style.display = "none";
+}
+
+let mesAnoAtualPagamento = "2026-09";
+
+function abrirModalPagamentoPix(mesAno = "2026-09", valor = "10,00") {
+    mesAnoAtualPagamento = mesAno;
+    let elMes = document.getElementById("mes-mensalidade-pix");
+    let elValor = document.getElementById("valor-mensalidade-pix");
+    if(elMes) elMes.innerText = mesAno;
+    if(elValor) elValor.innerText = `R$ ${valor}`;
+    document.getElementById("modal-pagamento-pix").style.display = "flex";
+}
+
+function fecharModalPix() {
+    document.getElementById("modal-pagamento-pix").style.display = "none";
+}
+
+function copiarChavePix() {
+    let inputChave = document.getElementById("input-chave-pix");
+    inputChave.select();
+    navigator.clipboard.writeText(inputChave.value);
+    alert("Chave Pix copiada para a área de transferência!");
+}
+
+async function enviarPagamentoRealizado() {
+    let user = firebase.auth().currentUser;
+    if (!user) {
+        alert("Sessão expirada. Faça login novamente.");
+        return;
+    }
+
+    let arquivoInput = document.getElementById("arquivo-comprovante-pix");
+    let comprovanteUrl = "";
+
+    if (arquivoInput.files && arquivoInput.files[0]) {
+        let arquivo = arquivoInput.files[0];
+        let reader = new FileReader();
+        
+        reader.onload = async function(e) {
+            comprovanteUrl = e.target.result;
+            await salvarStatusAnaliseNoFirestore(comprovanteUrl);
+        };
+        reader.readAsDataURL(arquivo);
+    } else {
+        await salvarStatusAnaliseNoFirestore("");
+    }
+}
+
+async function salvarStatusAnaliseNoFirestore(comprovanteUrl) {
+    try {
+        if (!usuarioLogado || !usuarioLogado.id) {
+            alert("Erro: ID do usuário não identificado.");
+            return;
+        }
+        let liganteId = usuarioLogado.id;
+        let docRef = db.collection("membros").doc(liganteId);
+        
+        let docSnap = await docRef.get();
+        if (!docSnap.exists) return;
+
+        let dados = docSnap.data();
+        let financeiroMap = dados.financeiro || {};
+
+        financeiroMap[mesAnoAtualPagamento] = "analise";
+
+        let updateData = { financeiro: financeiroMap };
+        if (comprovanteUrl) {
+            if (!dados.comprovantesPix) dados.comprovantesPix = {};
+            dados.comprovantesPix[mesAnoAtualPagamento] = comprovanteUrl;
+            updateData.comprovantesPix = dados.comprovantesPix;
+        }
+
+        await docRef.update(updateData);
+
+        alert("Comprovante enviado! Aguardando verificação do financeiro.");
+        fecharModalPix();
+    } catch (e) {
+        console.error("Erro ao enviar comprovante:", e);
+        alert("Erro ao registrar pagamento. Tente novamente.");
+    }
+}
         function renderizarCalendarioTab() {
             const tituloMes = document.getElementById("cal-widget-mes-titulo");
             const topoMes = document.getElementById("cal-topo-mes-ano");
@@ -2576,7 +3447,8 @@ async function fazerLogin() {
             let totalDiasMes = new Date(calTabAno, calTabMes + 1, 0).getDate();
             let totalDiasMesAnterior = new Date(calTabAno, calTabMes, 0).getDate();
 
-            let hojeStr = new Date().toISOString().split('T')[0];
+            let dLocalHoje = new Date();
+            let hojeStr = `${dLocalHoje.getFullYear()}-${String(dLocalHoje.getMonth() + 1).padStart(2, '0')}-${String(dLocalHoje.getDate()).padStart(2, '0')}`;
 
             for (let i = primeiroDiaIndex; i > 0; i--) {
                 let diaNum = totalDiasMesAnterior - i + 1;
@@ -2712,8 +3584,8 @@ async function fazerLogin() {
                 containerDia.innerHTML = htmlDia;
             }
 
-            let hojeStr = new Date().toISOString().split('T')[0];
-            let proximas = ativVisiveis.filter(a => a.data >= hojeStr);
+            let dLocalHoje = new Date();
+            let hojeStr = `${dLocalHoje.getFullYear()}-${String(dLocalHoje.getMonth() + 1).padStart(2, '0')}-${String(dLocalHoje.getDate()).padStart(2, '0')}`;            let proximas = ativVisiveis.filter(a => a.data >= hojeStr);
             proximas.sort((a, b) => new Date(a.data + "T" + (a.hora || "19:00")) - new Date(b.data + "T" + (b.hora || "19:00")));
 
             if (proximas.length === 0) {
@@ -2778,7 +3650,6 @@ async function fazerLogin() {
                 return true;
             });
 
-            // Ordenar por data e hora de agendamento crescente
             ativVisiveis.sort((a, b) => new Date(a.data + "T" + (a.hora || "19:00")) - new Date(b.data + "T" + (b.hora || "19:00")));
 
             let filtradas = [];
@@ -3093,6 +3964,80 @@ async function fazerLogin() {
                   container.innerHTML = html;
               });
         }
+
+        /* Funções de Conta e Segurança atualizadas e funcionais */
+        function fazerLogoutApp() {
+            if (confirm("Deseja realmente sair da sua conta?")) {
+                localStorage.removeItem("lape_sessao_usuario");
+                firebase.auth().signOut().then(() => {
+                    location.reload();
+                }).catch((error) => {
+                    console.error("Erro ao sair:", error);
+                    location.reload();
+                });
+            }
+        }
+
+        function abrirModalAlterarSenha() {
+            document.getElementById("input-senha-atual").value = "";
+            document.getElementById("input-senha-nova").value = "";
+            document.getElementById("modal-alterar-senha").style.display = "flex";
+        }
+
+        function fecharModalAlterarSenha() {
+            document.getElementById("modal-alterar-senha").style.display = "none";
+        }
+
+        async function salvarNovaSenha() {
+            let senhaAtual = document.getElementById("input-senha-atual").value.trim();
+            let senhaNova = document.getElementById("input-senha-nova").value.trim();
+
+            if (!senhaAtual || !senhaNova) {
+                alert("Preencha todos os campos.");
+                return;
+            }
+
+            if (senhaNova.length < 6) {
+                alert("A nova senha deve ter pelo menos 6 caracteres.");
+                return;
+            }
+
+            try {
+                let user = firebase.auth().currentUser;
+                if (!user) {
+                    alert("Usuário não autenticado.");
+                    return;
+                }
+
+                let credential = firebase.auth.EmailAuthProvider.credential(user.email, senhaAtual);
+                await user.reauthenticateWithCredential(credential);
+
+                await user.updatePassword(senhaNova);
+                alert("Senha alterada com sucesso!");
+                fecharModalAlterarSenha();
+            } catch (error) {
+                console.error(error);
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    alert("A senha atual está incorreta.");
+                } else {
+                    alert("Erro ao alterar a senha. Tente novamente.");
+                }
+            }
+        }
+        
+    function alternarVisibilidadeSenha() {
+    let inputSenha = document.getElementById("login-senha");
+    let iconeOlho = document.getElementById("toggle-senha");
+    
+    if (inputSenha.type === "password") {
+        inputSenha.type = "text";
+        iconeOlho.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+        inputSenha.type = "password";
+        iconeOlho.classList.replace("fa-eye-slash", "fa-eye");
+    }
+}
+
     </script>
 </body>
 </html>

@@ -11,6 +11,14 @@
 
     <meta name="color-scheme" content="light">
 
+    <script>
+        if (localStorage.getItem("lape_sessao_usuario")) {
+            const style = document.createElement('style');
+            style.innerHTML = '#tela-login { display: none !important; } #conteudo-principal-app { display: block !important; }';
+            document.head.appendChild(style);
+        }
+    </script>
+
     <style>
         body { background-color: #f4f7f6; margin: 0; padding: 0; color: #000; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         input, select, textarea { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #ced4da !important; }
@@ -874,38 +882,67 @@
             }
         }
 
-        async function fazerLogin() {
+async function fazerLogin() {
             let codigoInput = document.getElementById('login-codigo').value.trim();
             let senhaInput = document.getElementById('login-senha').value.trim();
             if(!codigoInput || !senhaInput) { alert("Preencha o código e a senha."); return; }
 
+            document.getElementById('conteudo-formulario-login').style.display = 'none';
+            document.getElementById('loading-login').style.display = 'block';
+
             try {
-                let emailFicticio = codigoInput + "@lape.app";
-                await firebase.auth().signInWithEmailAndPassword(emailFicticio, senhaInput);
-                
+                // 1. Busca o membro diretamente no Firestore pelo código
                 let snapshot = await db.collection("membros").where("codigo", "==", codigoInput).get();
-                if(snapshot.empty) { alert("Membro não encontrado!"); return; }
+                
+                if(snapshot.empty) {
+                    document.getElementById('conteudo-formulario-login').style.display = 'block';
+                    document.getElementById('loading-login').style.display = 'none';
+                    alert("Código de ligante não encontrado!"); 
+                    return;
+                }
 
                 let dadosUser = null;
                 snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
 
                 if(dadosUser.desligado === true) {
-                    await firebase.auth().signOut();
+                    document.getElementById('conteudo-formulario-login').style.display = 'block';
+                    document.getElementById('loading-login').style.display = 'none';
                     alert("Acesso negado. Este cadastro encontra-se desligado da liga.");
                     return;
                 }
 
-                document.getElementById('conteudo-formulario-login').style.display = 'none';
-                document.getElementById('loading-login').style.display = 'block';
+                // 2. Valida a senha cadastrada no banco
+                if(dadosUser.senhaPadrao && dadosUser.senhaPadrao !== senhaInput) {
+                    document.getElementById('conteudo-formulario-login').style.display = 'block';
+                    document.getElementById('loading-login').style.display = 'none';
+                    alert("Senha incorreta.");
+                    return;
+                }
 
+                // 3. Garante o login no Firebase Auth em segundo plano (cria a conta se não existir para evitar erros)
+                let emailFicticio = codigoInput + "@lape.app";
+                try {
+                    await firebase.auth().signInWithEmailAndPassword(emailFicticio, senhaInput);
+                } catch(authErr) {
+                    try {
+                        await firebase.auth().createUserWithEmailAndPassword(emailFicticio, senhaInput);
+                    } catch(createErr) {
+                        console.warn("Aviso de Auth secundário:", createErr);
+                    }
+                }
+
+                // 4. Salva a sessão permanentemente no dispositivo
+                localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
+                
                 setTimeout(() => {
-                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
                     iniciarAppComUsuario(dadosUser);
-                }, 1000);
+                }, 500);
 
             } catch(e) { 
-                console.error(e); 
-                alert("Erro ao logar. Certifique-se de que o usuário está cadastrado na aba Authentication do Firebase."); 
+                console.error(e);
+                document.getElementById('conteudo-formulario-login').style.display = 'block';
+                document.getElementById('loading-login').style.display = 'none';
+                alert("Erro ao fazer login. Verifique sua conexão e tente novamente."); 
             }
         }
 
