@@ -1555,6 +1555,34 @@ body {
 </head>
 <body>
 
+<!-- MODAL DE NOTIFICAÇÕES -->
+<div id="modal-notificacoes" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; padding: 16px;">
+    <div class="modal-conteudo" style="background: white; padding: 24px; border-radius: 20px; width: 100%; max-width: 420px; max-height: 80vh; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 14px;">
+            <h3 style="color: #0037a3; margin: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-bell" style="color: #0037a3;"></i> Central de Notificações</h3>
+            <button class="ativ-btn-justificar" style="width: auto; padding: 4px 8px;" onclick="fecharModalNotificacoes()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="lista-notificacoes-corpo" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; padding-right: 4px;">
+            <!-- Carregado via JavaScript -->
+        </div>
+        <button class="ativ-btn-confirmar" style="width: 100%; margin-top: 14px;" onclick="marcarTodasNotificacoesComoLidas()">Marcar todas como lidas</button>
+    </div>
+</div>
+
+    <!-- TELA DE INICIALIZAÇÃO (SPLASH SCREEN) -->
+    <div id="splash-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; transition: opacity 0.5s ease;">
+        <img src="brasao.png" alt="Brasão LAPE" style="width: 90px; height: 90px; border-radius: 50%; object-fit: contain; border: 3px solid #0037a3; animation: pulseSplash 1.2s infinite ease-in-out;">
+        <h2 style="color: #001a4d; font-size: 24px; font-weight: 800; margin: 15px 0 5px 0;">LAPE</h2>
+        <p style="color: #64748b; font-size: 13px; font-weight: 600; margin: 0;">Portal do Ligante</p>
+    </div>
+    <style>
+        @keyframes pulseSplash {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+    </style>
+
     <!-- MODAL DE JUSTIFICATIVA PERSONALIZADO -->
     <div id="modal-justificativa" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; padding: 16px;">
         <div class="modal-conteudo" style="background: white; padding: 24px; border-radius: 16px; width: 100%; max-width: 380px;">
@@ -1668,7 +1696,7 @@ body {
                 <label class="login-checkbox-label">
                     <input type="checkbox" id="check-lembrar" checked> Lembrar meu acesso
                 </label>
-                <a href="javascript:void(0)" class="login-link-esqueci" onclick="alert('Entre em contato com a diretoria para redefinir sua senha.')">Esqueci minha senha</a>
+            <a href="javascript:void(0)" class="login-link-esqueci" onclick="abrirModalRecuperarSenha()">Esqueci minha senha</a>
             </div>
 
             <button class="login-btn-entrar" onclick="fazerLogin()">
@@ -1694,6 +1722,43 @@ body {
         </div>
     </div>
 
+    <!-- MODAL DE RECUPERAÇÃO DE SENHA -->
+<div id="modal-recuperar-senha" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 16px;">
+    a    <div class="modal-conteudo" style="background: white; padding: 24px; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px;">
+            <h3 style="color: #0037a3; margin: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-key"></i> Recuperar Senha</h3>
+            <button class="ativ-btn-justificar" style="width: auto; padding: 4px 8px;" onclick="fecharModalRecuperarSenha()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p style="font-size: 11.5px; color: #64748b; margin-bottom: 14px; line-height: 1.4;">Confirme seus dados cadastrados para redefinir sua senha:</p>
+        
+        <div class="grupo-input" style="margin-bottom: 10px;">
+            <label style="font-size: 11px; font-weight: 800; color: #555;">Código / Matrícula</label>
+            <input type="text" id="rec-codigo" placeholder="Ex: 20252001" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box; outline: none;">
+        </div>
+
+        <div class="grupo-input" style="margin-bottom: 10px;">
+            <label style="font-size: 11px; font-weight: 800; color: #555;">E-mail Cadastrado</label>
+            <input type="email" id="rec-email" placeholder="seu.email@exemplo.com" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box; outline: none;">
+        </div>
+
+        <div class="grupo-input" style="margin-bottom: 10px;">
+            <label style="font-size: 11px; font-weight: 800; color: #555;">Data de Nascimento</label>
+            <input type="date" id="rec-nascimento" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box; outline: none;">
+        </div>
+
+        <div class="grupo-input" style="margin-bottom: 16px;">
+            <label style="font-size: 11px; font-weight: 800; color: #555;">Nova Senha</label>
+            <input type="password" id="rec-nova-senha" placeholder="Mínimo de 6 caracteres" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13px; margin-top: 4px; box-sizing: border-box; outline: none;">
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+            <button class="ativ-btn-confirmar" style="flex: 1; padding: 12px; border: none; border-radius: 8px; background: #0037a3; color: white; font-weight: 800; cursor: pointer;" onclick="executarRecuperacaoSenha()">Alterar Senha</button>
+            <button class="ativ-btn-justificar" style="flex: 1; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; background: #f8f9fa; color: #495057; font-weight: 800; cursor: pointer;" onclick="fecharModalRecuperarSenha()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+
     <!-- APLICATIVO PRINCIPAL -->
     <div id="conteudo-principal-app" style="display: none;">
         
@@ -1709,7 +1774,10 @@ body {
                     </div>
                 </div>
                 <div class="header-actions">
-                    <div class="notif-btn"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
+                    <div class="notif-btn" onclick="abrirModalNotificacoes()" style="cursor: pointer;">
+    <i class="fa-regular fa-bell"></i>
+    <span class="notif-dot" id="notif-dot-badge" style="display:none;"></span>
+</div>
                     <div class="avatar-perfil" id="container-avatar-topo"></div> 
                 </div>
             </div>
@@ -1722,7 +1790,10 @@ body {
                     <p style="margin: 4px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.8);">Acompanhe seus eventos e atividades da LAPE.</p>
                 </div>
                 <div class="header-actions" style="align-self: center;">
-                    <div class="notif-btn"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
+                    <div class="notif-btn" onclick="abrirModalNotificacoes()" style="cursor: pointer;">
+    <i class="fa-regular fa-bell"></i>
+    <span class="notif-dot" id="notif-dot-badge" style="display:none;"></span>
+</div>
                     <div class="avatar-perfil" id="container-avatar-topo-cal"></div> 
                 </div>
             </div>
@@ -1734,7 +1805,10 @@ body {
                     <p style="margin: 4px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.8);">Acompanhe suas atividades, confirme presença e registre sua carga horária.</p>
                 </div>
                 <div class="header-actions" style="align-self: center;">
-                    <div class="notif-btn"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
+                    <div class="notif-btn" onclick="abrirModalNotificacoes()" style="cursor: pointer;">
+    <i class="fa-regular fa-bell"></i>
+    <span class="notif-dot" id="notif-dot-badge" style="display:none;"></span>
+</div>
                     <div class="avatar-perfil" id="container-avatar-topo-ativ"></div> 
                 </div>
             </div>
@@ -1746,7 +1820,10 @@ body {
                     <p style="margin: 4px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.8);">Envie solicitações, sugestões ou utilize a ouvidoria de forma anônima e segura.</p>
                 </div>
                 <div class="header-actions" style="align-self: center;">
-                    <div class="notif-btn"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
+                    <div class="notif-btn" onclick="abrirModalNotificacoes()" style="cursor: pointer;">
+    <i class="fa-regular fa-bell"></i>
+    <span class="notif-dot" id="notif-dot-badge" style="display:none;"></span>
+</div>
                     <div class="avatar-perfil" id="container-avatar-topo-sol"></div> 
                 </div>
             </div>
@@ -1757,7 +1834,10 @@ body {
                     <p style="margin: 4px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.8);">Gerencie suas informações e acompanhe seu desempenho.</p>
                 </div>
                 <div class="header-actions" style="align-self: center;">
-                    <div class="notif-btn"><i class="fa-regular fa-bell"></i><span class="notif-dot"></span></div>
+                    <div class="notif-btn" onclick="abrirModalNotificacoes()" style="cursor: pointer;">
+    <i class="fa-regular fa-bell"></i>
+    <span class="notif-dot" id="notif-dot-badge" style="display:none;"></span>
+</div>
                     <div class="avatar-perfil" id="container-avatar-topo-perfil"></div> 
                 </div>
             </div>
@@ -1873,14 +1953,14 @@ body {
         <div id="conteudo-fluxo-pix">
             <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">Escaneie o QR Code abaixo ou copie a chave Pix para realizar o pagamento de <strong id="valor-mensalidade-pix">R$ 10,00</strong> referente a <span id="mes-mensalidade-pix">Setembro/2026</span>.</p>
 
-            <div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; display: inline-block; margin-bottom: 12px;">
-                <img id="img-qrcode-pix" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126580014br.gov.bcb.pix...pix-lape" style="width: 140px; height: 140px; border-radius: 8px; display: block; margin: 0 auto;" alt="QR Code Pix">
-            </div>
+<div style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; display: inline-block; margin-bottom: 12px;">
+    <img id="img-qrcode-pix" src="qrcode.png" style="width: 140px; height: 140px; border-radius: 8px; display: block; margin: 0 auto;" alt="QR Code Pix">
+</div>
 
             <div style="margin-bottom: 12px; text-align: left;">
                 <label style="font-size: 10px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px;">Chave Pix (CNPJ / E-mail):</label>
                 <div style="display: flex; gap: 6px;">
-                    <input type="text" id="input-chave-pix" value="12.345.678/0001-99" readonly style="font-size: 11px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; border-radius: 8px; flex: 1; outline: none;">
+                    <input type="text" id="input-chave-pix" value="lapewyden@gmail.com" readonly style="font-size: 11px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; border-radius: 8px; flex: 1; outline: none;">
                     <button class="ativ-btn-confirmar" style="padding: 0 12px; width: auto;" onclick="copiarChavePix()"><i class="fa-solid fa-copy"></i> Copiar</button>
                 </div>
             </div>
@@ -2471,25 +2551,29 @@ body {
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         
 window.onload = () => {
+    let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
+    if (sessaoSalva) {
+        // Renderiza instantaneamente com os dados salvos localmente
+        let dadosUser = JSON.parse(sessaoSalva);
+        iniciarAppComUsuario(dadosUser);
+    } else {
+        // Oculta o splash screen imediatamente se não houver sessão, revelando o login
+        ocultarSplashScreen();
+    }
+
     firebase.auth().onAuthStateChanged(async (userAuth) => {
         if (userAuth) {
-            let sessaoSalva = localStorage.getItem("lape_sessao_usuario");
-            if (sessaoSalva) {
-                iniciarAppComUsuario(JSON.parse(sessaoSalva));
-            } else {
-                try {
-                    let email = userAuth.email;
-                    let codigo = email.split('@')[0];
-                    let snapshot = await db.collection("membros").where("codigo", "==", codigo).get();
-                    if (!snapshot.empty) {
-                        let dadosUser = null;
-                        snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
-                        localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
-                        iniciarAppComUsuario(dadosUser);
-                    }
-                } catch(e) {
-                    console.error("Erro ao recuperar sessão:", e);
+            try {
+                let email = userAuth.email;
+                let codigo = email.split('@')[0];
+                let snapshot = await db.collection("membros").where("codigo", "==", codigo).get();
+                if (!snapshot.empty) {
+                    let dadosUser = null;
+                    snapshot.forEach(doc => { dadosUser = { id: doc.id, ...doc.data() }; });
+                    localStorage.setItem("lape_sessao_usuario", JSON.stringify(dadosUser));
                 }
+            } catch(e) {
+                console.error("Erro na sincronização de sessão:", e);
             }
         } else {
             localStorage.removeItem("lape_sessao_usuario");
@@ -2526,20 +2610,28 @@ async function fazerLogin() {
     }
 }
 
-        function iniciarAppComUsuario(user) {
+function iniciarAppComUsuario(user) {
             usuarioLogado = user;
-            document.getElementById('tela-login').style.display = 'none';
-            document.getElementById('conteudo-principal-app').style.display = 'block';
+            
+            // Aguarda 2 segundos com o brasão exibido enquanto processa o app
+            setTimeout(() => {
+                document.getElementById('tela-login').style.display = 'none';
+                document.getElementById('conteudo-principal-app').style.display = 'block';
 
-            document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}! 👋`;
-            document.getElementById('subtitulo-cargo').innerText = user.cargo || "LIGANTE";
-            document.getElementById('header-codigo-user').innerText = user.codigo || "";
+                document.getElementById('titulo-boas-vindas').innerText = `Olá, ${user.nome.split(' ')[0]}! 👋`;
+                document.getElementById('subtitulo-cargo').innerText = user.cargo || "LIGANTE";
+                document.getElementById('header-codigo-user').innerText = user.codigo || "";
 
-            renderizarAvatarTopo();
-            atualizarFinanceiroApp();
-            carregarAniversariantes();
-            carregarMinhasSolicitações();
-            iniciarOuvintesTempoReal();
+                renderizarAvatarTopo();
+                atualizarFinanceiroApp();
+                carregarAniversariantes();
+                carregarMinhasSolicitações();
+                iniciarOuvintesTempoReal();
+                iniciarOuvinteNotificacoes();
+
+                // Remove a tela de inicialização suavemente
+                ocultarSplashScreen();
+            }, 2000);
         }
 
         async function carregarAniversariantes() {
@@ -2825,92 +2917,89 @@ function mudarAba(idAba, elementoClicado) {
         }
 
 function iniciarOuvintesTempoReal() {
-            // Ouvinte em tempo real para os dados do próprio usuário (Financeiro, Cargo, Perfil, etc.)
-            if (usuarioLogado && usuarioLogado.id) {
-                db.collection("membros").doc(usuarioLogado.id).onSnapshot((doc) => {
-                    if (doc.exists) {
-                        let dadosAtualizados = { id: doc.id, ...doc.data() };
-                        if (dadosAtualizados.desligado === true) {
-                            alert("Sua conta foi desligada.");
-                            fazerLogoutApp();
-                            return;
-                        }
-                        usuarioLogado = dadosAtualizados;
-                        localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
-                        
-                        // Atualiza componentes visuais do usuário em tempo real
-                        renderizarAvatarTopo();
-                        atualizarFinanceiroApp();
-                        renderizarHistoricoGeral();
-                        renderizarDesempenhoMensal();
-                        if (document.getElementById("aba-perfil").classList.contains("ativa")) {
-                            renderizarPerfilTab();
-                        }
-                    }
-                });
-            }
-
-            db.collection("avisos").onSnapshot((snapshot) => {
-                let novosAvisos = [];
-                snapshot.forEach(doc => novosAvisos.push({ id: doc.id, ...doc.data() }));
-                avisos = novosAvisos;
-                renderizarAvisos();
-            });
-
-            db.collection("atividades").onSnapshot((snapshot) => {
-                atividades = [];
-                let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
-                let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
-
-                snapshot.forEach(doc => {
-                    let d = doc.data();
-                    if (d.publico === 'diretoria' && !ehDiretoria) return;
-                    if (usuarioLogado.ingressoLiga && d.data < usuarioLogado.ingressoLiga) return;
-
-                    let frequenciasMap = d.frequencias || {};
-                    let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', confirmadoAluno: false };
-
-                    let totalConfirmados = 0;
-                    Object.values(frequenciasMap).forEach(reg => {
-                        if (reg.confirmadoAluno === true) totalConfirmados++;
-                    });
-
-                    let ehDiretoriaAtiv = d.publico === 'diretoria' || (d.titulo && d.titulo.toLowerCase().includes('diretoria'));
-
-                    atividades.push({
-                        id: doc.id,
-                        titulo: d.titulo || "Atividade",
-                        data: d.data || "",
-                        hora: d.hora || "19:00",
-                        local: d.local || "Local a definir",
-                        ch: Number(d.ch || 0),
-                        desc: d.desc || "",
-                        cancelada: d.cancelada || false,
-                        concluida: d.concluida || false,
-                        publico: d.publico || "todos",
-                        ehDiretoria: ehDiretoriaAtiv,
-                        confirmadoAluno: meuRegistro.confirmadoAluno || false,
-                        statusAdmin: meuRegistro.status || 'pendente',
-                        totalConfirmados: totalConfirmados
-                    });
-                });
-
+    if (usuarioLogado && usuarioLogado.id) {
+        db.collection("membros").doc(usuarioLogado.id).onSnapshot((doc) => {
+            if (doc.exists) {
+                let dadosAtualizados = { id: doc.id, ...doc.data() };
+                if (dadosAtualizados.desligado === true) {
+                    alert("Sua conta foi desligada.");
+                    fazerLogoutApp();
+                    return;
+                }
+                usuarioLogado = dadosAtualizados;
+                localStorage.setItem("lape_sessao_usuario", JSON.stringify(usuarioLogado));
+                
+                renderizarAvatarTopo();
+                atualizarFinanceiroApp();
                 renderizarHistoricoGeral();
                 renderizarDesempenhoMensal();
-                if (document.getElementById("aba-atividades").classList.contains("ativa")) {
-                    renderizarAbaAtividades();
-                }
                 if (document.getElementById("aba-perfil").classList.contains("ativa")) {
                     renderizarPerfilTab();
                 }
+            }
+        });
+    }
+
+    // Carregamento desacoplado para não atrasar a UI
+    setTimeout(() => {
+        db.collection("avisos").onSnapshot((snapshot) => {
+            avisos = [];
+            snapshot.forEach(doc => avisos.push({ id: doc.id, ...doc.data() }));
+            renderizarAvisos();
+        });
+
+        db.collection("atividades").onSnapshot((snapshot) => {
+            atividades = [];
+            let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+            let ehDiretoria = cargoLower !== "ligante" && cargoLower !== "membro";
+
+            snapshot.forEach(doc => {
+                let d = doc.data();
+                if (d.publico === 'diretoria' && !ehDiretoria) return;
+                if (usuarioLogado.ingressoLiga && d.data < usuarioLogado.ingressoLiga) return;
+
+                let frequenciasMap = d.frequencias || {};
+                let meuRegistro = frequenciasMap[usuarioLogado.id] || { status: 'pendente', confirmadoAluno: false };
+
+                let totalConfirmados = 0;
+                Object.values(frequenciasMap).forEach(reg => {
+                    if (reg.confirmadoAluno === true) totalConfirmados++;
+                });
+
+                let ehDiretoriaAtiv = d.publico === 'diretoria' || (d.titulo && d.titulo.toLowerCase().includes('diretoria'));
+
+                atividades.push({
+                    id: doc.id,
+                    titulo: d.titulo || "Atividade",
+                    data: d.data || "",
+                    hora: d.hora || "19:00",
+                    local: d.local || "Local a definir",
+                    ch: Number(d.ch || 0),
+                    desc: d.desc || "",
+                    cancelada: d.cancelada || false,
+                    concluida: d.concluida || false,
+                    publico: d.publico || "todos",
+                    ehDiretoria: ehDiretoriaAtiv,
+                    confirmadoAluno: meuRegistro.confirmadoAluno || false,
+                    statusAdmin: meuRegistro.status || 'pendente',
+                    totalConfirmados: totalConfirmados
+                });
             });
 
-            db.collection("enquetes").where("ativa", "==", true).onSnapshot((snapshot) => {
-                enquetesCache = [];
-                snapshot.forEach(doc => { enquetesCache.push({ id: doc.id, ...doc.data() }); });
-                renderizarEnquetesWidget();
-            });
-        }
+            renderizarHistoricoGeral();
+            renderizarDesempenhoMensal();
+            if (document.getElementById("aba-atividades").classList.contains("ativa")) {
+                renderizarAbaAtividades();
+            }
+        });
+
+        db.collection("enquetes").where("ativa", "==", true).onSnapshot((snapshot) => {
+            enquetesCache = [];
+            snapshot.forEach(doc => { enquetesCache.push({ id: doc.id, ...doc.data() }); });
+            renderizarEnquetesWidget();
+        });
+    }, 100);
+}
 
         function renderizarAvisos() {
             const container = document.getElementById("container-slides");
@@ -4035,6 +4124,212 @@ async function salvarStatusAnaliseNoFirestore(comprovanteUrl) {
     } else {
         inputSenha.type = "password";
         iconeOlho.classList.replace("fa-eye-slash", "fa-eye");
+    }
+}
+
+function ocultarSplashScreen() {
+            let splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => { 
+                    splash.style.display = 'none'; 
+                }, 500);
+            }
+        }
+
+let notificacoesCache = [];
+
+// Ouvinte em tempo real para alimentar o sino
+function iniciarOuvinteNotificacoes() {
+    if (!usuarioLogado) return;
+
+    // 1. Ouvir notificações globais do painel
+    db.collection("notificacoes_push_manual").orderBy("timestamp", "desc").limit(10).onSnapshot(snapGlobal => {
+        let globais = [];
+        snapGlobal.forEach(doc => {
+            let d = doc.data();
+            globais.push({
+                id: doc.id,
+                tipo: 'global',
+                titulo: d.titulo || 'Aviso da Diretoria',
+                texto: d.texto || '',
+                timestamp: d.timestamp ? d.timestamp.toMillis() : Date.now()
+            });
+        });
+
+        // 2. Ouvir notificações individuais direcionadas ao ligante
+        db.collection("notificacoes_individuais").where("membroId", "==", usuarioLogado.id).orderBy("timestamp", "desc").limit(10).onSnapshot(snapInd => {
+            let individuais = [];
+            snapInd.forEach(doc => {
+                let d = doc.data();
+                individuais.push({
+                    id: doc.id,
+                    tipo: 'individual',
+                    titulo: d.titulo || 'Notificação Pessoal',
+                    texto: d.texto || '',
+                    timestamp: d.timestamp ? d.timestamp.toMillis() : Date.now()
+                });
+            });
+
+            // 3. Incluir novas atividades recentes como notificações automáticas
+            let ativNotifs = atividades.slice(0, 5).map(a => ({
+                id: 'ativ_' + a.id,
+                tipo: 'atividade',
+                titulo: `Nova Atividade: ${a.titulo}`,
+                texto: `Agendada para ${a.data} às ${a.hora || '19:00'} (${a.ch}h de CH).`,
+                timestamp: new Date(a.data + "T" + (a.hora || "19:00")).getTime()
+            }));
+
+            // Combinar e ordenar todas as notificações por data decrescente
+            notificacoesCache = [...globais, ...individuais, ...ativNotifs];
+            notificacoesCache.sort((a, b) => b.timestamp - a.timestamp);
+
+            verificarIndicadorNotificacoesNaoLidas();
+        });
+    });
+}
+
+function verificarIndicadorNotificacoesNaoLidas() {
+    let ultimaLeitura = Number(localStorage.getItem(`lape_ultima_leitura_${usuarioLogado.id}`) || 0);
+    let temNaoLida = notificacoesCache.some(n => n.timestamp > ultimaLeitura);
+    
+    let dot = document.getElementById("notif-dot-badge");
+    if (dot) {
+        dot.style.display = temNaoLida ? "block" : "none";
+    }
+}
+
+function abrirModalNotificacoes() {
+    let container = document.getElementById("lista-notificacoes-corpo");
+    if (!container) return;
+
+    if (notificacoesCache.length === 0) {
+        container.innerHTML = `<p style="text-align: center; color: #888; font-size: 13px; padding: 20px 0;">Nenhuma notificação no momento.</p>`;
+    } else {
+        let html = "";
+        notificacoesCache.forEach(n => {
+            let icone = "fa-bullhorn";
+            let corIcone = "#0037a3";
+            let bgIcone = "#f0f5ff";
+
+            if (n.tipo === 'individual') {
+                icone = "fa-circle-user";
+                corIcone = "#2b8a3e";
+                bgIcone = "#ebfbee";
+            } else if (n.tipo === 'atividade') {
+                icone = "fa-calendar-days";
+                corIcone = "#7950f2";
+                bgIcone = "#f3f0ff";
+            }
+
+            let dataFormatada = new Date(n.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+
+            html += `
+                <div style="display: flex; align-items: flex-start; gap: 12px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: ${bgIcone}; color: ${corIcone}; display: flex; justify-content: center; align-items: center; font-size: 16px; flex-shrink: 0;">
+                        <i class="fa-solid ${icone}"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <h5 style="margin: 0 0 2px 0; font-size: 13px; font-weight: 800; color: #001a4d;">${n.titulo}</h5>
+                        <p style="margin: 0 0 4px 0; font-size: 11.5px; color: #475569; line-height: 1.4;">${n.texto}</p>
+                        <span style="font-size: 9.5px; color: #94a3b8; font-weight: 700;">${dataFormatada}</span>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    document.getElementById("modal-notificacoes").style.display = "flex";
+}
+
+function fecharModalNotificacoes() {
+    document.getElementById("modal-notificacoes").style.display = "none";
+}
+
+function marcarTodasNotificacoesComoLidas() {
+    if (!usuarioLogado) return;
+    let agora = Date.now();
+    localStorage.setItem(`lape_ultima_leitura_${usuarioLogado.id}`, agora);
+    verificarIndicadorNotificacoesNaoLidas();
+    fecharModalNotificacoes();
+}     
+
+function abrirModalRecuperarSenha() {
+    document.getElementById("rec-codigo").value = "";
+    document.getElementById("rec-email").value = "";
+    document.getElementById("rec-nascimento").value = "";
+    document.getElementById("rec-nova-senha").value = "";
+    document.getElementById("modal-recuperar-senha").style.display = "flex";
+}
+
+function fecharModalRecuperarSenha() {
+    document.getElementById("modal-recuperar-senha").style.display = "none";
+}
+
+async function executarRecuperacaoSenha() {
+    let codigo = document.getElementById("rec-codigo").value.trim();
+    let email = document.getElementById("rec-email").value.trim().toLowerCase();
+    let nascimento = document.getElementById("rec-nascimento").value.trim();
+    let novaSenha = document.getElementById("rec-nova-senha").value.trim();
+
+    if (!codigo || !email || !nascimento || !novaSenha) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
+
+    if (novaSenha.length < 6) {
+        alert("A nova senha deve ter pelo menos 6 caracteres.");
+        return;
+    }
+
+    try {
+        // 1. Consulta o membro no Firestore pelo código digitado
+        let snapshot = await db.collection("membros").where("codigo", "==", codigo).get();
+
+        if (snapshot.empty) {
+            alert("Código/Matrícula não encontrado no sistema.");
+            return;
+        }
+
+        let membroDocId = null;
+        let dadosMembro = null;
+        snapshot.forEach(doc => {
+            membroDocId = doc.id;
+            dadosMembro = doc.data();
+        });
+
+        // 2. Valida se o e-mail e a data de nascimento conferem exatamente
+        let emailCadastrado = (dadosMembro.email || "").trim().toLowerCase();
+        let nascimentoCadastrado = (dadosMembro.nascimento || "").trim();
+
+        if (emailCadastrado !== email || nascimentoCadastrado !== nascimento) {
+            alert("Os dados informados (E-mail ou Data de Nascimento) não conferem com o cadastro deste código.");
+            return;
+        }
+
+        // 3. Dispara o link oficial de redefinição de senha do Firebase para o e-mail cadastrado
+        // Isso é seguro, prático e atualiza diretamente a credencial do Firebase Auth do usuário
+        let emailAuthFicticio = codigo + "@lape.app";
+        
+        // Como o Firebase Auth usa o e-mail fictício, enviamos o link de reset para o e-mail real do usuário
+        await auth.sendPasswordResetEmail(email);
+
+        // Opcional: Atualiza também a senha padrão salva no documento se necessário
+        await db.collection("membros").doc(membroDocId).update({
+            senhaPadrao: novaSenha
+        });
+
+        alert("Enviamos um link de redefinição de senha para o seu e-mail cadastrado (" + email + "). Verifique sua caixa de entrada e spam para concluir a alteração.");
+        fecharModalRecuperarSenha();
+
+    } catch (e) {
+        console.error("Erro na recuperação de senha:", e);
+        if (e.code === 'auth/user-not-found') {
+            alert("Não encontramos uma conta de autenticação vinculada a este e-mail.");
+        } else {
+            alert("Ocorreu um erro ao tentar enviar o e-mail de recuperação. Verifique os dados e tente novamente.");
+        }
     }
 }
 
