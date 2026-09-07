@@ -2483,6 +2483,7 @@ body {
                         <span>Conta</span>
                     </div>
                     <div class="perfil-card-conta">
+                        <div id="container-painel-diretoria-perfil"></div>
                         <div class="perfil-conta-item" onclick="abrirModalAlterarSenha()">
                             <div class="perfil-conta-icone"><i class="fa-solid fa-lock"></i></div>
                             <div class="perfil-conta-textos">
@@ -2764,6 +2765,24 @@ function mudarAba(idAba, elementoClicado) {
         }
 
         function renderizarPerfilTab() {
+            let containerPainelDir = document.getElementById("container-painel-diretoria-perfil");
+          if (containerPainelDir) {
+              let cargoLower = (usuarioLogado.cargo || "ligante").toLowerCase().trim();
+              if (cargoLower !== "ligante" && cargoLower !== "membro" && cargoLower !== "marketing") {
+                  containerPainelDir.innerHTML = `
+                      <div class="perfil-conta-item" onclick="window.location.href='diretoria.html'">
+                          <div class="perfil-conta-icone" style="background: #e7f5ff; color: #0037a3;"><i class="fa-solid fa-user-tie"></i></div>
+                          <div class="perfil-conta-textos">
+                              <span class="perfil-conta-titulo" style="color: #0037a3;">Painel da Diretoria</span>
+                              <span class="perfil-conta-sub">Acessar painel administrativo</span>
+                          </div>
+                          <div class="perfil-conta-seta"><i class="fa-solid fa-chevron-right"></i></div>
+                      </div>
+                  `;
+              } else {
+                  containerPainelDir.innerHTML = "";
+              }
+          }
             if (!usuarioLogado) return;
             document.getElementById("perfil-nome").innerText = usuarioLogado.nome || "-";
             document.getElementById("perfil-codigo").innerText = usuarioLogado.codigo || "-";
