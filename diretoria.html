@@ -992,9 +992,17 @@
                     <textarea id="novo-form-desc" rows="3" placeholder="Orientações sobre taxa de inscrição, prazos, etc..."></textarea>
                 </div>
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Data e Hora Limite para Encerramento Automático</label>
-                    <input type="datetime-local" id="novo-form-data-limite">
-                </div>
+<div>
+    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Data e Hora Limite para Encerramento Automático</label>
+    <input type="datetime-local" id="novo-form-data-limite">
+</div>
+
+<!-- ADICIONE ESTE BLOCO -->
+<div style="display: flex; flex-direction: column; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+    <label style="font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+        <input type="checkbox" id="novo-form-permitir-ver-respostas"> Permitir que vejam as respostas enviadas ou não
+    </label>
+</div>
 
                 <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 12px; padding: 14px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -1716,34 +1724,36 @@
             }
         }
 
-        function abrirModalFormularioExterno(id = null, dados = null) {
-            document.getElementById("form-id-editando").value = id || "";
-            document.getElementById("container-campos-customizados").innerHTML = "";
-            document.getElementById("container-contatos-form").innerHTML = "";
+function abrirModalFormularioExterno(id = null, dados = null) {
+    document.getElementById("form-id-editando").value = id || "";
+    document.getElementById("container-campos-customizados").innerHTML = "";
+    document.getElementById("container-contatos-form").innerHTML = "";
 
-            if (dados) {
-                document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Formulário`;
-                document.getElementById("novo-form-titulo").value = dados.titulo || "";
-                document.getElementById("novo-form-subtitulo").value = dados.subtitulo || "";
-                document.getElementById("novo-form-desc").value = dados.descricao || "";
-                document.getElementById("novo-form-data-limite").value = dados.dataLimite || "";
+    if (dados) {
+        document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Formulário`;
+        document.getElementById("novo-form-titulo").value = dados.titulo || "";
+        document.getElementById("novo-form-subtitulo").value = dados.subtitulo || "";
+        document.getElementById("novo-form-desc").value = dados.descricao || "";
+        document.getElementById("novo-form-data-limite").value = dados.dataLimite || "";
+        document.getElementById("novo-form-permitir-ver-respostas").checked = dados.permitirVerRespostas || false;
 
-                if (dados.contatos && Array.isArray(dados.contatos)) {
-                    dados.contatos.forEach(ct => adicionarContatoFormularioUI(ct));
-                }
-
-                if (dados.camposPersonalizados && Array.isArray(dados.camposPersonalizados)) {
-                    dados.camposPersonalizados.forEach(campo => adicionarCampoPersonalizadoUI(campo));
-                }
-            } else {
-                document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo`;
-                document.getElementById("novo-form-titulo").value = "";
-                document.getElementById("novo-form-subtitulo").value = "";
-                document.getElementById("novo-form-desc").value = "";
-                document.getElementById("novo-form-data-limite").value = "";
-            }
-            document.getElementById("modal-criar-form-externo").style.display = "flex";
+        if (dados.contatos && Array.isArray(dados.contatos)) {
+            dados.contatos.forEach(ct => adicionarContatoFormularioUI(ct));
         }
+
+        if (dados.camposPersonalizados && Array.isArray(dados.camposPersonalizados)) {
+            dados.camposPersonalizados.forEach(campo => adicionarCampoPersonalizadoUI(campo));
+        }
+    } else {
+        document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo`;
+        document.getElementById("novo-form-titulo").value = "";
+        document.getElementById("novo-form-subtitulo").value = "";
+        document.getElementById("novo-form-desc").value = "";
+        document.getElementById("novo-form-data-limite").value = "";
+        document.getElementById("novo-form-permitir-ver-respostas").checked = false;
+    }
+    document.getElementById("modal-criar-form-externo").style.display = "flex";
+}
 
         function fecharModalFormularioExterno() {
             document.getElementById("modal-criar-form-externo").style.display = "none";
@@ -1812,73 +1822,80 @@
             return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
         }
 
-        async function salvarFormularioExternoNuvem() {
-            let idEditando = document.getElementById("form-id-editando").value;
-            let titulo = document.getElementById("novo-form-titulo").value.trim();
-            let subtitulo = document.getElementById("novo-form-subtitulo").value.trim();
-            let descricao = document.getElementById("novo-form-desc").value.trim();
-            let dataLimite = document.getElementById("novo-form-data-limite").value;
+async function salvarFormularioExternoNuvem() {
+    let idEditando = document.getElementById("form-id-editando").value;
+    let titulo = document.getElementById("novo-form-titulo").value.trim();
+    let subtitulo = document.getElementById("novo-form-subtitulo").value.trim();
+    let descricao = document.getElementById("novo-form-desc").value.trim();
+    let dataLimite = document.getElementById("novo-form-data-limite").value;
+    let permitirVerRespostas = document.getElementById("novo-form-permitir-ver-respostas").checked;
 
-            if (!titulo) {
-                alert("Preencha o título do formulário.");
-                return;
-            }
+    if (!titulo) {
+        alert("Preencha o título do formulário.");
+        return;
+    }
 
-            let contatos = [];
-            document.querySelectorAll('#container-contatos-form > div').forEach(bloco => {
-                let nomeContato = bloco.querySelector('.contato-nome').value.trim();
-                let telContato = bloco.querySelector('.contato-telefone').value.trim();
-                if (nomeContato && telContato) {
-                    contatos.push({ nome: nomeContato, telefone: telContato });
-                }
-            });
-
-            let camposPersonalizados = [];
-            document.querySelectorAll('#container-campos-customizados > div').forEach(bloco => {
-                let rotulo = bloco.querySelector('.campo-rotulo').value.trim();
-                let tipo = bloco.querySelector('.campo-tipo').value;
-                let obrigatorio = bloco.querySelector('.campo-obrigatorio').checked; 
-                let opcoesElem = bloco.querySelector('.campo-opcoes');
-                let opcoes = opcoesElem ? opcoesElem.value.trim() : '';
-
-                if (rotulo) {
-                    camposPersonalizados.push({ rotulo, tipo, obrigatorio, opcoes });
-                }
-            });
-
-            if (camposPersonalizados.length === 0) {
-                alert("Por favor, adicione pelo menos um campo (pergunta) ao formulário.");
-                return;
-            }
-
-            try {
-                let pacote = {
-                    titulo, subtitulo, descricao, dataLimite, camposPersonalizados, contatos
-                };
-
-                if (idEditando) {
-                    await db.collection("formularios_externos").doc(idEditando).update(pacote);
-                    alert("Formulário atualizado com sucesso!");
-                } else {
-                    pacote.ativo = true;
-                    pacote.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-                    
-                    let novoIdBase = gerarSlugLegivel(titulo);
-                    let docTest = await db.collection("formularios_externos").doc(novoIdBase).get();
-                    if (docTest.exists) {
-                        novoIdBase = novoIdBase + "-" + Math.floor(Math.random() * 100);
-                    }
-
-                    await db.collection("formularios_externos").doc(novoIdBase).set(pacote);
-                    alert("Formulário criado! O link gerado será baseado no título.");
-                }
-                fecharModalFormularioExterno();
-                carregarFormulariosExternosAdmin();
-            } catch (e) {
-                console.error(e);
-                alert("Erro ao salvar formulário.");
-            }
+    let contatos = [];
+    document.querySelectorAll('#container-contatos-form > div').forEach(bloco => {
+        let nomeContato = bloco.querySelector('.contato-nome').value.trim();
+        let telContato = bloco.querySelector('.contato-telefone').value.trim();
+        if (nomeContato && telContato) {
+            contatos.push({ nome: nomeContato, telefone: telContato });
         }
+    });
+
+    let camposPersonalizados = [];
+    document.querySelectorAll('#container-campos-customizados > div').forEach(bloco => {
+        let rotulo = bloco.querySelector('.campo-rotulo').value.trim();
+        let tipo = bloco.querySelector('.campo-tipo').value;
+        let obrigatorio = bloco.querySelector('.campo-obrigatorio').checked; 
+        let opcoesElem = bloco.querySelector('.campo-opcoes');
+        let opcoes = opcoesElem ? opcoesElem.value.trim() : '';
+
+        if (rotulo) {
+            camposPersonalizados.push({ rotulo, tipo, obrigatorio, opcoes });
+        }
+    });
+
+    if (camposPersonalizados.length === 0) {
+        alert("Por favor, adicione pelo menos um campo (pergunta) ao formulário.");
+        return;
+    }
+
+    try {
+        let pacote = {
+            titulo, 
+            subtitulo, 
+            descricao, 
+            dataLimite, 
+            permitirVerRespostas, 
+            camposPersonalizados, 
+            contatos
+        };
+
+        if (idEditando) {
+            await db.collection("formularios_externos").doc(idEditando).update(pacote);
+            alert("Formulário atualizado com sucesso!");
+        } else {
+            pacote.ativo = true;
+            pacote.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+            
+            let novoIdBase = gerarSlugLegivel(titulo);
+            let docTest = await db.collection("formularios_externos").doc(novoIdBase).get();
+            if (docTest.exists) {
+                novoIdBase = novoIdBase + "-" + Math.floor(Math.random() * 100);
+            }
+
+            await db.collection("formularios_externos").doc(novoIdBase).set(pacote);
+            alert("Formulário criado! O link gerado será baseado no título.");
+        }
+        fecharModalFormularioExterno();
+        carregarFormulariosExternosAdmin();
+    } catch (e) {
+        console.error(e);
+        alert("Erro ao salvar formulário.");
+    }
+}
 
         async function excluirFormularioExterno(formId) {
             if (confirm("ATENÇÃO: Deseja apagar este formulário e perder todas as configurações?")) {
