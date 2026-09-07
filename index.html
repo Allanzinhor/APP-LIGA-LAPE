@@ -1828,68 +1828,7 @@ body {
                 </div>
             </div>
 
-            <!-- Documentos -->
-            <div id="header-documentos" class="header-content-documentos" style="display: none; width: 100%; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: white;">Documentos</h2>
-                    <p style="margin: 4px 0 0 0; font-size: 11px; color: rgba(255, 255, 255, 0.8);">Acesse os arquivos, regimento e termos da LAPE.</p>
-                </div>
-                <div class="header-actions" style="align-self: center;">
-                    <div class="notif-btn" onclick="abrirModalNotificacoes()" style="cursor: pointer;">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="notif-dot" id="notif-dot-badge" style="display:none;"></span>
-                    </div>
-                    <div class="avatar-perfil" id="container-avatar-topo-doc"></div> 
-                </div>
-            </div>
 
-            <!-- ABA DOCUMENTOS -->
-        <div id="aba-documentos" class="conteudo-aba">
-            <div style="background: white; border-radius: 22px; padding: 20px; box-shadow: 0 8px 25px rgba(0, 30, 90, 0.06); margin-top: -40px; position: relative; z-index: 2; margin-bottom: 20px;">
-                <div style="display: flex; gap: 16px; align-items: flex-start;">
-                    <div style="width: 55px; height: 55px; border-radius: 50%; background: #f0f5ff; color: #0056b3; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; border: 1px solid #e2e8f0;">
-                        <i class="fa-solid fa-folder-open"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 800; color: #001a4d;">Repositório de Arquivos</h3>
-                        <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.5;">Baixe regimentos, atas, termos e documentos oficiais disponibilizados pela diretoria.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; color: #001a4d; margin: 20px 0 12px 4px;">
-                <i class="fa-solid fa-file-arrow-down" style="color: #0037a3;"></i>
-                <span>Arquivos Disponíveis</span>
-            </div>
-
-            <div style="background: #ffffff; border-radius: 22px; box-shadow: 0 8px 25px rgba(0, 30, 90, 0.06); border: 1px solid rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 30px;">
-                <div style="padding: 16px 20px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #f1f3f5;">
-                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #e7f5ff; color: #0037a3; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0;">
-                        <i class="fa-solid fa-file-pdf"></i>
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <h5 style="margin: 0 0 2px 0; font-size: 13.5px; font-weight: 800; color: #001a4d;">Regimento Interno LAPE</h5>
-                        <p style="margin: 0; font-size: 11px; color: #64748b; font-weight: 600;">Atualizado para o ano letivo vigente • PDF</p>
-                    </div>
-                    <a href="#" onclick="alert('Baixando Regimento Interno...'); return false;" style="background: #f0f5ff; color: #0037a3; padding: 8px 14px; border-radius: 10px; font-size: 11px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa-solid fa-download"></i> Baixar
-                    </a>
-                </div>
-
-                <div style="padding: 16px 20px; display: flex; align-items: center; gap: 16px;">
-                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #ebfbee; color: #2b8a3e; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0;">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <h5 style="margin: 0 0 2px 0; font-size: 13.5px; font-weight: 800; color: #001a4d;">Termo de Compromisso e Conduta</h5>
-                        <p style="margin: 0; font-size: 11px; color: #64748b; font-weight: 600;">Documento oficial do ligante • PDF</p>
-                    </div>
-                    <a href="#" onclick="alert('Baixando Termo de Compromisso...'); return false;" style="background: #f0f5ff; color: #0037a3; padding: 8px 14px; border-radius: 10px; font-size: 11px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa-solid fa-download"></i> Baixar
-                    </a>
-                </div>
-            </div>
-        </div>
 
             <!-- Perfil -->
             <div id="header-perfil" class="header-content-perfil" style="display: none; width: 100%; justify-content: space-between; align-items: flex-start;">
@@ -2801,7 +2740,7 @@ function mudarAba(idAba, elementoClicado) {
                 container.innerHTML = `<div style="width:100%; height:100%; background:#0037a3; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:18px;">${inicial}</div>`;
             }
         }
-        
+
         function renderizarAvatarTopoAtiv() {
             let container = document.getElementById("container-avatar-topo-ativ");
             if (!container) return;
