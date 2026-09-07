@@ -533,8 +533,8 @@
 
                 renderizarCamposDinamicos(data.camposPersonalizados || []);
 
-                // VERIFICAR SE A EXIBIÇÃO PÚBLICA DE RESPOSTAS ESTÁ ATIVADA NO PAINEL
-                if (data.exibirRespostasPublicas === true) {
+// VERIFICAR SE A EXIBIÇÃO PÚBLICA DE RESPOSTAS ESTÁ ATIVADA NO PAINEL
+                if (data.exibirRespostasPublicas === true || data.permitirVerRespostas === true) {
                     document.getElementById("secao-respostas-publicas").style.display = "block";
                     escutarRespostasPublicas();
                 }
