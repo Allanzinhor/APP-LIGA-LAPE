@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Painel Executivo da Diretoria - LAPE</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" href="brasao.png" type="image/png">
-    
-    <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="brasao.png">
+    <link rel="stylesheet" href="style.css">
+
+    <meta name="color-scheme" content="light">
+
+    <!-- Ícones e Fontes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -23,7 +28,6 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
 
-      // Mantém a autenticação persistente original do seu sistema
       firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
           firebase.auth().onAuthStateChanged((user) => {
               if (!user) {
@@ -32,15 +36,17 @@
                       let dados = JSON.parse(sessao);
                       let emailFicticio = dados.codigo + "@lape.app";
                       firebase.auth().signInWithEmailAndPassword(emailFicticio, dados.senhaPadrao || "LAPE2026")
-                          .then(() => inicializarPainelAdmin())
+                          .then(() => iniciarPainelAdmin())
                           .catch(() => {
+                              alert("Sessão expirada. Faça login novamente.");
                               window.location.href = "index.html";
                           });
                   } else {
+                      alert("Acesso restrito. Faça login.");
                       window.location.href = "index.html";
                   }
               } else {
-                  inicializarPainelAdmin();
+                  iniciarPainelAdmin();
               }
           });
       });
@@ -49,1062 +55,615 @@
     <style>
         :root {
             --primary: #4f46e5;
-            --primary-dark: #312e81;
+            --primary-dark: #4338ca;
+            --primary-light: #e0e7ff;
             --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
             --dark: #1e293b;
-            --gray-bg: #f8fafc;
+            --gray-light: #f8fafc;
             --border: #e2e8f0;
-            --radius: 20px;
-            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --radius: 16px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            --transition: all 0.25s ease;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; }
 
-        body {
-            background: #f1f5f9;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        body.fundo-app {
+            background: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif; 
             color: var(--dark);
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Container responsivo adaptável para celular e desktop */
-        .app-container {
+        .celular-container {
             width: 100%;
-            max-width: 540px;
-            background: var(--gray-bg);
+            max-width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
             min-height: 100vh;
-            position: relative;
-            box-shadow: 0 0 40px rgba(0,0,0,0.1);
-            padding-bottom: 40px;
+            overflow-x: hidden;
         }
 
-        @media (min-width: 541px) {
-            body { padding: 20px 0; }
-            .app-container { border-radius: 28px; overflow: hidden; min-height: 90vh; }
+        @media (min-width: 768px) {
+            body.fundo-app {
+                padding: 20px 12px;
+                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            }
+            .celular-container {
+                max-width: 600px;
+                border-radius: 24px;
+                box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+                min-height: auto;
+                margin-bottom: 20px;
+            }
         }
 
-        /* --- TOPO / HEADER IDÊNTICO À REFERÊNCIA --- */
-        .novo-cabecalho {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        /* TOPO EXECUTIVO IDÊNTICO À REFERÊNCIA */
+        header.cabecalho-executivo {
+            background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
             color: white;
-            padding: 24px 20px 52px 20px;
+            padding: 26px 20px;
+            position: relative;
+            overflow: hidden;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            overflow: hidden;
-            border-bottom-left-radius: 32px;
-            border-bottom-right-radius: 32px;
+            box-shadow: 0 4px 20px rgba(49, 46, 129, 0.25);
         }
 
-        .novo-cabecalho::before {
-            content: '';
+        /* Marca d'água do brasão ao fundo exatamente como na referência */
+        header.cabecalho-executivo::after {
+            content: "";
             position: absolute;
             right: -20px;
-            top: -20px;
-            width: 180px;
-            height: 180px;
-            background: url('brasao.png') no-repeat center / contain;
-            opacity: 0.07;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 260px;
+            height: 260px;
+            background: url('brasao.png') no-repeat center center;
+            background-size: contain;
+            opacity: 0.10;
             pointer-events: none;
         }
 
-        .cabecalho-esquerda {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 1;
+        .cabecalho-info {
+            z-index: 2;
+            flex: 1;
+            min-width: 0;
+            padding-right: 12px;
         }
 
-        .logo-circulo {
-            width: 48px;
-            height: 48px;
-            background: #ffffff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            flex-shrink: 0;
-            padding: 4px;
-        }
-
-        .logo-circulo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .cabecalho-textos h1 {
-            font-size: 20px;
+        .cabecalho-info h2 {
+            margin: 0;
+            font-size: 24px;
             font-weight: 800;
-            letter-spacing: -0.4px;
+            letter-spacing: -0.5px;
             line-height: 1.1;
         }
 
-        .cabecalho-textos p {
-            font-size: 11px;
-            color: #cbd5e1;
-            font-weight: 500;
-            margin-top: 2px;
+        .cabecalho-info h4 {
+            margin: 4px 0 8px 0;
+            font-size: 13px;
+            font-weight: 700;
+            opacity: 0.95;
         }
 
-        .cabecalho-direita {
+        .cabecalho-info p {
+            margin: 0;
+            font-size: 11px;
+            opacity: 0.8;
+            line-height: 1.35;
+            max-width: 230px;
+        }
+
+        .cabecalho-acoes-topo {
             display: flex;
             align-items: center;
             gap: 12px;
-            z-index: 1;
+            z-index: 2;
+            flex-shrink: 0;
         }
 
-        .btn-notificacao {
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+        /* Card branco da notificação idêntico à referência */
+        .btn-notificacao-topo {
+            background: #ffffff;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 16px;
+            color: #312e81;
+            font-size: 17px;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
             position: relative;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
 
-        .btn-notificacao:active { transform: scale(0.95); }
+        .btn-notificacao-topo:active {
+            transform: scale(0.95);
+        }
 
-        .btn-notificacao::after {
-            content: '';
+        .btn-notificacao-topo::after {
+            content: "";
             position: absolute;
             top: 10px;
             right: 10px;
-            width: 9px;
-            height: 9px;
-            background: #38bdf8;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
             border-radius: 50%;
-            border: 2px solid #312e81;
+            border: 2px solid white;
         }
 
-        .avatar-topo {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        /* --- CARD DO PERFIL --- */
-        .wrapper-perfil-principal {
-            padding: 0 16px;
-            margin-top: -34px;
-            z-index: 10;
-            position: relative;
-        }
-
-        .card-perfil-executivo {
-            background: #ffffff;
-            border-radius: var(--radius);
-            padding: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .perfil-info-esquerda {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            min-width: 0;
-            flex: 1;
-        }
-
-        .avatar-grande-container {
-            position: relative;
-            width: 58px;
-            height: 58px;
-            flex-shrink: 0;
-        }
-
-        .avatar-grande {
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--border);
-        }
-
-        .status-bolinha {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 12px;
-            height: 12px;
-            background: var(--success);
-            border-radius: 50%;
-            border: 2px solid #ffffff;
-        }
-
-        .perfil-detalhes {
-            min-width: 0;
-            flex: 1;
-        }
-
-        .perfil-detalhes h2 {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .nome-completo {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 600;
-            margin: 2px 0 6px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .badge-cargo {
-            display: inline-block;
-            background: #d1fae5;
-            color: #065f46;
-            font-size: 9px;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .tempo-diretoria {
-            font-size: 10px;
-            color: #64748b;
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 500;
-        }
-
-        /* --- CARD DE ACESSO RÁPIDO --- */
-        .card-acesso-rapido {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 12px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 135px;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .card-acesso-rapido:hover {
-            border-color: #cbd5e1;
-            background: #f1f5f9;
-        }
-
-        .card-acesso-rapido:active {
-            transform: scale(0.97);
-        }
-
-        .acesso-topo-linha {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .acesso-icone {
-            width: 28px;
-            height: 28px;
-            background: #e0e7ff;
-            color: var(--primary);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        .acesso-seta {
-            font-size: 11px;
-            color: #94a3b8;
-            font-weight: 800;
-        }
-
-        .acesso-titulo {
-            font-size: 11px;
-            font-weight: 800;
-            color: var(--dark);
-            line-height: 1.1;
-        }
-
-        .acesso-sub {
-            font-size: 9px;
-            color: #64748b;
-            margin-top: 2px;
-            line-height: 1.2;
-        }
-
-        @media (max-width: 420px) {
-            .card-perfil-executivo {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-            }
-            .card-acesso-rapido {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px;
-                padding: 10px 12px;
-            }
-            .acesso-topo-linha { margin-bottom: 0; }
-            .acesso-sub { display: none; }
-        }
-
-        /* --- MURAL DA DIRETORIA --- */
-        .quadro-avisos-global {
-            margin: 16px 16px 0 16px;
-            background: #fffdf5;
-            border: 1px solid #fef08a;
-            border-radius: var(--radius);
-            padding: 16px;
-            box-shadow: var(--shadow);
-        }
-
-        .avisos-header-global {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 11px;
-            font-weight: 800;
-            color: #b45309;
-            letter-spacing: 0.3px;
-        }
-
-        .slides-container-global {
-            position: relative;
-            overflow: hidden;
-            min-height: 80px;
-        }
-
-        .slide-global { display: none; }
-        .slide-global.ativo { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .mural-dots-container {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 12px;
-        }
-
-        .mural-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #fde047;
-            transition: all 0.3s ease;
-        }
-
-        .mural-dot.ativo {
-            width: 16px;
-            border-radius: 4px;
-            background: #b45309;
-        }
-
-        /* --- RESUMO DO MÊS --- */
-        .resumo-mes-container {
-            margin: 20px 16px 0 16px;
-        }
-
-        .resumo-mes-topo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .resumo-mes-titulo {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .resumo-mes-titulo i {
-            color: var(--primary);
-        }
-
-        .resumo-mes-link {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .resumo-grid-cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .resumo-card-item {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 16px 8px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        /* Bloco do perfil alinhado à direita */
+        .perfil-usuario-topo {
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
+            cursor: pointer;
         }
 
-        .resumo-icone-caixa {
-            width: 40px;
-            height: 40px;
+        .avatar-topo-container {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .avatar-topo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .perfil-usuario-topo span.nome {
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+            color: white;
+            white-space: nowrap;
+            max-width: 90px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .perfil-usuario-topo span.cargo {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.75);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* MURAL DA DIRETORIA IDÊNTICO À REFERÊNCIA */
+        .mural-diretoria-referencia {
+            margin: 14px;
+            background: #fffdf5;
+            border: 1px solid #fde68a;
+            border-radius: 18px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mural-diretoria-referencia:active {
+            transform: scale(0.98);
+        }
+
+        .mural-icone-container {
+            width: 50px;
+            height: 50px;
+            background: #fef3c7;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d97706;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .mural-conteudo-texto {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mural-cabecalho-linha {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .mural-titulo {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.3px;
+        }
+
+        .mural-badge-presidencia {
+            background: #10b981;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: -0.2px;
+        }
+
+        .mural-descricao {
+            margin: 0;
+            font-size: 11.5px;
+            color: #475569;
+            line-height: 1.35;
+            font-weight: 500;
+        }
+
+        .mural-seta {
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+            padding-left: 4px;
+        }
+
+        /* ESTILOS DA SEÇÃO GESTÃO DA LIGA */
+/* ESTILOS DA SEÇÃO GESTÃO DA LIGA IDÊNTICO À REFERÊNCIA */
+        .secao-gestao-liga {
+            padding: 16px;
+        }
+
+        .gestao-liga-cabecalho {
+            margin-bottom: 14px;
+        }
+
+        .gestao-liga-cabecalho h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.4px;
+        }
+
+        .gestao-liga-cabecalho p {
+            margin: 2px 0 0 0;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .gestao-liga-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .gestao-liga-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .liga-card-item {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 115px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .liga-card-item:active {
+            transform: scale(0.98);
+            background: #f8fafc;
+        }
+
+        .liga-card-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .liga-card-icone {
+            width: 42px;
+            height: 42px;
+            background: #eef2ff;
+            color: #4f46e5;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            margin-bottom: 10px;
         }
 
-        .icone-atividades { background: #e0e7ff; color: #4f46e5; }
-        .icone-carga { background: #d1fae5; color: #065f46; }
-        .icone-presencas { background: #e0f2fe; color: #0284c7; }
-        .icone-faltas { background: #fee2e2; color: #dc2626; }
-
-        .resumo-valor {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--dark);
-            line-height: 1.2;
-            margin-bottom: 2px;
+        .liga-card-seta {
+            color: #94a3b8;
+            font-size: 12px;
+            padding-top: 2px;
         }
 
-        .resumo-rotulo {
-            font-size: 11px;
+        .liga-card-info strong {
+            display: block;
+            font-size: 13px;
             font-weight: 700;
-            color: var(--dark);
-            line-height: 1.2;
+            color: #1e293b;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .resumo-sub {
-            font-size: 9px;
+        .liga-card-info span {
+            display: block;
+            font-size: 10.5px;
             color: #64748b;
-            font-weight: 500;
-            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        @media (max-width: 480px) {
-            .resumo-grid-cards {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-        }
     </style>
 </head>
-<body>
+<body class="fundo-app">
 
-    <div class="app-container">
+    <div class="celular-container">
         
-        <!-- TOPO / HEADER -->
-        <header class="novo-cabecalho">
-            <div class="cabecalho-esquerda">
-                <div class="logo-circulo">
-                    <img src="brasao.png" alt="Logo LAPE">
-                </div>
-                <div class="cabecalho-textos">
-                    <h1>Gestão LAPE</h1>
-                    <p>Painel Administrativo</p>
-                </div>
+        <!-- TOPO EXECUTIVO -->
+        <header class="cabecalho-executivo">
+            <div class="cabecalho-info">
+                <h2>Gestão LAPE</h2>
+                <h4>Painel Administrativo</h4>
+                <p>Organização, gestión e desenvolvimento da nossa liga, em um só lugar.</p>
             </div>
-            <div class="cabecalho-direita">
-                <button class="btn-notificacao" onclick="alert('Notificações')">
+            <div class="cabecalho-acoes-topo">
+                <button class="btn-notificacao-topo" onclick="alert('Notificações')" title="Avisos">
                     <i class="fa-solid fa-bell"></i>
                 </button>
-                <img src="brasao.png" alt="Perfil" class="avatar-topo" id="img-avatar-topo">
+                <div class="perfil-usuario-topo" onclick="window.location.href='index.html'" title="Voltar ao Portal">
+                    <div class="avatar-topo-container" id="admin-perfil-foto-container">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span class="nome" id="admin-perfil-nome">Carregando</span>
+                    <span class="cargo" id="admin-perfil-cargo">Diretoria</span>
+                </div>
             </div>
         </header>
 
-        <!-- CARD DO PERFIL DO DIRETOR -->
-        <div class="wrapper-perfil-principal">
-            <div class="card-perfil-executivo">
-                <div class="perfil-info-esquerda">
-                    <div class="avatar-grande-container">
-                        <img src="brasao.png" alt="Foto" class="avatar-grande" id="img-avatar-grande">
-                        <div class="status-bolinha"></div>
-                    </div>
-                    <div class="perfil-detalhes">
-                        <h2><span id="txt-saudacao">Olá, Diretor!</span> <span>👋</span></h2>
-                        <div class="nome-completo" id="txt-nome-completo">Carregando nome...</div>
-                        <div>
-                            <span class="badge-cargo" id="txt-cargo">DIRETORIA</span>
-                        </div>
-                        <div class="tempo-diretoria">
-                            <i class="fa-regular fa-clock"></i> <span id="txt-tempo-diretoria">Calculando...</span>
-                        </div>
-                    </div>
+        <!-- MURAL DA DIRETORIA IDÊNTICO À REFERÊNCIA -->
+        <div class="mural-diretoria-referencia" onclick="alert('Mural da Diretoria clicado')">
+            <div class="mural-icone-container">
+                <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div class="mural-conteudo-texto">
+                <div class="mural-cabecalho-linha">
+                    <span class="mural-titulo">Mural da Diretoria</span>
+                    <span class="mural-badge-presidencia">Presidência</span>
                 </div>
-
-                <!-- CARD DE ACESSO RÁPIDO -->
-                <div class="card-acesso-rapido" onclick="alert('Acesso Rápido clicado')">
-                    <div class="acesso-topo-linha">
-                        <div class="acesso-icone">
-                            <i class="fa-solid fa-bolt"></i>
-                        </div>
-                        <span class="acesso-seta">&gt;</span>
-                    </div>
-                    <div class="acesso-titulo">Acesso rápido</div>
-                    <div class="acesso-sub">Navegue pelas principais ferramentas.</div>
-                </div>
+                <p class="mural-descricao">É expressamente proibida a divulgação, o compartilhamento ou a permissão de acesso ao painel por terceiros.</p>
+            </div>
+            <div class="mural-seta">
+                <i class="fa-solid fa-chevron-right"></i>
             </div>
         </div>
 
-        <!-- MURAL DA DIRETORIA -->
-        <div class="quadro-avisos-global" id="mural-avisos-global-container">
-            <div class="avisos-header-global">
-                <span><i class="fa-solid fa-bullhorn"></i> MURAL DA DIRETORIA</span>
-                <span id="contador-slide-global">1/1</span>
-            </div>
-            
-            <div id="container-avisos-fixos-global"></div>
-            
-            <div class="slides-container-global" id="container-slides-global">
-                <!-- Conteúdo injetado dinamicamente pelo Firebase -->
-            </div>
-            
-            <div class="mural-dots-container" id="mural-dots-paginacao">
-                <div class="mural-dot ativo"></div>
-            </div>
-        </div>
-
-        <!-- RESUMO DO MÊS (AGORA DENTRO DO APP-CONTAINER) -->
-        <div class="resumo-mes-container">
-            <div class="resumo-mes-topo">
-                <div class="resumo-mes-titulo">
-                    <i class="fa-solid fa-chart-column"></i> Resumo do mês
-                </div>
-                <a class="resumo-mes-link" onclick="alert('Detalhes do mês')">Ver detalhes &gt;</a>
+<!-- SEÇÃO GESTÃO DA LIGA -->
+        <div class="secao-gestao-liga">
+            <div class="gestao-liga-cabecalho">
+                <h3>Gestão da Liga</h3>
+                <p>Acesse e gerencie as principais áreas da LAPE.</p>
             </div>
 
-            <div class="resumo-grid-cards">
-                <!-- Atividades -->
-                <div class="resumo-card-item">
-                    <div class="resumo-icone-caixa icone-atividades">
-                        <i class="fa-solid fa-chart-pie"></i>
+            <div class="gestao-liga-grid">
+                <!-- 1. Ligantes -->
+                <div class="liga-card-item" onclick="alert('Ligantes')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-users"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
                     </div>
-                    <div class="resumo-valor" id="resumo-val-atividades">0</div>
-                    <div class="resumo-rotulo">Atividades</div>
-                    <div class="resumo-sub">este mês</div>
+                    <div class="liga-card-info">
+                        <strong>Ligantes</strong>
+                        <span>Lista e cadastros</span>
+                    </div>
                 </div>
 
-                <!-- Carga Horária Total -->
-                <div class="resumo-card-item">
-                    <div class="resumo-icone-caixa icone-carga">
-                        <i class="fa-solid fa-circle-check"></i>
+                <!-- 2. Calendário -->
+                <div class="liga-card-item" onclick="alert('Calendário')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-calendar-days"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
                     </div>
-                    <div class="resumo-valor" id="resumo-val-carga">0h</div>
-                    <div class="resumo-rotulo">Carga horária</div>
-                    <div class="resumo-sub">este mês</div>
+                    <div class="liga-card-info">
+                        <strong>Calendário</strong>
+                        <span>Eventos e cronograma</span>
+                    </div>
                 </div>
 
-                <!-- Presenças -->
-                <div class="resumo-card-item">
-                    <div class="resumo-icone-caixa icone-presencas">
-                        <i class="fa-solid fa-user-plus"></i>
+                <!-- 3. Atividades -->
+                <div class="liga-card-item" onclick="alert('Atividades')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-file-lines"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
                     </div>
-                    <div class="resumo-valor" id="resumo-val-presencas">0</div>
-                    <div class="resumo-rotulo">Presenças</div>
-                    <div class="resumo-sub">este mês</div>
+                    <div class="liga-card-info">
+                        <strong>Atividades</strong>
+                        <span>Gerenciar atividades</span>
+                    </div>
                 </div>
 
-                <!-- Faltas -->
-                <div class="resumo-card-item">
-                    <div class="resumo-icone-caixa icone-faltas">
-                        <i class="fa-solid fa-calendar-xmark"></i>
+                <!-- 4. Solicitações -->
+                <div class="liga-card-item" onclick="alert('Solicitações')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
                     </div>
-                    <div class="resumo-valor" id="resumo-val-faltas" style="color: #dc2626;">0</div>
-                    <div class="resumo-rotulo">Faltas</div>
-                    <div class="resumo-sub">este mês</div>
+                    <div class="liga-card-info">
+                        <strong>Solicitações</strong>
+                        <span>Requisições e documentos</span>
+                    </div>
+                </div>
+
+                <!-- 5. Gestão Executiva -->
+                <div class="liga-card-item" onclick="alert('Gestão Executiva')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-chart-column"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Gestão Executiva</strong>
+                        <span>Relatórios e indicadores</span>
+                    </div>
+                </div>
+
+                <!-- 6. Financeiro -->
+                <div class="liga-card-item" onclick="alert('Financeiro')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-wallet"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Financeiro</strong>
+                        <span>Controle e despesas</span>
+                    </div>
+                </div>
+
+                <!-- 7. Avisos Globais -->
+                <div class="liga-card-item" onclick="alert('Avisos Globais')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-bullhorn"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Avisos Globais</strong>
+                        <span>Comunicados gerais</span>
+                    </div>
+                </div>
+
+                <!-- 8. Cadastro de Ligante -->
+                <div class="liga-card-item" onclick="alert('Cadastro de Ligante')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-user-plus"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Cadastro de Ligante</strong>
+                        <span>Novo membro</span>
+                    </div>
+                </div>
+
+                <!-- 9. Lista de Ligantes -->
+                <div class="liga-card-item" onclick="alert('Lista de Ligantes')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-user-gear"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Lista de Ligantes</strong>
+                        <span>Visualizar e editar</span>
+                    </div>
+                </div>
+
+                <!-- 10. Frequência e Chamada -->
+                <div class="liga-card-item" onclick="alert('Frequência e Chamada')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-clipboard-user"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Frequência e Chamada</strong>
+                        <span>Presenças e participação</span>
+                    </div>
+                </div>
+
+                <!-- 11. Manutenção -->
+                <div class="liga-card-item" onclick="alert('Manutenção')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Manutenção</strong>
+                        <span>Configurações e suporte</span>
+                    </div>
+                </div>
+
+                <!-- 12. Migrar Lote (Papel) -->
+                <div class="liga-card-item" onclick="alert('Migrar Lote (Papel)')">
+                    <div class="liga-card-topo">
+                        <div class="liga-card-icone"><i class="fa-solid fa-file-arrow-down"></i></div>
+                        <i class="fa-solid fa-chevron-right liga-card-seta"></i>
+                    </div>
+                    <div class="liga-card-info">
+                        <strong>Migrar Lote (Papel)</strong>
+                        <span>Importação de dados</span>
+                    </div>
                 </div>
             </div>
         </div>
-
-    </div>
-
-    <!-- ================= MÓDULO: GESTÃO EXECUTIVA (DASHBOARD & INTELIGÊNCIA) ================= -->
-<div class="resumo-mes-container" style="margin-top: 20px;">
-    <div class="resumo-mes-topo">
-        <div class="resumo-mes-titulo">
-            <i class="fa-solid fa-crown" style="color: var(--primary);"></i> Inteligência Executiva
-        </div>
-        <span style="font-size: 10px; font-weight: 700; color: var(--dark); background: #e0e7ff; padding: 2px 8px; border-radius: 20px;" id="badge-periodo-atual">Mensal</span>
-    </div>
-
-    <!-- Seletor de Período -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px;">
-        <button class="btn-mini" id="btn-per-mensal" style="background: var(--primary); color: white; border: none; font-size: 10px; padding: 8px 2px; font-weight: 700; border-radius: 8px; cursor: pointer;" onclick="mudarPeriodoDesempenho('mensal')">Mensal</button>
-        <button class="btn-mini" id="btn-per-semestral" style="background: transparent; color: var(--dark); border: none; font-size: 10px; padding: 8px 2px; font-weight: 700; border-radius: 8px; cursor: pointer;" onclick="mudarPeriodoDesempenho('semestral')">Semestral</button>
-        <button class="btn-mini" id="btn-per-anual" style="background: transparent; color: var(--dark); border: none; font-size: 10px; padding: 8px 2px; font-weight: 700; border-radius: 8px; cursor: pointer;" onclick="mudarPeriodoDesempenho('anual')">Anual</button>
-        <button class="btn-mini" id="btn-per-geral" style="background: transparent; color: var(--dark); border: none; font-size: 10px; padding: 8px 2px; font-weight: 700; border-radius: 8px; cursor: pointer;" onclick="mudarPeriodoDesempenho('geral')">Geral</button>
-    </div>
-
-    <!-- Grid de Indicadores Executivos -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; text-align: center;">
-        <div style="background: #ffffff; padding: 10px 6px; border-radius: 14px; border: 1px solid var(--border);">
-            <span style="display: block; font-size: 15px; font-weight: 800; color: var(--primary);" id="ind-taxa-retencao">100%</span>
-            <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Retenção</span>
-        </div>
-        <div style="background: #ffffff; padding: 10px 6px; border-radius: 14px; border: 1px solid var(--border);">
-            <span style="display: block; font-size: 15px; font-weight: 800; color: #10b981;" id="ind-taxa-presenca">0%</span>
-            <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Presença</span>
-        </div>
-        <div style="background: #ffffff; padding: 10px 6px; border-radius: 14px; border: 1px solid var(--border);">
-            <span style="display: block; font-size: 15px; font-weight: 800; color: #dc2626;" id="ind-media-faltas">0</span>
-            <span style="font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase;">Faltas Média</span>
-        </div>
-    </div>
-
-    <!-- Recomendações da Presidência / IA -->
-    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 12px; margin-bottom: 12px;">
-        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-            <i class="fa-solid fa-robot" style="color: var(--primary); font-size: 13px;"></i>
-            <strong style="font-size: 11px; color: #1e40af;">Recomendações da Presidência</strong>
-        </div>
-        <div id="container-insights-ia" style="display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: #334155;">
-            <p style="margin: 0; color: #64748b; font-style: italic;">Processando dados do sistema...</p>
-        </div>
-    </div>
-
-    <!-- Hall da Fama / Rankings -->
-    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
-            <strong style="font-size: 12px; color: #8b5cf6;"><i class="fa-solid fa-trophy"></i> Hall da Fama</strong>
-            <select id="seletor-categoria-ranking" onchange="renderizarRankingsComplexos()" style="padding: 6px; border-radius: 8px; border: 1px solid var(--border); font-size: 11px; font-weight: 700; width: 100%; outline: none;">
-                <option value="geral">⭐ Ranking Geral</option>
-                <option value="presenca">🏆 Top Presença</option>
-                <option value="engajamento">🔥 Top Engajamento</option>
-                <option value="ch">📚 Maior Carga Horária</option>
-            </select>
-        </div>
-        <div id="container-lista-ranking-selecionado" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
-    </div>
-</div>
-
-
+        
     <script>
-      // Inicialização e autenticação persistente
-      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-          firebase.auth().onAuthStateChanged((user) => {
-              if (!user) {
-                  let sessao = localStorage.getItem("lape_sessao_usuario");
-                  if (sessao) {
-                      let dados = JSON.parse(sessao);
-                      let emailFicticio = dados.codigo + "@lape.app";
-                      firebase.auth().signInWithEmailAndPassword(emailFicticio, dados.senhaPadrao || "LAPE2026")
-                          .then(() => inicializarPainelAdmin())
-                          .catch(() => {
-                              window.location.href = "index.html";
-                          });
-                  } else {
-                      window.location.href = "index.html";
-                  }
-              } else {
-                  inicializarPainelAdmin();
-              }
-          });
-      });
+        let usuarioSessao = null;
 
-      let usuarioSessao = null;
-      let avisosDiretoriaCache = [];
-      let atividadesCache = [];
-      let membrosCache = [];
-      let indiceSlideGlobalAtual = 0;
+        function iniciarPainelAdmin() {
+            let sessao = localStorage.getItem("lape_sessao_usuario");
+            if (sessao) {
+                usuarioSessao = JSON.parse(sessao);
+                renderizarPerfilTopoAdmin();
+            }
+        }
 
-      function inicializarPainelAdmin() {
-          let sessaoStr = localStorage.getItem("lape_sessao_usuario");
-          if (sessaoStr) {
-              usuarioSessao = JSON.parse(sessaoStr);
-          }
-          
-          carregarPerfilNovoLayout();
-          iniciarOuvintesTempoReal();
-          processarCentroGestaoSupremo();
-      }
+        function formatarPrimeiroEUltimoNome(nomeCompleto) {
+            if (!nomeCompleto) return "Usuário";
+            let partes = nomeCompleto.trim().split(/\s+/);
+            if (partes.length === 1) return partes[0];
+            return partes[0] + " " + partes[partes.length - 1];
+        }
 
-      function carregarPerfilNovoLayout() {
-          if (!usuarioSessao) return;
+        function renderizarPerfilTopoAdmin() {
+            if (!usuarioSessao) return;
+            
+            let nomeResumido = formatarPrimeiroEUltimoNome(usuarioSessao.nome);
+            document.getElementById('admin-perfil-nome').innerText = nomeResumido;
+            document.getElementById('admin-perfil-cargo').innerText = usuarioSessao.cargo || "Diretoria";
 
-          let primeiroNome = usuarioSessao.nome ? usuarioSessao.nome.split(" ")[0] : "Diretor";
-          document.getElementById("txt-saudacao").innerText = `Olá, ${primeiroNome}!`;
-          document.getElementById("txt-nome-completo").innerText = usuarioSessao.nome || "";
-          document.getElementById("txt-cargo").innerText = usuarioSessao.cargo || "DIRETORIA";
-
-          if (usuarioSessao.fotoStatus === 'aprovada' && usuarioSessao.fotoUrl) {
-              document.getElementById("img-avatar-topo").src = usuarioSessao.fotoUrl;
-              document.getElementById("img-avatar-grande").src = usuarioSessao.fotoUrl;
-          }
-
-          if (usuarioSessao.ingressoLiga) {
-              let dIngresso = new Date(usuarioSessao.ingressoLiga + "T00:00:00");
-              let hoje = new Date();
-              let diffTime = hoje - dIngresso;
-              let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-              if (diffDays >= 0) {
-                  let meses = Math.floor(diffDays / 30);
-                  let diasRestantes = diffDays % 30;
-                  document.getElementById("txt-tempo-diretoria").innerText = `${meses}m e ${diasRestantes}d na diretoria`;
-              }
-          }
-      }
-
-      // Ouvintes em tempo real para o Mural, Atividades e Membros
-      function iniciarOuvintesTempoReal() {
-          db.collection("avisos_diretoria").onSnapshot(() => {
-              carregarAvisosDiretoriaGlobal();
-          });
-
-          db.collection("atividades").onSnapshot((snapshot) => {
-              atividadesCache = [];
-              snapshot.forEach(doc => {
-                  atividadesCache.push({ id: doc.id, ...doc.data() });
-              });
-              atualizarResumoDoMes();
-          });
-
-          db.collection("membros").onSnapshot((snapshot) => {
-              membrosCache = [];
-              snapshot.forEach(doc => {
-                  membrosCache.push({ id: doc.id, ...doc.data() });
-              });
-              atualizarResumoDoMes();
-          });
-      }
-
-      async function carregarAvisosDiretoriaGlobal() {
-          let containerSlides = document.getElementById("container-slides-global");
-          let contador = document.getElementById("contador-slide-global");
-          let dotsContainer = document.getElementById("mural-dots-paginacao");
-          if (!containerSlides) return;
-
-          containerSlides.innerHTML = "";
-          let snap = await db.collection("avisos_diretoria").get();
-          avisosDiretoriaCache = [];
-          let agora = new Date();
-          let cargoLogado = (usuarioSessao ? usuarioSessao.cargo : "").trim();
-          let ehPresidente = cargoLogado.toLowerCase() === "presidente";
-
-          snap.forEach(doc => {
-              let data = doc.data();
-              if (data.expiraEm) {
-                  let dataExp = data.expiraEm.toDate();
-                  if (agora > dataExp) return;
-              }
-              if (data.alvo !== "todos" && data.alvo !== cargoLogado && !ehPresidente) return;
-              avisosDiretoriaCache.push({ id: doc.id, ...data });
-          });
-
-          let rotativos = avisosDiretoriaCache;
-
-          if (rotativos.length === 0) {
-              containerSlides.innerHTML = "<p style='font-size:11px; text-align:center; color:#64748b; margin: 10px 0;'>Nenhum recado ativo no momento.</p>";
-              if (contador) contador.innerText = "0/0";
-              if (dotsContainer) dotsContainer.innerHTML = "";
-              return;
-          }
-
-          if (indiceSlideGlobalAtual >= rotativos.length) indiceSlideGlobalAtual = 0;
-
-          let htmlSlides = "";
-          rotativos.forEach((a, index) => {
-              let classeAtiva = (index === indiceSlideGlobalAtual) ? "ativo" : "";
-              
-              let botoesAcao = ehPresidente ? `
-                  <div style="float: right; display: flex; gap: 6px; margin-top: -2px;">
-                      <button class="btn-mini cinza" style="background: #ffffff; border: 1px solid var(--border); padding: 4px 10px; font-size: 10px; font-weight: 700; cursor: pointer;" onclick="prepararEdicaoAvisoDiretoria('${a.id}')">Editar</button>
-                      <button class="btn-mini vermelho" style="background: #fee2e2; color: #991b1b; padding: 4px 10px; font-size: 10px; font-weight: 700; border: none; cursor: pointer;" onclick="removerAvisoDiretoria('${a.id}')">Apagar</button>
-                  </div>
-              ` : "";
-
-              let tagOrigem = `<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 6px; font-size: 9px; font-weight: 800; margin-left: 6px;">${a.origem || 'Presidência'}</span>`;
-
-              htmlSlides += `
-                  <div class="slide-global ${classeAtiva}">
-                      ${botoesAcao}
-                      <div style="display: flex; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
-                          <h4 style="font-size: 14px; margin: 0; font-weight: 800; color: var(--dark);">${a.titulo}</h4>
-                          ${tagOrigem}
-                      </div>
-                      <p style="font-size: 11px; margin: 0; color: #475569; line-height: 1.4;">${a.texto}</p>
-                  </div>
-              `;
-          });
-
-          containerSlides.innerHTML = htmlSlides;
-          if (contador) contador.innerText = `${indiceSlideGlobalAtual + 1}/${rotativos.length}`;
-
-          if (dotsContainer) {
-              let dotsHtml = "";
-              rotativos.forEach((_, idx) => {
-                  let ativoDot = idx === indiceSlideGlobalAtual ? "ativo" : "";
-                  dotsHtml += `<div class="mural-dot ${ativoDot}"></div>`;
-              });
-              dotsContainer.innerHTML = dotsHtml;
-          }
-      }
-
-      setInterval(() => {
-          if (avisosDiretoriaCache.length > 1) {
-              indiceSlideGlobalAtual = (indiceSlideGlobalAtual + 1) % avisosDiretoriaCache.length;
-              carregarAvisosDiretoriaGlobal();
-          }
-      }, 6000);
-
-      async function removerAvisoDiretoria(id) {
-          if (confirm("Deseja realmente apagar este recado?")) {
-              await db.collection("avisos_diretoria").doc(id).delete();
-          }
-      }
-
-      function prepararEdicaoAvisoDiretoria(id) {
-          alert("Abrir edição para o recado ID: " + id);
-      }
-
-      function atualizarResumoDoMes() {
-          let hoje = new Date();
-          let anoAtual = hoje.getFullYear();
-          let mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
-          let prefixoMesAno = `${anoAtual}-${mesAtual}`;
-
-          let ativMes = atividadesCache.filter(a => a.data && a.data.startsWith(prefixoMesAno) && !a.cancelada);
-          let totalAtividades = ativMes.length;
-
-          let somaCargaHorariaGeral = 0;
-          let totalPresencasGeral = 0;
-          let totalFaltasGeral = 0;
-
-          let membrosAtivos = membrosCache.filter(m => !m.desligado);
-
-          ativMes.forEach(a => {
-              let chAtiv = Number(a.ch || 0);
-              membrosAtivos.forEach(m => {
-                  let cargoLower = (m.cargo || "ligante").toLowerCase().trim();
-                  let ehDir = cargoLower !== "ligante" && cargoLower !== "membro";
-                  if (a.publico === 'diretoria' && !ehDir) return;
-                  if (m.ingressoLiga && a.data < m.ingressoLiga) return;
-
-                  let reg = (a.frequencias || {})[m.id];
-                  if (reg) {
-                      if (reg.status === 'presente') {
-                          totalPresencasGeral++;
-                          somaCargaHorariaGeral += chAtiv;
-                      } else if (reg.status === 'negado' || reg.status === 'justificativa_negada') {
-                          totalFaltasGeral++;
-                      }
-                  }
-              });
-          });
-
-          let elAtiv = document.getElementById('resumo-val-atividades');
-          let elCarga = document.getElementById('resumo-val-carga');
-          let elPres = document.getElementById('resumo-val-presencas');
-          let elFaltas = document.getElementById('resumo-val-faltas');
-
-          if (elAtiv) elAtiv.innerText = totalAtividades;
-          if (elCarga) elCarga.innerText = `${somaCargaHorariaGeral}h`;
-          if (elPres) elPres.innerText = totalPresencasGeral;
-          if (elFaltas) elFaltas.innerText = totalFaltasGeral;
-      }
-
-      let periodoDesempenhoSelecionado = 'mensal';
-      let estatisticasLigantesCache = [];
-
-      function mudarPeriodoDesempenho(periodo) {
-          periodoDesempenhoSelecionado = periodo;
-          ['mensal', 'semestral', 'anual', 'geral'].forEach(p => {
-              let btn = document.getElementById(`btn-per-${p}`);
-              if (btn) {
-                  if (p === periodo) {
-                      btn.style.background = 'var(--primary)';
-                      btn.style.color = 'white';
-                  } else {
-                      btn.style.background = 'transparent';
-                      btn.style.color = 'var(--dark)';
-                  }
-              }
-          });
-          let labelMap = { 'mensal': 'Mensal', 'semestral': 'Semestral', 'anual': 'Anual', 'geral': 'Geral' };
-          document.getElementById('badge-periodo-atual').innerText = labelMap[periodo];
-          processarCentroGestaoSupremo();
-      }
-
-      function processarCentroGestaoSupremo() {
-          let hoje = new Date();
-          let anoAtual = hoje.getFullYear();
-          let mesAtual = hoje.getMonth() + 1;
-
-          let ativFiltradas = atividadesCache.filter(a => {
-              if (!a.data || a.cancelada) return false;
-              let [aAno, aMes] = a.data.split('-').map(Number);
-              if (periodoDesempenhoSelecionado === 'mensal') {
-                  return aAno === anoAtual && aMes === mesAtual;
-              } else if (periodoDesempenhoSelecionado === 'semestral') {
-                  let semAtual = mesAtual <= 6 ? 1 : 2;
-                  let aSem = aMes <= 6 ? 1 : 2;
-                  return aAno === anoAtual && aSem === semAtual;
-              } else if (periodoDesempenhoSelecionado === 'anual') {
-                  return aAno === anoAtual;
-              } else {
-                  return true;
-              }
-          });
-
-          let totalMembrosCadastrados = membrosCache.length;
-          let membrosAtivos = membrosCache.filter(m => !m.desligado);
-          let totalAtivosCount = membrosAtivos.length;
-          let taxaRetencao = totalMembrosCadastrados > 0 ? Math.round((totalAtivosCount / totalMembrosCadastrados) * 100) : 100;
-
-          estatisticasLigantesCache = [];
-          let presencasGeral = 0;
-          let totalPossivelGeral = 0;
-          let faltasGeral = 0;
-
-          membrosAtivos.forEach(m => {
-              let pres = 0;
-              let falt = 0;
-              let chInd = 0;
-              let totalAtivLig = 0;
-
-              ativFiltradas.forEach(a => {
-                  let cargoLower = (m.cargo || "ligante").toLowerCase().trim();
-                  let ehDir = cargoLower !== "ligante" && cargoLower !== "membro";
-                  if (a.publico === 'diretoria' && !ehDir) return;
-                  if (m.ingressoLiga && a.data < m.ingressoLiga) return;
-
-                  totalAtivLig++;
-                  let reg = (a.frequencias || {})[m.id];
-                  if (reg) {
-                      if (reg.status === 'presente') {
-                          pres++;
-                          chInd += Number(a.ch || 0);
-                      } else if (reg.status === 'negado' || reg.status === 'justificativa_negada') {
-                          falt++;
-                      }
-                  }
-              });
-
-              let taxaFreq = totalAtivLig > 0 ? Math.round((pres / totalAtivLig) * 100) : 100;
-              presencasGeral += pres;
-              totalPossivelGeral += totalAtivLig;
-              faltasGeral += falt;
-
-              let pontuacaogeral = (pres * 10) + (chInd * 5) - (falt * 5);
-
-              estatisticasLigantesCache.push({
-                  id: m.id,
-                  nome: m.nome,
-                  cargo: m.cargo || 'Ligante',
-                  presencas: pres,
-                  faltas: falt,
-                  totalAtiv: totalAtivLig,
-                  taxa: taxaFreq,
-                  ch: chInd,
-                  pontuacaogeral: Math.max(pontuacaogeral, 0)
-              });
-          });
-
-          let taxaMediaPresenca = totalPossivelGeral > 0 ? Math.round((presencasGeral / totalPossivelGeral) * 100) : 0;
-          let mediaFaltas = totalAtivosCount > 0 ? (faltasGeral / totalAtivosCount).toFixed(1) : 0;
-
-          document.getElementById('ind-taxa-retencao').innerText = `${taxaRetencao}%`;
-          document.getElementById('ind-taxa-presenca').innerText =`${taxaMediaPresenca}%`;
-          document.getElementById('ind-media-faltas').innerText = mediaFaltas;
-
-          gerarInsightsIA(taxaMediaPresenca, taxaRetencao);
-          renderizarRankingsComplexos();
-      }
-
-      function gerarInsightsIA(taxaPresenca, taxaRetencao) {
-          let container = document.getElementById('container-insights-ia');
-          if (!container) return;
-
-          let insights = [];
-          if (taxaPresenca >= 80) {
-              insights.push(`✨ Ótimo desempenho global: Taxa média de presença em ${taxaPresenca}%.`);
-          } else if (taxaPresenca < 50) {
-              insights.push(`⚠️ Alerta: Presença média abaixo de 50%. Ação recomendada.`);
-          } else {
-              insights.push(`💡 Sistema operando com estabilidade e fluxo normal.`);
-          }
-
-          container.innerHTML = insights.map(i => `<p style="margin: 0;">• ${i}</p>`).join('');
-      }
-
-      function renderizarRankingsComplexos() {
-          let categoria = document.getElementById('seletor-categoria-ranking').value;
-          let container = document.getElementById('container-lista-ranking-selecionado');
-          if (!container) return;
-
-          let lista = [...estatisticasLigantesCache];
-
-          if (categoria === 'geral') lista.sort((a,b) => b.pontuacaogeral - a.pontuacaogeral);
-          else if (categoria === 'presenca') lista.sort((a,b) => b.presencas - a.presencas);
-          else if (categoria === 'engajamento') lista.sort((a,b) => b.taxa - a.taxa);
-          else if (categoria === 'ch') lista.sort((a,b) => b.ch - a.ch);
-
-          if (lista.length === 0) {
-              container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; margin: 6px 0;">Sem dados suficientes.</p>`;
-              return;
-          }
-
-          let html = "";
-          lista.slice(0, 5).forEach((m, idx) => {
-              let badgeMedalha = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : `#${idx+1}`));
-              let valorDestaque = categoria === 'ch' ? `${m.ch}h` : (categoria === 'presenca' ? `${m.presencas} pres.` : `${m.pontuacaogeral} pts`);
-
-              html += `
-                  <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); gap: 6px;">
-                      <div style="display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1;">
-                          <span style="font-weight: 800; font-size: 12px; flex-shrink: 0;">${badgeMedalha}</span>
-                          <div style="min-width: 0; flex: 1;">
-                              <strong style="font-size: 11px; color: var(--dark); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.nome}</strong>
-                              <span style="font-size: 9px; color: #64748b;">(${m.cargo})</span>
-                          </div>
-                      </div>
-                      <span style="font-size: 11px; font-weight: 800; color: var(--primary); flex-shrink: 0;">${valorDestaque}</span>
-                  </div>
-              `;
-          });
-
-          container.innerHTML = html;
-      }
+            let containerFoto = document.getElementById('admin-perfil-foto-container');
+            if (usuarioSessao.fotoStatus === 'aprovada' && usuarioSessao.fotoUrl) {
+                containerFoto.innerHTML = `<img src="${usuarioSessao.fotoUrl}" alt="Foto Perfil">`;
+            } else {
+                let inicial = usuarioSessao.nome ? usuarioSessao.nome.charAt(0).toUpperCase() : "D";
+                containerFoto.innerHTML = `<span style="font-weight: 800; font-size: 16px; color: white;">${inicial}</span>`;
+            }
+        }
     </script>
 </body>
 </html>
