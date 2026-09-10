@@ -1542,6 +1542,7 @@ body {
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
@@ -2632,7 +2633,7 @@ function iniciarAppComUsuario(user) {
                 carregarMinhasSolicitações();
                 iniciarOuvintesTempoReal();
                 iniciarOuvinteNotificacoes();
-
+                registrarNotificacoesPushFCM(user.id);
                 // Remove a tela de inicialização suavemente
                 ocultarSplashScreen();
             }, 2000);
@@ -4368,7 +4369,25 @@ async function executarRecuperacaoSenha() {
         }
     }
 }
-
+async function registrarNotificacoesPushFCM(membroId) {
+    try {
+        if (!('serviceWorker' in navigator)) return;
+        
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const messaging = firebase.messaging();
+            const token = await messaging.getToken({ 
+                vapidKey: 'BKvAYTPSIW34uiR2DjBNrg0B39ULtehYVVXXRCimBsQ7cmVWP7IIyVcfUcHcu9RgJ_0d-_0iVHPn4EuxcxCm99Q' 
+            });
+            
+            if (token) {
+                await db.collection("membros").doc(membroId).update({ fcmToken: token });
+            }
+        }
+    } catch (e) {
+        console.error("Erro ao registrar token FCM:", e);
+    }
+}
     </script>
 </body>
 </html>
