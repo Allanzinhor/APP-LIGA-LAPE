@@ -3810,7 +3810,7 @@ async function salvarStatusAnaliseNoFirestore(comprovanteUrl) {
 function gerarHtmlCardAtividade(ativ, incluirCronometro) {
     let cfg = detectarIconeAtividade(ativ.titulo);
 
-    // Ajuste para parsing seguro no fuso horário local (evitando distorções de UTC)
+    // Ajuste para parsing seguro no fuso horário local
     let partesData = (ativ.data || "").split('-');
     let ano = parseInt(partesData[0]) || new Date().getFullYear();
     let mes = (parseInt(partesData[1]) || 1) - 1;
@@ -3844,20 +3844,31 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
 
     let conteudoExpansaoHtml = `<p class="ativ-desc-texto">${ativ.desc || 'Nenhuma descrição detalhada informada para esta atividade.'}</p>`;
 
-let dataAtividadeMs = dataAtividadeObj.getTime();
+    let dataAtividadeMs = dataAtividadeObj.getTime();
     let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000);
     let agoraMs = new Date().getTime();
 
     let prazoEncerrado = false;
     let alvoTimerMs = prazoLimiteMs;
 
-    if (ativ.prazoFechadoManual === true) {
+    // Tratamento 100% seguro contra indefinidos ou strings vazias vindas do Firebase
+    let fechadoManual = (ativ.prazoFechadoManual === true || String(ativ.prazoFechadoManual) === "true");
+    let temPrazoExtra = (ativ.prazoExtraExpiraEm && !isNaN(ativ.prazoExtraExpiraEm) && ativ.prazoExtraExpiraEm > 0);
+
+    // Lógica rigorosa de prioridade de bloqueio
+    if (fechadoManual) {
         prazoEncerrado = true;
-    } else if (ativ.prazoFechadoManual === false && ativ.prazoExtraExpiraEm) {
+        alvoTimerMs = 0;
+    } else if (temPrazoExtra) {
         alvoTimerMs = ativ.prazoExtraExpiraEm;
         prazoEncerrado = agoraMs >= ativ.prazoExtraExpiraEm;
     } else {
+        alvoTimerMs = prazoLimiteMs;
         prazoEncerrado = agoraMs >= prazoLimiteMs;
+    }
+
+    if (prazoEncerrado) {
+        alvoTimerMs = 0; // Trava o valor para garantir que o setInterval não recrie o cronômetro
     }
 
     if (!ativ.concluida) {
@@ -3886,10 +3897,17 @@ let dataAtividadeMs = dataAtividadeObj.getTime();
     }
 
     let prazoDelicadoHtml = "";
+    // Se o prazo encerrou, removemos a ID do timer (ativ-timer) para que o script não tente atualizar a tela
     if (incluirCronometro && !ativ.concluida && !prazoEncerrado) {
         prazoDelicadoHtml = `
             <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${alvoTimerMs}">
                 <i class="fa-solid fa-hourglass-half"></i> <span>Prazo: Calculando...</span>
+            </div>
+        `;
+    } else if (incluirCronometro && !ativ.concluida && prazoEncerrado) {
+        prazoDelicadoHtml = `
+            <div class="ativ-prazo-delicado" style="background: #f1f3f5; color: #495057; border-color: #ced4da;">
+                <i class="fa-solid fa-ban"></i> <span>Prazo encerrado</span>
             </div>
         `;
     }
