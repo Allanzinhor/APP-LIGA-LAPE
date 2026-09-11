@@ -3809,8 +3809,19 @@ async function salvarStatusAnaliseNoFirestore(comprovanteUrl) {
 
 function gerarHtmlCardAtividade(ativ, incluirCronometro) {
     let cfg = detectarIconeAtividade(ativ.titulo);
-    let dataObj = new Date(ativ.data + "T00:00:00");
-    let dataFormatada = `${String(dataObj.getDate()).padStart(2,'0')}/${String(dataObj.getMonth()+1).padStart(2,'0')}/${dataObj.getFullYear()}`;
+
+    // Ajuste para parsing seguro no fuso horário local (evitando distorções de UTC)
+    let partesData = (ativ.data || "").split('-');
+    let ano = parseInt(partesData[0]) || new Date().getFullYear();
+    let mes = (parseInt(partesData[1]) || 1) - 1;
+    let dia = parseInt(partesData[2]) || 1;
+
+    let partesHora = (ativ.hora || "19:00").split(':');
+    let hora = parseInt(partesHora[0]) || 19;
+    let min = parseInt(partesHora[1]) || 0;
+
+    let dataAtividadeObj = new Date(ano, mes, dia, hora, min, 0);
+    let dataFormatada = `${String(dia).padStart(2,'0')}/${String(mes+1).padStart(2,'0')}/${ano}`;
 
     let textoConfirmados = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
     let badgeDiretoriaHtml = ativ.ehDiretoria ? `<div style="margin-bottom: 6px;"><span class="ativ-badge-diretoria"><i class="fa-solid fa-user-tie"></i> Atividade da Diretoria</span></div>` : '';
@@ -3833,7 +3844,7 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
 
     let conteudoExpansaoHtml = `<p class="ativ-desc-texto">${ativ.desc || 'Nenhuma descrição detalhada informada para esta atividade.'}</p>`;
 
-    let dataAtividadeMs = new Date(`${ativ.data}T${ativ.hora || '19:00'}:00`).getTime();
+    let dataAtividadeMs = dataAtividadeObj.getTime();
     let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000);
     let agoraMs = new Date().getTime();
 
