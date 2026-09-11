@@ -3844,7 +3844,7 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
 
     let conteudoExpansaoHtml = `<p class="ativ-desc-texto">${ativ.desc || 'Nenhuma descrição detalhada informada para esta atividade.'}</p>`;
 
-    let dataAtividadeMs = dataAtividadeObj.getTime();
+let dataAtividadeMs = dataAtividadeObj.getTime();
     let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000);
     let agoraMs = new Date().getTime();
 
@@ -3853,13 +3853,9 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
 
     if (ativ.prazoFechadoManual === true) {
         prazoEncerrado = true;
-    } else if (ativ.prazoFechadoManual === false) {
-        if (ativ.prazoExtraExpiraEm) {
-            alvoTimerMs = ativ.prazoExtraExpiraEm;
-            prazoEncerrado = agoraMs >= ativ.prazoExtraExpiraEm;
-        } else {
-            prazoEncerrado = false;
-        }
+    } else if (ativ.prazoFechadoManual === false && ativ.prazoExtraExpiraEm) {
+        alvoTimerMs = ativ.prazoExtraExpiraEm;
+        prazoEncerrado = agoraMs >= ativ.prazoExtraExpiraEm;
     } else {
         prazoEncerrado = agoraMs >= prazoLimiteMs;
     }
