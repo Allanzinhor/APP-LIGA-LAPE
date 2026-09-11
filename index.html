@@ -3844,22 +3844,23 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
 
     let conteudoExpansaoHtml = `<p class="ativ-desc-texto">${ativ.desc || 'Nenhuma descrição detalhada informada para esta atividade.'}</p>`;
 
+    // --- CÁLCULO RIGOROSO DE PRAZOS ---
     let dataAtividadeMs = dataAtividadeObj.getTime();
-    let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000);
+    let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000); // 24 horas antes da atividade
     let agoraMs = new Date().getTime();
 
     let prazoEncerrado = false;
     let alvoTimerMs = prazoLimiteMs;
+    let usandoPrazoExtra = false;
 
-    // Tratamento 100% seguro contra indefinidos ou strings vazias vindas do Firebase
     let fechadoManual = (ativ.prazoFechadoManual === true || String(ativ.prazoFechadoManual) === "true");
     let temPrazoExtra = (ativ.prazoExtraExpiraEm && !isNaN(ativ.prazoExtraExpiraEm) && ativ.prazoExtraExpiraEm > 0);
 
-    // Lógica rigorosa de prioridade de bloqueio
     if (fechadoManual) {
         prazoEncerrado = true;
         alvoTimerMs = 0;
     } else if (temPrazoExtra) {
+        usandoPrazoExtra = true;
         alvoTimerMs = ativ.prazoExtraExpiraEm;
         prazoEncerrado = agoraMs >= ativ.prazoExtraExpiraEm;
     } else {
@@ -3868,9 +3869,10 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
     }
 
     if (prazoEncerrado) {
-        alvoTimerMs = 0; // Trava o valor para garantir que o setInterval não recrie o cronômetro
+        alvoTimerMs = 0;
     }
 
+    // --- RENDERIZAÇÃO DOS BOTÕES E MENSAGENS DE EXPANSÃO ---
     if (!ativ.concluida) {
         if (ativ.confirmadoAluno) {
             if (!prazoEncerrado) {
@@ -3896,12 +3898,13 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
         }
     }
 
+    // --- RENDERIZAÇÃO DO CRONÔMETRO NO CARD (SUPORTE A PRAZO EXTRA) ---
     let prazoDelicadoHtml = "";
-    // Se o prazo encerrou, removemos a ID do timer (ativ-timer) para que o script não tente atualizar a tela
     if (incluirCronometro && !ativ.concluida && !prazoEncerrado) {
+        let textoRotulo = usandoPrazoExtra ? "Prazo Extra:" : "Prazo:";
         prazoDelicadoHtml = `
             <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${alvoTimerMs}">
-                <i class="fa-solid fa-hourglass-half"></i> <span>Prazo: Calculando...</span>
+                <i class="fa-solid fa-hourglass-half"></i> <span>${textoRotulo} Calculando...</span>
             </div>
         `;
     } else if (incluirCronometro && !ativ.concluida && prazoEncerrado) {
