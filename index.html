@@ -3005,22 +3005,24 @@ function iniciarOuvintesTempoReal() {
 
                 let ehDiretoriaAtiv = d.publico === 'diretoria' || (d.titulo && d.titulo.toLowerCase().includes('diretoria'));
 
-                atividades.push({
-                    id: doc.id,
-                    titulo: d.titulo || "Atividade",
-                    data: d.data || "",
-                    hora: d.hora || "19:00",
-                    local: d.local || "Local a definir",
-                    ch: Number(d.ch || 0),
-                    desc: d.desc || "",
-                    cancelada: d.cancelada || false,
-                    concluida: d.concluida || false,
-                    publico: d.publico || "todos",
-                    ehDiretoria: ehDiretoriaAtiv,
-                    confirmadoAluno: meuRegistro.confirmadoAluno || false,
-                    statusAdmin: meuRegistro.status || 'pendente',
-                    totalConfirmados: totalConfirmados
-                });
+atividades.push({
+    id: doc.id,
+    titulo: d.titulo || "Atividade",
+    data: d.data || "",
+    hora: d.hora || "19:00",
+    local: d.local || "Local a definir",
+    ch: Number(d.ch || 0),
+    desc: d.desc || "",
+    cancelada: d.cancelada || false,
+    concluida: d.concluida || false,
+    publico: d.publico || "todos",
+    ehDiretoria: ehDiretoriaAtiv,
+    confirmadoAluno: meuRegistro.confirmadoAluno || false,
+    statusAdmin: meuRegistro.status || 'pendente',
+    totalConfirmados: totalConfirmados,
+    prazoFechadoManual: d.prazoFechadoManual, // <--- ADICIONE ESTA LINHA
+    prazoExtraExpiraEm: d.prazoExtraExpiraEm ? d.prazoExtraExpiraEm.toMillis() : null // <--- ADICIONE ESTA LINHA
+});
             });
 
             renderizarHistoricoGeral();
@@ -3806,39 +3808,52 @@ async function salvarStatusAnaliseNoFirestore(comprovanteUrl) {
         }
 
 function gerarHtmlCardAtividade(ativ, incluirCronometro) {
-    let cfg = detectarIconeAtividade(ativ.titulo);
-    let dataObj = new Date(ativ.data + "T00:00:00");
-    let dataFormatada = `${String(dataObj.getDate()).padStart(2,'0')}/${String(dataObj.getMonth()+1).padStart(2,'0')}/${dataObj.getFullYear()}`;
-
-    let textoConfirmados = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
-    let badgeDiretoriaHtml = ativ.ehDiretoria ? `<div style="margin-bottom: 6px;"><span class="ativ-badge-diretoria"><i class="fa-solid fa-user-tie"></i> Atividade da Diretoria</span></div>` : '';
-
-    let statusCardClass = "";
-    let statusSymbolHtml = "";
-
-    if (ativ.confirmadoAluno || ativ.statusAdmin === 'presente') {
-        statusCardClass = "status-card-verde";
-        statusSymbolHtml = `<span style="color: #2b8a3e; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-check"></i> Confirmado</span>`;
-    } else if (ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada' || ativ.statusAdmin === 'falta') {
-        statusCardClass = "status-card-vermelho";
-        statusSymbolHtml = `<span style="color: #e03131; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-xmark"></i> Falta / Negado</span>`;
-    } else if (ativ.statusAdmin === 'aguardando_analise' || ativ.statusAdmin === 'justificado' || ativ.statusAdmin === 'abonada') {
-        statusCardClass = "status-card-amarelo";
-        let textoAmarelo = ativ.statusAdmin === 'aguardando_analise' ? 'Em Análise' : 'Justificativa Aceita';
-        let iconeAmarelo = ativ.statusAdmin === 'aguardando_analise' ? 'fa-clock' : 'fa-shield-halved';
-        statusSymbolHtml = `<span style="color: #f59f00; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid ${iconeAmarelo}"></i> ${textoAmarelo}</span>`;
-    }
-
-    let conteudoExpansaoHtml = `<p class="ativ-desc-texto">${ativ.desc || 'Nenhuma descrição detalhada informada para esta atividade.'}</p>`;
-
     let dataAtividadeMs = new Date(`${ativ.data}T${ativ.hora || '19:00'}:00`).getTime();
     let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000);
     let agoraMs = new Date().getTime();
-    let prazoEncerrado = agoraMs >= prazoLimiteMs;
+
+    let prazoEncerrado = false;
+    let alvoTimerMs = prazoLimiteMs;
+
+    if (ativ.prazoFechadoManual === true) {
+        prazoEncerrado = true;
+    } else if (ativ.prazoFechadoManual === false) {
+        if (ativ.prazoExtraExpiraEm) {
+            alvoTimerMs = ativ.prazoExtraExpiraEm;
+            prazoEncerrado = agoraMs >= ativ.prazoExtraExpiraEm;
+        } else {
+            prazoEncerrado = false;
+        }
+    } else {
+        prazoEncerrado = agoraMs >= prazoLimiteMs;
+    }
+
+    let prazoDelicadoHtml = "";
+    if (incluirCronometro && !ativ.concluida && !prazoEncerrado) {
+        prazoDelicadoHtml = `
+            <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${alvoTimerMs}">
+                <i class="fa-solid fa-hourglass-half"></i> <span>Prazo: Calculando...</span>
+            </div>
+        `;
+    }
+
+    let conteudoExpansaoHtml = `
+        <div class="ativ-detalhes">
+            <p><i class="fa-solid fa-calendar"></i> <strong>Data:</strong> ${ativ.data ? ativ.data.split('-').reverse().join('/') : ''} às ${ativ.hora || '19:00'}</p>
+            <p><i class="fa-solid fa-location-dot"></i> <strong>Local:</strong> ${ativ.local}</p>
+            <p><i class="fa-solid fa-clock"></i> <strong>C.H.:</strong> ${ativ.ch}h</p>
+            ${ativ.desc ? `<p><i class="fa-solid fa-circle-info"></i> <strong>Descrição:</strong> ${ativ.desc}</p>` : ''}
+            ${prazoDelicadoHtml}
+        </div>
+    `;
 
     if (!ativ.concluida) {
         if (ativ.confirmadoAluno) {
-            conteudoExpansaoHtml += `<button class="ativ-btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+            if (!prazoEncerrado) {
+                conteudoExpansaoHtml += `<button class="ativ-btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+            } else {
+                conteudoExpansaoHtml += `<div style="background: #f1f3f5; border: 1px solid #ced4da; color: #495057; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Prazo de confirmação encerrado</div>`;
+            }
         } else if (ativ.statusAdmin === 'aguardando_analise') {
             conteudoExpansaoHtml += `<div style="background: #fff9db; border: 1px solid #f59f00; color: #b7791f; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa em análise pela diretoria</div>`;
         } else if (ativ.statusAdmin === 'justificado' || ativ.statusAdmin === 'abonada') {
@@ -3846,7 +3861,7 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
         } else if (ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada' || ativ.statusAdmin === 'falta') {
             conteudoExpansaoHtml += `<div style="background: #ffe3e3; border: 1px solid #e03131; color: #c92a2a; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa negada pela Diretoria - Falta Contabilizada</div>`;
         } else if (prazoEncerrado) {
-            conteudoExpansaoHtml += `<div style="background: #f1f3f5; border: 1px solid #ced4da; color: #495057; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Aguardando movimentação da diretoria</div>`;
+            conteudoExpansaoHtml += `<div style="background: #f1f3f5; border: 1px solid #ced4da; color: #495057; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Prazo de confirmação encerrado</div>`;
         } else {
             conteudoExpansaoHtml += `
                 <div class="ativ-botoes-acao">
@@ -3857,41 +3872,22 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
         }
     }
 
-    let prazoDelicadoHtml = "";
-    if (incluirCronometro && !ativ.concluida) {
-        prazoDelicadoHtml = `
-            <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${prazoLimiteMs}">
-                <i class="fa-solid fa-hourglass-half"></i> <span>Prazo: Calculando...</span>
-            </div>
-        `;
-    }
+    let classeStatus = ativ.concluida ? 'concluida' : (ativ.cancelada ? 'cancelada' : '');
+    let badgeStatus = ativ.concluida ? '<span class="badge-status concluida">Concluída</span>' : (ativ.cancelada ? '<span class="badge-status cancelada">Cancelada</span>' : '');
 
     return `
-        <div class="ativ-card-item ${statusCardClass}">
-            ${badgeDiretoriaHtml}
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <div style="display: flex; gap: 6px; align-items: center;">
-                    <span class="ativ-pill-badge ch">${ativ.ch}h de CH</span>
-                    <span class="ativ-pill-badge confirmados">${textoConfirmados}</span>
-                </div>
-                <div>${statusSymbolHtml}</div>
-            </div>
-
-            <div class="ativ-card-topo" onclick="toggleExpandAtivTab('${ativ.id}')">
-                <div class="ativ-circulo-icone ${cfg.cor}"><i class="fa-solid ${cfg.icone}"></i></div>
+        <div class="ativ-card ${classeStatus}" id="card-ativ-${ativ.id}">
+            <div class="ativ-header" onclick="toggleCardAtiv('${ativ.id}')">
                 <div class="ativ-info-principal">
-                    <h5>${ativ.titulo}</h5>
-                    <p><i class="fa-regular fa-calendar" style="color: #888;"></i> ${dataFormatada} às ${ativ.hora || '19:00'}</p>
-                    <p><i class="fa-solid fa-location-dot" style="color: #888;"></i> ${ativ.local || 'Centro Universitário'}</p>
-                    ${prazoDelicadoHtml}
+                    <h4>${ativ.titulo}</h4>
+                    <span class="ativ-subinfo">${ativ.data ? ativ.data.split('-').reverse().join('/') : ''} • ${ativ.ch}h</span>
                 </div>
-                <div style="color: #0037a3; font-size: 11px; font-weight: 800; padding-left: 6px; display: flex; align-items: center;">
-                    <i class="fa-solid fa-chevron-right" id="ativ-seta-${ativ.id}" style="transition: transform 0.2s;"></i>
+                <div class="ativ-header-right">
+                    ${badgeStatus}
+                    <i class="fa-solid fa-chevron-down ativ-chevron" id="chevron-${ativ.id}"></i>
                 </div>
             </div>
-
-            <div class="ativ-detalhes-expansao" id="ativ-detalhes-${ativ.id}">
+            <div class="ativ-body" id="body-ativ-${ativ.id}" style="display: none;">
                 ${conteudoExpansaoHtml}
             </div>
         </div>
