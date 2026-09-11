@@ -3836,11 +3836,30 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
     let dataAtividadeMs = new Date(`${ativ.data}T${ativ.hora || '19:00'}:00`).getTime();
     let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000);
     let agoraMs = new Date().getTime();
-    let prazoEncerrado = agoraMs >= prazoLimiteMs;
+
+    let prazoEncerrado = false;
+    let alvoTimerMs = prazoLimiteMs;
+
+    if (ativ.prazoFechadoManual === true) {
+        prazoEncerrado = true;
+    } else if (ativ.prazoFechadoManual === false) {
+        if (ativ.prazoExtraExpiraEm) {
+            alvoTimerMs = ativ.prazoExtraExpiraEm;
+            prazoEncerrado = agoraMs >= ativ.prazoExtraExpiraEm;
+        } else {
+            prazoEncerrado = false;
+        }
+    } else {
+        prazoEncerrado = agoraMs >= prazoLimiteMs;
+    }
 
     if (!ativ.concluida) {
         if (ativ.confirmadoAluno) {
-            conteudoExpansaoHtml += `<button class="ativ-btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+            if (!prazoEncerrado) {
+                conteudoExpansaoHtml += `<button class="ativ-btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+            } else {
+                conteudoExpansaoHtml += `<div style="background: #f1f3f5; border: 1px solid #ced4da; color: #495057; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Prazo de confirmação encerrado</div>`;
+            }
         } else if (ativ.statusAdmin === 'aguardando_analise') {
             conteudoExpansaoHtml += `<div style="background: #fff9db; border: 1px solid #f59f00; color: #b7791f; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa em análise pela diretoria</div>`;
         } else if (ativ.statusAdmin === 'justificado' || ativ.statusAdmin === 'abonada') {
@@ -3860,9 +3879,9 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
     }
 
     let prazoDelicadoHtml = "";
-    if (incluirCronometro && !ativ.concluida) {
+    if (incluirCronometro && !ativ.concluida && !prazoEncerrado) {
         prazoDelicadoHtml = `
-            <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${prazoLimiteMs}">
+            <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${alvoTimerMs}">
                 <i class="fa-solid fa-hourglass-half"></i> <span>Prazo: Calculando...</span>
             </div>
         `;
