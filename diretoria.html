@@ -4127,23 +4127,39 @@ async function carregarTermoCompromissoAdmin() {
             }
         }
 
-        function converterTermoParaBase64(input, membroId) {
+function converterTermoParaBase64(input, membroId) {
             let file = input.files[0];
             if (file) {
+                // Validação opcional de tamanho (ex: máx 800KB para caber no Firestore com folga)
+                if (file.size > 800 * 1024) {
+                    alert("O arquivo é muito grande para armazenamento direto. Por favor, envie um arquivo menor que 800KB ou utilize um link externo/PDF otimizado.");
+                    input.value = "";
+                    return;
+                }
                 let reader = new FileReader();
                 reader.onload = function(e) {
                     let base64String = e.target.result;
                     let hiddenInput = document.getElementById(`termo-base64-${membroId}`);
-                    if (hiddenInput) hiddenInput.value = base64String;
-                    alert(`Arquivo "${file.name}" carregado! Clique em 'Salvar Termo' para efetivar.`);
+                    if (hiddenInput) {
+                        hiddenInput.value = base64String;
+                        alert(`Arquivo "${file.name}" processado com sucesso! Agora clique em 'Salvar Termo' abaixo.`);
+                    }
                 };
                 reader.readAsDataURL(file);
             }
         }
 
         async function salvarTermoLigante(membroId) {
-            let urlAnexo = document.getElementById(`termo-base64-${membroId}`).value.trim();
-            let dataAssinatura = document.getElementById(`termo-data-${membroId}`).value;
+            let hiddenInput = document.getElementById(`termo-base64-${membroId}`);
+            let dataInput = document.getElementById(`termo-data-${membroId}`);
+            
+            let urlAnexo = hiddenInput ? hiddenInput.value.trim() : "";
+            let dataAssinatura = dataInput ? dataInput.value : "";
+
+            if (!urlAnexo) {
+                alert("Nenhum arquivo ou documento válido foi selecionado/carregado para este ligante.");
+                return;
+            }
 
             try {
                 let docRef = db.collection("documentos_fixos").doc("termo_compromisso");
@@ -4152,40 +4168,64 @@ async function carregarTermoCompromissoAdmin() {
 
                 registros[membroId] = {
                     imagemUrl: urlAnexo,
-                    dataAssinatura: dataAssinatura,
-                    status: urlAnexo ? "assinado" : "pendente"
+                    dataAssinatura: dataAssinatura || new Date().toISOString().split('T')[0],
+                    status: "assinado"
                 };
 
                 await docRef.set({ registros }, { merge: true });
-                alert("Termo de compromisso atualizado com sucesso!");
+                alert("Termo de compromisso salvo e sincronizado com sucesso na nuvem!");
                 carregarTermoCompromissoAdmin();
             } catch (e) {
-                console.error(e);
-                alert("Erro ao salvar termo do ligante.");
+                console.error("Erro ao salvar termo:", e);
+                alert("Erro ao salvar termo. O arquivo pode ser grande demais para o banco de dados.");
             }
         }
 
-        async function salvarTermoLigante(membroId) {
-            let urlAnexo = document.getElementById(`termo-url-${membroId}`).value.trim();
-            let dataAssinatura = document.getElementById(`termo-data-${membroId}`).value;
+        function converterArquivoParaBase64(input, membroId) {
+            let file = input.files[0];
+            if (file) {
+                if (file.size > 800 * 1024) {
+                    alert("O arquivo excede 800KB. Compacte o arquivo antes de anexar.");
+                    input.value = "";
+                    return;
+                }
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let base64String = e.target.result;
+                    let hiddenInput = document.getElementById(`cert-base64-${membroId}`);
+                    if (hiddenInput) {
+                        hiddenInput.value = base64String;
+                        alert(`Certificado de ${file.name} carregado! Clique em 'Salvar Alterações' no fim da janela.`);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function salvarAnexosCertificadosNuvem() {
+            let certId = document.getElementById("cert-id-atual-anexos").value;
+            if (!certId) return;
+
+            let novosAnexos = {};
+            document.querySelectorAll('input[id^="cert-base64-"]').forEach(hiddenInput => {
+                let mId = hiddenInput.id.replace('cert-base64-', '');
+                let url = hiddenInput.value.trim();
+                if (url) {
+                    novosAnexos[mId] = {
+                        imagemUrl: url,
+                        status: "entregue"
+                    };
+                }
+            });
 
             try {
-                let docRef = db.collection("documentos_fixos").doc("termo_compromisso");
-                let docSnap = await docRef.get();
-                let registros = docSnap.exists ? (docSnap.data().registros || {}) : {};
-
-                registros[membroId] = {
-                    imagemUrl: urlAnexo,
-                    dataAssinatura: dataAssinatura,
-                    status: urlAnexo ? "assinado" : "pendente"
-                };
-
-                await docRef.set({ registros }, { merge: true });
-                alert("Termo de compromisso atualizado com sucesso!");
-                carregarTermoCompromissoAdmin();
+                await db.collection("certificados").doc(certId).update({ anexos: novosAnexos });
+                alert("Anexos de certificados salvos com sucesso!");
+                fecharModalAnexosCertificado();
+                carregarCertificadosAdmin();
             } catch (e) {
-                console.error(e);
-                alert("Erro ao salvar termo do ligante.");
+                console.error("Erro ao salvar anexos do certificado:", e);
+                alert("Erro ao salvar anexos na nuvem.");
             }
         }
 

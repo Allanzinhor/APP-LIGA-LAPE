@@ -2422,71 +2422,19 @@
 
 <!-- ABA DOCUMENTOS -->
 <div id="aba-documentos" class="conteudo-aba">
-    <!-- Card Termo de Compromisso -->
-    <div style="background: white; border-radius: 22px; padding: 20px; box-shadow: 0 8px 25px rgba(0, 30, 90, 0.08); margin-top: -40px; position: relative; z-index: 2; margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.03); box-sizing: border-box;">
-        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px;">
-            <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 0;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f0f5ff; color: #0037a3; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; border: 1px solid #d0ebff;">
-                    <i class="fa-solid fa-file-lines"></i>
-                </div>
-                <div style="flex: 1; min-width: 0;">
-                    <h3 style="margin: 0; font-size: 15px; font-weight: 800; color: #001a4d; line-height: 1.35;">Termo de Compromisso e Responsabilidades</h3>
-                </div>
-            </div>
-            <span style="background: #ebfbee; color: #2b8a3e; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;">
-                <i class="fa-solid fa-circle-check"></i> Assinado
-            </span>
-        </div>
-
-        <p style="margin: 0 0 16px 0; font-size: 12px; color: #64748b; line-height: 1.5; font-weight: 500;">
-            Documento obrigatório para todos os ligantes da LAPE. Leia com atenção e mantenha seu termo sempre disponível.
-        </p>
-
-        <div style="border-top: 1px solid #f1f3f5; margin: 16px 0;"></div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; min-width: 0;">
-            <div style="display: flex; gap: 8px; align-items: flex-start; min-width: 0;">
-                <i class="fa-regular fa-calendar" style="color: #0037a3; font-size: 15px; margin-top: 2px; flex-shrink: 0;"></i>
-                <div style="min-width: 0; flex: 1;">
-                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; margin-bottom: 2px; text-transform: uppercase;">Data da assinatura</span>
-                    <span style="font-size: 12px; font-weight: 800; color: #001a4d;">15/03/2026</span>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px; align-items: flex-start; min-width: 0;">
-                <i class="fa-solid fa-signature" style="color: #0037a3; font-size: 15px; margin-top: 2px; flex-shrink: 0;"></i>
-                <div style="min-width: 0; flex: 1;">
-                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; margin-bottom: 2px; text-transform: uppercase;">Anexado por</span>
-                    <span style="font-size: 12px; font-weight: 800; color: #001a4d; display: block;">Allan Sousa</span>
-                    <span style="font-size: 10px; font-weight: 600; color: #64748b;">Presidente da LAPE</span>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px; align-items: flex-start; min-width: 0;">
-                <i class="fa-regular fa-file-pdf" style="color: #0037a3; font-size: 15px; margin-top: 2px; flex-shrink: 0;"></i>
-                <div style="min-width: 0; flex: 1;">
-                    <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; margin-bottom: 2px; text-transform: uppercase;">Arquivo</span>
-                    <span style="font-size: 11px; font-weight: 800; color: #001a4d;">Termo (.pdf)</span>
-                </div>
-            </div>
-        </div>
-
-        <div style="display: flex; gap: 12px;">
-            <button onclick="alert('Visualizando termo...'); return false;" style="flex: 1; background: #ffffff; color: #0037a3; border: 1px solid #d0ebff; padding: 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <i class="fa-regular fa-eye"></i> Visualizar
-            </button>
-            <button onclick="alert('Baixando termo...'); return false;" style="flex: 1; background: #0037a3; color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0, 55, 163, 0.25);">
-                <i class="fa-solid fa-download"></i> Baixar PDF
-            </button>
-        </div>
+    <!-- Card Termo de Compromisso Dinâmico -->
+    <div id="container-termo-compromisso" style="background: white; border-radius: 22px; padding: 20px; box-shadow: 0 8px 25px rgba(0, 30, 90, 0.08); margin-top: -40px; position: relative; z-index: 2; margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.03); box-sizing: border-box;">
+        <p style="text-align: center; color: #888; font-size: 13px; padding: 20px 0;">Carregando termo de compromisso...</p>
     </div>
 
-<!-- SEÇÃO: MEUS CERTIFICADOS -->
+    <!-- SEÇÃO: MEUS CERTIFICADOS -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
         <div>
             <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #001a4d;">Meus Certificados</h3>
             <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b; font-weight: 600;">Acompanhe seus certificados de participação nas atividades da liga.</p>
         </div>
-        <span style="background: #e7f5ff; color: #0037a3; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 16px; white-space: nowrap;">
-            4 certificados
+        <span id="contador-certificados-badge" style="background: #e7f5ff; color: #0037a3; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 16px; white-space: nowrap;">
+            0 certificados
         </span>
     </div>
 
@@ -2495,85 +2443,11 @@
         <input type="text" class="cert-search-input" placeholder="Buscar certificado...">
     </div>
 
-    <!-- Lista de Certificados -->
-    <div class="cert-card-item">
-        <div class="cert-left-group">
-            <div class="cert-icon-box verde"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="cert-info">
-                <h5>I Simpósio da LAPE</h5>
-                <div class="cert-meta-row">
-                    <span class="cert-meta-item"><i class="fa-regular fa-calendar"></i> 12/05/2025</span>
-                    <span class="cert-meta-item"><i class="fa-regular fa-clock"></i> 20 horas</span>
-                </div>
-            </div>
-        </div>
-        <div class="cert-right-group">
-            <span class="cert-status-pill disponivel"><i class="fa-solid fa-circle-check"></i> Disponível</span>
-            <div class="cert-acoes-btns">
-                <button class="cert-btn-acao" title="Visualizar" onclick="alert('Visualizando certificado...')"><i class="fa-regular fa-eye"></i></button>
-                <button class="cert-btn-acao" title="Baixar" onclick="alert('Baixando certificado...')"><i class="fa-solid fa-download"></i></button>
-            </div>
-        </div>
+    <!-- Lista de Certificados Dinâmica -->
+    <div id="lista-meus-certificados">
+        <div style="background: white; border-radius: 16px; padding: 20px; text-align: center; color: #888; font-size: 13px;">Carregando certificados...</div>
     </div>
-
-    <div class="cert-card-item">
-        <div class="cert-left-group">
-            <div class="cert-icon-box verde"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="cert-info">
-                <h5>Ação Social - Setembro Amarelo</h5>
-                <div class="cert-meta-row">
-                    <span class="cert-meta-item"><i class="fa-regular fa-calendar"></i> 28/09/2024</span>
-                    <span class="cert-meta-item"><i class="fa-regular fa-clock"></i> 8 horas</span>
-                </div>
-            </div>
-        </div>
-        <div class="cert-right-group">
-            <span class="cert-status-pill disponivel"><i class="fa-solid fa-circle-check"></i> Disponível</span>
-            <div class="cert-acoes-btns">
-                <button class="cert-btn-acao" title="Visualizar" onclick="alert('Visualizando certificado...')"><i class="fa-regular fa-eye"></i></button>
-                <button class="cert-btn-acao" title="Baixar" onclick="alert('Baixando certificado...')"><i class="fa-solid fa-download"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="cert-card-item">
-        <div class="cert-left-group">
-            <div class="cert-icon-box vermelho"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="cert-info">
-                <h5>Minicurso de Sutura</h5>
-                <div class="cert-meta-row">
-                    <span class="cert-meta-item"><i class="fa-regular fa-clock"></i> Previsto 15/10/25</span>
-                    <span class="cert-meta-item"><i class="fa-regular fa-clock"></i> 10 horas</span>
-                </div>
-            </div>
-        </div>
-        <div class="cert-right-group">
-            <span class="cert-status-pill pendente"><i class="fa-regular fa-clock"></i> Pendente</span>
-            <div class="cert-acoes-btns">
-                <button class="cert-btn-acao" title="Indisponível" style="opacity: 0.4; cursor: not-allowed;"><i class="fa-regular fa-eye"></i></button>
-                <button class="cert-btn-acao" title="Indisponível" style="opacity: 0.4; cursor: not-allowed;"><i class="fa-solid fa-download"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="cert-card-item">
-        <div class="cert-left-group">
-            <div class="cert-icon-box verde"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="cert-info">
-                <h5>Reunião Científica - Feridas</h5>
-                <div class="cert-meta-row">
-                    <span class="cert-meta-item"><i class="fa-regular fa-calendar"></i> 10/08/2024</span>
-                    <span class="cert-meta-item"><i class="fa-regular fa-clock"></i> 4 horas</span>
-                </div>
-            </div>
-        </div>
-        <div class="cert-right-group">
-            <span class="cert-status-pill disponivel"><i class="fa-solid fa-circle-check"></i> Disponível</span>
-            <div class="cert-acoes-btns">
-                <button class="cert-btn-acao" title="Visualizar" onclick="alert('Visualizando certificado...')"><i class="fa-regular fa-eye"></i></button>
-                <button class="cert-btn-acao" title="Baixar" onclick="alert('Baixando certificado...')"><i class="fa-solid fa-download"></i></button>
-            </div>
-        </div>
+</div>
     </div>
 </div>
 
@@ -2912,6 +2786,7 @@
                 carregarMinhasSolicitações();
                 iniciarOuvintesTempoReal();
                 iniciarOuvinteNotificacoes();
+                carregarDocumentosECertificados();
 
                 ocultarSplashScreen();
             }, 2000);
@@ -2997,6 +2872,7 @@
                 } else if (idAba === 'documentos') {
                     headDoc.style.display = 'flex';
                     renderizarAvatarTopoDoc();
+                    carregarDocumentosECertificados()
                 } else if (idAba === 'perfil') {
                     headPerfil.style.display = 'flex';
                     renderizarAvatarTopoPerfil();
@@ -4705,6 +4581,167 @@ function gerarHtmlCardAtividade(ativ, incluirCronometro) {
                 }
             }
         }
+
+async function carregarDocumentosECertificados() {
+    if (!usuarioLogado || !usuarioLogado.id) return;
+    
+    // 1. Carregar Termo de Compromisso do Firestore
+    try {
+        let termoDoc = await db.collection("documentos_fixos").doc("termo_compromisso").get();
+        let termoContainer = document.getElementById("container-termo-compromisso");
+        if (termoContainer) {
+            let reg = null;
+            if (termoDoc.exists) {
+                let dadosTermo = termoDoc.data();
+                reg = dadosTermo.registros ? dadosTermo.registros[usuarioLogado.id] : null;
+            }
+
+            let assinado = reg && reg.imagemUrl;
+            let dataAssinatura = (assinado && reg.dataAssinatura) ? new Date(reg.dataAssinatura + "T00:00:00").toLocaleDateString('pt-BR') : "Pendente";
+            let anexadoPor = assinado ? "Diretoria LAPE" : "Aguardando anexo";
+            
+            let statusBadgeHtml = assinado 
+                ? `<span style="background: #ebfbee; color: #2b8a3e; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;"><i class="fa-solid fa-circle-check"></i> Assinado</span>`
+                : `<span style="background: #fff5f5; color: #e03131; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 5px; flex-shrink: 0; white-space: nowrap;"><i class="fa-regular fa-clock"></i> Pendente</span>`;
+
+            let iconeBoxHtml = assinado
+                ? `<div style="width: 52px; height: 52px; border-radius: 16px; background: #f0f5ff; color: #0037a3; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; border: 1px solid #d0ebff;"><i class="fa-solid fa-file-lines"></i></div>`
+                : `<div style="width: 52px; height: 52px; border-radius: 16px; background: #fff5f5; color: #e03131; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; border: 1px solid #ffc9c9;"><i class="fa-solid fa-file-lines"></i></div>`;
+
+            let botoesHtml = assinado
+                ? `
+                    <button onclick="window.open('${reg.imagemUrl}', '_blank')" style="flex: 1; background: #ffffff; color: #0037a3; border: 1px solid #d0ebff; padding: 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa-regular fa-eye"></i> Visualizar
+                    </button>
+                    <button onclick="window.open('${reg.imagemUrl}', '_blank')" style="flex: 1; background: #0037a3; color: #ffffff; border: none; padding: 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0, 55, 163, 0.25);">
+                        <i class="fa-solid fa-download"></i> Baixar PDF
+                    </button>
+                  `
+                : `
+                    <button disabled style="flex: 1; background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0; padding: 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.6;">
+                        <i class="fa-regular fa-eye"></i> Visualizar
+                    </button>
+                    <button disabled style="flex: 1; background: #f1f3f5; color: #adb5bd; border: none; padding: 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.6;">
+                        <i class="fa-solid fa-download"></i> Baixar PDF
+                    </button>
+                  `;
+
+            termoContainer.innerHTML = `
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px;">
+                    <div style="display: flex; gap: 14px; align-items: flex-start; flex: 1; min-width: 0;">
+                        ${iconeBoxHtml}
+                        <div style="flex: 1; min-width: 0;">
+                            <h3 style="margin: 0; font-size: 15px; font-weight: 800; color: #001a4d; line-height: 1.35;">Termo de Compromisso e Responsabilidades</h3>
+                        </div>
+                    </div>
+                    ${statusBadgeHtml}
+                </div>
+                <p style="margin: 0 0 16px 0; font-size: 12px; color: #64748b; line-height: 1.5; font-weight: 500;">
+                    Documento obrigatório para todos os ligantes da LAPE. Leia com atenção e mantenha seu termo sempre disponível.
+                </p>
+                <div style="border-top: 1px solid #f1f3f5; margin: 16px 0;"></div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; min-width: 0;">
+                    <div style="display: flex; gap: 8px; align-items: flex-start; min-width: 0;">
+                        <i class="fa-regular fa-calendar" style="color: #0037a3; font-size: 15px; margin-top: 2px; flex-shrink: 0;"></i>
+                        <div style="min-width: 0; flex: 1;">
+                            <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; margin-bottom: 2px; text-transform: uppercase;">Data da assinatura</span>
+                            <span style="font-size: 12px; font-weight: 800; color: #001a4d;">${dataAssinatura}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: flex-start; min-width: 0;">
+                        <i class="fa-solid fa-signature" style="color: #0037a3; font-size: 15px; margin-top: 2px; flex-shrink: 0;"></i>
+                        <div style="min-width: 0; flex: 1;">
+                            <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; margin-bottom: 2px; text-transform: uppercase;">Anexado por</span>
+                            <span style="font-size: 12px; font-weight: 800; color: #001a4d; display: block;">${anexadoPor}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: flex-start; min-width: 0;">
+                        <i class="fa-regular fa-file-pdf" style="color: #0037a3; font-size: 15px; margin-top: 2px; flex-shrink: 0;"></i>
+                        <div style="min-width: 0; flex: 1;">
+                            <span style="font-size: 9px; font-weight: 800; color: #64748b; display: block; margin-bottom: 2px; text-transform: uppercase;">Arquivo</span>
+                            <span style="font-size: 11px; font-weight: 800; color: #001a4d;">Termo (.pdf)</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    ${botoesHtml}
+                </div>
+            `;
+        }
+    } catch(e) {
+        console.error("Erro ao carregar termo:", e);
+    }
+
+    // 2. Carregar Certificados do Firestore filtrados pelo ID do ligante
+    try {
+        let snapCert = await db.collection("certificados").get();
+        let listaCertContainer = document.getElementById("lista-meus-certificados");
+        let badgeCertCount = document.getElementById("contador-certificados-badge");
+        
+        let certificadosArray = [];
+        snapCert.forEach(doc => {
+            let data = doc.data();
+            if (data.destinatarios && data.destinatarios.includes(usuarioLogado.id)) {
+                certificadosArray.push({ id: doc.id, ...data });
+            }
+        });
+
+        if (badgeCertCount) {
+            badgeCertCount.innerText = `${certificadosArray.length} certificado${certificadosArray.length === 1 ? '' : 's'}`;
+        }
+
+        if (listaCertContainer) {
+            if (certificadosArray.length === 0) {
+                listaCertContainer.innerHTML = `<div style="background: white; border-radius: 16px; padding: 20px; text-align: center; color: #888; font-size: 13px;">Nenhum certificado disponível no momento.</div>`;
+                return;
+            }
+
+            let htmlCert = "";
+            certificadosArray.forEach(cert => {
+                let anexoInfo = cert.anexos && cert.anexos[usuarioLogado.id] ? cert.anexos[usuarioLogado.id] : { imagemUrl: "", status: "pendente" };
+                let disponivel = (anexoInfo.status === 'entregue' && anexoInfo.imagemUrl);
+                
+                let iconClass = disponivel ? "verde" : "vermelho";
+                let statusPillClass = disponivel ? "disponivel" : "pendente";
+                let statusText = disponivel ? "Disponível" : "Pendente";
+                let statusIcon = disponivel ? "fa-circle-check" : "fa-regular fa-clock";
+
+                let dataFormatada = cert.data ? new Date(cert.data + "T00:00:00").toLocaleDateString('pt-BR') : "Data não informada";
+
+                let botoesAcao = disponivel 
+                    ? `<button class="cert-btn-acao" title="Visualizar" onclick="window.open('${anexoInfo.imagemUrl}', '_blank')"><i class="fa-regular fa-eye"></i></button>
+                       <button class="cert-btn-acao" title="Baixar" onclick="window.open('${anexoInfo.imagemUrl}', '_blank')"><i class="fa-solid fa-download"></i></button>`
+                    : `<button class="cert-btn-acao" title="Indisponível" style="opacity: 0.4; cursor: not-allowed;"><i class="fa-regular fa-eye"></i></button>
+                       <button class="cert-btn-acao" title="Indisponível" style="opacity: 0.4; cursor: not-allowed;"><i class="fa-solid fa-download"></i></button>`;
+
+                htmlCert += `
+                    <div class="cert-card-item">
+                        <div class="cert-left-group">
+                            <div class="cert-icon-box ${iconClass}"><i class="fa-solid fa-file-lines"></i></div>
+                            <div class="cert-info">
+                                <h5>${cert.nome}</h5>
+                                <div class="cert-meta-row">
+                                    <span class="cert-meta-item"><i class="fa-regular fa-calendar"></i> ${dataFormatada}</span>
+                                    <span class="cert-meta-item"><i class="fa-regular fa-clock"></i> ${cert.horas} horas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cert-right-group">
+                            <span class="cert-status-pill ${statusPillClass}"><i class="fa-solid ${statusIcon}"></i> ${statusText}</span>
+                            <div class="cert-acoes-btns">
+                                ${botoesAcao}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            listaCertContainer.innerHTML = htmlCert;
+        }
+    } catch(e) {
+        console.error("Erro ao carregar certificados:", e);
+    }
+}
+
     </script>
 </body>
 </html>
