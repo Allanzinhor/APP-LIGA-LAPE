@@ -3968,7 +3968,7 @@ async function salvarFormularioExternoNuvem() {
             }
         }
 
-        async function abrirModalAnexosCertificado(certId, nomeCert) {
+async function abrirModalAnexosCertificado(certId, nomeCert) {
             document.getElementById("cert-id-atual-anexos").value = certId;
             document.getElementById("titulo-modal-anexos").innerText = `📎 Anexos: ${nomeCert}`;
             let container = document.getElementById("lista-ligantes-anexos-conteudo");
@@ -3998,9 +3998,11 @@ async function salvarFormularioExternoNuvem() {
                         <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px;" data-membro-id="${mId}">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <strong style="font-size: 11px; color: var(--dark);">${nomeMembro}</strong>
-                                <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusAtual === 'entregue' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusAtual === 'entregue' ? 'Entregue' : 'Pendente'}</span>
+                                <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusAtual === 'entregue' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusAtual === 'entregue' ? 'Entregue (PDF/Doc)' : 'Pendente'}</span>
                             </div>
-                            <input type="text" class="input-url-anexo-cert" data-membro-id="${mId}" placeholder="Cole a URL ou link da imagem do certificado gerado..." value="${anexoInfo.imagemUrl || ''}" style="padding: 8px; font-size: 10px; background: white;">
+                            <input type="hidden" id="cert-base64-${mId}" value="${anexoInfo.imagemUrl || ''}">
+                            <input type="file" accept=".pdf,image/*" onchange="converterArquivoParaBase64(this, '${mId}')" style="padding: 6px; font-size: 10px; background: white; border: 1px solid var(--border); border-radius: 6px;">
+                            ${anexoInfo.imagemUrl ? `<a href="${anexoInfo.imagemUrl}" target="_blank" style="font-size: 10px; color: var(--primary); text-decoration: none; font-weight: 800;"><i class="fa-solid fa-file-arrow-down"></i> Baixar / Visualizar arquivo atual</a>` : ''}
                         </div>
                     `;
                 });
@@ -4008,6 +4010,45 @@ async function salvarFormularioExternoNuvem() {
             } catch (e) {
                 console.error(e);
                 container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar anexos.</p>`;
+            }
+        }
+
+        function converterArquivoParaBase64(input, membroId) {
+            let file = input.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let base64String = e.target.result;
+                    let hiddenInput = document.getElementById(`cert-base64-${membroId}`);
+                    if (hiddenInput) hiddenInput.value = base64String;
+                    alert(`Arquivo "${file.name}" anexado com sucesso! Clique em 'Salvar Alterações' para confirmar.`);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function salvarAnexosCertificadosNuvem() {
+            let certId = document.getElementById("cert-id-atual-anexos").value;
+            if (!certId) return;
+
+            let novosAnexos = {};
+            document.querySelectorAll('input[id^="cert-base64-"]').forEach(hiddenInput => {
+                let mId = hiddenInput.id.replace('cert-base64-', '');
+                let url = hiddenInput.value.trim();
+                novosAnexos[mId] = {
+                    imagemUrl: url,
+                    status: url ? "entregue" : "pendente"
+                };
+            });
+
+            try {
+                await db.collection("certificados").doc(certId).update({ anexos: novosAnexos });
+                alert("Anexos atualizados com sucesso!");
+                fecharModalAnexosCertificado();
+                carregarCertificadosAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar anexos.");
             }
         }
 
@@ -4041,12 +4082,11 @@ async function salvarFormularioExternoNuvem() {
         }
 
         // Gestão do Termo de Compromisso Fixo
-        async function carregarTermoCompromissoAdmin() {
+async function carregarTermoCompromissoAdmin() {
             let container = document.getElementById("lista-termo-ligantes-admin");
             if (!container) return;
 
             try {
-                // Buscamos o documento global do termo na coleção "documentos_fixos" ou configuração
                 let docTermoSnap = await db.collection("documentos_fixos").doc("termo_compromisso").get();
                 let dadosTermoGeral = docTermoSnap.exists ? docTermoSnap.data() : { registros: {} };
                 let registrosMap = dadosTermoGeral.registros || {};
@@ -4066,12 +4106,14 @@ async function salvarFormularioExternoNuvem() {
                         <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <strong style="font-size: 12px; color: var(--dark);">${m.nome}</strong>
-                                <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusTermo === 'assinado' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusTermo === 'assinado' ? 'Anexado / Assinado' : 'Pendente'}</span>
+                                <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusTermo === 'assinado' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusTermo === 'assinado' ? 'PDF Anexado / Assinado' : 'Pendente'}</span>
                             </div>
-                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
-                                <input type="text" id="termo-url-${m.id}" placeholder="URL do Termo Assinado..." value="${reg.imagemUrl || ''}" style="padding: 8px; font-size: 10px;">
-                                <input type="date" id="termo-data-${m.id}" value="${reg.dataAssinatura || ''}" style="padding: 8px; font-size: 10px;">
+                            <input type="hidden" id="termo-base64-${m.id}" value="${reg.imagemUrl || ''}">
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; align-items: center;">
+                                <input type="file" accept=".pdf,image/*" onchange="converterTermoParaBase64(this, '${m.id}')" style="padding: 6px; font-size: 10px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;">
+                                <input type="date" id="termo-data-${m.id}" value="${reg.dataAssinatura || ''}" style="padding: 6px; font-size: 10px;">
                             </div>
+                            ${reg.imagemUrl ? `<div style="font-size: 10px;"><a href="${reg.imagemUrl}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 800;"><i class="fa-solid fa-file-arrow-down"></i> Baixar / Visualizar termo atual</a></div>` : ''}
                             <div style="display: flex; justify-content: flex-end;">
                                 <button class="btn-mini verde" style="padding: 6px 12px; font-size: 10px;" onclick="salvarTermoLigante('${m.id}')">💾 Salvar Termo</button>
                             </div>
@@ -4082,6 +4124,44 @@ async function salvarFormularioExternoNuvem() {
             } catch (e) {
                 console.error(e);
                 container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Erro ao carregar o termo de compromisso.</p>`;
+            }
+        }
+
+        function converterTermoParaBase64(input, membroId) {
+            let file = input.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let base64String = e.target.result;
+                    let hiddenInput = document.getElementById(`termo-base64-${membroId}`);
+                    if (hiddenInput) hiddenInput.value = base64String;
+                    alert(`Arquivo "${file.name}" carregado! Clique em 'Salvar Termo' para efetivar.`);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function salvarTermoLigante(membroId) {
+            let urlAnexo = document.getElementById(`termo-base64-${membroId}`).value.trim();
+            let dataAssinatura = document.getElementById(`termo-data-${membroId}`).value;
+
+            try {
+                let docRef = db.collection("documentos_fixos").doc("termo_compromisso");
+                let docSnap = await docRef.get();
+                let registros = docSnap.exists ? (docSnap.data().registros || {}) : {};
+
+                registros[membroId] = {
+                    imagemUrl: urlAnexo,
+                    dataAssinatura: dataAssinatura,
+                    status: urlAnexo ? "assinado" : "pendente"
+                };
+
+                await docRef.set({ registros }, { merge: true });
+                alert("Termo de compromisso atualizado com sucesso!");
+                carregarTermoCompromissoAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar termo do ligante.");
             }
         }
 
