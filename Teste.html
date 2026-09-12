@@ -2634,7 +2634,43 @@
                     </div>
                 </div>
             </section>
+<!-- CARD DE DOCUMENTOS E CERTIFICADOS OTIMIZADO PARA MOBILE -->
+            <div onclick="mudarAba('documentos', document.querySelectorAll('.nav-item')[3])" style="background: #ffffff; border-radius: 20px; padding: 14px 16px; box-shadow: 0 4px 20px rgba(0, 26, 77, 0.05); border: 1px solid #e2e8f0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 25px rgba(0, 26, 77, 0.08)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0, 26, 77, 0.05)'">
+                
+                <!-- Lado Esquerdo: Ícone e Textos Proporcionais -->
+                <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1.1;">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #0037a3; color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0, 55, 163, 0.2);">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div style="min-width: 0; flex: 1;">
+                        <h4 style="margin: 0 0 2px 0; font-size: 13px; font-weight: 800; color: #001a4d; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">Documentos e Certificados</h4>
+                        <p style="margin: 0; font-size: 10px; color: #64748b; font-weight: 500; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">Acesse seus documentos e certificados da LAPE.</p>
+                    </div>
+                </div>
 
+                <!-- Lado Direito: Estatísticas Internas e Seta Compactas -->
+                <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 6px 8px; display: flex; align-items: center; gap: 8px;">
+                        <!-- Coluna Documentos -->
+                        <div style="text-align: center; min-width: 32px;">
+                            <div style="font-size: 10px; color: #0037a3; margin-bottom: 1px;"><i class="fa-regular fa-file-lines"></i></div>
+                            <div style="font-size: 13px; font-weight: 800; color: #001a4d; line-height: 1.1;">5</div>
+                            <div style="font-size: 7px; font-weight: 800; color: #64748b; text-transform: uppercase;">Docs</div>
+                        </div>
+                        <!-- Linha Divisória -->
+                        <div style="width: 1px; height: 24px; background: #cbd5e1;"></div>
+                        <!-- Coluna Certificados -->
+                        <div style="text-align: center; min-width: 52px;">
+                            <div style="font-size: 10px; color: #0037a3; margin-bottom: 1px;"><i class="fa-solid fa-award"></i></div>
+                            <div style="font-size: 13px; font-weight: 800; color: #001a4d; line-height: 1.1;">8</div>
+                            <div style="font-size: 7px; font-weight: 800; color: #64748b; text-transform: uppercase; white-space: nowrap;">Certificados</div>
+                        </div>
+                    </div>
+                    <!-- Seta de Navegação -->
+                    <i class="fa-solid fa-chevron-right" style="color: #001a4d; font-size: 12px; font-weight: bold;"></i>
+                </div>
+
+            </div>
             <div class="perfil-card-referencia">
                 <div class="perfil-ref-bloco-esquerda">
                     <div class="perfil-ref-circulo-icone">
@@ -2756,7 +2792,7 @@
             </div>
         </div>
 
-        <!-- MENU INFERIOR -->
+<!-- MENU INFERIOR -->
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="mudarAba('inicio', this)">
                 <i class="fa-solid fa-house"></i>
@@ -2773,10 +2809,6 @@
             <div class="nav-item" onclick="mudarAba('solicitacoes', this)">
                 <i class="fa-regular fa-comments"></i>
                 <span>Solicitações</span>
-            </div>
-            <div class="nav-item" onclick="mudarAba('documentos', this)">
-                <i class="fa-regular fa-folder-open"></i>
-                <span>Documentos</span>
             </div>
             <div class="nav-item" onclick="mudarAba('perfil', this)">
                 <i class="fa-regular fa-user"></i>
@@ -3252,22 +3284,25 @@
 
                         let ehDiretoriaAtiv = d.publico === 'diretoria' || (d.titulo && d.titulo.toLowerCase().includes('diretoria'));
 
-                        atividades.push({
-                            id: doc.id,
-                            titulo: d.titulo || "Atividade",
-                            data: d.data || "",
-                            hora: d.hora || "19:00",
-                            local: d.local || "Local a definir",
-                            ch: Number(d.ch || 0),
-                            desc: d.desc || "",
-                            cancelada: d.cancelada || false,
-                            concluida: d.concluida || false,
-                            publico: d.publico || "todos",
-                            ehDiretoria: ehDiretoriaAtiv,
-                            confirmadoAluno: meuRegistro.confirmadoAluno || false,
-                            statusAdmin: meuRegistro.status || 'pendente',
-                            totalConfirmados: totalConfirmados
-                        });
+atividades.push({
+    id: doc.id,
+    titulo: d.titulo || "Atividade",
+    data: d.data || "",
+    hora: d.hora || "19:00",
+    local: d.local || "Local a definir",
+    ch: Number(d.ch || 0),
+    desc: d.desc || "",
+    cancelada: d.cancelada || false,
+    concluida: d.concluida || false,
+    publico: d.publico || "todos",
+    ehDiretoria: ehDiretoriaAtiv,
+    confirmadoAluno: meuRegistro.confirmadoAluno || false,
+    statusAdmin: meuRegistro.status || 'pendente',
+    totalConfirmados: totalConfirmados,
+    // Adicione estas duas linhas abaixo:
+    prazoFechadoManual: d.prazoFechadoManual,
+    prazoExtraExpiraEm: d.prazoExtraExpiraEm && typeof d.prazoExtraExpiraEm.toMillis === 'function' ? d.prazoExtraExpiraEm.toMillis() : (d.prazoExtraExpiraEm || null)
+});
                     });
 
                     renderizarHistoricoGeral();
@@ -4051,120 +4086,186 @@
 
             container.innerHTML = html;
             iniciarMotorCronometrosAtividades();
+            iniciarMotorCronometrosAtividades();
             atualizarResumoAtividadesMes();
         }
 
-        function gerarHtmlCardAtividade(ativ, incluirCronometro) {
-            let cfg = detectarIconeAtividade(ativ.titulo);
-            let dataObj = new Date(ativ.data + "T00:00:00");
-            let dataFormatada = `${String(dataObj.getDate()).padStart(2,'0')}/${String(dataObj.getMonth()+1).padStart(2,'0')}/${dataObj.getFullYear()}`;
+function iniciarMotorCronometrosAtividades() {
+    if (motorCronometroAtividades) clearInterval(motorCronometroAtividades);
 
-            let textoConfirmados = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
-            let badgeDiretoriaHtml = ativ.ehDiretoria ? `<div style="margin-bottom: 6px;"><span class="ativ-badge-diretoria"><i class="fa-solid fa-user-tie"></i> Atividade da Diretoria</span></div>` : '';
+    motorCronometroAtividades = setInterval(() => {
+        let agoraMs = new Date().getTime();
 
-            let statusCardClass = "";
-            let statusSymbolHtml = "";
+        document.querySelectorAll('[id^="ativ-timer-"]').forEach(el => {
+            let alvoMs = Number(el.getAttribute('data-alvo'));
+            if (!alvoMs || isNaN(alvoMs)) return;
 
-            if (ativ.confirmadoAluno || ativ.statusAdmin === 'presente') {
-                statusCardClass = "status-card-verde";
-                statusSymbolHtml = `<span style="color: #2b8a3e; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-check"></i> Confirmado</span>`;
-            } else if (ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada' || ativ.statusAdmin === 'falta') {
-                statusCardClass = "status-card-vermelho";
-                statusSymbolHtml = `<span style="color: #e03131; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-xmark"></i> Falta / Negado</span>`;
-            } else if (ativ.statusAdmin === 'aguardando_analise' || ativ.statusAdmin === 'justificado' || ativ.statusAdmin === 'abonada') {
-                statusCardClass = "status-card-amarelo";
-                let textoAmarelo = ativ.statusAdmin === 'aguardando_analise' ? 'Em Análise' : 'Justificativa Aceita';
-                let iconeAmarelo = ativ.statusAdmin === 'aguardando_analise' ? 'fa-clock' : 'fa-shield-halved';
-                statusSymbolHtml = `<span style="color: #f59f00; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid ${iconeAmarelo}"></i> ${textoAmarelo}</span>`;
+            let diff = alvoMs - agoraMs;
+            let spanTexto = el.querySelector('span');
+
+            if (diff <= 0) {
+                if (spanTexto) spanTexto.innerText = "Prazo encerrado";
+                el.style.background = "#f1f3f5";
+                el.style.color = "#495057";
+                el.style.borderColor = "#ced4da";
+                let icone = el.querySelector('i');
+                if (icone) icone.className = "fa-solid fa-ban";
+            } else {
+                let dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+                let horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                let segundos = Math.floor((diff % (1000 * 60)) / 1000);
+
+                let tempoFormatado = "";
+                if (dias > 0) tempoFormatado += `${dias}d `;
+                tempoFormatado += `${String(horas).padStart(2,'0')}h ${String(minutos).padStart(2,'0')}m ${String(segundos).padStart(2,'0')}s`;
+
+                let rotuloAtual = el.innerText.includes("Prazo Extra") ? "Prazo Extra:" : "Prazo:";
+                if (spanTexto) spanTexto.innerText = `${rotuloAtual} ${tempoFormatado}`;
             }
+        });
+    }, 1000);
+}
 
-            let conteudoExpansaoHtml = `<p class="ativ-desc-texto">${ativ.desc || 'Nenhuma descrição detalhada informada para esta atividade.'}</p>`;
+function gerarHtmlCardAtividade(ativ, incluirCronometro) {
+    let cfg = detectarIconeAtividade(ativ.titulo);
 
-            if (!ativ.concluida) {
-                if (ativ.confirmadoAluno) {
-                    conteudoExpansaoHtml += `<button class="ativ-btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
-                } else if (ativ.statusAdmin === 'aguardando_analise') {
-                    conteudoExpansaoHtml += `<div style="background: #fff9db; border: 1px solid #f59f00; color: #b7791f; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa em análise pela diretoria</div>`;
-                } else if (ativ.statusAdmin === 'justificado' || ativ.statusAdmin === 'abonada') {
-                    conteudoExpansaoHtml += `<div style="background: #ebfbee; border: 1px solid #2b8a3e; color: #2b8a3e; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa aceita pela Diretoria - Falta Abonada</div>`;
-                } else if (ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada' || ativ.statusAdmin === 'falta') {
-                    conteudoExpansaoHtml += `<div style="background: #ffe3e3; border: 1px solid #e03131; color: #c92a2a; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa negada pela Diretoria - Falta Contabilizada</div>`;
-                } else {
-                    conteudoExpansaoHtml += `
-                        <div class="ativ-botoes-acao">
-                            <button class="ativ-btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
-                            <button class="ativ-btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
-                        </div>
-                    `;
-                }
+    // Ajuste para parsing seguro no fuso horário local
+    let partesData = (ativ.data || "").split('-');
+    let ano = parseInt(partesData[0]) || new Date().getFullYear();
+    let mes = (parseInt(partesData[1]) || 1) - 1;
+    let dia = parseInt(partesData[2]) || 1;
+
+    let partesHora = (ativ.hora || "19:00").split(':');
+    let hora = parseInt(partesHora[0]) || 19;
+    let min = parseInt(partesHora[1]) || 0;
+
+    let dataAtividadeObj = new Date(ano, mes, dia, hora, min, 0);
+    let dataFormatada = `${String(dia).padStart(2,'0')}/${String(mes+1).padStart(2,'0')}/${ano}`;
+
+    let textoConfirmados = ativ.totalConfirmados === 1 ? "1 confirmado" : `${ativ.totalConfirmados} confirmados`;
+    let badgeDiretoriaHtml = ativ.ehDiretoria ? `<div style="margin-bottom: 6px;"><span class="ativ-badge-diretoria"><i class="fa-solid fa-user-tie"></i> Atividade da Diretoria</span></div>` : '';
+
+    let statusCardClass = "";
+    let statusSymbolHtml = "";
+
+    if (ativ.confirmadoAluno || ativ.statusAdmin === 'presente') {
+        statusCardClass = "status-card-verde";
+        statusSymbolHtml = `<span style="color: #2b8a3e; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-check"></i> Confirmado</span>`;
+    } else if (ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada' || ativ.statusAdmin === 'falta') {
+        statusCardClass = "status-card-vermelho";
+        statusSymbolHtml = `<span style="color: #e03131; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle-xmark"></i> Falta / Negado</span>`;
+    } else if (ativ.statusAdmin === 'aguardando_analise' || ativ.statusAdmin === 'justificado' || ativ.statusAdmin === 'abonada') {
+        statusCardClass = "status-card-amarelo";
+        let textoAmarelo = ativ.statusAdmin === 'aguardando_analise' ? 'Em Análise' : 'Justificativa Aceita';
+        let iconeAmarelo = ativ.statusAdmin === 'aguardando_analise' ? 'fa-clock' : 'fa-shield-halved';
+        statusSymbolHtml = `<span style="color: #f59f00; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 4px;"><i class="fa-solid ${iconeAmarelo}"></i> ${textoAmarelo}</span>`;
+    }
+
+    let conteudoExpansaoHtml = `<p class="ativ-desc-texto">${ativ.desc || 'Nenhuma descrição detalhada informada para esta atividade.'}</p>`;
+
+    // --- CÁLCULO RIGOROSO DE PRAZOS ---
+    let dataAtividadeMs = dataAtividadeObj.getTime();
+    let prazoLimiteMs = dataAtividadeMs - (24 * 60 * 60 * 1000); // 24 horas antes da atividade
+    let agoraMs = new Date().getTime();
+
+    let prazoEncerrado = false;
+    let alvoTimerMs = prazoLimiteMs;
+    let usandoPrazoExtra = false;
+
+    let fechadoManual = (ativ.prazoFechadoManual === true || String(ativ.prazoFechadoManual) === "true");
+    let temPrazoExtra = (ativ.prazoExtraExpiraEm && !isNaN(ativ.prazoExtraExpiraEm) && ativ.prazoExtraExpiraEm > 0);
+
+    if (fechadoManual) {
+        prazoEncerrado = true;
+        alvoTimerMs = 0;
+    } else if (temPrazoExtra) {
+        usandoPrazoExtra = true;
+        alvoTimerMs = ativ.prazoExtraExpiraEm;
+        prazoEncerrado = agoraMs >= ativ.prazoExtraExpiraEm;
+    } else {
+        alvoTimerMs = prazoLimiteMs;
+        prazoEncerrado = agoraMs >= prazoLimiteMs;
+    }
+
+    if (prazoEncerrado) {
+        alvoTimerMs = 0;
+    }
+
+    // --- RENDERIZAÇÃO DOS BOTÕES E MENSAGENS DE EXPANSÃO ---
+    if (!ativ.concluida) {
+        if (ativ.confirmadoAluno) {
+            if (!prazoEncerrado) {
+                conteudoExpansaoHtml += `<button class="ativ-btn-desconfirmar" onclick="desconfirmarPresencaAluno('${ativ.id}')">Desconfirmar Presença</button>`;
+            } else {
+                conteudoExpansaoHtml += `<div style="background: #f1f3f5; border: 1px solid #ced4da; color: #495057; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Prazo de confirmação encerrado</div>`;
             }
-
-            let prazoDelicadoHtml = "";
-            if (incluirCronometro && !ativ.concluida) {
-                let dataAlvoMs = new Date(`${ativ.data}T${ativ.hora || '19:00'}:00`).getTime();
-                prazoDelicadoHtml = `
-                    <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${dataAlvoMs}">
-                        <i class="fa-solid fa-hourglass-half"></i> <span>Prazo: Calculando...</span>
-                    </div>
-                `;
-            }
-
-            return `
-                <div class="ativ-card-item ${statusCardClass}">
-                    ${badgeDiretoriaHtml}
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <div style="display: flex; gap: 6px; align-items: center;">
-                            <span class="ativ-pill-badge ch">${ativ.ch}h de CH</span>
-                            <span class="ativ-pill-badge confirmados">${textoConfirmados}</span>
-                        </div>
-                        <div>${statusSymbolHtml}</div>
-                    </div>
-
-                    <div class="ativ-card-topo" onclick="toggleExpandAtivTab('${ativ.id}')">
-                        <div class="ativ-circulo-icone ${cfg.cor}"><i class="fa-solid ${cfg.icone}"></i></div>
-                        <div class="ativ-info-principal">
-                            <h5>${ativ.titulo}</h5>
-                            <p><i class="fa-regular fa-calendar" style="color: #888;"></i> ${dataFormatada} às ${ativ.hora || '19:00'}</p>
-                            <p><i class="fa-solid fa-location-dot" style="color: #888;"></i> ${ativ.local || 'Centro Universitário'}</p>
-                            ${prazoDelicadoHtml}
-                        </div>
-                        <div style="color: #0037a3; font-size: 11px; font-weight: 800; padding-left: 6px; display: flex; align-items: center;">
-                            <i class="fa-solid fa-chevron-right" id="ativ-seta-${ativ.id}" style="transition: transform 0.2s;"></i>
-                        </div>
-                    </div>
-
-                    <div class="ativ-detalhes-expansao" id="ativ-detalhes-${ativ.id}">
-                        ${conteudoExpansaoHtml}
-                    </div>
+        } else if (ativ.statusAdmin === 'aguardando_analise') {
+            conteudoExpansaoHtml += `<div style="background: #fff9db; border: 1px solid #f59f00; color: #b7791f; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa em análise pela diretoria</div>`;
+        } else if (ativ.statusAdmin === 'justificado' || ativ.statusAdmin === 'abonada') {
+            conteudoExpansaoHtml += `<div style="background: #ebfbee; border: 1px solid #2b8a3e; color: #2b8a3e; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa aceita pela Diretoria - Falta Abonada</div>`;
+        } else if (ativ.statusAdmin === 'negado' || ativ.statusAdmin === 'justificativa_negada' || ativ.statusAdmin === 'falta') {
+            conteudoExpansaoHtml += `<div style="background: #ffe3e3; border: 1px solid #e03131; color: #c92a2a; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Justificativa negada pela Diretoria - Falta Contabilizada</div>`;
+        } else if (prazoEncerrado) {
+            conteudoExpansaoHtml += `<div style="background: #f1f3f5; border: 1px solid #ced4da; color: #495057; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; text-align: center;">Aguardando movimentação da diretoria</div>`;
+        } else {
+            conteudoExpansaoHtml += `
+                <div class="ativ-botoes-acao">
+                    <button class="ativ-btn-confirmar" onclick="confirmarPresencaAluno('${ativ.id}')">Confirmar Presença</button>
+                    <button class="ativ-btn-justificar" onclick="abrirModalJust('${ativ.id}')">Justificar</button>
                 </div>
             `;
         }
+    }
 
-        function iniciarMotorCronometrosAtividades() {
-            if (motorCronometroAtividades) clearInterval(motorCronometroAtividades);
+    // --- RENDERIZAÇÃO DO CRONÔMETRO NO CARD (SUPORTE A PRAZO EXTRA) ---
+    let prazoDelicadoHtml = "";
+    if (incluirCronometro && !ativ.concluida && !prazoEncerrado) {
+        let textoRotulo = usandoPrazoExtra ? "Prazo Extra:" : "Prazo:";
+        prazoDelicadoHtml = `
+            <div class="ativ-prazo-delicado" id="ativ-timer-${ativ.id}" data-alvo="${alvoTimerMs}">
+                <i class="fa-solid fa-hourglass-half"></i> <span>${textoRotulo} Calculando...</span>
+            </div>
+        `;
+    } else if (incluirCronometro && !ativ.concluida && prazoEncerrado) {
+        prazoDelicadoHtml = `
+            <div class="ativ-prazo-delicado" style="background: #f1f3f5; color: #495057; border-color: #ced4da;">
+                <i class="fa-solid fa-ban"></i> <span>Prazo encerrado</span>
+            </div>
+        `;
+    }
 
-            motorCronometroAtividades = setInterval(() => {
-                let agoraMs = new Date().getTime();
+    return `
+        <div class="ativ-card-item ${statusCardClass}">
+            ${badgeDiretoriaHtml}
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <span class="ativ-pill-badge ch">${ativ.ch}h de CH</span>
+                    <span class="ativ-pill-badge confirmados">${textoConfirmados}</span>
+                </div>
+                <div>${statusSymbolHtml}</div>
+            </div>
 
-                document.querySelectorAll('[id^="ativ-timer-"]').forEach(el => {
-                    let alvoMs = Number(el.getAttribute('data-alvo'));
-                    if (!alvoMs) return;
+            <div class="ativ-card-topo" onclick="toggleExpandAtivTab('${ativ.id}')">
+                <div class="ativ-circulo-icone ${cfg.cor}"><i class="fa-solid ${cfg.icone}"></i></div>
+                <div class="ativ-info-principal">
+                    <h5>${ativ.titulo}</h5>
+                    <p><i class="fa-regular fa-calendar" style="color: #888;"></i> ${dataFormatada} às ${ativ.hora || '19:00'}</p>
+                    <p><i class="fa-solid fa-location-dot" style="color: #888;"></i> ${ativ.local || 'Centro Universitário'}</p>
+                    ${prazoDelicadoHtml}
+                </div>
+                <div style="color: #0037a3; font-size: 11px; font-weight: 800; padding-left: 6px; display: flex; align-items: center;">
+                    <i class="fa-solid fa-chevron-right" id="ativ-seta-${ativ.id}" style="transition: transform 0.2s;"></i>
+                </div>
+            </div>
 
-                    let diff = alvoMs - agoraMs;
-                    if (diff <= 0) {
-                        el.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> <span>Prazo encerrado</span>`;
-                    } else {
-                        let dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-                        let horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        let minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                        let segundos = Math.floor((diff % (1000 * 60)) / 1000);
-
-                        el.innerHTML = `<i class="fa-solid fa-hourglass-half"></i> <span>Prazo: ${dias}d ${horas}h ${minutos}m ${segundos}s</span>`;
-                    }
-                });
-            }, 1000);
-        }
+            <div class="ativ-detalhes-expansao" id="ativ-detalhes-${ativ.id}">
+                ${conteudoExpansaoHtml}
+            </div>
+        </div>
+    `;
+}
 
         function toggleExpandAtivTab(id) {
             let detalhes = document.getElementById(`ativ-detalhes-${id}`);

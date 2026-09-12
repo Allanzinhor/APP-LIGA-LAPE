@@ -873,6 +873,109 @@
             <div id="lista-admin-ouvidoria" style="margin-top: 12px;"></div>
         </div>
 
+        <!-- ================= ABA: CERTIFICADOS E DOCUMENTOS ================= -->
+        <div id="secao-certificados-documentos" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <div>
+                    <h3 style="margin: 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-award"></i> Certificados e Documentos</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; color: #64748b;">Gerencie certificados de eventos/ligantes e o Termo de Responsabilidade</p>
+                </div>
+            </div>
+
+            <!-- Abas internas: Certificados / Termo de Compromisso -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 14px;">
+                <button class="btn-mini" id="subtab-btn-certificados" style="background: var(--primary); color: white; border: none; font-size: 11px; padding: 8px; font-weight: 800; border-radius: 9px;" onclick="mudarSubAbaCertificados('certificados')">🏆 Certificados</button>
+                <button class="btn-mini" id="subtab-btn-termo" style="background: transparent; color: var(--dark); border: none; font-size: 11px; padding: 8px; font-weight: 800; border-radius: 9px;" onclick="mudarSubAbaCertificados('termo')">📄 Termo de Compromisso</button>
+            </div>
+
+            <!-- Sub-aba 1: Gestão de Certificados -->
+            <div id="subsecao-certificados-geral">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                    <button class="btn-mini verde" style="padding: 8px 12px; font-size: 11px; font-weight: 800;" onclick="abrirModalCriarCertificado()"><i class="fa-solid fa-plus"></i> Novo Certificado</button>
+                </div>
+                <div id="lista-certificados-admin" style="display: flex; flex-direction: column; gap: 10px;">
+                    <p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando certificados...</p>
+                </div>
+            </div>
+
+            <!-- Sub-aba 2: Termo de Compromisso e Responsabilidade -->
+            <div id="subsecao-termo-geral" style="display: none;">
+                <div class="admin-card-acao" style="background: #f8fafc; border: 1px solid var(--border); margin-bottom: 12px;">
+                    <h4 style="margin: 0 0 4px 0; font-size: 13px; color: var(--primary); font-weight: 800;"><i class="fa-solid fa-file-contract"></i> Termo de Compromisso Fixo</h4>
+                    <p style="margin: 0; font-size: 11px; color: #64748b;">Documento obrigatório para todos os ligantes ativos. Anexe o termo assinado e defina a data de assinatura manualmente.</p>
+                </div>
+                <div id="lista-termo-ligantes-admin" style="display: flex; flex-direction: column; gap: 8px;">
+                    <p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando ligantes...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE CRIAÇÃO / EDIÇÃO DE CERTIFICADO -->
+    <div id="modal-certificado" class="modal" style="display:none;">
+        <div class="modal-conteudo">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+                <h3 id="titulo-modal-certificado" style="color: var(--primary); margin: 0; font-size: 16px; font-weight: 800;"><i class="fa-solid fa-award"></i> Criar Certificado</h3>
+                <button class="btn-mini cinza" onclick="fecharModalCertificado()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <input type="hidden" id="cert-id-editando">
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                <div>
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Nome do Certificado / Evento *</label>
+                    <input type="text" id="cert-nome" placeholder="Ex: Simpósio de Enfermagem LAPE 2026">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Data do Certificado *</label>
+                        <input type="date" id="cert-data">
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Quantidade de Horas *</label>
+                        <input type="number" id="cert-horas" placeholder="Ex: 10">
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
+                    <label style="font-size: 11px; font-weight: 800; color: var(--primary); display: block; margin-bottom: 8px;"><i class="fa-solid fa-users"></i> Selecionar Ligantes Destinatários</label>
+                    <div style="margin-bottom: 8px; display: flex; gap: 6px;">
+                        <button type="button" class="btn-mini verde" style="font-size: 9px;" onclick="marcarTodosLigantesCertificado(true)">✓ Marcar Todos</button>
+                        <button type="button" class="btn-mini vermelho" style="font-size: 9px;" onclick="marcarTodosLigantesCertificado(false)">✕ Desmarcar Todos</button>
+                    </div>
+                    <div id="container-checkbox-ligantes-cert" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; background: white; padding: 8px; border-radius: 8px; border: 1px solid var(--border);">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-salvar" style="flex: 1; padding: 14px;" onclick="salvarCertificadoNuvem()">Salvar Certificado</button>
+                <button class="btn-mini cinza" style="flex: 1; padding: 14px; font-weight: 800;" onclick="fecharModalCertificado()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE GERENCIAMENTO DE ANEXOS DO CERTIFICADO -->
+    <div id="modal-anexos-certificado" class="modal" style="display:none;">
+        <div class="modal-conteudo" style="max-width: 600px; display: flex; flex-direction: column; max-height: 90vh;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
+                <h3 style="color: var(--primary); margin: 0; font-size: 15px; font-weight: 800;" id="titulo-modal-anexos">📎 Anexar Imagens do Certificado</h3>
+                <button class="btn-mini cinza" onclick="fecharModalAnexosCertificado()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <input type="hidden" id="cert-id-atual-anexos">
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">Insira a URL da imagem ou cole o link do certificado gerado para cada ligante. Os sem link ficarão como <strong>Pendentes</strong>.</p>
+            
+            <div id="lista-ligantes-anexos-conteudo" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
+
+            <div style="margin-top: 16px; display: flex; gap: 8px;">
+                <button class="btn-salvar" style="flex: 1; padding: 12px;" onclick="salvarAnexosCertificadosNuvem()">Salvar Alterações</button>
+                <button class="btn-mini cinza" style="flex: 1; padding: 12px; font-weight: 800;" onclick="fecharModalAnexosCertificado()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+
         <!-- ================= ABA: LAPE MAIL (VIA IFRAME ISOLADO) ================= -->
         <div id="secao-correio-interno" class="admin-secao" style="display: none; padding: 0 14px 24px 14px; height: 85vh;">
             <iframe src="email-lape.html" style="width: 100%; height: 100%; border: none; border-radius: 12px; background: white; box-shadow: var(--shadow);"></iframe>
@@ -1129,14 +1232,14 @@
         let periodoDesempenhoSelecionado = 'mensal';
         let estatisticasLigantesCache = [];
 
-        const permissoesCargos = {
-            "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
-            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno"],
-            "secretaria": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "frequencia", "avisos", "ouvidoria-admin", "correio-interno"],
+const permissoesCargos = {
+            "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos"],
+            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos"],
+            "secretaria": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "frequencia", "avisos", "ouvidoria-admin", "correio-interno", "certificados-documentos"],
             "tesoureira": ["formularios-seletivo", "enquetes-admin", "recados-internos", "financeiro", "avisos", "correio-interno"],
-            "diretora de extensao": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "frequencia", "avisos", "correio-interno"],
-            "diretora de pesquisa": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "frequencia", "avisos", "correio-interno"],
-            "diretora de marketing": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "correio-interno", "recados-internos", "avisos"]
+            "diretora de extensao": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "frequencia", "avisos", "correio-interno", "certificados-documentos"],
+            "diretora de pesquisa": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "frequencia", "avisos", "correio-interno", "certificados-documentos"],
+            "diretora de marketing": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "correio-interno", "recados-internos", "avisos", "certificados-documentos"]
         };
 
         function mascaraTelefone(input) {
@@ -1247,6 +1350,7 @@
                 "avisos": { nome: "Avisos Globais", icone: "fa-bell" },
                 "migracao-papel": { nome: "Migrar Lote (Papel)", icone: "fa-file-arrow-down" },
                 "ouvidoria-admin": { nome: "Ouvidoria e Sugestões", icone: "fa-lightbulb" },
+                "certificados-documentos": { nome: "Certificados e Docs", icone: "fa-award" },
                 "correio-interno": { nome: "Solicitações", icone: "fa-envelope-open-text" }
             };
 
@@ -3687,6 +3791,324 @@ async function salvarFormularioExternoNuvem() {
                 await db.collection("avisos").doc(id).delete();
             }
         }
+
+        // ================= FUNÇÕES DE CERTIFICADOS E DOCUMENTOS ================= //
+        function mudarSubAbaCertificados(subaba) {
+            let btnCert = document.getElementById("subtab-btn-certificados");
+            let btnTermo = document.getElementById("subtab-btn-termo");
+            let secCert = document.getElementById("subsecao-certificados-geral");
+            let secTermo = document.getElementById("subsecao-termo-geral");
+
+            if (subaba === 'certificados') {
+                btnCert.style.background = 'var(--primary)';
+                btnCert.style.color = 'white';
+                btnTermo.style.background = 'transparent';
+                btnTermo.style.color = 'var(--dark)';
+                secCert.style.display = 'block';
+                secTermo.style.display = 'none';
+                carregarCertificadosAdmin();
+            } else {
+                btnTermo.style.background = 'var(--primary)';
+                btnTermo.style.color = 'white';
+                btnCert.style.background = 'transparent';
+                btnCert.style.color = 'var(--dark)';
+                secTermo.style.display = 'block';
+                secCert.style.display = 'none';
+                carregarTermoCompromissoAdmin();
+            }
+        }
+
+        async function abrirModalCriarCertificado(id = null, dados = null) {
+            document.getElementById("cert-id-editando").value = id || "";
+            let containerLigantes = document.getElementById("container-checkbox-ligantes-cert");
+            let membrosAtivos = membrosCache.filter(m => !m.desligado);
+
+            let ligantesHtml = "";
+            membrosAtivos.forEach(m => {
+                let selecionado = dados && dados.destinatarios && dados.destinatarios.includes(m.id);
+                ligantesHtml += `
+                    <label style="font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 2px 0;">
+                        <input type="checkbox" class="check-destinatario-cert" value="${m.id}" ${selecionado ? 'checked' : ''}> ${m.nome} (${m.cargo || 'Ligante'})
+                    </label>
+                `;
+            });
+            containerLigantes.innerHTML = ligantesHtml || "<p style='font-size:10px; color:#64748b;'>Nenhum ligante ativo.</p>";
+
+            if (dados) {
+                document.getElementById("titulo-modal-certificado").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Certificado`;
+                document.getElementById("cert-nome").value = dados.nome || "";
+                document.getElementById("cert-data").value = dados.data || "";
+                document.getElementById("cert-horas").value = dados.horas || "";
+            } else {
+                document.getElementById("titulo-modal-certificado").innerHTML = `<i class="fa-solid fa-award"></i> Criar Certificado`;
+                document.getElementById("cert-nome").value = "";
+                document.getElementById("cert-data").value = new Date().toISOString().split('T')[0];
+                document.getElementById("cert-horas").value = "";
+            }
+            document.getElementById("modal-certificado").style.display = "flex";
+        }
+
+        function fecharModalCertificado() {
+            document.getElementById("modal-certificado").style.display = "none";
+        }
+
+        function marcarTodosLigantesCertificado(marcar) {
+            document.querySelectorAll('.check-destinatario-cert').forEach(chk => chk.checked = marcar);
+        }
+
+        async function salvarCertificadoNuvem() {
+            let idEditando = document.getElementById("cert-id-editando").value;
+            let nome = document.getElementById("cert-nome").value.trim();
+            let data = document.getElementById("cert-data").value;
+            let horas = Number(document.getElementById("cert-horas").value);
+
+            if (!nome || !data || !horas) {
+                alert("Preencha todos os campos obrigatórios do certificado.");
+                return;
+            }
+
+            let destinatarios = [];
+            document.querySelectorAll('.check-destinatario-cert:checked').forEach(chk => {
+                destinatarios.push(chk.value);
+            });
+
+            if (destinatarios.length === 0) {
+                alert("Selecione pelo menos um ligante destinatário.");
+                return;
+            }
+
+            try {
+                let docRef;
+                if (idEditando) {
+                    // Mantém os anexos existentes se já houverem
+                    let docSnap = await db.collection("certificados").doc(idEditando).get();
+                    let anexosAtuais = docSnap.exists ? (docSnap.data().anexos || {}) : {};
+
+                    let novosAnexos = {};
+                    destinatarios.forEach(mId => {
+                        novosAnexos[mId] = anexosAtuais[mId] || { imagemUrl: "", status: "pendente" };
+                    });
+
+                    await db.collection("certificados").doc(idEditando).update({
+                        nome, data, horas, destinatarios, anexos: novosAnexos
+                    });
+                    alert("Certificado atualizado com sucesso!");
+                } else {
+                    let anexosIniciais = {};
+                    destinatarios.forEach(mId => {
+                        anexosIniciais[mId] = { imagemUrl: "", status: "pendente" };
+                    });
+
+                    await db.collection("certificados").add({
+                        nome, data, horas, destinatarios, anexos: anexosIniciais,
+                        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await dispararNotificacaoGlobal("Novo Certificado Disponível! 🏆", nome);
+                    alert("Certificado criado com sucesso!");
+                }
+                fecharModalCertificado();
+                carregarCertificadosAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar certificado.");
+            }
+        }
+
+        async function carregarCertificadosAdmin() {
+            let container = document.getElementById("lista-certificados-admin");
+            if (!container) return;
+
+            try {
+                let snapshot = await db.collection("certificados").orderBy("criadoEm", "desc").get();
+                if (snapshot.empty) {
+                    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Nenhum certificado cadastrado.</p>`;
+                    return;
+                }
+
+                let html = "";
+                snapshot.forEach(doc => {
+                    let d = doc.data();
+                    let certId = doc.id;
+                    let totalDest = d.destinatarios ? d.destinatarios.length : 0;
+
+                    let anexosMap = d.anexos || {};
+                    let totalEntregues = Object.values(anexosMap).filter(a => a.status === 'entregue' && a.imagemUrl).length;
+
+                    html += `
+                        <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <div style="min-width: 0; flex: 1;">
+                                <strong style="font-size: 12px; color: var(--dark); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.nome}</strong>
+                                <p style="margin: 2px 0 0 0; font-size: 10px; color: #64748b;">📅 Data: ${d.data} | ⏱️ ${d.horas}h | 👥 ${totalDest} ligante(s) | ✅ Entregues: ${totalEntregues}/${totalDest}</p>
+                            </div>
+                            <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                                <button class="btn-mini verde" style="padding: 6px 10px; font-size: 10px;" onclick="abrirModalAnexosCertificado('${certId}', '${d.nome.replace(/'/g, "\\'")}')">📎 Anexos</button>
+                                <button class="btn-mini cinza" style="padding: 6px 10px; font-size: 10px;" onclick='abrirModalCriarCertificado("${certId}", ${JSON.stringify(d).replace(/"/g, '&quot;')})'>✏️ Editar</button>
+                                <button class="btn-mini vermelho" style="padding: 6px 10px; font-size: 10px;" onclick="excluirCertificado('${certId}')"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar certificados.</p>`;
+            }
+        }
+
+        async function excluirCertificado(certId) {
+            if (confirm("Deseja realmente excluir este certificado?")) {
+                try {
+                    await db.collection("certificados").doc(certId).delete();
+                    alert("Certificado excluído.");
+                    carregarCertificadosAdmin();
+                } catch (e) {
+                    console.error(e);
+                    alert("Erro ao excluir certificado.");
+                }
+            }
+        }
+
+        async function abrirModalAnexosCertificado(certId, nomeCert) {
+            document.getElementById("cert-id-atual-anexos").value = certId;
+            document.getElementById("titulo-modal-anexos").innerText = `📎 Anexos: ${nomeCert}`;
+            let container = document.getElementById("lista-ligantes-anexos-conteudo");
+            container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando destinatários...</p>`;
+            document.getElementById("modal-anexos-certificado").style.display = "flex";
+
+            try {
+                let docSnap = await db.collection("certificados").doc(certId).get();
+                if (!docSnap.exists) return;
+                let dados = docSnap.data();
+                let destinatarios = dados.destinatarios || [];
+                let anexosMap = dados.anexos || {};
+
+                if (destinatarios.length === 0) {
+                    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Nenhum destinatário neste certificado.</p>`;
+                    return;
+                }
+
+                let html = "";
+                destinatarios.forEach(mId => {
+                    let membro = membrosCache.find(m => m.id === mId);
+                    let nomeMembro = membro ? membro.nome : "Ligante Removido";
+                    let anexoInfo = anexosMap[mId] || { imagemUrl: "", status: "pendente" };
+                    let statusAtual = anexoInfo.imagemUrl ? "entregue" : "pendente";
+
+                    html += `
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px;" data-membro-id="${mId}">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="font-size: 11px; color: var(--dark);">${nomeMembro}</strong>
+                                <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusAtual === 'entregue' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusAtual === 'entregue' ? 'Entregue' : 'Pendente'}</span>
+                            </div>
+                            <input type="text" class="input-url-anexo-cert" data-membro-id="${mId}" placeholder="Cole a URL ou link da imagem do certificado gerado..." value="${anexoInfo.imagemUrl || ''}" style="padding: 8px; font-size: 10px; background: white;">
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar anexos.</p>`;
+            }
+        }
+
+        function fecharModalAnexosCertificado() {
+            document.getElementById("modal-anexos-certificado").style.display = "none";
+        }
+
+        async function salvarAnexosCertificadosNuvem() {
+            let certId = document.getElementById("cert-id-atual-anexos").value;
+            if (!certId) return;
+
+            let novosAnexos = {};
+            document.querySelectorAll('.input-url-anexo-cert').forEach(input => {
+                let mId = input.getAttribute('data-membro-id');
+                let url = input.value.trim();
+                novosAnexos[mId] = {
+                    imagemUrl: url,
+                    status: url ? "entregue" : "pendente"
+                };
+            });
+
+            try {
+                await db.collection("certificados").doc(certId).update({ anexos: novosAnexos });
+                alert("Anexos atualizados com sucesso!");
+                fecharModalAnexosCertificado();
+                carregarCertificadosAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar anexos.");
+            }
+        }
+
+        // Gestão do Termo de Compromisso Fixo
+        async function carregarTermoCompromissoAdmin() {
+            let container = document.getElementById("lista-termo-ligantes-admin");
+            if (!container) return;
+
+            try {
+                // Buscamos o documento global do termo na coleção "documentos_fixos" ou configuração
+                let docTermoSnap = await db.collection("documentos_fixos").doc("termo_compromisso").get();
+                let dadosTermoGeral = docTermoSnap.exists ? docTermoSnap.data() : { registros: {} };
+                let registrosMap = dadosTermoGeral.registros || {};
+
+                let membrosAtivos = membrosCache.filter(m => !m.desligado);
+                if (membrosAtivos.length === 0) {
+                    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Nenhum ligante ativo.</p>`;
+                    return;
+                }
+
+                let html = "";
+                membrosAtivos.forEach(m => {
+                    let reg = registrosMap[m.id] || { imagemUrl: "", dataAssinatura: "", status: "pendente" };
+                    let statusTermo = reg.imagemUrl ? "assinado" : "pendente";
+
+                    html += `
+                        <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="font-size: 12px; color: var(--dark);">${m.nome}</strong>
+                                <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusTermo === 'assinado' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusTermo === 'assinado' ? 'Anexado / Assinado' : 'Pendente'}</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+                                <input type="text" id="termo-url-${m.id}" placeholder="URL do Termo Assinado..." value="${reg.imagemUrl || ''}" style="padding: 8px; font-size: 10px;">
+                                <input type="date" id="termo-data-${m.id}" value="${reg.dataAssinatura || ''}" style="padding: 8px; font-size: 10px;">
+                            </div>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <button class="btn-mini verde" style="padding: 6px 12px; font-size: 10px;" onclick="salvarTermoLigante('${m.id}')">💾 Salvar Termo</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Erro ao carregar o termo de compromisso.</p>`;
+            }
+        }
+
+        async function salvarTermoLigante(membroId) {
+            let urlAnexo = document.getElementById(`termo-url-${membroId}`).value.trim();
+            let dataAssinatura = document.getElementById(`termo-data-${membroId}`).value;
+
+            try {
+                let docRef = db.collection("documentos_fixos").doc("termo_compromisso");
+                let docSnap = await docRef.get();
+                let registros = docSnap.exists ? (docSnap.data().registros || {}) : {};
+
+                registros[membroId] = {
+                    imagemUrl: urlAnexo,
+                    dataAssinatura: dataAssinatura,
+                    status: urlAnexo ? "assinado" : "pendente"
+                };
+
+                await docRef.set({ registros }, { merge: true });
+                alert("Termo de compromisso atualizado com sucesso!");
+                carregarTermoCompromissoAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar termo do ligante.");
+            }
+        }
+
     </script>
 </body>
 </html>
