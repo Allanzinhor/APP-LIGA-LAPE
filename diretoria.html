@@ -975,6 +975,75 @@
         </div>
     </div>
 
+<!-- ================= ABA: DOSSIÊ COMPLETO DO LIGANTE ================= -->
+        <div id="secao-dossie-ligante" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
+            <div class="admin-card-acao" style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid var(--primary);">
+                <h3 style="margin: 0 0 4px 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-id-card-clip"></i> Dossiê Completo do Ligante</h3>
+                <p style="margin: 0 0 14px 0; font-size: 11px; color: #64748b;">Selecione um ligante (ativo ou desligado) para auditar histórico completo, presenças, faltas, horas e certificados.</p>
+
+                <div style="margin-bottom: 14px;">
+                    <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Escolher Ligante:</label>
+                    <select id="select-dossie-membro-id" onchange="carregarDossieLiganteSelecionado()" style="padding: 10px; font-size: 11px; border-radius: 8px; border: 1px solid var(--border);">
+                        <option value="">Selecione um ligante...</option>
+                    </select>
+                </div>
+
+                <div id="container-conteudo-dossie" style="display: none; flex-direction: column; gap: 12px;">
+                    <!-- Resumo de Estatísticas -->
+                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
+                        <strong style="font-size: 12px; color: var(--dark); display: block; margin-bottom: 8px;"><i class="fa-solid fa-chart-line"></i> Resumo de Indicadores</strong>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
+                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
+                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--success);" id="dossie-ind-presenca">0%</span>
+                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Presença</span>
+                            </div>
+                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
+                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--danger);" id="dossie-ind-faltas-perc">0%</span>
+                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">% Faltas</span>
+                            </div>
+                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
+                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--danger);" id="dossie-ind-faltas-qtd">0</span>
+                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Qtd Faltas</span>
+                            </div>
+                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
+                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--warning);" id="dossie-ind-justificativas">0</span>
+                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Justificativas</span>
+                            </div>
+                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
+                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--primary);" id="dossie-ind-horas-ganhas">0h</span>
+                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Horas (CH)</span>
+                            </div>
+                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
+                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--danger);" id="dossie-ind-horas-perdidas">0h</span>
+                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Horas Perd.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações Cadastrais e de Vínculo -->
+                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
+                        <strong style="color: var(--primary); font-size: 12px; margin-bottom: 4px;"><i class="fa-solid fa-circle-info"></i> Dados do Vínculo</strong>
+                        <div>• <strong>Cargo Atual/Principal:</strong> <span id="dossie-txt-cargo">-</span></div>
+                        <div>• <strong>Status:</strong> <span id="dossie-txt-status">-</span></div>
+                        <div>• <strong>Período na Liga:</strong> <span id="dossie-txt-periodo-liga">-</span></div>
+                        <div>• <strong>Tempo de Permanência:</strong> <span id="dossie-txt-tempo-permanencia">-</span></div>
+                        <div id="wrapper-dossie-desligamento" style="display: none; margin-top: 4px; background: #fee2e2; padding: 6px; border-radius: 6px; color: #991b1b;">
+                            <div>• <strong>Data de Desligamento:</strong> <span id="dossie-txt-data-desligamento">-</span></div>
+                            <div>• <strong>Motivo:</strong> <span id="dossie-txt-motivo-desligamento">-</span></div>
+                        </div>
+                        <div>• <strong>Certificados Gerados:</strong> <span id="dossie-txt-certificados">0</span></div>
+                    </div>
+
+                    <!-- Planilha Detalhada de Atividades -->
+                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
+                        <strong style="font-size: 12px; color: var(--dark); display: block; margin-bottom: 8px;"><i class="fa-solid fa-table"></i> Planilha de Atividades do Ligante</strong>
+                        <div id="dossie-tabela-atividades" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                            <!-- Injetado via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- ================= ABA: LAPE MAIL (VIA IFRAME ISOLADO) ================= -->
         <div id="secao-correio-interno" class="admin-secao" style="display: none; padding: 0 14px 24px 14px; height: 85vh;">
@@ -1233,9 +1302,9 @@
         let estatisticasLigantesCache = [];
 
 const permissoesCargos = {
-            "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos"],
-            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos"],
-            "secretaria": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "frequencia", "avisos", "ouvidoria-admin", "correio-interno", "certificados-documentos"],
+            "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante"],
+            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante"],
+            "secretaria": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "frequencia", "avisos", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante"],
             "tesoureira": ["formularios-seletivo", "enquetes-admin", "recados-internos", "financeiro", "avisos", "correio-interno"],
             "diretora de extensao": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "frequencia", "avisos", "correio-interno", "certificados-documentos"],
             "diretora de pesquisa": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "frequencia", "avisos", "correio-interno", "certificados-documentos"],
@@ -1337,6 +1406,7 @@ const permissoesCargos = {
 
             const configAbas = {
                 "dashboard-principal": { nome: "Gestão Executiva", icone: "fa-chart-pie" },
+                "dossie-ligante": { nome: "Dossiê do Ligante", icone: "fa-id-card-clip" },
                 "formularios-seletivo": { nome: "Formulários", icone: "fa-wpforms" },
                 "enquetes-admin": { nome: "Enquetes", icone: "fa-square-poll-vertical" },
                 "recados-internos": { nome: "Recados Internos", icone: "fa-bullhorn" },
@@ -1383,14 +1453,17 @@ const permissoesCargos = {
 
             document.getElementById('menu-painel-executivo').style.display = 'none';
 
-            if (nome === 'migracao-papel') {
+if (nome === 'migracao-papel') {
                 inicializarMigracaoLote();
             } else if (nome === 'formularios-seletivo') {
                 carregarFormulariosExternosAdmin();
             } else if (nome === 'enquetes-admin') {
                 carregarEnquetesAdmin();
+            } else if (nome === 'dossie-ligante') {
+                inicializarDossieLigantes();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
         }
 
         function voltarAoMenuPrincipal() {
@@ -3254,18 +3327,24 @@ async function salvarFormularioExternoNuvem() {
             let dataDesligamento = document.getElementById('desligar-data').value;
             let motivoDesligamento = document.getElementById('desligar-motivo').value.trim();
 
-            if (!dataDesligamento || !motivoDesligamento) {
-                alert("Preencha data e motivo.");
+            if (!id || !dataDesligamento || !motivoDesligamento) {
+                alert("Preencha a data e o motivo do desligamento.");
                 return;
             }
 
-            await db.collection("membros").doc(id).update({
-                desligado: true,
-                dataDesligamento,
-                motivoDesligamento
-            });
-
-            fecharModalDesligamento();
+            try {
+                await db.collection("membros").doc(id).update({
+                    desligado: true,
+                    dataDesligamento: dataDesligamento,
+                    motivoDesligamento: motivoDesligamento
+                });
+                alert("Ligante desligado com sucesso!");
+                fecharModalDesligamento();
+                renderizarListaMembrosAdmin();
+            } catch (e) {
+                console.error("Erro ao desligar ligante:", e);
+                alert("Erro ao realizar o desligamento no banco de dados.");
+            }
         }
 
         async function reativarMembro(id) {
@@ -4228,6 +4307,185 @@ function converterTermoParaBase64(input, membroId) {
                 alert("Erro ao salvar anexos na nuvem.");
             }
         }
+// Inicializa ou atualiza o seletor da aba de Dossiê quando aberta
+        function inicializarDossieLiganteAdmin() {
+            let select = document.getElementById("select-dossie-membro-id");
+            if (!select) return;
+            
+            let valorAtual = select.value;
+            let html = `<option value="">Selecione um ligante...</option>`;
+            
+            // Ordena alfabeticamente
+            let membrosOrdenados = [...membrosCache].sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+            
+            membrosOrdenados.forEach(m => {
+                let tagStatus = m.desligado ? " [DESLIGADO]" : "";
+                html += `<option value="${m.id}">${m.nome} (${m.cargo || 'Ligante'})${tagStatus}</option>`;
+            });
+            
+            select.innerHTML = html;
+            if (valorAtual) select.value = valorAtual;
+        }
+
+        async function carregarDossieLiganteSelecionado() {
+            let membroId = document.getElementById("select-dossie-membro-id").value;
+            let container = document.getElementById("container-conteudo-dossie");
+            
+            if (!membroId) {
+                container.style.display = "none";
+                return;
+            }
+
+            let m = membrosCache.find(x => x.id === membroId);
+            if (!m) return;
+
+            container.style.display = "flex";
+
+            // 1. Calcular Presenças, Faltas, Justificativas e Horas
+            let totalAtivLigante = 0;
+            let presencas = 0;
+            let faltas = 0;
+            let justAbonadas = 0;
+            let justPendentes = 0;
+            let horasGanhas = 0;
+            let horasPerdidas = 0;
+
+            let atividadesLiganteLog = [];
+
+            let ativCronologicas = [...atividadesCache].sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            ativCronologicas.forEach(a => {
+                let cargoLower = (m.cargo || "ligante").toLowerCase().trim();
+                let ehDir = cargoLower !== "ligante" && cargoLower !== "membro";
+                if (a.publico === 'diretoria' && !ehDir) return;
+                if (m.ingressoLiga && a.data < m.ingressoLiga) return;
+                if (m.desligado && m.dataDesligamento && a.data > m.dataDesligamento) return;
+
+                totalAtivLigante++;
+                let reg = (a.frequencias || {})[m.id];
+                let statusReg = reg ? reg.status : 'pendente';
+                let textoJust = reg ? (reg.texto || '-') : '-';
+
+                if (statusReg === 'presente') {
+                    presencas++;
+                    horasGanhas += Number(a.ch || 0);
+                } else if (statusReg === 'negado' || statusReg === 'justificativa_negada') {
+                    faltas++;
+                    horasPerdidas += Number(a.ch || 0);
+                } else if (statusReg === 'justificado') {
+                    justAbonadas++;
+                } else if (statusReg === 'aguardando_analise') {
+                    justPendentes++;
+                } else {
+                    // Considera pendente sem registro como falta em aberto ou ausência
+                    horasPerdidas += Number(a.ch || 0);
+                }
+
+                atividadesLiganteLog.push({
+                    data: a.data,
+                    titulo: a.titulo,
+                    ch: Number(a.ch || 0),
+                    status: statusReg,
+                    texto: textoJust
+                });
+            });
+
+            let percPresenca = totalAtivLigante > 0 ? Math.round((presencas / totalAtivLigante) * 100) : 0;
+            let percFaltas = totalAtivLigante > 0 ? Math.round((faltas / totalAtivLigante) * 100) : 0;
+            let totalJustificativas = justAbonadas + justPendentes;
+
+            // 2. Certificados Gerados
+            let certificadosGeradosCount = 0;
+            try {
+                let snapCerts = await db.collection("certificados").get();
+                snapCerts.forEach(doc => {
+                    let d = doc.data();
+                    if (d.destinatarios && d.destinatarios.includes(m.id)) {
+                        let anexoInfo = d.anexos && d.anexos[m.id] ? d.anexos[m.id] : null;
+                        if (anexoInfo && anexoInfo.imagemUrl && anexoInfo.status === 'entregue') {
+                            certificadosGeradosCount++;
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Erro ao carregar certificados para dossiê:", e);
+            }
+
+            // 3. Tempo na Liga e Datas
+            let dataIngressoStr = m.ingressoLiga || 'Não informada';
+            let dataDesligamentoStr = m.dataDesligamento || (m.desligado ? 'Desligado' : 'Ativo');
+            let tempoPermanenciaStr = "Calculando...";
+
+            if (m.ingressoLiga) {
+                let dIngresso = new Date(m.ingressoLiga + "T00:00:00");
+                let dFim = m.desligado && m.dataDesligamento ? new Date(m.dataDesligamento + "T00:00:00") : new Date();
+                let diffTime = dFim - dIngresso;
+                let diffDays = Math.max(Math.floor(diffTime / (1000 * 60 * 60 * 24)), 0);
+                
+                let anos = Math.floor(diffDays / 365);
+                let meses = Math.floor((diffDays % 365) / 30);
+                let dias = (diffDays % 365) % 30;
+
+                if (anos > 0) {
+                    tempoPermanenciaStr = `${anos} ano(s), ${meses} mes(es) e ${dias} dia(s) (${diffDays} dias no total)`;
+                } else {
+                    tempoPermanenciaStr = `${meses} mes(es) e ${dias} dia(s) (${diffDays} dias no total)`;
+                }
+            }
+
+            // 4. Preencher UI dos Indicadores
+            document.getElementById("dossie-ind-presenca").innerText = `${percPresenca}%`;
+            document.getElementById("dossie-ind-faltas-percetry" || "dossie-ind-faltas-perc").innerText = `${percFaltas}%`;
+            document.getElementById("dossie-ind-faltas-qtd").innerText = faltas;
+            document.getElementById("dossie-ind-justificativas").innerText = totalJustificativas;
+            document.getElementById("dossie-ind-horas-ganhas").innerText = `${horasGanhas}h`;
+            document.getElementById("dossie-ind-horas-perdidas").innerText = `${horasPerdidas}h`;
+
+            document.getElementById("dossie-txt-cargo").innerText = m.cargo || 'Ligante';
+            document.getElementById("dossie-txt-status").innerText = m.desligado ? '🔴 Desligado' : '🟢 Ativo';
+            document.getElementById("dossie-txt-periodo-liga").innerText = `De ${dataIngressoStr} até ${dataDesligamentoStr}`;
+            document.getElementById("dossie-txt-tempo-permanencia").innerText = tempoPermanenciaStr;
+            document.getElementById("dossie-txt-certificados").innerText = certificadosGeradosCount;
+
+            let wrapperDesl = document.getElementById("wrapper-dossie-desligamento");
+            if (m.desligado) {
+                wrapperDesl.style.display = "block";
+                document.getElementById("dossie-txt-data-desligamento").innerText = m.dataDesligamento || '-';
+                document.getElementById("dossie-txt-motivo-desligamento").innerText = m.motivoDesligamento || 'Não especificado';
+            } else {
+                wrapperDesl.style.display = "none";
+            }
+
+            // 5. Preencher Planilha de Atividades
+            let tabelaContainer = document.getElementById("dossie-tabela-atividades");
+            if (atividadesLiganteLog.length === 0) {
+                tabelaContainer.innerHTML = `<p style="font-size: 10px; color: #64748b; text-align: center; padding: 10px;">Nenhuma atividade registrada para este ligante no período.</p>`;
+                return;
+            }
+
+            let tabelaHtml = "";
+            atividadesLiganteLog.forEach(item => {
+                let badgeStatus = `<span style="background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">Pendente</span>`;
+                if (item.status === 'presente') badgeStatus = `<span style="background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✓ Participou (${item.ch}h)</span>`;
+                else if (item.status === 'negado' || item.status === 'justificativa_negada') badgeStatus = `<span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✕ Faltou</span>`;
+                else if (item.status === 'justificado') badgeStatus = `<span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">📝 Abonado / Justificado</span>`;
+                else if (item.status === 'aguardando_analise') badgeStatus = `<span style="background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">⏳ Just. em Análise</span>`;
+
+                tabelaHtml += `
+                    <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                        <div style="min-width: 0; flex: 1;">
+                            <strong style="font-size: 11px; color: var(--dark); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.titulo}</strong>
+                            <span style="font-size: 9px; color: #64748b;">📅 ${item.data} ${item.texto !== '-' ? `| Obs: ${item.texto}` : ''}</span>
+                        </div>
+                        <div style="flex-shrink: 0;">
+                            ${badgeStatus}
+                        </div>
+                    </div>
+                `;
+            });
+            tabelaContainer.innerHTML = tabelaHtml;
+        }
+
 
     </script>
 </body>
