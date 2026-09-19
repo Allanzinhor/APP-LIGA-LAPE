@@ -2712,47 +2712,57 @@ async function salvarFormularioExternoNuvem() {
             container.insertAdjacentHTML('beforeend', htmlBloco);
         }
 
-        function atualizarMembrosBlocoLote(idBloco) {
-            let dataAtividade = document.getElementById(`bloco-${idBloco}-data`).value;
-            let containerMembros = document.getElementById(`container-membros-bloco-${idBloco}`);
-            if (!containerMembros) return;
+async function atualizarMembrosBlocoLote(idBloco) {
+    let dataAtividade = document.getElementById(`bloco-${idBloco}-data`).value;
+    let containerMembros = document.getElementById(`container-membros-bloco-${idBloco}`);
+    if (!containerMembros) return;
 
-            if (!dataAtividade) {
-                containerMembros.innerHTML = `<p style="font-size: 10px; color: #64748b; font-style: italic;">Selecione uma data acima.</p>`;
-                return;
-            }
+    if (!dataAtividade) {
+        containerMembros.innerHTML = `<p style="font-size: 10px; color: #64748b; font-style: italic;">Selecione a data acima.</p>`;
+        return;
+    }
 
-            let membrosFiltrados = membrosCache.filter(m => {
-                if (m.desligado) return false;
-                if (m.ingressoLiga && m.ingressoLiga > dataAtividade) return false;
-                return true;
-            });
-
-            membrosFiltrados.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
-
-            if (membrosFiltrados.length === 0) {
-                containerMembros.innerHTML = `<p style="font-size: 10px; color: var(--danger); font-weight: 800;">Nenhum ligante ativo nesta data.</p>`;
-                return;
-            }
-
-            let opcoesMembrosHtml = "";
-            membrosFiltrados.forEach(m => {
-                opcoesMembrosHtml += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: white; border-radius: 6px; border: 1px solid var(--border); gap: 4px;">
-                        <span style="font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;"><strong>${m.nome}</strong></span>
-                        <select id="bloco-${idBloco}-status-${m.id}" style="padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 10px; width: auto; flex-shrink: 0;">
-                            <option value="presente" selected>Presente</option>
-                            <option value="negado">Falta</option>
-                            <option value="justificativa_negada">Just. Negada</option>
-                            <option value="justificado">Abonado</option>
-                            <option value="pendente">Ausente</option>
-                        </select>
-                    </div>
-                `;
-            });
-
-            containerMembros.innerHTML = opcoesMembrosHtml;
+    if (membrosCache.length === 0) {
+        try {
+            let snap = await db.collection("membros").get();
+            membrosCache = [];
+            snap.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
+        } catch (e) {
+            console.error("Erro ao carregar membros:", e);
         }
+    }
+
+    let membrosFiltrados = membrosCache.filter(m => {
+        if (m.desligado) return false;
+        if (m.ingressoLiga && m.ingressoLiga > dataAtividade) return false;
+        return true;
+    });
+
+    membrosFiltrados.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+
+    if (membrosFiltrados.length === 0) {
+        containerMembros.innerHTML = `<p style="font-size: 10px; color: var(--danger); font-weight: 800;">Nenhum ligante ativo nesta data.</p>`;
+        return;
+    }
+
+    let opcoesMembrosHtml = "";
+    membrosFiltrados.forEach(m => {
+        opcoesMembrosHtml += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: white; border-radius: 6px; border: 1px solid var(--border); gap: 4px;">
+                <span style="font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;"><strong>${m.nome}</strong></span>
+                <select id="bloco-${idBloco}-status-${m.id}" style="padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 10px; width: auto; flex-shrink: 0;">
+                    <option value="presente" selected>Presente</option>
+                    <option value="negado">Falta</option>
+                    <option value="justificativa_negada">Just. Negada</option>
+                    <option value="justificado">Abonado</option>
+                    <option value="pendente">Ausente</option>
+                </select>
+            </div>
+        `;
+    });
+
+    containerMembros.innerHTML = opcoesMembrosHtml;
+}
 
         function marcarTodosBlocoLote(idBloco, status) {
             let container = document.getElementById(`container-membros-bloco-${idBloco}`);
@@ -3897,35 +3907,47 @@ async function salvarFormularioExternoNuvem() {
             }
         }
 
-        async function abrirModalCriarCertificado(id = null, dados = null) {
-            document.getElementById("cert-id-editando").value = id || "";
-            let containerLigantes = document.getElementById("container-checkbox-ligantes-cert");
-            let membrosAtivos = membrosCache.filter(m => !m.desligado);
+async function abrirModalCriarCertificado(id = null, dados = null) {
+    document.getElementById("cert-id-editando").value = id || "";
+    let containerLigantes = document.getElementById("container-checkbox-ligantes-cert");
+    containerLigantes.innerHTML = `<p style='font-size:10px; color:#64748b;'>Carregando ligantes...</p>`;
 
-            let ligantesHtml = "";
-            membrosAtivos.forEach(m => {
-                let selecionado = dados && dados.destinatarios && dados.destinatarios.includes(m.id);
-                ligantesHtml += `
-                    <label style="font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 2px 0;">
-                        <input type="checkbox" class="check-destinatario-cert" value="${m.id}" ${selecionado ? 'checked' : ''}> ${m.nome} (${m.cargo || 'Ligante'})
-                    </label>
-                `;
-            });
-            containerLigantes.innerHTML = ligantesHtml || "<p style='font-size:10px; color:#64748b;'>Nenhum ligante ativo.</p>";
-
-            if (dados) {
-                document.getElementById("titulo-modal-certificado").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Certificado`;
-                document.getElementById("cert-nome").value = dados.nome || "";
-                document.getElementById("cert-data").value = dados.data || "";
-                document.getElementById("cert-horas").value = dados.horas || "";
-            } else {
-                document.getElementById("titulo-modal-certificado").innerHTML = `<i class="fa-solid fa-award"></i> Criar Certificado`;
-                document.getElementById("cert-nome").value = "";
-                document.getElementById("cert-data").value = new Date().toISOString().split('T')[0];
-                document.getElementById("cert-horas").value = "";
-            }
-            document.getElementById("modal-certificado").style.display = "flex";
+    // Garante que o cache não esteja vazio
+    if (membrosCache.length === 0) {
+        try {
+            let snap = await db.collection("membros").get();
+            membrosCache = [];
+            snap.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
+        } catch (e) {
+            console.error("Erro ao carregar membros:", e);
         }
+    }
+
+    let membrosAtivos = membrosCache.filter(m => !m.desligado);
+    let ligantesHtml = "";
+    membrosAtivos.forEach(m => {
+        let selecionado = dados && dados.destinatarios && dados.destinatarios.includes(m.id);
+        ligantesHtml += `
+            <label style="font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 2px 0;">
+                <input type="checkbox" class="check-destinatario-cert" value="${m.id}" ${selecionado ? 'checked' : ''}> ${m.nome} (${m.cargo || 'Ligante'})
+            </label>
+        `;
+    });
+    containerLigantes.innerHTML = ligantesHtml || "<p style='font-size:10px; color:#64748b;'>Nenhum ligante ativo encontrado.</p>";
+
+    if (dados) {
+        document.getElementById("titulo-modal-certificado").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Certificado`;
+        document.getElementById("cert-nome").value = dados.nome || "";
+        document.getElementById("cert-data").value = dados.data || "";
+        document.getElementById("cert-horas").value = dados.horas || "";
+    } else {
+        document.getElementById("titulo-modal-certificado").innerHTML = `<i class="fa-solid fa-award"></i> Criar Certificado`;
+        document.getElementById("cert-nome").value = "";
+        document.getElementById("cert-data").value = new Date().toISOString().split('T')[0];
+        document.getElementById("cert-horas").value = "";
+    }
+    document.getElementById("modal-certificado").style.display = "flex";
+}
 
         function fecharModalCertificado() {
             document.getElementById("modal-certificado").style.display = "none";
@@ -4308,24 +4330,33 @@ function converterTermoParaBase64(input, membroId) {
             }
         }
 // Inicializa ou atualiza o seletor da aba de Dossiê quando aberta
-        function inicializarDossieLiganteAdmin() {
-            let select = document.getElementById("select-dossie-membro-id");
-            if (!select) return;
-            
-            let valorAtual = select.value;
-            let html = `<option value="">Selecione um ligante...</option>`;
-            
-            // Ordena alfabeticamente
-            let membrosOrdenados = [...membrosCache].sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
-            
-            membrosOrdenados.forEach(m => {
-                let tagStatus = m.desligado ? " [DESLIGADO]" : "";
-                html += `<option value="${m.id}">${m.nome} (${m.cargo || 'Ligante'})${tagStatus}</option>`;
-            });
-            
-            select.innerHTML = html;
-            if (valorAtual) select.value = valorAtual;
+async function inicializarDossieLiganteAdmin() {
+    let select = document.getElementById("select-dossie-membro-id");
+    if (!select) return;
+    
+    let valorAtual = select.value;
+
+    if (membrosCache.length === 0) {
+        try {
+            let snap = await db.collection("membros").get();
+            membrosCache = [];
+            snap.forEach(doc => membrosCache.push({ id: doc.id, ...doc.data() }));
+        } catch (e) {
+            console.error("Erro ao carregar membros:", e);
         }
+    }
+
+    let html = `<option value="">Selecione um ligante...</option>`;
+    let membrosOrdenados = [...membrosCache].sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+    
+    membrosOrdenados.forEach(m => {
+        let tagStatus = m.desligado ? " [DESLIGADO]" : "";
+        html += `<option value="${m.id}">${m.nome} (${m.cargo || 'Ligante'})${tagStatus}</option>`;
+    });
+    
+    select.innerHTML = html;
+    if (valorAtual) select.value = valorAtual;
+}
 
         async function carregarDossieLiganteSelecionado() {
             let membroId = document.getElementById("select-dossie-membro-id").value;
