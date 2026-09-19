@@ -975,6 +975,33 @@
         </div>
     </div>
 
+    <!-- ================= ABA: GESTÃO DE DESLIGAMENTOS ================= -->
+        <div id="secao-desligamentos" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
+            <div class="admin-card-acao" style="background: #fff5f5; border: 1px solid #fecaca;">
+                <h3 style="margin-top:0; font-size: 15px; font-weight: 800; color: var(--danger);"><i class="fa-solid fa-user-slash"></i> Efetuar Desligamento</h3>
+                <p style="font-size: 11px; color: #7f1d1d; margin-bottom: 12px; line-height: 1.3;">Selecione um ligante ativo da lista, defina a data e o motivo formal da saída.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 11px; font-weight: 700; display: block;">Selecionar Ligante Ativo:</label>
+                    <select id="select-membro-para-desligar" style="padding: 10px; font-size: 11px; border-radius: 8px; border: 1px solid var(--border);">
+                        <option value="">Carregando ligantes...</option>
+                    </select>
+
+                    <label style="font-size: 11px; font-weight: 700; display: block;">Data do Desligamento:</label>
+                    <input type="date" id="input-data-desligamento-aba">
+
+                    <label style="font-size: 11px; font-weight: 700; display: block;">Motivo do Desligamento:</label>
+                    <textarea id="input-motivo-desligamento-aba" rows="3" placeholder="Explique detalhadamente o motivo..."></textarea>
+
+                    <button class="btn-salvar" style="background: var(--danger); margin-top: 6px;" onclick="efetuarDesligamentoAbaNova()">Confirmar Desligamento</button>
+                </div>
+            </div>
+
+            <h3 style="font-size: 14px; font-weight: 800; color: var(--dark); margin: 16px 0 8px 0;">Histórico de Ligantes Desligados</h3>
+            <div id="lista-admin-desligados-aba" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+
 <!-- ================= ABA: DOSSIÊ COMPLETO DO LIGANTE ================= -->
         <div id="secao-dossie-ligante" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid var(--primary);">
@@ -1302,8 +1329,8 @@
         let estatisticasLigantesCache = [];
 
 const permissoesCargos = {
-            "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante"],
-            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante"],
+            "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante", "desligamentos"],
+            "vice-presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante", "desligamentos"],
             "secretaria": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "frequencia", "avisos", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante"],
             "tesoureira": ["formularios-seletivo", "enquetes-admin", "recados-internos", "financeiro", "avisos", "correio-interno"],
             "diretora de extensao": ["formularios-seletivo", "enquetes-admin", "cadastro-atividades", "lista-atividades", "recados-internos", "frequencia", "avisos", "correio-interno", "certificados-documentos"],
@@ -1421,6 +1448,7 @@ const permissoesCargos = {
                 "migracao-papel": { nome: "Migrar Lote (Papel)", icone: "fa-file-arrow-down" },
                 "ouvidoria-admin": { nome: "Ouvidoria e Sugestões", icone: "fa-lightbulb" },
                 "certificados-documentos": { nome: "Certificados e Docs", icone: "fa-award" },
+                "desligamentos": { nome: "Gestão de Desligamentos", icone: "fa-user-slash" },
                 "correio-interno": { nome: "Solicitações", icone: "fa-envelope-open-text" }
             };
 
@@ -1461,6 +1489,8 @@ if (nome === 'migracao-papel') {
                 carregarEnquetesAdmin();
             } else if (nome === 'dossie-ligante') {
                 inicializarDossieLigantes();
+            } else if (nome === 'desligamentos') {
+                inicializarAbaDesligamentos(); // <--- ADICIONE ESTA LINHA AQUI
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
@@ -4520,6 +4550,75 @@ async function inicializarDossieLigantes() {
             tabelaContainer.innerHTML = tabelaHtml;
         }
 
+function inicializarAbaDesligamentos() {
+    let select = document.getElementById("select-membro-para-desligar");
+    document.getElementById("input-data-desligamento-aba").value = new Date().toISOString().split('T')[0];
+    document.getElementById("input-motivo-desligamento-aba").value = "";
+
+    let membrosAtivos = membrosCache.filter(m => !m.desligado);
+    let html = `<option value="">Selecione um ligante...</option>`;
+    membrosAtivos.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+    membrosAtivos.forEach(m => {
+        html += `<option value="${m.id}">${m.nome} (${m.cargo || 'Ligante'})</option>`;
+    });
+    select.innerHTML = html;
+
+    renderizarListaDesligadosAbaNova();
+}
+
+async function efetuarDesligamentoAbaNova() {
+    let membroId = document.getElementById("select-membro-para-desligar").value;
+    let dataDesligamento = document.getElementById("input-data-desligamento-aba").value;
+    let motivo = document.getElementById("input-motivo-desligamento-aba").value.trim();
+
+    if (!membroId || !dataDesligamento || !motivo) {
+        alert("Por favor, selecione o ligante, insira a data e preencha o motivo.");
+        return;
+    }
+
+    if (confirm("Deseja realmente efetuar o desligamento deste ligante?")) {
+        try {
+            await db.collection("membros").doc(membroId).update({
+                desligado: true,
+                dataDesligamento: dataDesligamento,
+                motivoDesligamento: motivo
+            });
+            alert("Ligante desligado com sucesso!");
+            inicializarAbaDesligamentos();
+        } catch (e) {
+            console.error(e);
+            alert("Erro ao efetuar o desligamento na base de dados.");
+        }
+    }
+}
+
+function renderizarListaDesligadosAbaNova() {
+    let container = document.getElementById("lista-admin-desligados-aba");
+    if (!container) return;
+
+    let desligados = membrosCache.filter(m => m.desligado);
+    if (desligados.length === 0) {
+        container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 10px;">Nenhum ligante desligado registado.</p>`;
+        return;
+    }
+
+    let html = "";
+    desligados.forEach(m => {
+        html += `
+            <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div style="min-width: 0; flex: 1;">
+                    <strong style="font-size: 11px; color: var(--danger); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.nome}</strong>
+                    <span style="font-size: 10px; color: #64748b;">📅 Desligado em: ${m.dataDesligamento || '-'} | Motivo: ${m.motivoDesligamento || '-'}</span>
+                </div>
+                <div style="display: flex; gap: 4px; flex-shrink: 0;">
+                    <button class="btn-mini verde" onclick="reativarMembro('${m.id}'); setTimeout(inicializarAbaDesligamentos, 600);">Reativar</button>
+                    <button class="btn-mini vermelho" onclick="removerMembro('${m.id}'); setTimeout(inicializarAbaDesligamentos, 600);">Excluir</button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
 
     </script>
 </body>
