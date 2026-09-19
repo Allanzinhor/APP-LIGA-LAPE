@@ -1006,7 +1006,7 @@
         <div id="secao-dossie-ligante" class="admin-secao" style="display: none; padding: 0 14px 24px 14px;">
             <div class="admin-card-acao" style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid var(--primary);">
                 <h3 style="margin: 0 0 4px 0; color: var(--primary); font-size: 15px; font-weight: 800;"><i class="fa-solid fa-id-card-clip"></i> Dossiê Completo do Ligante</h3>
-                <p style="margin: 0 0 14px 0; font-size: 11px; color: #64748b;">Selecione um ligante (ativo ou desligado) para auditar histórico completo, presenças, faltas, horas e certificados.</p>
+                <p style="margin: 0 0 14px 0; font-size: 11px; color: #64748b;">Selecione um ligante para auditar o histórico completo, presenças, faltas, justificativas e análises automatizadas.</p>
 
                 <div style="margin-bottom: 14px;">
                     <label style="font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px;">Escolher Ligante:</label>
@@ -1016,41 +1016,12 @@
                 </div>
 
                 <div id="container-conteudo-dossie" style="display: none; flex-direction: column; gap: 12px;">
-                    <!-- Resumo de Estatísticas -->
-                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
-                        <strong style="font-size: 12px; color: var(--dark); display: block; margin-bottom: 8px;"><i class="fa-solid fa-chart-line"></i> Resumo de Indicadores</strong>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
-                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
-                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--success);" id="dossie-ind-presenca">0%</span>
-                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Presença</span>
-                            </div>
-                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
-                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--danger);" id="dossie-ind-faltas-perc">0%</span>
-                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">% Faltas</span>
-                            </div>
-                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
-                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--danger);" id="dossie-ind-faltas-qtd">0</span>
-                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Qtd Faltas</span>
-                            </div>
-                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
-                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--warning);" id="dossie-ind-justificativas">0</span>
-                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Justificativas</span>
-                            </div>
-                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
-                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--primary);" id="dossie-ind-horas-ganhas">0h</span>
-                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Horas (CH)</span>
-                            </div>
-                            <div style="background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);">
-                                <span style="display: block; font-size: 13px; font-weight: 800; color: var(--danger);" id="dossie-ind-horas-perdidas">0h</span>
-                                <span style="font-size: 8px; color: #64748b; font-weight: 700; text-transform: uppercase;">Horas Perd.</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Informações Cadastrais e de Vínculo -->
+                    
+                    <!-- Informações e Quantidade Geral de Atividades lá em cima -->
                     <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
-                        <strong style="color: var(--primary); font-size: 12px; margin-bottom: 4px;"><i class="fa-solid fa-circle-info"></i> Dados do Vínculo</strong>
-                        <div>• <strong>Cargo Atual/Principal:</strong> <span id="dossie-txt-cargo">-</span></div>
+                        <strong style="color: var(--primary); font-size: 12px; margin-bottom: 4px;"><i class="fa-solid fa-circle-info"></i> Informações Gerais do Vínculo</strong>
+                        <div>• <strong>Quantidade Geral de Atividades no Período:</strong> <span id="dossie-txt-qtd-geral-ativ" style="font-weight: 800; color: var(--primary);">0</span></div>
+                        <div>• <strong>Cargo Atual:</strong> <span id="dossie-txt-cargo">-</span></div>
                         <div>• <strong>Status:</strong> <span id="dossie-txt-status">-</span></div>
                         <div>• <strong>Período na Liga:</strong> <span id="dossie-txt-periodo-liga">-</span></div>
                         <div>• <strong>Tempo de Permanência:</strong> <span id="dossie-txt-tempo-permanencia">-</span></div>
@@ -1058,16 +1029,51 @@
                             <div>• <strong>Data de Desligamento:</strong> <span id="dossie-txt-data-desligamento">-</span></div>
                             <div>• <strong>Motivo:</strong> <span id="dossie-txt-motivo-desligamento">-</span></div>
                         </div>
-                        <div>• <strong>Certificados Gerados:</strong> <span id="dossie-txt-certificados">0</span></div>
+                        <div>• <strong>Certificados Entregues:</strong> <span id="dossie-txt-certificados">0</span></div>
                     </div>
 
-                    <!-- Planilha Detalhada de Atividades -->
-                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px;">
-                        <strong style="font-size: 12px; color: var(--dark); display: block; margin-bottom: 8px;"><i class="fa-solid fa-table"></i> Planilha de Atividades do Ligante</strong>
-                        <div id="dossie-tabela-atividades" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                            <!-- Injetado via JS -->
+                    <!-- Abas Internas do Dossiê: Planilhas Divididas / Comentários da IA -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #e2e8f0; padding: 4px; border-radius: 10px;">
+                        <button class="btn-mini" id="dossie-subtab-btn-planilha" style="background: var(--primary); color: white; border: none; font-size: 10px; padding: 8px; font-weight: 800; border-radius: 8px;" onclick="mudarSubAbaDossiue('planilha')">📋 Planilhas Separadas</button>
+                        <button class="btn-mini" id="dossie-subtab-btn-comentarios" style="background: transparent; color: var(--dark); border: none; font-size: 10px; padding: 8px; font-weight: 800; border-radius: 8px;" onclick="mudarSubAbaDossiue('comentarios')">🤖 Análise & Comentários</button>
+                    </div>
+
+                    <!-- Sub-aba 1: Planilha Dividida (Presenças, Faltas e Justificadas) -->
+                    <div id="dossie-subsecao-planilha" style="display: flex; flex-direction: column; gap: 10px;">
+                        
+                        <!-- Bloco Presenças -->
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px;">
+                            <strong style="font-size: 11px; color: #166534; display: block; margin-bottom: 6px;"><i class="fa-solid fa-circle-check"></i> Presenças Registradas (<span id="dossie-count-presencas">0</span>)</strong>
+                            <div id="dossie-lista-presencas" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;"></div>
+                        </div>
+
+                        <!-- Bloco Faltas -->
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 10px;">
+                            <strong style="font-size: 11px; color: #991b1b; display: block; margin-bottom: 6px;"><i class="fa-solid fa-circle-xmark"></i> Faltas / Ausências (<span id="dossie-count-faltas">0</span>)</strong>
+                            <div id="dossie-lista-faltas" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;"></div>
+                        </div>
+
+                        <!-- Bloco Justificadas -->
+                        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 10px;">
+                            <strong style="font-size: 11px; color: #b45309; display: block; margin-bottom: 6px;"><i class="fa-solid fa-file-lines"></i> Atividades Justificadas / Abonadas (<span id="dossie-count-justificadas">0</span>)</strong>
+                            <div id="dossie-lista-justificadas" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;"></div>
+                        </div>
+
+                    </div>
+
+                    <!-- Sub-aba 2: Comentários e Análise Inteligente do Sistema -->
+                    <div id="dossie-subsecao-comentarios" style="display: none; flex-direction: column; gap: 8px;">
+                        <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 10px; padding: 12px;">
+                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                <i class="fa-solid fa-robot" style="color: #7c3aed; font-size: 14px;"></i>
+                                <strong style="font-size: 12px; color: #6b21a8;">Parecer Automatizado da Secretaria & Presidência</strong>
+                            </div>
+                            <div id="dossie-conteudo-parecer-ia" style="font-size: 11px; color: #334155; display: flex; flex-direction: column; gap: 6px; line-height: 1.4;">
+                                <!-- Injetado via JS -->
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -4391,6 +4397,29 @@ async function inicializarDossieLigantes() {
     if (valorAtual) select.value = valorAtual;
 }
 
+function mudarSubAbaDossiue(subaba) {
+            let btnPlanilha = document.getElementById("dossie-subtab-btn-planilha");
+            let btnComentarios = document.getElementById("dossie-subtab-btn-comentarios");
+            let secPlanilha = document.getElementById("dossie-subsecao-planilha");
+            let secComentarios = document.getElementById("dossie-subsecao-comentarios");
+
+            if (subaba === 'planilha') {
+                btnPlanilha.style.background = 'var(--primary)';
+                btnPlanilha.style.color = 'white';
+                btnComentarios.style.background = 'transparent';
+                btnComentarios.style.color = 'var(--dark)';
+                secPlanilha.style.display = 'flex';
+                secComentarios.style.display = 'none';
+            } else {
+                btnComentarios.style.background = 'var(--primary)';
+                btnComentarios.style.color = 'white';
+                btnPlanilha.style.background = 'transparent';
+                btnPlanilha.style.color = 'var(--dark)';
+                secComentarios.style.display = 'flex';
+                secPlanilha.style.display = 'none';
+            }
+        }
+
         async function carregarDossieLiganteSelecionado() {
             let membroId = document.getElementById("select-dossie-membro-id").value;
             let container = document.getElementById("container-conteudo-dossie");
@@ -4405,16 +4434,13 @@ async function inicializarDossieLigantes() {
 
             container.style.display = "flex";
 
-            // 1. Calcular Presenças, Faltas, Justificativas e Horas
             let totalAtivLigante = 0;
-            let presencas = 0;
-            let faltas = 0;
-            let justAbonadas = 0;
-            let justPendentes = 0;
-            let horasGanhas = 0;
-            let horasPerdidas = 0;
+            let presencasLista = [];
+            let faltasLista = [];
+            let justificadasLista = [];
 
-            let atividadesLiganteLog = [];
+            let horasGanhas = 0;
+            let datasPresencas = [];
 
             let ativCronologicas = [...atividadesCache].sort((a, b) => new Date(a.data) - new Date(b.data));
 
@@ -4428,88 +4454,50 @@ async function inicializarDossieLigantes() {
                 totalAtivLigante++;
                 let reg = (a.frequencias || {})[m.id];
                 let statusReg = reg ? reg.status : 'pendente';
-                let textoJust = reg ? (reg.texto || '-') : '-';
+                let textoJust = reg && reg.texto ? reg.texto : 'Nenhuma justificativa informada.';
+
+                let itemAtiv = {
+                    titulo: a.titulo,
+                    data: a.data,
+                    ch: Number(a.ch || 0),
+                    justificativa: textoJust
+                };
 
                 if (statusReg === 'presente') {
-                    presencas++;
+                    presencasLista.push(itemAtiv);
                     horasGanhas += Number(a.ch || 0);
+                    datasPresencas.push(a.data);
                 } else if (statusReg === 'negado' || statusReg === 'justificativa_negada') {
-                    faltas++;
-                    horasPerdidas += Number(a.ch || 0);
-                } else if (statusReg === 'justificado') {
-                    justAbonadas++;
-                } else if (statusReg === 'aguardando_analise') {
-                    justPendentes++;
+                    faltasLista.push(itemAtiv);
+                } else if (statusReg === 'justificado' || statusReg === 'aguardando_analise') {
+                    justificadasLista.push(itemAtiv);
                 } else {
-                    // Considera pendente sem registro como falta em aberto ou ausência
-                    horasPerdidas += Number(a.ch || 0);
+                    // Sem registro conta como falta/ausência padrão
+                    faltasLista.push(itemAtiv);
                 }
-
-                atividadesLiganteLog.push({
-                    data: a.data,
-                    titulo: a.titulo,
-                    ch: Number(a.ch || 0),
-                    status: statusReg,
-                    texto: textoJust
-                });
             });
 
-            let percPresenca = totalAtivLigante > 0 ? Math.round((presencas / totalAtivLigante) * 100) : 0;
-            let percFaltas = totalAtivLigante > 0 ? Math.round((faltas / totalAtivLigante) * 100) : 0;
-            let totalJustificativas = justAbonadas + justPendentes;
+            let totalPresencas = presencasLista.length;
+            let totalFaltas = faltasLista.length;
+            let totalJustificadas = justificadasLista.length;
+            let percPresenca = totalAtivLigante > 0 ? Math.round((totalPresencas / totalAtivLigante) * 100) : 0;
 
-            // 2. Certificados Gerados
-            let certificadosGeradosCount = 0;
-            try {
-                let snapCerts = await db.collection("certificados").get();
-                snapCerts.forEach(doc => {
-                    let d = doc.data();
-                    if (d.destinatarios && d.destinatarios.includes(m.id)) {
-                        let anexoInfo = d.anexos && d.anexos[m.id] ? d.anexos[m.id] : null;
-                        if (anexoInfo && anexoInfo.imagemUrl && anexoInfo.status === 'entregue') {
-                            certificadosGeradosCount++;
-                        }
-                    }
-                });
-            } catch (e) {
-                console.error("Erro ao carregar certificados para dossiê:", e);
-            }
+            // 1. Atualizar contadores superiores e quantidade geral
+            document.getElementById("dossie-txt-qtd-geral-ativ").innerText = totalAtivLigante;
+            document.getElementById("dossie-txt-cargo").innerText = m.cargo || 'Ligante';
+            document.getElementById("dossie-txt-status").innerText = m.desligado ? '🔴 Desligado' : '🟢 Ativo';
+            document.getElementById("dossie-txt-periodo-liga").innerText = `De ${m.ingressoLiga || 'Início'} até ${m.dataDesligamento || (m.desligado ? 'Desligado' : 'Presente')}`;
 
-            // 3. Tempo na Liga e Datas
-            let dataIngressoStr = m.ingressoLiga || 'Não informada';
-            let dataDesligamentoStr = m.dataDesligamento || (m.desligado ? 'Desligado' : 'Ativo');
             let tempoPermanenciaStr = "Calculando...";
-
             if (m.ingressoLiga) {
                 let dIngresso = new Date(m.ingressoLiga + "T00:00:00");
                 let dFim = m.desligado && m.dataDesligamento ? new Date(m.dataDesligamento + "T00:00:00") : new Date();
-                let diffTime = dFim - dIngresso;
-                let diffDays = Math.max(Math.floor(diffTime / (1000 * 60 * 60 * 24)), 0);
-                
-                let anos = Math.floor(diffDays / 365);
-                let meses = Math.floor((diffDays % 365) / 30);
-                let dias = (diffDays % 365) % 30;
-
-                if (anos > 0) {
-                    tempoPermanenciaStr = `${anos} ano(s), ${meses} mes(es) e ${dias} dia(s) (${diffDays} dias no total)`;
-                } else {
-                    tempoPermanenciaStr = `${meses} mes(es) e ${dias} dia(s) (${diffDays} dias no total)`;
-                }
+                let diffDays = Math.max(Math.floor((dFim - dIngresso) / (1000 * 60 * 60 * 24)), 0);
+                let meses = Math.floor(diffDays / 30);
+                let dias = diffDays % 30;
+                tempoPermanenciaStr = `${meses} mes(es) e ${dias} dia(s) (${diffDays} dias)`;
             }
-
-            // 4. Preencher UI dos Indicadores
-            document.getElementById("dossie-ind-presenca").innerText = `${percPresenca}%`;
-            document.getElementById("dossie-ind-faltas-perc").innerText = `${percFaltas}%`;
-            document.getElementById("dossie-ind-faltas-qtd").innerText = faltas;
-            document.getElementById("dossie-ind-justificativas").innerText = totalJustificativas;
-            document.getElementById("dossie-ind-horas-ganhas").innerText = `${horasGanhas}h`;
-            document.getElementById("dossie-ind-horas-perdidas").innerText = `${horasPerdidas}h`;
-
-            document.getElementById("dossie-txt-cargo").innerText = m.cargo || 'Ligante';
-            document.getElementById("dossie-txt-status").innerText = m.desligado ? '🔴 Desligado' : '🟢 Ativo';
-            document.getElementById("dossie-txt-periodo-liga").innerText = `De ${dataIngressoStr} até ${dataDesligamentoStr}`;
             document.getElementById("dossie-txt-tempo-permanencia").innerText = tempoPermanenciaStr;
-            document.getElementById("dossie-txt-certificados").innerText = certificadosGeradosCount;
 
             let wrapperDesl = document.getElementById("wrapper-dossie-desligamento");
             if (m.desligado) {
@@ -4520,34 +4508,66 @@ async function inicializarDossieLigantes() {
                 wrapperDesl.style.display = "none";
             }
 
-            // 5. Preencher Planilha de Atividades
-            let tabelaContainer = document.getElementById("dossie-tabela-atividades");
-            if (atividadesLiganteLog.length === 0) {
-                tabelaContainer.innerHTML = `<p style="font-size: 10px; color: #64748b; text-align: center; padding: 10px;">Nenhuma atividade registrada para este ligante no período.</p>`;
-                return;
-            }
+            // Certificados
+            let certificadosCount = 0;
+            try {
+                let snapCerts = await db.collection("certificados").get();
+                snapCerts.forEach(doc => {
+                    let d = doc.data();
+                    if (d.destinatarios && d.destinatarios.includes(m.id)) {
+                        let anexoInfo = d.anexos && d.anexos[m.id] ? d.anexos[m.id] : null;
+                        if (anexoInfo && anexoInfo.imagemUrl) certificadosCount++;
+                    }
+                });
+            } catch (e) {}
+            document.getElementById("dossie-txt-certificados").innerText = certificadosCount;
 
-            let tabelaHtml = "";
-            atividadesLiganteLog.forEach(item => {
-                let badgeStatus = `<span style="background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">Pendente</span>`;
-                if (item.status === 'presente') badgeStatus = `<span style="background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✓ Participou (${item.ch}h)</span>`;
-                else if (item.status === 'negado' || item.status === 'justificativa_negada') badgeStatus = `<span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">✕ Faltou</span>`;
-                else if (item.status === 'justificado') badgeStatus = `<span style="background: #fef3c7; color: #b45309; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">📝 Abonado / Justificado</span>`;
-                else if (item.status === 'aguardando_analise') badgeStatus = `<span style="background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800;">⏳ Just. em Análise</span>`;
+            // 2. Renderizar Listas Separadas (Presenças, Faltas, Justificadas)
+            document.getElementById("dossie-count-presencas").innerText = totalPresencas;
+            document.getElementById("dossie-count-faltas").innerText = totalFaltas;
+            document.getElementById("dossie-count-justificadas").innerText = totalJustificadas;
 
-                tabelaHtml += `
-                    <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
-                        <div style="min-width: 0; flex: 1;">
-                            <strong style="font-size: 11px; color: var(--dark); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.titulo}</strong>
-                            <span style="font-size: 9px; color: #64748b;">📅 ${item.data} ${item.texto !== '-' ? `| Obs: ${item.texto}` : ''}</span>
+            let renderizarItensLista = (containerId, lista, corTag, textoExtraFn) => {
+                let el = document.getElementById(containerId);
+                if (lista.length === 0) {
+                    el.innerHTML = `<p style="font-size: 10px; color: #64748b; text-align: center; padding: 6px;">Nenhum registro nesta categoria.</p>`;
+                    return;
+                }
+                let html = "";
+                lista.forEach(item => {
+                    html += `
+                        <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                            <div style="min-width: 0; flex: 1;">
+                                <strong style="font-size: 11px; color: var(--dark); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.titulo}</strong>
+                                <span style="font-size: 9px; color: #64748b;">📅 ${item.data}</span>
+                                ${textoExtraFn ? textoExtraFn(item) : ''}
+                            </div>
+                            <span style="font-size: 9px; font-weight: 800; color: ${corTag}; flex-shrink: 0;">${item.ch}h</span>
                         </div>
-                        <div style="flex-shrink: 0;">
-                            ${badgeStatus}
-                        </div>
-                    </div>
-                `;
-            });
-            tabelaContainer.innerHTML = tabelaHtml;
+                    `;
+                });
+                el.innerHTML = html;
+            };
+
+            renderizarItensLista("dossie-lista-presencas", presencasLista, "#166534", null);
+            renderizarItensLista("dossie-lista-faltas", faltasLista, "#991b1b", null);
+            renderizarItensLista("dossie-lista-justificadas", justificadasLista, "#b45309", (item) => `
+                <div style="margin-top: 2px; font-size: 10px; color: #78350f; background: #fef3c7; padding: 4px; border-radius: 4px;">
+                    📝 <strong>Justificativa:</strong> "${item.justificativa}"
+                </div>
+            `);
+
+            // 3. Gerar Parecer e Comentários Inteligentes do Sistema
+            let primeiraData = datasPresencas.length > 0 ? datasPresencas[0] : (m.ingressoLiga || 'Início da Liga');
+            let ultimaData = datasPresencas.length > 0 ? datasPresencas[datasPresencas.length - 1] : 'Atualmente';
+
+            let parecerHtml = `
+                <p style="margin: 0;">• <strong>Avaliação de Frequencia:</strong> A taxa de presença do ligante está em <strong>${percPresenca}%</strong> (${totalPresencas} presenças em ${totalAtivLigante} atividades gerais). ${percPresenca >= 75 ? 'Desempenho dentro do padrão de excelência da liga.' : 'Atenção necessária devido à frequência abaixo do recomendado.'}</p>
+                <p style="margin: 0;">• <strong>Carga Horária para Certificação:</strong> O sistema calculou um total de <strong>${horasGanhas} horas</strong> acumuladas nas atividades presenciais efetivas.</p>
+                <p style="margin: 0;">• <strong>Datas para o Certificado de Participação:</strong> Com base na auditoria cronológica, as datas que devem constar no certificado de participação oficial do ligante são de <strong>${primeiraData}</strong> até <strong>${ultimaData}</strong>.</p>
+                <p style="margin: 0;">• <strong>Histórico de Ocorrências:</strong> O ligante possui <strong>${totalFaltas} falta(s)</strong> registrada(s) e <strong>${totalJustificadas} justificativa(s)</strong> abonada(s) ou em análise.</p>
+            `;
+            document.getElementById("dossie-conteudo-parecer-ia").innerHTML = parecerHtml;
         }
 
 function inicializarAbaDesligamentos() {
