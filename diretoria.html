@@ -3332,30 +3332,30 @@ async function atualizarMembrosBlocoLote(idBloco) {
             document.getElementById('modal-desligamento').style.display = 'none';
         }
 
-        async function confirmarDesligamento() {
-            let id = document.getElementById('desligar-membro-id').value;
-            let dataDesligamento = document.getElementById('desligar-data').value;
-            let motivoDesligamento = document.getElementById('desligar-motivo').value.trim();
+async function confirmarDesligamento() {
+    let id = document.getElementById('desligar-membro-id').value;
+    let dataDesligamento = document.getElementById('desligar-data').value;
+    let motivoDesligamento = document.getElementById('desligar-motivo').value.trim();
 
-            if (!id || !dataDesligamento || !motivoDesligamento) {
-                alert("Preencha a data e o motivo do desligamento.");
-                return;
-            }
+    if (!id || !dataDesligamento || !motivoDesligamento) {
+        alert("Por favor, preencha a data e o motivo do desligamento.");
+        return;
+    }
 
-            try {
-                await db.collection("membros").doc(id).update({
-                    desligado: true,
-                    dataDesligamento: dataDesligamento,
-                    motivoDesligamento: motivoDesligamento
-                });
-                alert("Ligante desligado com sucesso!");
-                fecharModalDesligamento();
-                renderizarListaMembrosAdmin();
-            } catch (e) {
-                console.error("Erro ao desligar ligante:", e);
-                alert("Erro ao realizar o desligamento no banco de dados.");
-            }
-        }
+    try {
+        await db.collection("membros").doc(id).update({
+            desligado: true,
+            dataDesligamento: dataDesligamento,
+            motivoDesligamento: motivoDesligamento
+        });
+        alert("Ligante desligado com sucesso!");
+        fecharModalDesligamento();
+        renderizarListaMembrosAdmin();
+    } catch (e) {
+        console.error("Erro ao desligar ligante:", e);
+        alert("Erro ao realizar o desligamento na base de dados.");
+    }
+}
 
         async function reativarMembro(id) {
             if (confirm("Reativar ligante?")) {
@@ -4466,7 +4466,7 @@ async function inicializarDossieLigantes() {
 
             // 4. Preencher UI dos Indicadores
             document.getElementById("dossie-ind-presenca").innerText = `${percPresenca}%`;
-            document.getElementById("dossie-ind-faltas-percetry" || "dossie-ind-faltas-perc").innerText = `${percFaltas}%`;
+            document.getElementById("dossie-ind-faltas-perc").innerText = `${percFaltas}%`;
             document.getElementById("dossie-ind-faltas-qtd").innerText = faltas;
             document.getElementById("dossie-ind-justificativas").innerText = totalJustificativas;
             document.getElementById("dossie-ind-horas-ganhas").innerText = `${horasGanhas}h`;
