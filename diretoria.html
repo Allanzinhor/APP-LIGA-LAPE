@@ -2932,7 +2932,9 @@ async function atualizarMembrosBlocoLote(idBloco) {
                         botoesAdminCard = `
                             <div style="margin-top:10px; display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-mini cinza" onclick="prepararEdicaoMembro('${m.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
-                                <button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')"><i class="fa-solid fa-user-xmark"></i> Desligar</button>
+<button class="btn-mini vermelho" onclick="abrirModalDesligamento('${m.id}')">
+    <i class="fa-solid fa-user-xmark"></i> Desligar
+</button>
                                 <button class="btn-mini vermelho" onclick="removerMembro('${m.id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
                             </div>
                         `;
@@ -3322,12 +3324,12 @@ async function atualizarMembrosBlocoLote(idBloco) {
             document.getElementById('btn-cancelar-membro').style.display = "none";
         }
 
-        function abrirModalDesligamento(id) {
-            document.getElementById('desligar-membro-id').value = id;
-            document.getElementById('desligar-data').value = new Date().toISOString().split('T')[0];
-            document.getElementById('desligar-motivo').value = '';
-            document.getElementById('modal-desligamento').style.display = 'flex';
-        }
+function abrirModalDesligamento(id) {
+    document.getElementById('desligar-membro-id').value = id;
+    document.getElementById('desligar-data').value = new Date().toISOString().split('T')[0];
+    document.getElementById('desligar-motivo').value = '';
+    document.getElementById('modal-desligamento').style.display = 'flex';
+}
 
         function fecharModalDesligamento() {
             document.getElementById('modal-desligamento').style.display = 'none';
