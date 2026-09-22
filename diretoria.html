@@ -19,6 +19,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
@@ -27,6 +28,7 @@
       };
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
+      const storage = firebase.storage();
 
       // Garante autenticação persistente e login automático no Firestore
       firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
@@ -1333,6 +1335,8 @@
         let estadoManutencaoGlobal = false;
         let periodoDesempenhoSelecionado = 'mensal';
         let estatisticasLigantesCache = [];
+        let arquivosTemporariosCert = {}; // Armazena temporariamente os arquivos de certificados
+        let arquivosTemporariosTermo = {}; // Armazena temporariamente os arquivos de termos
 
 const permissoesCargos = {
             "presidente": ["dashboard-principal", "formularios-seletivo", "enquetes-admin", "recados-internos", "manutencao", "cadastro-membros", "lista-membros", "cadastro-atividades", "lista-atividades", "frequencia", "financeiro", "avisos", "migracao-papel", "ouvidoria-admin", "correio-interno", "certificados-documentos", "dossie-ligante", "desligamentos"],
@@ -4153,44 +4157,46 @@ async function abrirModalAnexosCertificado(certId, nomeCert) {
             }
         }
 
-        function converterArquivoParaBase64(input, membroId) {
-            let file = input.files[0];
-            if (file) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let base64String = e.target.result;
-                    let hiddenInput = document.getElementById(`cert-base64-${membroId}`);
-                    if (hiddenInput) hiddenInput.value = base64String;
-                    alert(`Arquivo "${file.name}" anexado com sucesso! Clique em 'Salvar Alterações' para confirmar.`);
-                };
-                reader.readAsDataURL(file);
-            }
+function converterArquivoParaBase64(input, membroId) {
+    let file = input.files[0];
+    if (file) {
+        arquivosTemporariosCert[membroId] = file;
+        alert(`Arquivo "${file.name}" selecionado! Clique em 'Salvar Alterações' para enviar à nuvem.`);
+    }
+}
+
+async function salvarAnexosCertificadosNuvem() {
+    let certId = document.getElementById("cert-id-atual-anexos").value;
+    if (!certId) return;
+
+    try {
+        let docRef = db.collection("certificados").doc(certId);
+        let docSnap = await docRef.get();
+        let dadosAtuais = docSnap.exists ? docSnap.data() : {};
+        let anexosAtuais = dadosAtuais.anexos || {};
+
+        // Faz o upload de cada arquivo selecionado para o Firebase Storage
+        for (let [mId, file] of Object.entries(arquivosTemporariosCert)) {
+            let storageRef = storage.ref().child(`certificados/${certId}/${mId}_${file.name}`);
+            let snapshot = await storageRef.put(file);
+            let downloadUrl = await snapshot.ref.getDownloadURL();
+
+            anexosAtuais[mId] = {
+                imagemUrl: downloadUrl,
+                status: "entregue"
+            };
         }
 
-        async function salvarAnexosCertificadosNuvem() {
-            let certId = document.getElementById("cert-id-atual-anexos").value;
-            if (!certId) return;
-
-            let novosAnexos = {};
-            document.querySelectorAll('input[id^="cert-base64-"]').forEach(hiddenInput => {
-                let mId = hiddenInput.id.replace('cert-base64-', '');
-                let url = hiddenInput.value.trim();
-                novosAnexos[mId] = {
-                    imagemUrl: url,
-                    status: url ? "entregue" : "pendente"
-                };
-            });
-
-            try {
-                await db.collection("certificados").doc(certId).update({ anexos: novosAnexos });
-                alert("Anexos atualizados com sucesso!");
-                fecharModalAnexosCertificado();
-                carregarCertificadosAdmin();
-            } catch (e) {
-                console.error(e);
-                alert("Erro ao salvar anexos.");
-            }
-        }
+        await docRef.update({ anexos: anexosAtuais });
+        arquivosTemporariosCert = {}; // Limpa o cache temporário
+        alert("Anexos de certificados salvos no Firebase Storage com sucesso!");
+        fecharModalAnexosCertificado();
+        carregarCertificadosAdmin();
+    } catch (e) {
+        console.error("Erro ao fazer upload dos certificados:", e);
+        alert("Erro ao enviar arquivos para o Firebase Storage.");
+    }
+}
 
         function fecharModalAnexosCertificado() {
             document.getElementById("modal-anexos-certificado").style.display = "none";
@@ -4289,37 +4295,48 @@ function converterTermoParaBase64(input, membroId) {
             }
         }
 
-        async function salvarTermoLigante(membroId) {
-            let hiddenInput = document.getElementById(`termo-base64-${membroId}`);
-            let dataInput = document.getElementById(`termo-data-${membroId}`);
-            
-            let urlAnexo = hiddenInput ? hiddenInput.value.trim() : "";
-            let dataAssinatura = dataInput ? dataInput.value : "";
+function converterTermoParaBase64(input, membroId) {
+    let file = input.files[0];
+    if (file) {
+        arquivosTemporariosTermo[membroId] = file;
+        alert(`Termo "${file.name}" selecionado! Clique em 'Salvar Termo' para enviar à nuvem.`);
+    }
+}
 
-            if (!urlAnexo) {
-                alert("Nenhum arquivo ou documento válido foi selecionado/carregado para este ligante.");
-                return;
-            }
+async function salvarTermoLigante(membroId) {
+    let file = arquivosTemporariosTermo[membroId];
+    let dataInput = document.getElementById(`termo-data-${membroId}`);
+    let dataAssinatura = dataInput ? dataInput.value : "";
 
-            try {
-                let docRef = db.collection("documentos_fixos").doc("termo_compromisso");
-                let docSnap = await docRef.get();
-                let registros = docSnap.exists ? (docSnap.data().registros || {}) : {};
+    if (!file) {
+        alert("Nenhum arquivo novo foi selecionado para este ligante.");
+        return;
+    }
 
-                registros[membroId] = {
-                    imagemUrl: urlAnexo,
-                    dataAssinatura: dataAssinatura || new Date().toISOString().split('T')[0],
-                    status: "assinado"
-                };
+    try {
+        let storageRef = storage.ref().child(`termos_compromisso/${membroId}_${file.name}`);
+        let snapshot = await storageRef.put(file);
+        let downloadUrl = await snapshot.ref.getDownloadURL();
 
-                await docRef.set({ registros }, { merge: true });
-                alert("Termo de compromisso salvo e sincronizado com sucesso na nuvem!");
-                carregarTermoCompromissoAdmin();
-            } catch (e) {
-                console.error("Erro ao salvar termo:", e);
-                alert("Erro ao salvar termo. O arquivo pode ser grande demais para o banco de dados.");
-            }
-        }
+        let docRef = db.collection("documentos_fixos").doc("termo_compromisso");
+        let docSnap = await docRef.get();
+        let registros = docSnap.exists ? (docSnap.data().registros || {}) : {};
+
+        registros[membroId] = {
+            imagemUrl: downloadUrl,
+            dataAssinatura: dataAssinatura || new Date().toISOString().split('T')[0],
+            status: "assinado"
+        };
+
+        await docRef.set({ registros }, { merge: true });
+        delete arquivosTemporariosTermo[membroId];
+        alert("Termo de compromisso salvo no Firebase Storage com sucesso!");
+        carregarTermoCompromissoAdmin();
+    } catch (e) {
+        console.error("Erro ao salvar termo no Storage:", e);
+        alert("Erro ao enviar o termo para o Firebase Storage.");
+    }
+}
 
         function converterArquivoParaBase64(input, membroId) {
             let file = input.files[0];
