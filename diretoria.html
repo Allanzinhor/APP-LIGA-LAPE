@@ -4274,26 +4274,12 @@ async function carregarTermoCompromissoAdmin() {
         }
 
 function converterTermoParaBase64(input, membroId) {
-            let file = input.files[0];
-            if (file) {
-                // Validação opcional de tamanho (ex: máx 800KB para caber no Firestore com folga)
-                if (file.size > 800 * 1024) {
-                    alert("O arquivo é muito grande para armazenamento direto. Por favor, envie um arquivo menor que 800KB ou utilize um link externo/PDF otimizado.");
-                    input.value = "";
-                    return;
-                }
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let base64String = e.target.result;
-                    let hiddenInput = document.getElementById(`termo-base64-${membroId}`);
-                    if (hiddenInput) {
-                        hiddenInput.value = base64String;
-                        alert(`Arquivo "${file.name}" processado com sucesso! Agora clique em 'Salvar Termo' abaixo.`);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+    let file = input.files[0];
+    if (file) {
+        arquivosTemporariosTermo[membroId] = file;
+        alert(`Termo "${file.name}" selecionado! Clique em 'Salvar Termo' para enviar à nuvem.`);
+    }
+}
 
 function converterTermoParaBase64(input, membroId) {
     let file = input.files[0];
@@ -4338,26 +4324,13 @@ async function salvarTermoLigante(membroId) {
     }
 }
 
-        function converterArquivoParaBase64(input, membroId) {
-            let file = input.files[0];
-            if (file) {
-                if (file.size > 800 * 1024) {
-                    alert("O arquivo excede 800KB. Compacte o arquivo antes de anexar.");
-                    input.value = "";
-                    return;
-                }
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let base64String = e.target.result;
-                    let hiddenInput = document.getElementById(`cert-base64-${membroId}`);
-                    if (hiddenInput) {
-                        hiddenInput.value = base64String;
-                        alert(`Certificado de ${file.name} carregado! Clique em 'Salvar Alterações' no fim da janela.`);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+function converterArquivoParaBase64(input, membroId) {
+    let file = input.files[0];
+    if (file) {
+        arquivosTemporariosCert[membroId] = file;
+        alert(`Certificado "${file.name}" selecionado! Clique em 'Salvar Alterações' para enviar à nuvem.`);
+    }
+}
 
         async function salvarAnexosCertificadosNuvem() {
             let certId = document.getElementById("cert-id-atual-anexos").value;
