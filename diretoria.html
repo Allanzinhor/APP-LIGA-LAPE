@@ -4252,13 +4252,6 @@ function converterTermoParaBase64(input, membroId) {
     }
 }
 
-function converterTermoParaBase64(input, membroId) {
-    let file = input.files[0];
-    if (file) {
-        arquivosTemporariosTermo[membroId] = file;
-        alert(`Termo "${file.name}" selecionado! Clique em 'Salvar Termo' para enviar à nuvem.`);
-    }
-}
 
 async function salvarTermoLigante(membroId) {
     let file = arquivosTemporariosTermo[membroId];
