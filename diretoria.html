@@ -4175,7 +4175,7 @@ async function salvarAnexosCertificadosNuvem() {
         let dadosAtuais = docSnap.exists ? docSnap.data() : {};
         let anexosAtuais = dadosAtuais.anexos || {};
 
-        // Faz o upload de cada arquivo selecionado para o Firebase Storage
+        // Faz o upload de cada ficheiro selecionado para o Firebase Storage
         for (let [mId, file] of Object.entries(arquivosTemporariosCert)) {
             let storageRef = storage.ref().child(`certificados/${certId}/${mId}_${file.name}`);
             let snapshot = await storageRef.put(file);
@@ -4189,43 +4189,14 @@ async function salvarAnexosCertificadosNuvem() {
 
         await docRef.update({ anexos: anexosAtuais });
         arquivosTemporariosCert = {}; // Limpa o cache temporário
-        alert("Anexos de certificados salvos no Firebase Storage com sucesso!");
+        alert("Anexos guardados com sucesso no Firebase Storage!");
         fecharModalAnexosCertificado();
         carregarCertificadosAdmin();
     } catch (e) {
-        console.error("Erro ao fazer upload dos certificados:", e);
-        alert("Erro ao enviar arquivos para o Firebase Storage.");
+        console.error("Erro ao carregar os certificados:", e);
+        alert("Erro ao enviar ficheiros para o Firebase Storage.");
     }
 }
-
-        function fecharModalAnexosCertificado() {
-            document.getElementById("modal-anexos-certificado").style.display = "none";
-        }
-
-        async function salvarAnexosCertificadosNuvem() {
-            let certId = document.getElementById("cert-id-atual-anexos").value;
-            if (!certId) return;
-
-            let novosAnexos = {};
-            document.querySelectorAll('.input-url-anexo-cert').forEach(input => {
-                let mId = input.getAttribute('data-membro-id');
-                let url = input.value.trim();
-                novosAnexos[mId] = {
-                    imagemUrl: url,
-                    status: url ? "entregue" : "pendente"
-                };
-            });
-
-            try {
-                await db.collection("certificados").doc(certId).update({ anexos: novosAnexos });
-                alert("Anexos atualizados com sucesso!");
-                fecharModalAnexosCertificado();
-                carregarCertificadosAdmin();
-            } catch (e) {
-                console.error(e);
-                alert("Erro ao salvar anexos.");
-            }
-        }
 
         // Gestão do Termo de Compromisso Fixo
 async function carregarTermoCompromissoAdmin() {
