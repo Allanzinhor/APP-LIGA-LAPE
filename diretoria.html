@@ -4293,41 +4293,7 @@ async function salvarTermoLigante(membroId) {
         console.error("Erro ao salvar termo no Storage:", e);
         alert("Erro ao enviar o termo para o Firebase Storage.");
     }
-}
 
-function converterArquivoParaBase64(input, membroId) {
-    let file = input.files[0];
-    if (file) {
-        arquivosTemporariosCert[membroId] = file;
-        alert(`Certificado "${file.name}" selecionado! Clique em 'Salvar Alterações' para enviar à nuvem.`);
-    }
-}
-
-        async function salvarAnexosCertificadosNuvem() {
-            let certId = document.getElementById("cert-id-atual-anexos").value;
-            if (!certId) return;
-
-            let novosAnexos = {};
-            document.querySelectorAll('input[id^="cert-base64-"]').forEach(hiddenInput => {
-                let mId = hiddenInput.id.replace('cert-base64-', '');
-                let url = hiddenInput.value.trim();
-                if (url) {
-                    novosAnexos[mId] = {
-                        imagemUrl: url,
-                        status: "entregue"
-                    };
-                }
-            });
-
-            try {
-                await db.collection("certificados").doc(certId).update({ anexos: novosAnexos });
-                alert("Anexos de certificados salvos com sucesso!");
-                fecharModalAnexosCertificado();
-                carregarCertificadosAdmin();
-            } catch (e) {
-                console.error("Erro ao salvar anexos do certificado:", e);
-                alert("Erro ao salvar anexos na nuvem.");
-            }
         }
 // Inicializa ou atualiza o seletor da aba de Dossiê quando aberta
 async function inicializarDossieLigantes() {
