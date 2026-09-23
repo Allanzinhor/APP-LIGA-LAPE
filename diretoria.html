@@ -4116,7 +4116,7 @@ async function abrirModalAnexosCertificado(certId, nomeCert) {
     document.getElementById("cert-id-atual-anexos").value = certId;
     document.getElementById("titulo-modal-anexos").innerText = `📎 Anexos (Links Imgur): ${nomeCert}`;
     let container = document.getElementById("lista-ligantes-anexos-conteudo");
-    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">Carregando destinatários...</p>`;
+    container.innerHTML = `<p style="font-size: 11px; color: #64748b; text-align: center; padding: 20px;">A carregar destinatários...</p>`;
     document.getElementById("modal-anexos-certificado").style.display = "flex";
 
     try {
@@ -4144,7 +4144,7 @@ async function abrirModalAnexosCertificado(certId, nomeCert) {
                         <strong style="font-size: 11px; color: var(--dark);">${nomeMembro}</strong>
                         <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusAtual === 'entregue' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusAtual === 'entregue' ? 'Link Definido' : 'Pendente'}</span>
                     </div>
-                    <input type="text" id="cert-link-${mId}" value="${anexoInfo.imagemUrl || ''}" placeholder="Cole o link da imagem do Imgur aqui..." style="padding: 8px; font-size: 11px; background: white; border: 1px solid var(--border); border-radius: 6px;">
+                    <input type="text" id="cert-link-${mId}" value="${anexoInfo.imagemUrl || ''}" placeholder="Cole o link direto da imagem PNG do Imgur..." style="padding: 8px; font-size: 11px; background: white; border: 1px solid var(--border); border-radius: 6px;">
                     ${anexoInfo.imagemUrl ? `<a href="${anexoInfo.imagemUrl}" target="_blank" style="font-size: 10px; color: var(--primary); text-decoration: none; font-weight: 800;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Testar link atual</a>` : ''}
                 </div>
             `;
@@ -4153,14 +4153,6 @@ async function abrirModalAnexosCertificado(certId, nomeCert) {
     } catch (e) {
         console.error(e);
         container.innerHTML = `<p style="font-size: 11px; color: var(--danger); text-align: center;">Erro ao carregar anexos.</p>`;
-    }
-}
-
-function converterArquivoParaBase64(input, membroId) {
-    let file = input.files[0];
-    if (file) {
-        arquivosTemporariosCert[membroId] = file;
-        alert(`Arquivo "${file.name}" selecionado! Clique em 'Salvar Alterações' para enviar à nuvem.`);
     }
 }
 
@@ -4223,7 +4215,7 @@ async function carregarTermoCompromissoAdmin() {
                         <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; ${statusTermo === 'assinado' ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;'}">${statusTermo === 'assinado' ? 'Link Configurado' : 'Pendente'}</span>
                     </div>
                     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; align-items: center;">
-                        <input type="text" id="termo-link-${m.id}" value="${reg.imagemUrl || ''}" placeholder="Cole o link do Imgur aqui..." style="padding: 8px; font-size: 10px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;">
+                        <input type="text" id="termo-link-${m.id}" value="${reg.imagemUrl || ''}" placeholder="Cole o link direto da imagem PNG do Imgur..." style="padding: 8px; font-size: 10px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;">
                         <input type="date" id="termo-data-${m.id}" value="${reg.dataAssinatura || ''}" style="padding: 8px; font-size: 10px;">
                     </div>
                     ${reg.imagemUrl ? `<div style="font-size: 10px;"><a href="${reg.imagemUrl}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 800;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Testar link atual</a></div>` : ''}

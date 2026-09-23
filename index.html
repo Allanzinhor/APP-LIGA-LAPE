@@ -1675,6 +1675,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBB69rrvrFCJSrkCyScQl6JDeiSNees3qA",
@@ -4610,14 +4611,62 @@ function obterPrimeiroEUltimoNome(nomeCompleto) {
             if (modal) modal.style.display = "none";
         }
 
-        function baixarArquivoDireto(url, nomeArquivo) {
+async function baixarArquivoDireto(url, nomeArquivo) {
+    if (!url) {
+        alert("Nenhum link de documento disponível para download.");
+        return;
+    }
+
+    try {
+        let img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = url;
+        
+        img.onload = function() {
+            let canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            let imgData = canvas.toDataURL('image/jpeg', 1.0);
+            
+            const { jsPDF } = window.jspdf;
+            let pdf = new jsPDF(img.width > img.height ? 'landscape' : 'portrait', 'mm', 'a4');
+            
+            let pageWidth = pdf.internal.pageSize.getWidth();
+            let pageHeight = pdf.internal.pageSize.getHeight();
+            
+            let imgWidth = pageWidth;
+            let imgHeight = (img.height * pageWidth) / img.width;
+            
+            if (imgHeight > pageHeight) {
+                imgHeight = pageHeight;
+                imgWidth = (img.width * pageHeight) / img.height;
+            }
+            
+            let x = (pageWidth - imgWidth) / 2;
+            let y = (pageHeight - imgHeight) / 2;
+            
+            pdf.addImage(imgData, 'JPEG', x, y, imgWidth, imgHeight);
+            pdf.save(nomeArquivo || 'documento_lape.pdf');
+        };
+        
+        img.onerror = function() {
+            // Fallback caso ocorra bloqueio de CORS na imagem do Imgur
             let a = document.createElement('a');
             a.href = url;
-            a.download = nomeArquivo || 'documento.pdf';
+            a.target = '_blank';
+            a.download = nomeArquivo || 'documento_lape.pdf';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-        }
+        };
+    } catch (e) {
+        console.error("Erro ao gerar PDF:", e);
+        window.open(url, '_blank');
+    }
+}
 
 async function carregarDocumentosECertificados() {
             if (!usuarioLogado || !usuarioLogado.id) return;
