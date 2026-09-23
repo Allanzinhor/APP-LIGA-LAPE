@@ -4160,6 +4160,16 @@ async function salvarAnexosCertificadosNuvem() {
     let certId = document.getElementById("cert-id-atual-anexos").value;
     if (!certId) return;
 
+    // Seleciona o botão de salvar para evitar múltiplos cliques
+    let modalConteudo = document.querySelector("#modal-anexos-certificado .modal-conteudo");
+    let btnSalvar = modalConteudo ? modalConteudo.querySelector("button.btn-salvar") : null;
+    
+    if (btnSalvar) {
+        if (btnSalvar.disabled) return; // Se já estiver a salvar, ignora novos cliques
+        btnSalvar.disabled = true;
+        btnSalvar.innerText = "A guardar...";
+    }
+
     try {
         let docRef = db.collection("certificados").doc(certId);
         let docSnap = await docRef.get();
@@ -4184,7 +4194,13 @@ async function salvarAnexosCertificadosNuvem() {
         carregarCertificadosAdmin();
     } catch (e) {
         console.error("Erro ao salvar os certificados:", e);
-        alert("Erro ao salvar os links na base de dados.");
+        alert("Erro ao salvar os links na base de dados: " + (e.message || e));
+    } finally {
+        // Restaura o botão caso ocorra algum erro e o modal continue aberto
+        if (btnSalvar) {
+            btnSalvar.disabled = false;
+            btnSalvar.innerText = "Salvar Alterações";
+        }
     }
 }
 
