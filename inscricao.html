@@ -511,14 +511,21 @@ window.onload = async () => {
                     return;
                 }
 
-                // Verificar limite de vagas antes de exibir o form
-                let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
-                if (data.ativarLimiteVagas && data.limiteVagas && respSnap.size >= Number(data.limiteVagas)) {
-                    mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
-                    return;
+                // Tenta verificar o limite de vagas com segurança (protegido contra bloqueio de regras)
+                let totalRespostas = 0;
+                try {
+                    let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
+                    totalRespostas = respSnap.size;
+                    
+                    if (data.ativarLimiteVagas && data.limiteVagas && totalRespostas >= Number(data.limiteVagas)) {
+                        mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
+                        return;
+                    }
+                } catch (errPerm) {
+                    console.warn("Aviso: Não foi possível ler as respostas devido às regras de segurança do Firestore.", errPerm);
                 }
 
-                atualizarCardVagas(respSnap.size, data);
+                atualizarCardVagas(totalRespostas, data);
 
                 document.getElementById("pub-titulo-form").innerText = data.titulo;
                 
@@ -565,7 +572,7 @@ window.onload = async () => {
                 document.getElementById("painel-formulario").style.display = "block";
 
             } catch(e) {
-                console.error(e);
+                console.error("Erro crítico ao carregar:", e);
                 mostrarErro("Erro de Conexão", "Não foi possível carregar os dados. Verifique sua internet.");
             }
         };
