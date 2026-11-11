@@ -510,7 +510,10 @@
         let intervaloCronometro = null;
         let dadosFormularioAtual = null;
         let totalInscritosAtual = 0;
+        let totalGeraisAtual = 0;
+        let totalLigantesAtual = 0;
         let modoApenasLigantes = false;
+        let liganteValidadoAtual = false;
 
         function mostrarErro(titulo, desc) {
             document.getElementById("painel-loading").style.display = "none";
@@ -545,27 +548,30 @@
                 let agora = new Date();
                 let dataLimiteObj = data.dataLimite ? new Date(data.dataLimite) : null;
 
-                // Verificar total de inscritos / vagas preenchidas
+                // Verificar total de inscritos / vagas preenchidas separando gerais e ligantes
                 let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
                 totalInscritosAtual = respSnap.size;
+                totalLigantesAtual = respSnap.docs.filter(d => d.data().isLigante === true).length;
+                totalGeraisAtual = totalInscritosAtual - totalLigantesAtual;
+
+                let limiteTotal = data.limiteVagas || 0;
+                let qtdReservadas = (data.ativarVagasReservadas && data.qtdVagasReservadas) ? Number(data.qtdVagasReservadas) : 0;
+                let limiteGerais = Math.max(0, limiteTotal - qtdReservadas);
 
                 if (data.ativarLimiteVagas) {
                     let boxVagas = document.getElementById("box-vagas");
                     boxVagas.style.display = "block";
-                    atualizarDisplayVagas(totalInscritosAtual, data);
+                    atualizarDisplayVagas(totalInscritosAtual, totalGeraisAtual, totalLigantesAtual, data);
 
-                    if (totalInscritosAtual >= data.limiteVagas) {
+                    if (totalInscritosAtual >= limiteTotal) {
                         await db.collection("formularios_externos").doc(formId).update({ ativo: false });
                         mostrarVagasEsgotadas();
                         return;
                     }
 
-                    // Verificar se as vagas públicas esgotadas restam apenas as reservadas
-                    if (data.ativarVagasReservadas && data.qtdVagasReservadas) {
-                        let vagasPublicas = data.limiteVagas - data.qtdVagasReservadas;
-                        if (totalInscritosAtual >= vagasPublicas) {
-                            modoApenasLigantes = true;
-                        }
+                    // Se as vagas gerais preenchidas atingiram o limite geral, restam apenas as vagas reservadas
+                    if (data.ativarVagasReservadas && totalGeraisAtual >= limiteGerais) {
+                        modoApenasLigantes = true;
                     }
                 }
 
@@ -633,7 +639,7 @@
             }
         };
 
-        function atualizarDisplayVagas(inscritos, data) {
+        function atualizarDisplayVagas(inscritos, gerais, ligantes, data) {
             let textoVagas = document.getElementById("texto-status-vagas");
             let limite = data.limiteVagas || 0;
             let vagasRestantes = Math.max(0, limite - inscritos);
@@ -641,8 +647,9 @@
             
             let infoReservadas = "";
             if (data.ativarVagasReservadas && data.qtdVagasReservadas) {
+                let qtdRes = Number(data.qtdVagasReservadas);
                 let destinoTexto = data.destinoVagasReservadas === 'ligantes_lape' ? 'Ligantes da LAPE' : (data.especifiqueOutro || 'Reservadas');
-                infoReservadas = `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 6px;">(${data.qtdVagasReservadas} vagas reservadas para ${destinoTexto})</div>`;
+                infoReservadas = `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 6px;">(${ligantes} de ${qtdRes} vagas reservadas preenchidas para ${destinoTexto})</div>`;
             }
             
             textoVagas.innerHTML = `
@@ -745,7 +752,10 @@
         async function verificarMatriculaLape(inputEl) {
             if (!dadosFormularioAtual || !dadosFormularioAtual.ativarVagasReservadas || dadosFormularioAtual.destinoVagasReservadas !== 'ligantes_lape') return;
             let matriculaBuscada = inputEl.value.trim();
-            if (matriculaBuscada.length < 3) return;
+            if (matriculaBuscada.length < 3) {
+                liganteValidadoAtual = false;
+                return;
+            }
 
             try {
                 let membrosRef = db.collection("membros");
@@ -756,8 +766,13 @@
                 
                 if (!snap.empty) {
                     let membroData = snap.docs[0].data();
-                    if (membroData.desligado) return;
+                    if (membroData.desligado) {
+                        liganteValidadoAtual = false;
+                        return;
+                    }
                     
+                    liganteValidadoAtual = true;
+
                     // Preenche automaticamente as outras informações correspondentes
                     camposPersonalizadosRenderizados.forEach((campo, idx) => {
                         let rotuloLower = campo.rotulo.toLowerCase();
@@ -779,9 +794,12 @@
 
                     // Desbloqueia os campos caso algum não tenha sido preenchido automaticamente
                     aplicarBloqueioCamposPublicos(false);
+                } else {
+                    liganteValidadoAtual = false;
                 }
             } catch (e) {
                 console.error("Erro ao verificar matrícula LAPE:", e);
+                liganteValidadoAtual = false;
             }
         }
 
@@ -874,10 +892,33 @@
             // Verificação de vagas em tempo real antes de submeter
             if (dadosFormularioAtual && dadosFormularioAtual.ativarLimiteVagas) {
                 let checkRespSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
-                if (checkRespSnap.size >= dadosFormularioAtual.limiteVagas) {
+                let curTotal = checkRespSnap.size;
+                let curLigantes = checkRespSnap.docs.filter(d => d.data().isLigante === true).length;
+                let curGerais = curTotal - curLigantes;
+
+                let limiteTotal = dadosFormularioAtual.limiteVagas || 0;
+                let qtdReservadas = (dadosFormularioAtual.ativarVagasReservadas && dadosFormularioAtual.qtdVagasReservadas) ? Number(dadosFormularioAtual.qtdVagasReservadas) : 0;
+                let limiteGerais = Math.max(0, limiteTotal - qtdReservadas);
+
+                if (curTotal >= limiteTotal) {
                     await db.collection("formularios_externos").doc(formId).update({ ativo: false });
                     mostrarVagasEsgotadas();
                     return;
+                }
+
+                if (liganteValidadoAtual) {
+                    if (curLigantes >= qtdReservadas && curTotal >= limiteTotal) {
+                        await db.collection("formularios_externos").doc(formId).update({ ativo: false });
+                        mostrarVagasEsgotadas();
+                        return;
+                    }
+                } else {
+                    if (curGerais >= limiteGerais) {
+                        alert("As vagas gerais foram esgotadas. Apenas ligantes da LAPE com vagas reservadas podem se inscrever.");
+                        btn.disabled = false;
+                        btn.innerHTML = `<span>Submeter Inscrição</span><i class="fa-solid fa-paper-plane"></i>`;
+                        return;
+                    }
                 }
             }
 
@@ -925,6 +966,7 @@
             try {
                 let pacoteEnvio = {
                     respostasExtras: respostasColetadas,
+                    isLigante: liganteValidadoAtual,
                     enviadoEm: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
