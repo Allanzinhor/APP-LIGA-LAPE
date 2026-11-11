@@ -419,6 +419,19 @@
             <p id="pub-desc-form"></p>
         </div>
 
+        <!-- CAIXA DE STATUS DE VAGAS -->
+        <div class="vagas-container" id="box-vagas-status" style="display: none; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-users-rectangle"></i> Vagas Disponíveis</span>
+                <span id="vagas-contador-txt" style="font-size: 12px; font-weight: 800; color: var(--dark);">0 / 0 preenchidas</span>
+            </div>
+            <div style="width: 100%; background: var(--border); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
+                <div id="vagas-barra-progresso" style="background: var(--primary); width: 0%; height: 100%; border-radius: 4px; transition: width 0.3s;"></div>
+            </div>
+            <span id="vagas-detalhe-reservadas" style="font-size: 10px; color: var(--text-muted); display: block;"></span>
+        </div>
+
+
         <div class="area-contatos" id="container-contatos"></div>
 
         <div class="cronometro-container" id="box-cronometro">
@@ -475,7 +488,7 @@
             document.getElementById("erro-desc").innerText = desc;
         }
 
-        window.onload = async () => {
+window.onload = async () => {
             if (!formId) {
                 mostrarErro("Link Inválido", "Nenhum ID de formulário foi especificado na URL.");
                 return;
@@ -489,6 +502,7 @@
                 }
 
                 let data = doc.data();
+                formDadosGlobal = data;
                 let agora = new Date();
                 let dataLimiteObj = data.dataLimite ? new Date(data.dataLimite) : null;
 
@@ -496,6 +510,15 @@
                     mostrarErro("Inscrições Encerradas", "O prazo para submissões neste processo seletivo já acabou.");
                     return;
                 }
+
+                // Verificar limite de vagas antes de exibir o form
+                let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
+                if (data.ativarLimiteVagas && data.limiteVagas && respSnap.size >= Number(data.limiteVagas)) {
+                    mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
+                    return;
+                }
+
+                atualizarCardVagas(respSnap.size, data);
 
                 document.getElementById("pub-titulo-form").innerText = data.titulo;
                 
@@ -507,7 +530,6 @@
 
                 document.getElementById("pub-desc-form").innerText = data.descricao || "Preencha os dados abaixo com atenção.";
 
-                // Configurar Contatos
                 let contatosContainer = document.getElementById("container-contatos");
                 if (data.contatos && Array.isArray(data.contatos) && data.contatos.length > 0) {
                     contatosContainer.style.display = "flex";
@@ -532,8 +554,8 @@
                 if (dataLimiteObj) iniciarCronometro(dataLimiteObj);
 
                 renderizarCamposDinamicos(data.camposPersonalizados || []);
+                configurarIdentificacaoLape(data.camposPersonalizados || []);
 
-// VERIFICAR SE A EXIBIÇÃO PÚBLICA DE RESPOSTAS ESTÁ ATIVADA NO PAINEL
                 if (data.exibirRespostasPublicas === true || data.permitirVerRespostas === true) {
                     document.getElementById("secao-respostas-publicas").style.display = "block";
                     escutarRespostasPublicas();
@@ -618,18 +640,22 @@
         }
 
         // CARREGA E ATUALIZA A TABELA EM TEMPO REAL COM OS DADOS DO FIRESTORE
+// CARREGA E ATUALIZA A TABELA E O CONTADOR DE VAGAS EM TEMPO REAL COM OS DADOS DO FIRESTORE
         function escutarRespostasPublicas() {
             const containerPub = document.getElementById("conteudo-tabela-publica");
 
             db.collection("formularios_externos").doc(formId).collection("respostas")
               .orderBy("enviadoEm", "desc")
               .onSnapshot((snapshot) => {
+                  if (formDadosGlobal && formDadosGlobal.ativarLimiteVagas) {
+                      atualizarCardVagas(snapshot.size, formDadosGlobal);
+                  }
+
                   if (snapshot.empty) {
                       containerPub.innerHTML = `<div class="tabela-vazia">Nenhum envio registrado até o momento. Seja o primeiro(a)!</div>`;
                       return;
                   }
 
-                  // Descobrir as colunas com base nas chaves do primeiro registro (respostasExtras)
                   let primeiroDocData = snapshot.docs[0].data().respostasExtras || {};
                   let colunas = Object.keys(primeiroDocData);
 
@@ -656,7 +682,6 @@
                       htmlTabela += `<tr>`;
                       colunas.forEach(col => {
                           let valor = dados[col] || "-";
-                          // Se for base64 de imagem/arquivo, simplificar visualização na tabela
                           if (typeof valor === 'string' && valor.startsWith("data:")) {
                               valor = `<a href="${valor}" target="_blank" style="color:var(--primary); font-weight:700;"><i class="fa-solid fa-file-arrow-down"></i> Ver Anexo</a>`;
                           }
@@ -671,33 +696,6 @@
                   console.error("Erro ao carregar tabela pública:", error);
                   containerPub.innerHTML = `<div class="tabela-vazia">Não foi possível carregar o painel público de respostas.</div>`;
               });
-        }
-
-        function getIconeParaCampo(rotulo, tipo) {
-            let r = rotulo.toLowerCase();
-            if (r.includes('nome')) return '<i class="fa-solid fa-user" style="color:var(--primary);"></i>';
-            if (r.includes('mail')) return '<i class="fa-solid fa-envelope" style="color:var(--primary);"></i>';
-            if (r.includes('tel') || r.includes('whats')) return '<i class="fa-solid fa-phone" style="color:var(--primary);"></i>';
-            if (r.includes('curso') || r.includes('período')) return '<i class="fa-solid fa-graduation-cap" style="color:var(--primary);"></i>';
-            if (tipo === 'arquivo') return '<i class="fa-solid fa-paperclip" style="color:var(--primary);"></i>';
-            if (tipo === 'selecao') return '<i class="fa-solid fa-list" style="color:var(--primary);"></i>';
-            return '<i class="fa-solid fa-pen" style="color:var(--primary);"></i>';
-        }
-
-        function mascaraTelefoneGenerica(input) {
-            let v = input.value.replace(/\D/g, "");
-            v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
-            v = v.replace(/(\d)(\d{4})$/, "$1-$2");
-            input.value = v;
-        }
-
-        function lerArquivoComoBase64(file) {
-            return new Promise((resolve, reject) => {
-                let reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
         }
 
         async function enviarInscricaoPublica() {
@@ -747,6 +745,16 @@
             }
 
             try {
+                // Verificação de segurança de vagas no último segundo antes de submeter
+                if (formDadosGlobal && formDadosGlobal.ativarLimiteVagas && formDadosGlobal.limiteVagas) {
+                    let respCheck = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
+                    if (respCheck.size >= Number(formDadosGlobal.limiteVagas)) {
+                        alert("Infelizmente as vagas esgotaram enquanto você preenchia o formulário.");
+                        mostrarErro("Vagas Esgotadas", "Todas as vagas para este formulário foram preenchidas.");
+                        return;
+                    }
+                }
+
                 let pacoteEnvio = {
                     respostasExtras: respostasColetadas,
                     enviadoEm: firebase.firestore.FieldValue.serverTimestamp()
@@ -763,6 +771,98 @@
                 btn.innerHTML = `<span>Tentar Novamente</span><i class="fa-solid fa-rotate-right"></i>`;
             }
         }
+
+        let formDadosGlobal = null;
+
+        function atualizarCardVagas(totalPreenchidas, dataForm) {
+            if (!dataForm.ativarLimiteVagas || !dataForm.limiteVagas) return;
+
+            let boxVagas = document.getElementById("box-vagas-status");
+            boxVagas.style.display = "block";
+
+            let limite = Number(dataForm.limiteVagas);
+            let preenchidas = Number(totalPreenchidas);
+            let perc = Math.min(Math.round((preenchidas / limite) * 100), 100);
+
+            document.getElementById("vagas-contador-txt").innerText = `${preenchidas} / ${limite} preenchidas`;
+            let barra = document.getElementById("vagas-barra-progresso");
+            barra.style.width = `${perc}%`;
+            
+            if (perc >= 100) {
+                barra.style.background = "var(--danger)";
+            } else if (perc >= 80) {
+                barra.style.background = "var(--warning, #f59e0b)";
+            } else {
+                barra.style.background = "var(--primary)";
+            }
+
+            let detalheReservadas = document.getElementById("vagas-detalhe-reservadas");
+            if (dataForm.ativarVagasReservadas && dataForm.qtdVagasReservadas) {
+                let qtdRes = Number(dataForm.qtdVagasReservadas);
+                let destinoStr = dataForm.destinoVagasReservadas === 'ligantes_lape' ? 'Ligantes da LAPE' : (dataForm.especifiqueOutro || 'Reservadas');
+                detalheReservadas.innerHTML = `<i class="fa-solid fa-bookmark" style="color: var(--primary);"></i> Inclui <strong>${qtdRes} vagas reservadas</strong> para ${destinoStr}.`;
+            } else {
+                detalheReservadas.innerHTML = "";
+            }
+        }
+
+        function configurarIdentificacaoLape(campos) {
+            if (!formDadosGlobal || !formDadosGlobal.ativarVagasReservadas || formDadosGlobal.destinoVagasReservadas !== 'ligantes_lape') return;
+
+            campos.forEach((campo, index) => {
+                let rotuloLower = campo.rotulo.toLowerCase();
+                if (rotuloLower.includes('matrícula') || rotuloLower.includes('matricula') || rotuloLower.includes('código') || rotuloLower.includes('codigo') || rotuloLower.includes('registro')) {
+                    let inputEl = document.getElementById(`campo_dyn_${index}`);
+                    if (inputEl) {
+                        inputEl.addEventListener('blur', async function() {
+                            let valorBusca = this.value.trim();
+                            if (!valorBusca) return;
+
+                            try {
+                                let snapshot = await db.collection("membros").get();
+                                let membroEncontrado = null;
+
+                                snapshot.forEach(doc => {
+                                    let m = doc.data();
+                                    if ((m.matricula && m.matricula.toString().trim() === valorBusca) || 
+                                        (m.codigo && m.codigo.toString().trim() === valorBusca)) {
+                                        membroEncontrado = m;
+                                    }
+                                });
+
+                                if (membroEncontrado) {
+                                    // Preenche automaticamente outros campos compatíveis em branco
+                                    campos.forEach((cOutro, idxOutro) => {
+                                        let rOutro = cOutro.rotulo.toLowerCase();
+                                        let elOutro = document.getElementById(`campo_dyn_${idxOutro}`);
+                                        if (elOutro && !elOutro.value) {
+                                            if (rOutro.includes('nome')) elOutro.value = membroEncontrado.nome || '';
+                                            else if (rOutro.includes('mail')) elOutro.value = membroEncontrado.email || '';
+                                            else if (rOutro.includes('tel') || rOutro.includes('whats')) elOutro.value = membroEncontrado.tel || '';
+                                            else if (rOutro.includes('curso')) elOutro.value = membroEncontrado.curso || 'Enfermagem';
+                                        }
+                                    });
+
+                                    let pai = inputEl.parentElement;
+                                    let avisoExistente = pai.querySelector('.badge-lape-ok');
+                                    if (!avisoExistente) {
+                                        let aviso = document.createElement('div');
+                                        aviso.className = 'badge-lape-ok';
+                                        aviso.style.cssText = 'font-size: 11px; color: var(--success); font-weight: 800; margin-top: 6px; display: flex; align-items: center; gap: 4px;';
+                                        aviso.innerHTML = `<i class="fa-solid fa-circle-check"></i> Ligante LAPE identificado (${membroEncontrado.nome})! Vaga reservada aplicada.`;
+                                        pai.appendChild(aviso);
+                                    }
+                                }
+                            } catch(err) {
+                                console.error("Erro ao buscar ligante:", err);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+
     </script>
 </body>
 </html>
