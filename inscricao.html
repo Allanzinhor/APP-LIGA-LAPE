@@ -511,18 +511,18 @@ window.onload = async () => {
                     return;
                 }
 
-                // Tenta verificar o limite de vagas com segurança (protegido contra bloqueio de regras)
+                // Verificação de vagas isolada para garantir que nunca quebre a página
                 let totalRespostas = 0;
                 try {
                     let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
                     totalRespostas = respSnap.size;
-                    
+
                     if (data.ativarLimiteVagas && data.limiteVagas && totalRespostas >= Number(data.limiteVagas)) {
                         mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
                         return;
                     }
-                } catch (errPerm) {
-                    console.warn("Aviso: Não foi possível ler as respostas devido às regras de segurança do Firestore.", errPerm);
+                } catch (errVagas) {
+                    console.warn("Aviso ao carregar contagem de vagas:", errVagas);
                 }
 
                 atualizarCardVagas(totalRespostas, data);
@@ -572,7 +572,7 @@ window.onload = async () => {
                 document.getElementById("painel-formulario").style.display = "block";
 
             } catch(e) {
-                console.error("Erro crítico ao carregar:", e);
+                console.error("Erro crítico ao carregar formulário:", e);
                 mostrarErro("Erro de Conexão", "Não foi possível carregar os dados. Verifique sua internet.");
             }
         };
