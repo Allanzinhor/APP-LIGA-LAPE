@@ -1204,6 +1204,40 @@
     <input type="datetime-local" id="novo-form-data-limite">
 </div>
 
+<!-- OPÇÃO DE LIMITE DE VAGAS E VAGAS RESERVADAS -->
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                    <label style="font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--primary);">
+                        <input type="checkbox" id="novo-form-ativar-limite-vagas" onchange="toggleSecaoVagasForm(this.checked)"> Ativar limite de vagas e vagas reservadas
+                    </label>
+
+                    <div id="wrapper-config-vagas" style="display: none; flex-direction: column; gap: 8px; margin-top: 4px; border-top: 1px dashed var(--border); padding-top: 8px;">
+                        <div>
+                            <label style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 2px;">Quantidade Total de Vagas *</label>
+                            <input type="number" id="novo-form-limite-vagas" placeholder="Ex: 30" min="1" style="padding: 8px; font-size: 11px;">
+                        </div>
+
+                        <label style="font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" id="novo-form-ativar-vagas-reservadas" onchange="toggleSecaoVagasReservadas(this.checked)"> Possui vagas reservadas?
+                        </label>
+
+                        <div id="wrapper-vagas-reservadas" style="display: none; flex-direction: column; gap: 8px; background: white; padding: 8px; border-radius: 8px; border: 1px solid var(--border);">
+                            <div>
+                                <label style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 2px;">Quantidade de Vagas Reservadas</label>
+                                <input type="number" id="novo-form-qtd-reservadas" placeholder="Ex: 10" min="1" style="padding: 8px; font-size: 11px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 10px; font-weight: 700; display: block; margin-bottom: 2px;">A quem se destinam essas vagas reservadas?</label>
+                                <select id="novo-form-destino-reservadas" onchange="toggleDestinoManual(this.value)" style="padding: 8px; font-size: 11px; margin-bottom: 6px;">
+                                    <option value="ligantes_lape">Ligantes da LAPE</option>
+                                    <option value="outro_manual">Outros (Especificar manualmente)</option>
+                                </select>
+                                <input type="text" id="novo-form-especifique-outro" placeholder="Ex: Convidados, Professores, Diretorias..." style="display: none; padding: 8px; font-size: 11px;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
 <!-- ADICIONE ESTE BLOCO -->
 <div style="display: flex; flex-direction: column; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
     <label style="font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer;">
@@ -1943,35 +1977,59 @@ if (nome === 'migracao-papel') {
         }
 
 function abrirModalFormularioExterno(id = null, dados = null) {
-    document.getElementById("form-id-editando").value = id || "";
-    document.getElementById("container-campos-customizados").innerHTML = "";
-    document.getElementById("container-contatos-form").innerHTML = "";
+            document.getElementById("form-id-editando").value = id || "";
+            document.getElementById("container-campos-customizados").innerHTML = "";
+            document.getElementById("container-contatos-form").innerHTML = "";
 
-    if (dados) {
-        document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Formulário`;
-        document.getElementById("novo-form-titulo").value = dados.titulo || "";
-        document.getElementById("novo-form-subtitulo").value = dados.subtitulo || "";
-        document.getElementById("novo-form-desc").value = dados.descricao || "";
-        document.getElementById("novo-form-data-limite").value = dados.dataLimite || "";
-        document.getElementById("novo-form-permitir-ver-respostas").checked = dados.permitirVerRespostas || false;
+            if (dados) {
+                document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-pen"></i> Editar Formulário`;
+                document.getElementById("novo-form-titulo").value = dados.titulo || "";
+                document.getElementById("novo-form-subtitulo").value = dados.subtitulo || "";
+                document.getElementById("novo-form-desc").value = dados.descricao || "";
+                document.getElementById("novo-form-data-limite").value = dados.dataLimite || "";
+                document.getElementById("novo-form-permitir-ver-respostas").checked = dados.permitirVerRespostas || false;
 
-        if (dados.contatos && Array.isArray(dados.contatos)) {
-            dados.contatos.forEach(ct => adicionarContatoFormularioUI(ct));
+                // Carregar dados de vagas
+                let ativarVagas = dados.ativarLimiteVagas || false;
+                document.getElementById("novo-form-ativar-limite-vagas").checked = ativarVagas;
+                toggleSecaoVagasForm(ativarVagas);
+                document.getElementById("novo-form-limite-vagas").value = dados.limiteVagas || "";
+
+                let ativarReservadas = dados.ativarVagasReservadas || false;
+                document.getElementById("novo-form-ativar-vagas-reservadas").checked = ativarReservadas;
+                toggleSecaoVagasReservadas(ativarReservadas);
+                document.getElementById("novo-form-qtd-reservadas").value = dados.qtdVagasReservadas || "";
+                document.getElementById("novo-form-destino-reservadas").value = dados.destinoVagasReservadas || "ligantes_lape";
+                toggleDestinoManual(dados.destinoVagasReservadas || "ligantes_lape");
+                document.getElementById("novo-form-especifique-outro").value = dados.especifiqueOutro || "";
+
+                if (dados.contatos && Array.isArray(dados.contatos)) {
+                    dados.contatos.forEach(ct => adicionarContatoFormularioUI(ct));
+                }
+
+                if (dados.camposPersonalizados && Array.isArray(dados.camposPersonalizados)) {
+                    dados.camposPersonalizados.forEach(campo => adicionarCampoPersonalizadoUI(campo));
+                }
+            } else {
+                document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo`;
+                document.getElementById("novo-form-titulo").value = "";
+                document.getElementById("novo-form-subtitulo").value = "";
+                document.getElementById("novo-form-desc").value = "";
+                document.getElementById("novo-form-data-limite").value = "";
+                document.getElementById("novo-form-permitir-ver-respostas").checked = false;
+
+                document.getElementById("novo-form-ativar-limite-vagas").checked = false;
+                toggleSecaoVagasForm(false);
+                document.getElementById("novo-form-limite-vagas").value = "";
+                document.getElementById("novo-form-ativar-vagas-reservadas").checked = false;
+                toggleSecaoVagasReservadas(false);
+                document.getElementById("novo-form-qtd-reservadas").value = "";
+                document.getElementById("novo-form-destino-reservadas").value = "ligantes_lape";
+                toggleDestinoManual("ligantes_lape");
+                document.getElementById("novo-form-especifique-outro").value = "";
+            }
+            document.getElementById("modal-criar-form-externo").style.display = "flex";
         }
-
-        if (dados.camposPersonalizados && Array.isArray(dados.camposPersonalizados)) {
-            dados.camposPersonalizados.forEach(campo => adicionarCampoPersonalizadoUI(campo));
-        }
-    } else {
-        document.getElementById("titulo-modal-form-externo").innerHTML = `<i class="fa-solid fa-circle-plus"></i> Criar Formulário Externo`;
-        document.getElementById("novo-form-titulo").value = "";
-        document.getElementById("novo-form-subtitulo").value = "";
-        document.getElementById("novo-form-desc").value = "";
-        document.getElementById("novo-form-data-limite").value = "";
-        document.getElementById("novo-form-permitir-ver-respostas").checked = false;
-    }
-    document.getElementById("modal-criar-form-externo").style.display = "flex";
-}
 
         function fecharModalFormularioExterno() {
             document.getElementById("modal-criar-form-externo").style.display = "none";
@@ -1990,6 +2048,23 @@ function abrirModalFormularioExterno(id = null, dados = null) {
                 </div>
             `;
             document.getElementById("container-contatos-form").insertAdjacentHTML('beforeend', html);
+        }
+
+        function toggleSecaoVagasForm(ativo) {
+            let wrapper = document.getElementById("wrapper-config-vagas");
+            if (wrapper) wrapper.style.display = ativo ? "flex" : "none";
+        }
+
+        function toggleSecaoVagasReservadas(ativo) {
+            let wrapper = document.getElementById("wrapper-vagas-reservadas");
+            if (wrapper) wrapper.style.display = ativo ? "flex" : "none";
+        }
+
+        function toggleDestinoManual(valor) {
+            let inputOutro = document.getElementById("novo-form-especifique-outro");
+            if (inputOutro) {
+                inputOutro.style.display = (valor === 'outro_manual') ? 'block' : 'none';
+            }
         }
 
         function adicionarCampoPersonalizadoUI(dados = null) {
@@ -2041,80 +2116,99 @@ function abrirModalFormularioExterno(id = null, dados = null) {
         }
 
 async function salvarFormularioExternoNuvem() {
-    let idEditando = document.getElementById("form-id-editando").value;
-    let titulo = document.getElementById("novo-form-titulo").value.trim();
-    let subtitulo = document.getElementById("novo-form-subtitulo").value.trim();
-    let descricao = document.getElementById("novo-form-desc").value.trim();
-    let dataLimite = document.getElementById("novo-form-data-limite").value;
-    let permitirVerRespostas = document.getElementById("novo-form-permitir-ver-respostas").checked;
+            let idEditando = document.getElementById("form-id-editando").value;
+            let titulo = document.getElementById("novo-form-titulo").value.trim();
+            let subtitulo = document.getElementById("novo-form-subtitulo").value.trim();
+            let descricao = document.getElementById("novo-form-desc").value.trim();
+            let dataLimite = document.getElementById("novo-form-data-limite").value;
+            let permitirVerRespostas = document.getElementById("novo-form-permitir-ver-respostas").checked;
 
-    if (!titulo) {
-        alert("Preencha o título do formulário.");
-        return;
-    }
+            // Recolhendo dados de vagas
+            let ativarLimiteVagas = document.getElementById("novo-form-ativar-limite-vagas").checked;
+            let limiteVagas = ativarLimiteVagas ? Number(document.getElementById("novo-form-limite-vagas").value || 0) : null;
+            let ativarVagasReservadas = ativarLimiteVagas && document.getElementById("novo-form-ativar-vagas-reservadas").checked;
+            let qtdVagasReservadas = ativarVagasReservadas ? Number(document.getElementById("novo-form-qtd-reservadas").value || 0) : 0;
+            let destinoVagasReservadas = ativarVagasReservadas ? document.getElementById("novo-form-destino-reservadas").value : "";
+            let especifiqueOutro = (ativarVagasReservadas && destinoVagasReservadas === 'outro_manual') ? document.getElementById("novo-form-especifique-outro").value.trim() : "";
 
-    let contatos = [];
-    document.querySelectorAll('#container-contatos-form > div').forEach(bloco => {
-        let nomeContato = bloco.querySelector('.contato-nome').value.trim();
-        let telContato = bloco.querySelector('.contato-telefone').value.trim();
-        if (nomeContato && telContato) {
-            contatos.push({ nome: nomeContato, telefone: telContato });
-        }
-    });
-
-    let camposPersonalizados = [];
-    document.querySelectorAll('#container-campos-customizados > div').forEach(bloco => {
-        let rotulo = bloco.querySelector('.campo-rotulo').value.trim();
-        let tipo = bloco.querySelector('.campo-tipo').value;
-        let obrigatorio = bloco.querySelector('.campo-obrigatorio').checked; 
-        let opcoesElem = bloco.querySelector('.campo-opcoes');
-        let opcoes = opcoesElem ? opcoesElem.value.trim() : '';
-
-        if (rotulo) {
-            camposPersonalizados.push({ rotulo, tipo, obrigatorio, opcoes });
-        }
-    });
-
-    if (camposPersonalizados.length === 0) {
-        alert("Por favor, adicione pelo menos um campo (pergunta) ao formulário.");
-        return;
-    }
-
-    try {
-        let pacote = {
-            titulo, 
-            subtitulo, 
-            descricao, 
-            dataLimite, 
-            permitirVerRespostas, 
-            exibirRespostasPublicas: permitirVerRespostas, 
-            camposPersonalizados, 
-            contatos
-        };
-
-        if (idEditando) {
-            await db.collection("formularios_externos").doc(idEditando).update(pacote);
-            alert("Formulário atualizado com sucesso!");
-        } else {
-            pacote.ativo = true;
-            pacote.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-            
-            let novoIdBase = gerarSlugLegivel(titulo);
-            let docTest = await db.collection("formularios_externos").doc(novoIdBase).get();
-            if (docTest.exists) {
-                novoIdBase = novoIdBase + "-" + Math.floor(Math.random() * 100);
+            if (ativarLimiteVagas && (!limiteVagas || limiteVagas <= 0)) {
+                alert("Por favor, informe a quantidade total de vagas válida.");
+                return;
             }
 
-            await db.collection("formularios_externos").doc(novoIdBase).set(pacote);
-            alert("Formulário criado! O link gerado será baseado no título.");
+            if (!titulo) {
+                alert("Preencha o título do formulário.");
+                return;
+            }
+
+            let contatos = [];
+            document.querySelectorAll('#container-contatos-form > div').forEach(bloco => {
+                let nomeContato = bloco.querySelector('.contato-nome').value.trim();
+                let telContato = bloco.querySelector('.contato-telefone').value.trim();
+                if (nomeContato && telContato) {
+                    contatos.push({ nome: nomeContato, telefone: telContato });
+                }
+            });
+
+            let camposPersonalizados = [];
+            document.querySelectorAll('#container-campos-customizados > div').forEach(bloco => {
+                let rotulo = bloco.querySelector('.campo-rotulo').value.trim();
+                let tipo = bloco.querySelector('.campo-tipo').value;
+                let obrigatorio = bloco.querySelector('.campo-obrigatorio').checked; 
+                let opcoesElem = bloco.querySelector('.campo-opcoes');
+                let opcoes = opcoesElem ? opcoesElem.value.trim() : '';
+
+                if (rotulo) {
+                    camposPersonalizados.push({ rotulo, tipo, obrigatorio, opcoes });
+                }
+            });
+
+            if (camposPersonalizados.length === 0) {
+                alert("Por favor, adicione pelo menos um campo (pergunta) ao formulário.");
+                return;
+            }
+
+            try {
+                let pacote = {
+                    titulo, 
+                    subtitulo, 
+                    descricao, 
+                    dataLimite, 
+                    permitirVerRespostas, 
+                    exibirRespostasPublicas: permitirVerRespostas, 
+                    ativarLimiteVagas,
+                    limiteVagas,
+                    ativarVagasReservadas,
+                    qtdVagasReservadas,
+                    destinoVagasReservadas,
+                    especifiqueOutro,
+                    camposPersonalizados, 
+                    contatos
+                };
+
+                if (idEditando) {
+                    await db.collection("formularios_externos").doc(idEditando).update(pacote);
+                    alert("Formulário atualizado com sucesso!");
+                } else {
+                    pacote.ativo = true;
+                    pacote.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+                    
+                    let novoIdBase = gerarSlugLegivel(titulo);
+                    let docTest = await db.collection("formularios_externos").doc(novoIdBase).get();
+                    if (docTest.exists) {
+                        novoIdBase = novoIdBase + "-" + Math.floor(Math.random() * 100);
+                    }
+
+                    await db.collection("formularios_externos").doc(novoIdBase).set(pacote);
+                    alert("Formulário criado! O link gerado será baseado no título.");
+                }
+                fecharModalFormularioExterno();
+                carregarFormulariosExternosAdmin();
+            } catch (e) {
+                console.error(e);
+                alert("Erro ao salvar formulário.");
+            }
         }
-        fecharModalFormularioExterno();
-        carregarFormulariosExternosAdmin();
-    } catch (e) {
-        console.error(e);
-        alert("Erro ao salvar formulário.");
-    }
-}
 
         async function excluirFormularioExterno(formId) {
             if (confirm("ATENÇÃO: Deseja apagar este formulário e perder todas as configurações?")) {
