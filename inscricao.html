@@ -171,6 +171,22 @@
             gap: 6px;
         }
 
+        .barra-progresso-container {
+            width: 100%;
+            background: var(--border);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .barra-progresso-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #8b5cf6);
+            border-radius: 5px;
+            transition: width 0.4s ease;
+        }
+
         .cronometro-grid {
             display: flex;
             justify-content: center;
@@ -409,6 +425,18 @@
         </div>
     </div>
 
+    <!-- TELA DE VAGAS ESGOTADAS PERSONALIZADA -->
+    <div class="container-publico" id="painel-vagas-esgotadas" style="display: none;">
+        <div class="borda-superior" style="background: linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b);"></div>
+        <div class="tela-centralizada">
+            <div style="width: 80px; height: 80px; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: #d97706; font-size: 36px; box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);">
+                <i class="fa-solid fa-users-slash"></i>
+            </div>
+            <h2 style="color: var(--dark); font-size: 22px; font-weight: 800; margin: 0 0 12px 0;">Vagas Esgotadas! 🛑</h2>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0;">Todas as vagas disponíveis para este formulário (incluindo as reservas) já foram totalmente preenchidas. Agradecemos o imenso interesse!</p>
+        </div>
+    </div>
+
     <div class="container-publico" id="painel-formulario" style="display: none;">
         <div class="borda-superior"></div>
         
@@ -424,7 +452,7 @@
         <!-- BLOCO DE STATUS DE VAGAS -->
         <div class="cronometro-container" id="box-vagas">
             <div class="cronometro-titulo"><i class="fa-solid fa-users-rectangle"></i> Status de Vagas</div>
-            <div style="text-align: center; font-size: 13px; font-weight: 700; color: var(--dark);" id="texto-status-vagas">
+            <div style="font-size: 13px; font-weight: 700; color: var(--dark);" id="texto-status-vagas">
                 Calculando vagas...
             </div>
         </div>
@@ -485,6 +513,13 @@
             document.getElementById("erro-desc").innerText = desc;
         }
 
+        function mostrarVagasEsgotadas() {
+            document.getElementById("painel-loading").style.display = "none";
+            document.getElementById("painel-formulario").style.display = "none";
+            document.getElementById("painel-erro").style.display = "none";
+            document.getElementById("painel-vagas-esgotadas").style.display = "block";
+        }
+
         window.onload = async () => {
             if (!formId) {
                 mostrarErro("Link Inválido", "Nenhum ID de formulário foi especificado na URL.");
@@ -515,7 +550,7 @@
                     if (totalInscritosAtual >= data.limiteVagas) {
                         // Fecha o form automaticamente se atingiu o limite
                         await db.collection("formularios_externos").doc(formId).update({ ativo: false });
-                        mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
+                        mostrarVagasEsgotadas();
                         return;
                     }
                 }
@@ -580,14 +615,24 @@
             let textoVagas = document.getElementById("texto-status-vagas");
             let limite = data.limiteVagas || 0;
             let vagasRestantes = Math.max(0, limite - inscritos);
+            let percentual = limite > 0 ? Math.min(100, Math.round((inscritos / limite) * 100)) : 0;
             
             let infoReservadas = "";
             if (data.ativarVagasReservadas && data.qtdVagasReservadas) {
                 let destinoTexto = data.destinoVagasReservadas === 'ligantes_lape' ? 'Ligantes da LAPE' : (data.especifiqueOutro || 'Reservadas');
-                infoReservadas = `<br><span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">(${data.qtdVagasReservadas} vagas reservadas para ${destinoTexto})</span>`;
+                infoReservadas = `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 6px;">(${data.qtdVagasReservadas} vagas inclusas para ${destinoTexto})</div>`;
             }
             
-            textoVagas.innerHTML = `Preenchidas: <strong>${inscritos}</strong> de <strong>${limite}</strong> vagas (${vagasRestantes} restantes)${infoReservadas}`;
+            textoVagas.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span>Preenchidas: <strong>${inscritos}</strong> de <strong>${limite}</strong> vagas (${vagasRestantes} restantes)</span>
+                    <span style="color: var(--primary); font-weight: 800;">${percentual}%</span>
+                </div>
+                <div class="barra-progresso-container">
+                    <div class="barra-progresso-fill" style="width: ${percentual}%;"></div>
+                </div>
+                ${infoReservadas}
+            `;
         }
 
         function iniciarCronometro(dataLimite) {
@@ -794,7 +839,7 @@
                 let checkRespSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
                 if (checkRespSnap.size >= dadosFormularioAtual.limiteVagas) {
                     await db.collection("formularios_externos").doc(formId).update({ ativo: false });
-                    mostrarErro("Vagas Esgotadas", "Infelizmente as vagas esgotaram enquanto você preenchia o formulário.");
+                    mostrarVagasEsgotadas();
                     return;
                 }
             }
