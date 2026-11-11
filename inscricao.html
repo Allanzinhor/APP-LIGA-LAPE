@@ -813,7 +813,7 @@ window.onload = async () => {
             }
         }
 
-        function configurarIdentificacaoLape(campos) {
+function configurarIdentificacaoLape(campos) {
             if (!formDadosGlobal || !formDadosGlobal.ativarVagasReservadas || formDadosGlobal.destinoVagasReservadas !== 'ligantes_lape') return;
 
             campos.forEach((campo, index) => {
@@ -826,6 +826,7 @@ window.onload = async () => {
                             if (!valorBusca) return;
 
                             try {
+                                // Consulta segura e isolada que não quebra a página se falhar
                                 let snapshot = await db.collection("membros").get();
                                 let membroEncontrado = null;
 
@@ -838,7 +839,6 @@ window.onload = async () => {
                                 });
 
                                 if (membroEncontrado) {
-                                    // Preenche automaticamente outros campos compatíveis em branco
                                     campos.forEach((cOutro, idxOutro) => {
                                         let rOutro = cOutro.rotulo.toLowerCase();
                                         let elOutro = document.getElementById(`campo_dyn_${idxOutro}`);
@@ -861,7 +861,7 @@ window.onload = async () => {
                                     }
                                 }
                             } catch(err) {
-                                console.error("Erro ao buscar ligante:", err);
+                                console.warn("Aviso na identificação automática do ligante:", err);
                             }
                         });
                     }
