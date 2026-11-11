@@ -268,6 +268,12 @@
             box-shadow: 0 0 0 4px var(--primary-light);
         }
 
+        input:disabled, select:disabled, textarea:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
         input[type="file"] {
             padding: 10px;
             background: #fff;
@@ -504,6 +510,7 @@
         let intervaloCronometro = null;
         let dadosFormularioAtual = null;
         let totalInscritosAtual = 0;
+        let modoApenasLigantes = false;
 
         function mostrarErro(titulo, desc) {
             document.getElementById("painel-loading").style.display = "none";
@@ -548,10 +555,17 @@
                     atualizarDisplayVagas(totalInscritosAtual, data);
 
                     if (totalInscritosAtual >= data.limiteVagas) {
-                        // Fecha o form automaticamente se atingiu o limite
                         await db.collection("formularios_externos").doc(formId).update({ ativo: false });
                         mostrarVagasEsgotadas();
                         return;
+                    }
+
+                    // Verificar se as vagas públicas esgotadas restam apenas as reservadas
+                    if (data.ativarVagasReservadas && data.qtdVagasReservadas) {
+                        let vagasPublicas = data.limiteVagas - data.qtdVagasReservadas;
+                        if (totalInscritosAtual >= vagasPublicas) {
+                            modoApenasLigantes = true;
+                        }
                     }
                 }
 
@@ -596,6 +610,14 @@
 
                 renderizarCamposDinamicos(data.camposPersonalizados || []);
 
+                if (modoApenasLigantes) {
+                    aplicarBloqueioCamposPublicos(true);
+                    let avisoDiv = document.createElement("div");
+                    avisoDiv.style.cssText = "background: #eef2ff; border: 1px solid #c7d2fe; color: #3730a3; padding: 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 20px; text-align: center;";
+                    avisoDiv.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Vagas gerais esgotadas! Restam apenas vagas reservadas para Ligantes da LAPE. Informe sua matrícula para preencher os dados.`;
+                    document.getElementById("container-campos-dinamicos").prepend(avisoDiv);
+                }
+
                 // VERIFICAR SE A EXIBIÇÃO PÚBLICA DE RESPOSTAS ESTÁ ATIVADA NO PAINEL
                 if (data.exibirRespostasPublicas === true || data.permitirVerRespostas === true) {
                     document.getElementById("secao-respostas-publicas").style.display = "block";
@@ -633,6 +655,18 @@
                 </div>
                 ${infoReservadas}
             `;
+        }
+
+        function aplicarBloqueioCamposPublicos(bloquear) {
+            camposPersonalizadosRenderizados.forEach((campo, idx) => {
+                let rotuloLower = campo.rotulo.toLowerCase();
+                let el = document.getElementById(`campo_dyn_${idx}`);
+                if (!el) return;
+                let ehMatricula = rotuloLower.includes('matrícula') || rotuloLower.includes('matricula');
+                if (!ehMatricula) {
+                    el.disabled = bloquear;
+                }
+            });
         }
 
         function iniciarCronometro(dataLimite) {
@@ -742,6 +776,9 @@
                             el.value = membroData.turno;
                         }
                     });
+
+                    // Desbloqueia os campos caso algum não tenha sido preenchido automaticamente
+                    aplicarBloqueioCamposPublicos(false);
                 }
             } catch (e) {
                 console.error("Erro ao verificar matrícula LAPE:", e);
