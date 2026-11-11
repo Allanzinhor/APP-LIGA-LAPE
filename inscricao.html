@@ -433,7 +433,7 @@
                 <i class="fa-solid fa-users-slash"></i>
             </div>
             <h2 style="color: var(--dark); font-size: 22px; font-weight: 800; margin: 0 0 12px 0;">Vagas Esgotadas! 🛑</h2>
-            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0;">Todas as vagas disponíveis para este formulário (incluindo as reservas) já foram totalmente preenchidas. Agradecemos o imenso interesse!</p>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0;">Todas as vagas disponíveis para este formulário já foram totalmente preenchidas. Agradecemos o imenso interesse!</p>
         </div>
     </div>
 
@@ -620,7 +620,7 @@
             let infoReservadas = "";
             if (data.ativarVagasReservadas && data.qtdVagasReservadas) {
                 let destinoTexto = data.destinoVagasReservadas === 'ligantes_lape' ? 'Ligantes da LAPE' : (data.especifiqueOutro || 'Reservadas');
-                infoReservadas = `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 6px;">(${data.qtdVagasReservadas} vagas inclusas para ${destinoTexto})</div>`;
+                infoReservadas = `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 6px;">(${data.qtdVagasReservadas} vagas reservadas para ${destinoTexto})</div>`;
             }
             
             textoVagas.innerHTML = `
