@@ -9,9 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Firebase SDKs -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script>
       const firebaseConfig = {
@@ -19,14 +18,8 @@
         authDomain: "app-lape.firebaseapp.com",
         projectId: "app-lape"
       };
-      
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
-
-      // Autenticação anônima automática para liberar o acesso público ao Firestore
-      firebase.auth().signInAnonymously().catch((error) => {
-          console.error("Erro na autenticação anônima:", error);
-      });
     </script>
 
     <style>
@@ -518,21 +511,14 @@ window.onload = async () => {
                     return;
                 }
 
-                // Verificação de vagas isolada para garantir que nunca quebre a página
-                let totalRespostas = 0;
-                try {
-                    let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
-                    totalRespostas = respSnap.size;
-
-                    if (data.ativarLimiteVagas && data.limiteVagas && totalRespostas >= Number(data.limiteVagas)) {
-                        mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
-                        return;
-                    }
-                } catch (errVagas) {
-                    console.warn("Aviso ao carregar contagem de vagas:", errVagas);
+                // Verificar limite de vagas antes de exibir o form
+                let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
+                if (data.ativarLimiteVagas && data.limiteVagas && respSnap.size >= Number(data.limiteVagas)) {
+                    mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
+                    return;
                 }
 
-                atualizarCardVagas(totalRespostas, data);
+                atualizarCardVagas(respSnap.size, data);
 
                 document.getElementById("pub-titulo-form").innerText = data.titulo;
                 
@@ -579,7 +565,7 @@ window.onload = async () => {
                 document.getElementById("painel-formulario").style.display = "block";
 
             } catch(e) {
-                console.error("Erro crítico ao carregar formulário:", e);
+                console.error(e);
                 mostrarErro("Erro de Conexão", "Não foi possível carregar os dados. Verifique sua internet.");
             }
         };
@@ -820,7 +806,7 @@ window.onload = async () => {
             }
         }
 
-function configurarIdentificacaoLape(campos) {
+        function configurarIdentificacaoLape(campos) {
             if (!formDadosGlobal || !formDadosGlobal.ativarVagasReservadas || formDadosGlobal.destinoVagasReservadas !== 'ligantes_lape') return;
 
             campos.forEach((campo, index) => {
@@ -833,7 +819,6 @@ function configurarIdentificacaoLape(campos) {
                             if (!valorBusca) return;
 
                             try {
-                                // Consulta segura e isolada que não quebra a página se falhar
                                 let snapshot = await db.collection("membros").get();
                                 let membroEncontrado = null;
 
@@ -846,6 +831,7 @@ function configurarIdentificacaoLape(campos) {
                                 });
 
                                 if (membroEncontrado) {
+                                    // Preenche automaticamente outros campos compatíveis em branco
                                     campos.forEach((cOutro, idxOutro) => {
                                         let rOutro = cOutro.rotulo.toLowerCase();
                                         let elOutro = document.getElementById(`campo_dyn_${idxOutro}`);
@@ -868,7 +854,7 @@ function configurarIdentificacaoLape(campos) {
                                     }
                                 }
                             } catch(err) {
-                                console.warn("Aviso na identificação automática do ligante:", err);
+                                console.error("Erro ao buscar ligante:", err);
                             }
                         });
                     }
