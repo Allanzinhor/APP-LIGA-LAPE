@@ -421,6 +421,14 @@
 
         <div class="area-contatos" id="container-contatos"></div>
 
+        <!-- BLOCO DE STATUS DE VAGAS -->
+        <div class="cronometro-container" id="box-vagas">
+            <div class="cronometro-titulo"><i class="fa-solid fa-users-rectangle"></i> Status de Vagas</div>
+            <div style="text-align: center; font-size: 13px; font-weight: 700; color: var(--dark);" id="texto-status-vagas">
+                Calculando vagas...
+            </div>
+        </div>
+
         <div class="cronometro-container" id="box-cronometro">
             <div class="cronometro-titulo"><i class="fa-solid fa-stopwatch"></i> O formulário encerra em:</div>
             <div class="cronometro-grid">
@@ -466,6 +474,8 @@
         const formId = urlParams.get('id');
         let camposPersonalizadosRenderizados = [];
         let intervaloCronometro = null;
+        let dadosFormularioAtual = null;
+        let totalInscritosAtual = 0;
 
         function mostrarErro(titulo, desc) {
             document.getElementById("painel-loading").style.display = "none";
@@ -489,8 +499,26 @@
                 }
 
                 let data = doc.data();
+                dadosFormularioAtual = data;
                 let agora = new Date();
                 let dataLimiteObj = data.dataLimite ? new Date(data.dataLimite) : null;
+
+                // Verificar total de inscritos / vagas preenchidas
+                let respSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
+                totalInscritosAtual = respSnap.size;
+
+                if (data.ativarLimiteVagas) {
+                    let boxVagas = document.getElementById("box-vagas");
+                    boxVagas.style.display = "block";
+                    atualizarDisplayVagas(totalInscritosAtual, data);
+
+                    if (totalInscritosAtual >= data.limiteVagas) {
+                        // Fecha o form automaticamente se atingiu o limite
+                        await db.collection("formularios_externos").doc(formId).update({ ativo: false });
+                        mostrarErro("Vagas Esgotadas", "Todas as vagas disponíveis para este formulário já foram preenchidas.");
+                        return;
+                    }
+                }
 
                 if (!data.ativo || (dataLimiteObj && dataLimiteObj < agora)) {
                     mostrarErro("Inscrições Encerradas", "O prazo para submissões neste processo seletivo já acabou.");
@@ -533,7 +561,7 @@
 
                 renderizarCamposDinamicos(data.camposPersonalizados || []);
 
-// VERIFICAR SE A EXIBIÇÃO PÚBLICA DE RESPOSTAS ESTÁ ATIVADA NO PAINEL
+                // VERIFICAR SE A EXIBIÇÃO PÚBLICA DE RESPOSTAS ESTÁ ATIVADA NO PAINEL
                 if (data.exibirRespostasPublicas === true || data.permitirVerRespostas === true) {
                     document.getElementById("secao-respostas-publicas").style.display = "block";
                     escutarRespostasPublicas();
@@ -547,6 +575,20 @@
                 mostrarErro("Erro de Conexão", "Não foi possível carregar os dados. Verifique sua internet.");
             }
         };
+
+        function atualizarDisplayVagas(inscritos, data) {
+            let textoVagas = document.getElementById("texto-status-vagas");
+            let limite = data.limiteVagas || 0;
+            let vagasRestantes = Math.max(0, limite - inscritos);
+            
+            let infoReservadas = "";
+            if (data.ativarVagasReservadas && data.qtdVagasReservadas) {
+                let destinoTexto = data.destinoVagasReservadas === 'ligantes_lape' ? 'Ligantes da LAPE' : (data.especifiqueOutro || 'Reservadas');
+                infoReservadas = `<br><span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">(${data.qtdVagasReservadas} vagas reservadas para ${destinoTexto})</span>`;
+            }
+            
+            textoVagas.innerHTML = `Preenchidas: <strong>${inscritos}</strong> de <strong>${limite}</strong> vagas (${vagasRestantes} restantes)${infoReservadas}`;
+        }
 
         function iniciarCronometro(dataLimite) {
             const box = document.getElementById("box-cronometro");
@@ -592,9 +634,12 @@
                 let icone = getIconeParaCampo(campo.rotulo, campo.tipo);
                 let inputHtml = "";
 
+                let rotuloLower = campo.rotulo.toLowerCase();
+                let eventoMatricula = (rotuloLower.includes('matrícula') || rotuloLower.includes('matricula')) ? `oninput="verificarMatriculaLape(this)"` : ``;
+
                 if (campo.tipo === 'texto_curto') {
-                    let mascaraAttr = campo.rotulo.toLowerCase().includes('telefone') || campo.rotulo.toLowerCase().includes('whatsapp') ? `oninput="mascaraTelefoneGenerica(this)" maxlength="15"` : ``;
-                    inputHtml = `<input type="text" id="${idInput}" placeholder="Sua resposta" ${mascaraAttr}>`;
+                    let mascaraAttr = rotuloLower.includes('telefone') || rotuloLower.includes('whatsapp') ? `oninput="mascaraTelefoneGenerica(this)" maxlength="15"` : ``;
+                    inputHtml = `<input type="text" id="${idInput}" placeholder="Sua resposta" ${mascaraAttr} ${eventoMatricula}>`;
                 } else if (campo.tipo === 'texto_longo') {
                     inputHtml = `<textarea id="${idInput}" rows="3" placeholder="Digite sua resposta detalhada..."></textarea>`;
                 } else if (campo.tipo === 'selecao') {
@@ -617,6 +662,47 @@
             container.innerHTML = html;
         }
 
+        // IDENTIFICAÇÃO AUTOMÁTICA DE LIGANTES DA LAPE VIA MATRÍCULA
+        async function verificarMatriculaLape(inputEl) {
+            if (!dadosFormularioAtual || !dadosFormularioAtual.ativarVagasReservadas || dadosFormularioAtual.destinoVagasReservadas !== 'ligantes_lape') return;
+            let matriculaBuscada = inputEl.value.trim();
+            if (matriculaBuscada.length < 3) return;
+
+            try {
+                let membrosRef = db.collection("membros");
+                let snap = await membrosRef.where("matricula", "==", matriculaBuscada).get();
+                if (snap.empty) {
+                    snap = await membrosRef.where("codigo", "==", matriculaBuscada).get();
+                }
+                
+                if (!snap.empty) {
+                    let membroData = snap.docs[0].data();
+                    if (membroData.desligado) return;
+                    
+                    // Preenche automaticamente as outras informações correspondentes
+                    camposPersonalizadosRenderizados.forEach((campo, idx) => {
+                        let rotuloLower = campo.rotulo.toLowerCase();
+                        let el = document.getElementById(`campo_dyn_${idx}`);
+                        if (!el) return;
+
+                        if (rotuloLower.includes('nome') && membroData.nome) {
+                            el.value = membroData.nome;
+                        } else if (rotuloLower.includes('mail') && membroData.email) {
+                            el.value = membroData.email;
+                        } else if ((rotuloLower.includes('tel') || rotuloLower.includes('whats')) && membroData.tel) {
+                            el.value = membroData.tel;
+                        } else if (rotuloLower.includes('curso') && membroData.curso) {
+                            el.value = membroData.curso;
+                        } else if (rotuloLower.includes('turno') && membroData.turno) {
+                            el.value = membroData.turno;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Erro ao verificar matrícula LAPE:", e);
+            }
+        }
+
         // CARREGA E ATUALIZA A TABELA EM TEMPO REAL COM OS DADOS DO FIRESTORE
         function escutarRespostasPublicas() {
             const containerPub = document.getElementById("conteudo-tabela-publica");
@@ -629,7 +715,6 @@
                       return;
                   }
 
-                  // Descobrir as colunas com base nas chaves do primeiro registro (respostasExtras)
                   let primeiroDocData = snapshot.docs[0].data().respostasExtras || {};
                   let colunas = Object.keys(primeiroDocData);
 
@@ -656,7 +741,6 @@
                       htmlTabela += `<tr>`;
                       colunas.forEach(col => {
                           let valor = dados[col] || "-";
-                          // Se for base64 de imagem/arquivo, simplificar visualização na tabela
                           if (typeof valor === 'string' && valor.startsWith("data:")) {
                               valor = `<a href="${valor}" target="_blank" style="color:var(--primary); font-weight:700;"><i class="fa-solid fa-file-arrow-down"></i> Ver Anexo</a>`;
                           }
@@ -705,6 +789,16 @@
             btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Processando...`;
 
+            // Verificação de vagas em tempo real antes de submeter
+            if (dadosFormularioAtual && dadosFormularioAtual.ativarLimiteVagas) {
+                let checkRespSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
+                if (checkRespSnap.size >= dadosFormularioAtual.limiteVagas) {
+                    await db.collection("formularios_externos").doc(formId).update({ ativo: false });
+                    mostrarErro("Vagas Esgotadas", "Infelizmente as vagas esgotaram enquanto você preenchia o formulário.");
+                    return;
+                }
+            }
+
             let respostasColetadas = {};
             let possuiErroValidacao = false;
 
@@ -752,7 +846,13 @@
                     enviadoEm: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                await db.collection("formularios_externos").doc(formId).collection("respostas").add(pacoteEnvio);
+                let respRef = await db.collection("formularios_externos").doc(formId).collection("respostas").add(pacoteEnvio);
+
+                // Verificar se a nova contagem excede o limite para fechar automaticamente o formulário
+                let posEnvioSnap = await db.collection("formularios_externos").doc(formId).collection("respostas").get();
+                if (dadosFormularioAtual && dadosFormularioAtual.ativarLimiteVagas && posEnvioSnap.size >= dadosFormularioAtual.limiteVagas) {
+                    await db.collection("formularios_externos").doc(formId).update({ ativo: false });
+                }
 
                 document.getElementById("painel-formulario").style.display = "none";
                 document.getElementById("painel-sucesso-envio").style.display = "block";
